@@ -2,18 +2,20 @@
 
 namespace App\Controllers;
 
+use App\Models\CustomerModel;
 use App\Models\ProductCategoryModel;
 use App\Models\ProductModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class ProductController extends BaseController
 {
-    protected $productModel, $categoryModel;
+    protected $productModel, $categoryModel, $customerModel;
 
     public function __construct()
     {
         $this->productModel = new ProductModel();
         $this->categoryModel = new ProductCategoryModel();
+        $this->customerModel = new CustomerModel();
     }
 
     // =======================
@@ -25,6 +27,72 @@ class ProductController extends BaseController
     {
         $products = $this->productModel->findAll();
         return $this->response->setJSON($products);
+    }
+
+    // GET /api/product/recommendations
+    public function apiProductRecommendations($customerId)
+    {
+        $customer = $this->customerModel->find($customerId);
+        $products = $this->productModel;
+
+        $eyeHistoryData = json_decode($customer['customer_eye_history'], true);
+        $preferencesData = json_decode($customer['customer_preferences'], true);
+
+        $recommendations = [];
+        foreach ($products as $product) {
+            $score = 0;
+
+            // Power range matching
+            if (!empty($product['power_range']) && is_array($eyeHistoryData)) {
+                if (isset($eyeHistoryData['left_eye']['spere']) && isset($eyeHistoryData['right_eye']['sphere'])) {
+                    $range = explode('-', $product['power_range']);
+                    if (count($range) === 2) {
+                        $min = floatval($range[0]);
+                        $max = floatval($range[1]);
+                        if (
+                            ($eyeHistoryData['left_eye']['spere'] >= $min && $eyeHistoryData['left_eye']['spere'] <= $max) ||
+                            ($eyeHistoryData['right_eye']['sphere'] >= $min && $eyeHistoryData['right_eye']['sphere'] <= $max)
+                        ) {
+                            $score += 2;
+                        }
+                    }
+                }
+            }
+
+            // UV protection matching
+            if (!empty($product['uv_protection']) && is_array($preferencesData)) {
+                if (in_array(strtolower($product['uv_protection']), array_map('strtolower', $preferencesData))) {
+                    $score += 1;
+                }
+            }
+
+            // Color matching
+            if (!empty($product['color']) && is_array($preferencesData)) {
+                if (in_array(strtolower($product['color']), array_map('strtolower', $preferencesData))) {
+                    $score += 1;
+                }
+            }
+
+            // Coating matching
+            if (!empty($product['coating']) && is_array($preferencesData)) {
+                if (in_array(strtolower($product['coating']), array_map('strtolower', $preferencesData))) {
+                    $score += 1;
+                }
+            }
+
+            if ($score > 0) {
+                $product['score'] = $score;
+                $recommendations[] = $product;
+            }
+        }
+
+        // 5. Urutkan berdasarkan score (descending)
+        usort($recommendations, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
+
+        // 6. Return JSON
+        return $this->response->setJSON($recommendations);
     }
 
     // POST /api/products

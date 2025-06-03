@@ -10,6 +10,7 @@ $routes->get('/dashboard', 'DashboardController::index');
 $routes->group('api', function ($routes) {
   $routes->group('products', function ($routes) {
     $routes->get('/', 'ProductController::apiList');
+    $routes->get('recommendations/(:num)', 'ProductController::apiProductRecommendations/$1');
     $routes->post('/', 'ProductController::apiCreate');
     $routes->get('(:num)', 'ProductController::apiShow/$1');
     $routes->put('(:num)', 'ProductController::apiUpdate/$1');
