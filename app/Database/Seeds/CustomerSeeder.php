@@ -38,6 +38,7 @@ class CustomerSeeder extends Seeder
             $customers[] = [
                 'customer_name'         => $faker->name,
                 'customer_email'        => $faker->unique()->email,
+                'customer_password'     => password_hash('123', PASSWORD_DEFAULT),
                 'customer_phone'        => $faker->phoneNumber,
                 'customer_dob'          => $faker->dateTimeBetween('-70 years', '-18 years')->format('Y-m-d'),
                 'customer_gender'       => $faker->randomElement(['male', 'female']),

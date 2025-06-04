@@ -22,95 +22,103 @@ class ProductController extends BaseController
     // API FUNCTIONS
     // =======================
 
-    // GET /api/products
-    public function apiList()
+    // GET /api/products/new-eyewear
+    public function apiListNewEyewear()
     {
-        $products = $this->productModel->findAll();
-        return $this->response->setJSON($products);
+        $products = $this->productModel
+            ->orderBy('created_at', 'DESC')
+            ->limit(10)
+            ->findAll();
+
+        $response = [
+            'status' => 200,
+            'message' => 'Succesfully!',
+            'data' => $products
+        ];
+        return $this->response->setJSON($response);
     }
 
     // GET /api/product/recommendations
     public function apiProductRecommendations($customerId)
     {
         $customer = $this->customerModel->find($customerId);
-        $products = $this->productModel;
-
-        $eyeHistoryData = json_decode($customer['customer_eye_history'], true);
-        $preferencesData = json_decode($customer['customer_preferences'], true);
+        $products = $this->productModel->findAll();
 
         $recommendations = [];
-        foreach ($products as $product) {
-            $score = 0;
 
-            // Power range matching
-            if (!empty($product['power_range']) && is_array($eyeHistoryData)) {
-                if (isset($eyeHistoryData['left_eye']['spere']) && isset($eyeHistoryData['right_eye']['sphere'])) {
+        if (!$customer || empty($customer['customer_eye_history']) || empty($customer['customer_preferences'])) {
+            // fallback: tampilkan semua produk dengan skor 0
+            foreach ($products as $product) {
+                $product['score'] = 0;
+                $recommendations[] = $product;
+            }
+        } else {
+            $eyeHistoryData = json_decode($customer['customer_eye_history'], true);
+            $preferencesData = json_decode($customer['customer_preferences'], true);
+
+            foreach ($products as $product) {
+                $score = 0;
+
+                // Power range matching
+                if (!empty($product['power_range']) && is_array($eyeHistoryData)) {
                     $range = explode('-', $product['power_range']);
                     if (count($range) === 2) {
-                        $min = floatval($range[0]);
-                        $max = floatval($range[1]);
+                        $min = floatval(trim($range[0]));
+                        $max = floatval(trim($range[1]));
+                        $leftSphere = isset($eyeHistoryData['left_eye']['sphere']) ? floatval($eyeHistoryData['left_eye']['sphere']) : null;
+                        $rightSphere = isset($eyeHistoryData['right_eye']['sphere']) ? floatval($eyeHistoryData['right_eye']['sphere']) : null;
+
                         if (
-                            ($eyeHistoryData['left_eye']['spere'] >= $min && $eyeHistoryData['left_eye']['spere'] <= $max) ||
-                            ($eyeHistoryData['right_eye']['sphere'] >= $min && $eyeHistoryData['right_eye']['sphere'] <= $max)
+                            ($leftSphere !== null && $leftSphere >= $min && $leftSphere <= $max) ||
+                            ($rightSphere !== null && $rightSphere >= $min && $rightSphere <= $max)
                         ) {
                             $score += 2;
                         }
                     }
                 }
-            }
 
-            // UV protection matching
-            if (!empty($product['uv_protection']) && is_array($preferencesData)) {
-                if (in_array(strtolower($product['uv_protection']), array_map('strtolower', $preferencesData))) {
-                    $score += 1;
+                // UV protection matching
+                if (!empty($product['uv_protection']) && is_array($preferencesData)) {
+                    if (in_array(strtolower($product['uv_protection']), array_map('strtolower', (array)$preferencesData))) {
+                        $score += 1;
+                    }
                 }
-            }
 
-            // Color matching
-            if (!empty($product['color']) && is_array($preferencesData)) {
-                if (in_array(strtolower($product['color']), array_map('strtolower', $preferencesData))) {
-                    $score += 1;
+                // Color matching
+                if (!empty($product['color']) && is_array($preferencesData)) {
+                    if (in_array(strtolower($product['color']), array_map('strtolower', (array)$preferencesData))) {
+                        $score += 1;
+                    }
                 }
-            }
 
-            // Coating matching
-            if (!empty($product['coating']) && is_array($preferencesData)) {
-                if (in_array(strtolower($product['coating']), array_map('strtolower', $preferencesData))) {
-                    $score += 1;
+                // Coating matching
+                if (!empty($product['coating']) && is_array($preferencesData)) {
+                    if (in_array(strtolower($product['coating']), array_map('strtolower', (array)$preferencesData))) {
+                        $score += 1;
+                    }
                 }
-            }
 
-            if ($score > 0) {
                 $product['score'] = $score;
                 $recommendations[] = $product;
             }
+
+            // Urutkan berdasarkan score
+            usort($recommendations, function ($a, $b) {
+                return $b['score'] <=> $a['score'];
+            });
         }
 
-        // 5. Urutkan berdasarkan score (descending)
-        usort($recommendations, function ($a, $b) {
-            return $b['score'] <=> $a['score'];
-        });
+        $response = [
+            'status' => 200,
+            'message' => 'Succesfully!',
+            'data' => $recommendations
+        ];
 
-        // 6. Return JSON
-        return $this->response->setJSON($recommendations);
-    }
-
-    // POST /api/products
-    public function apiCreate()
-    {
-        $data = $this->request->getJSON();
-
-        if ($this->productModel->insert($data)) {
-            return $this->response->setStatusCode(ResponseInterface::HTTP_CREATED)
-                ->setJSON(['message' => 'Product created successfully']);
-        }
-
-        return $this->response->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST)
-            ->setJSON(['message' => 'Failed to create product']);
+        return $this->response->setJSON($response);
     }
 
     // GET /api/products/{id}
-    public function apiShow($id)
+    public function apiProductDetail($id)
     {
         $product = $this->productModel->find($id);
         if ($product) {
@@ -119,29 +127,6 @@ class ProductController extends BaseController
 
         return $this->response->setStatusCode(ResponseInterface::HTTP_NOT_FOUND)
             ->setJSON(['message' => 'Product not found']);
-    }
-
-    // PUT/PATCH /api/products/{id}
-    public function apiUpdate($id)
-    {
-        $data = $this->request->getJSON();
-        if ($this->productModel->update($id, $data)) {
-            return $this->response->setJSON(['message' => 'Product updated successfully']);
-        }
-
-        return $this->response->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST)
-            ->setJSON(['message' => 'Failed to update product']);
-    }
-
-    // DELETE /api/products/{id}
-    public function apiDelete($id)
-    {
-        if ($this->productModel->delete($id)) {
-            return $this->response->setJSON(['message' => 'Product deleted successfully']);
-        }
-
-        return $this->response->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST)
-            ->setJSON(['message' => 'Failed to delete product']);
     }
 
     // =======================

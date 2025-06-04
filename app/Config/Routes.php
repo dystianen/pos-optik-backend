@@ -7,14 +7,16 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/dashboard', 'DashboardController::index');
 
-$routes->group('api', function ($routes) {
-  $routes->group('products', function ($routes) {
-    $routes->get('/', 'ProductController::apiList');
+$routes->group('api', ['filter' => 'cors'], function ($routes) {
+  $routes->group('auth', function ($routes) {
+    $routes->post('login', 'AuthController::login');
+    $routes->post('register', 'AuthController::register');
+  });
+
+  $routes->group('products', ['filter' => 'auth'], function ($routes) {
+    $routes->get('new-eyewear', 'ProductController::apiListNewEyewear');
     $routes->get('recommendations/(:num)', 'ProductController::apiProductRecommendations/$1');
-    $routes->post('/', 'ProductController::apiCreate');
-    $routes->get('(:num)', 'ProductController::apiShow/$1');
-    $routes->put('(:num)', 'ProductController::apiUpdate/$1');
-    $routes->delete('(:num)', 'ProductController::apiDelete/$1');
+    $routes->get('product/(:num)', 'ProductController::apiProductDetail/$1');
   });
 });
 

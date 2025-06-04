@@ -24,6 +24,10 @@ class CreateCustomersTable extends Migration
                 'constraint' => 100,
                 'unique' => true
             ],
+            'customer_password' => [
+                'type' => 'VARCHAR',
+                'constraint' => '255'
+            ],
             'customer_phone'       => [
                 'type' => 'VARCHAR',
                 'constraint' => 20

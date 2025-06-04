@@ -28,9 +28,9 @@
 
   // Menentukan breadcrumb berdasarkan route
   $breadcrumbs = [
-    'admin/dashboard' => ['Dashboard'],
-    'admin/books' => ['Books'],
-    'admin/borrowings' => ['Borrowings'],
+    '/dashboard' => ['Dashboard'],
+    '/products' => ['Products'],
+    '/product-category' => ['Product Category'],
   ];
 
   $currentPage = isset($breadcrumbs[$currentURI]) ? $breadcrumbs[$currentURI][0] : 'Dashboard'; // Default 'Dashboard' jika tidak ditemukan
@@ -54,13 +54,13 @@
     <?php endif; ?>
   </div>
 
-  <div class="min-height-300 bg-dark position-absolute w-100"></div>
+  <div class="min-height-300 bg-dark position-fixed w-100"></div>
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0 d-flex gap-2" href="<?= base_url('dashboard') ?>" target="_blank">
         <img src="/assets/img/logo-ct-dark.png" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
-        <h5 class="ms-1 font-weight-bold">SOLUSIKU</h5>
+        <h5 class="ms-1 font-weight-bold">OPTIKERS</h5>
       </a>
     </div>
     <hr class="horizontal dark mt-0">

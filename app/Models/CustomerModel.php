@@ -11,17 +11,11 @@ class CustomerModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
-    protected $allowedFields    = ['name', 'email', 'phone', 'dob', 'gender', 'occupation', 'eye_history', 'preferences'];
+    protected $allowedFields    = ['customer_name', 'customer_email', 'customer_password', 'customer_phone', 'customer_dob', 'customer_gender', 'customer_occupation', 'customer_eye_history', 'customer_preferences'];
     protected $useTimestamps    = true;
     protected $createdField     = 'created_at';
     protected $updatedField     = 'updated_at';
 
-    // Validasi input
-    protected $validationRules = [
-        'name'     => 'required|min_length[3]',
-        'email'    => 'required|valid_email|is_unique[customers.email]',
-        'phone'    => 'required|min_length[10]',
-    ];
 
     // Relasi ke tabel eye_examinations (One-to-Many)
     public function eyeExaminations()
