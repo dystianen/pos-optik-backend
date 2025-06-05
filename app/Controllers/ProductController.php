@@ -26,9 +26,11 @@ class ProductController extends BaseController
     public function apiListNewEyewear()
     {
         $products = $this->productModel
-            ->orderBy('created_at', 'DESC')
+            ->builder()
             ->limit(10)
-            ->findAll();
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->getResultArray();
 
         $response = [
             'status' => 200,
@@ -39,12 +41,29 @@ class ProductController extends BaseController
     }
 
     // GET /api/product/recommendations
-    public function apiProductRecommendations($customerId)
+    public function apiProductRecommendations()
     {
-        $customer = $this->customerModel->find($customerId);
-        $products = $this->productModel->findAll();
+        $limit = (int) $this->request->getVar('limit');
+        if ($limit <= 0) {
+            $limit = 10; // default limit
+        }
+
+        try {
+            $decode = $this->decodedToken();
+            $customer = $this->customerModel->find($decode->user_id);
+        } catch (\Exception $e) {
+            // Token tidak ada atau invalid
+            $customer = null;
+        }
+
+        $products = $this->productModel
+            ->builder()
+            ->limit($limit)
+            ->get()
+            ->getResultArray();
 
         $recommendations = [];
+
 
         if (!$customer || empty($customer['customer_eye_history']) || empty($customer['customer_preferences'])) {
             // fallback: tampilkan semua produk dengan skor 0
@@ -53,6 +72,7 @@ class ProductController extends BaseController
                 $recommendations[] = $product;
             }
         } else {
+            // customer ada, lanjut hitung score rekomendasi seperti biasa
             $eyeHistoryData = json_decode($customer['customer_eye_history'], true);
             $preferencesData = json_decode($customer['customer_preferences'], true);
 
@@ -116,6 +136,7 @@ class ProductController extends BaseController
 
         return $this->response->setJSON($response);
     }
+
 
     // GET /api/products/{id}
     public function apiProductDetail($id)

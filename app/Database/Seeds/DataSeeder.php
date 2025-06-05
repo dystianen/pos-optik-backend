@@ -11,6 +11,6 @@ class DataSeeder extends Seeder
         $this->call('RoleSeeder');
         $this->call('CustomerSeeder');
         $this->call('ProductCategorySeeder');
-        $this->call('ProductSeeder');
+        // $this->call('ProductSeeder');
     }
 }

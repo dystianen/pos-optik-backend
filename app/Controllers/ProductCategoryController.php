@@ -14,6 +14,18 @@ class ProductCategoryController extends BaseController
         $this->categoryModel = new ProductCategoryModel();
     }
 
+    public function apiListProductCategory()
+    {
+        $categories = $this->categoryModel->findAll();
+
+        $response = [
+            'status' => 200,
+            'message' => 'Successfully',
+            'data' => $categories
+        ];
+        return $this->response->setJSON($response);
+    }
+
     // READ
     public function webIndex()
     {

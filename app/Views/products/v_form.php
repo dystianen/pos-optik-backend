@@ -103,8 +103,8 @@
         <div class="col-12 col-md-6 mb-3">
           <label for="uv_protection" class="form-label">UV Protection</label>
           <select name="uv_protection" class="form-select">
-            <option value="Yes" <?= old('uv_protection', $product['uv_protection'] ?? '') === 'Yes' ? 'selected' : '' ?>>Yes</option>
-            <option value="No" <?= old('uv_protection', $product['uv_protection'] ?? '') === 'No' ? 'selected' : '' ?>>No</option>
+            <option value="true" <?= old('uv_protection', $product['uv_protection'] ?? '') === 'true' ? 'selected' : '' ?>>Yes</option>
+            <option value="false" <?= old('uv_protection', $product['uv_protection'] ?? '') === 'false' ? 'selected' : '' ?>>No</option>
           </select>
         </div>
 

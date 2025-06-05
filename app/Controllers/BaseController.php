@@ -7,8 +7,12 @@ use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Exception;
+use Firebase\JWT\BeforeValidException;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -69,7 +73,23 @@ abstract class BaseController extends Controller
                 $token = $matches[1];
             }
         }
-        $decoded = JWT::decode($token, new Key($key, 'HS256'));
-        return $decoded;
+
+        if (!$token) {
+            // Token tidak ada di header
+            throw new Exception("Token not provided", 401);
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            return $decoded;
+        } catch (ExpiredException $e) {
+            throw new Exception("Token expired", 401);
+        } catch (SignatureInvalidException $e) {
+            throw new Exception("Invalid token signature", 401);
+        } catch (BeforeValidException $e) {
+            throw new Exception("Token not valid yet", 401);
+        } catch (Exception $e) {
+            throw new Exception("Invalid token", 401);
+        }
     }
 }

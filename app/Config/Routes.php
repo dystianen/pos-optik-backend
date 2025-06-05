@@ -6,17 +6,21 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/dashboard', 'DashboardController::index');
+$routes->match(['options'], '(:any)', 'CorsController::handleOptions');
 
 $routes->group('api', ['filter' => 'cors'], function ($routes) {
+  // AUTH
   $routes->group('auth', function ($routes) {
     $routes->post('login', 'AuthController::login');
     $routes->post('register', 'AuthController::register');
   });
 
-  $routes->group('products', ['filter' => 'auth'], function ($routes) {
+  // PRODUCTS
+  $routes->group('products', function ($routes) {
     $routes->get('new-eyewear', 'ProductController::apiListNewEyewear');
-    $routes->get('recommendations/(:num)', 'ProductController::apiProductRecommendations/$1');
-    $routes->get('product/(:num)', 'ProductController::apiProductDetail/$1');
+    $routes->get('recommendations', 'ProductController::apiProductRecommendations');
+    $routes->get('(:num)', 'ProductController::apiProductDetail/$1');
+    $routes->get('category', 'ProductCategoryController::apiListProductCategory');
   });
 });
 

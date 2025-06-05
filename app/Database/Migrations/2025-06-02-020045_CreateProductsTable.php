@@ -30,10 +30,9 @@ class CreateProductsTable extends Migration
             'diameter'              => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
             'power_range'           => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
             'water_content'         => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
-            'uv_protection'         => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
+            'uv_protection'         => ['type' => 'BOOLEAN', 'null' => true],
             'color'                 => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
             'coating'               => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
-
             'created_at'            => ['type' => 'DATETIME', 'null' => true],
             'updated_at'            => ['type' => 'DATETIME', 'null' => true],
         ]);
