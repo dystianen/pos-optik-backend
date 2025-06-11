@@ -28,15 +28,6 @@ class CreateUsers extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => '255'
             ],
-            'email_verified_at' => [
-                'type' => 'DATETIME',
-                'null' => TRUE
-            ],
-            'remember_token' => [
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-                'null' => TRUE
-            ],
             'role_id' => [
                 'type' => 'INT',
                 'constraint' => 11,

@@ -4,17 +4,59 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CustomerModel;
+use App\Models\UserModel;
+use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use Firebase\JWT\JWT;
 
 class AuthController extends BaseController
 {
-    protected $customerModel;
+    use ResponseTrait;
+    protected $customerModel, $userModel;
 
     public function __construct()
     {
         $this->customerModel = new CustomerModel();
+        $this->userModel = new UserModel();
         helper(['form', 'url']); // load form & URL helper
+    }
+
+    public function signin()
+    {
+        return view('auth/v_signin');
+    }
+
+    public function signinStore()
+    {
+        $session = session();
+        $email = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+
+        $data = $this->userModel->where('user_email', $email)->first();
+
+        if ($data) {
+            $pass = $data['password'];
+            $authenticatePassword = password_verify($password, $pass);
+            if ($authenticatePassword) {
+                $ses_data = [
+                    'id' => $data['user_id'],
+                    'full_name' => $data['user_name'],
+                    'email' => $data['user_email'],
+                    'role_id' => $data['role_id'],
+                    'isLoggedIn' => TRUE
+                ];
+
+                $session->set($ses_data);
+
+                return redirect()->to(base_url('/dashboard'));
+            } else {
+                $session->setFlashdata('failed', 'Password is incorrect.');
+                return redirect()->to('/signin');
+            }
+        } else {
+            $session->setFlashdata('failed', 'Email does not exist.');
+            return redirect()->to('/signin');
+        }
     }
 
     /**
@@ -90,42 +132,45 @@ class AuthController extends BaseController
         $user = $this->customerModel->where('customer_email', $email)->first();
 
         if (is_null($user)) {
-            return $this->response->setJSON(['error' => 'Invalid username or password.'], 401);
+            return $this->respond([
+                'status' => 401,
+                'message' => 'Invalid username or password.'
+            ], 401);
         }
 
-        $pwd_verify = password_verify($password, $user['customer_password']);
-
-        if (!$pwd_verify) {
-            return $this->response->setJSON(['error' => 'Invalid username or password.'], 401);
+        if (!password_verify($password, $user['customer_password'])) {
+            return $this->respond([
+                'status' => 401,
+                'message' => 'Invalid username or password.'
+            ], 401);
         }
 
         $key = getenv('JWT_SECRET');
-        $iat = time(); // current timestamp value
+        $iat = time();
         $exp = $iat + 3600;
 
-        $payload = array(
+        $payload = [
             "iss" => "Issuer of the JWT",
             "aud" => "Audience that the JWT",
             "sub" => "Subject of the JWT",
-            "iat" => $iat, //Time the JWT issued at
-            "exp" => $exp, // Expiration time of token
+            "iat" => $iat,
+            "exp" => $exp,
             "user_id" => $user['customer_id'],
             "user_name" => $user['customer_name'],
             "email" => $user['customer_email'],
-        );
+        ];
 
         $token = JWT::encode($payload, $key, 'HS256');
 
-        $response = [
+        return $this->respond([
             'status' => 200,
-            'message' => 'Login Succesfully!',
+            'message' => 'Login successfully!',
             'data' => [
-                'token' => $token,
+                'token' => $token
             ]
-        ];
-
-        return $this->response->setJSON($response);
+        ], 200);
     }
+
 
 
     /**
@@ -134,10 +179,6 @@ class AuthController extends BaseController
     public function logout()
     {
         session()->destroy();
-
-        return $this->response->setJSON([
-            'status'  => 'success',
-            'message' => 'Logged out successfully'
-        ]);
+        return view('auth/v_signin');
     }
 }

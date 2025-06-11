@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card  py-4">
   <div class="card-header pb-0 d-flex justify-content-between">
-    <h4>Product List</h4>
-    <a href="<?= base_url('/products/create') ?>" class="btn btn-primary mb-3">Add Product</a>
+    <h4>Inventory Transactions List</h4>
+    <a href="<?= base_url('/inventory-transactions/form') ?>" class="btn btn-primary mb-3">+ Add</a>
   </div>
   <?php if (session()->getFlashdata('message')): ?>
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -16,29 +16,40 @@
             <th>No</th>
             <th>Category</th>
             <th>Name</th>
-            <th>Brand</th>
             <th>Price</th>
-            <th>Stock</th>
+            <th>Quantity</th>
+            <th>Transaction Date</th>
             <th>Image URL</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-          <?php foreach ($products as $product): ?>
+          <?php foreach ($inventory_transactions as $inventory_transaction): ?>
             <tr>
               <td><?= $startIndex++ ?></td>
-              <td><?= $product['category_name'] ?></td>
-              <td><?= $product['product_name'] ?></td>
-              <td><?= $product['product_brand'] ?></td>
-              <td><?= $product['product_price'] ?></td>
-              <td><?= $product['product_stock'] ?></td>
               <td>
-                <img src="<?= base_url() . esc($product['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+                <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
+                  <span class="badge bg-success">IN</span>
+                <?php else : ?>
+                  <span class="badge bg-danger">OUT</span>
+                <?php endif; ?>
               </td>
+
+              <td><?= esc($inventory_transaction['product_name']) ?></td>
+              <td><?= number_format($inventory_transaction['product_price'], 0, ',', '.') ?></td>
+              <td><?= esc($inventory_transaction['quantity']) ?></td>
               <td>
-                <a href="<?= base_url('/products/edit/' . $product['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/products/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;">
+                <?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?>
+              </td>
+
+              <td>
+                <img src="<?= base_url() . esc($inventory_transaction['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+              </td>
+
+              <td>
+                <a href="<?= base_url('/inventory-transactions/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                <form action="<?= base_url('/inventory-transactions/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
                   <?= csrf_field() ?>
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                 </form>
@@ -65,7 +76,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>products?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>inventory_transactions?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

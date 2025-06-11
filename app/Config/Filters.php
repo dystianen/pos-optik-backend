@@ -2,8 +2,8 @@
 
 namespace Config;
 
-use App\Filters\AuthFilter;
-use App\Filters\CorsFilter;
+use App\Filters\AuthApi;
+use App\Filters\AuthGuard;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -27,7 +27,8 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'auth'          => AuthFilter::class,
+        'authApi'       => AuthApi::class,
+        'authGuard'     => AuthGuard::class,
         'cors'          => FiltersCorsFilter::class,
     ];
 

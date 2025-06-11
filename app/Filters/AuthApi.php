@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
@@ -9,16 +10,19 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Exception;
 
-class AuthFilter implements FilterInterface
+class AuthApi implements FilterInterface
 {
+  use ResponseTrait;
   public function before(RequestInterface $request, $arguments = null)
   {
     $authHeader = $request->getHeaderLine('Authorization');
     if (!$authHeader) {
-      return service('response')->setJSON([
-        'status'  => 'error',
-        'message' => 'Authorization header missing'
-      ])->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+      return service('response')
+        ->setJSON([
+          'status'  => ResponseInterface::HTTP_UNAUTHORIZED,
+          'message' => 'Authorization header missing'
+        ])
+        ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
     }
 
     $token = null;
@@ -27,10 +31,12 @@ class AuthFilter implements FilterInterface
     }
 
     if (!$token) {
-      return service('response')->setJSON([
-        'status'  => 'error',
-        'message' => 'Token not found'
-      ])->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+      return service('response')
+        ->setJSON([
+          'status'  => 'error',
+          'message' => 'Token not found'
+        ])
+        ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
     }
 
     try {
@@ -40,12 +46,15 @@ class AuthFilter implements FilterInterface
       // Simpan data user ke request untuk digunakan di controller
       $request->user = $decoded;
     } catch (Exception $e) {
-      return service('response')->setJSON([
-        'status'  => 'error',
-        'message' => 'Invalid or expired token'
-      ])->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+      return service('response')
+        ->setJSON([
+          'status'  => ResponseInterface::HTTP_UNAUTHORIZED,
+          'message' => 'Invalid or expired token'
+        ])
+        ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
     }
   }
+
 
   public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
   {
