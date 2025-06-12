@@ -132,6 +132,14 @@
             <span class="nav-link-text ms-1">Eye Examinations</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $currentURI === 'users' ? 'active' : '' ?>" href="/users">
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <span class="nav-link-text ms-1">Users</span>
+          </a>
+        </li>
       </ul>
     </div>
 
