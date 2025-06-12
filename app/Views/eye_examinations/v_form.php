@@ -8,7 +8,7 @@
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
   <?php endif; ?>
   <div class="card-body">
-    <form action="<?= site_url('eye-examination/save') ?>" method="post" enctype="multipart/form-data">
+    <form action="<?= site_url('eye-examinations/save') ?>" method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="id" value="<?= isset($eyeExamination) ? $eyeExamination['eye_examination_id'] : '' ?>">
 
@@ -63,15 +63,15 @@
         </div>
 
         <div class="col-12 col-md-6 mb-3">
-          <label for="right_eye_cylinder">Sympthoms</label>
-          <input class="form-control" name="right_eye_cylinder" id="right_eye_cylinder" placeholder="e.g., 0"
-            value="<?= isset($eyeExamination) ? $eyeExamination['right_eye_cylinder'] : '' ?>">
+          <label for="symptoms">Symptoms</label>
+          <input class="form-control" name="symptoms" id="symptoms" placeholder="e.g., Teks"
+            value="<?= isset($eyeExamination) ? $eyeExamination['symptoms'] : '' ?>">
         </div>
 
         <div class="col-12 col-md-6 mb-3">
-          <label for="right_eye_cylinder">Diagnosis</label>
-          <input class="form-control" name="right_eye_cylinder" id="right_eye_cylinder" placeholder="e.g., 0"
-            value="<?= isset($eyeExamination) ? $eyeExamination['right_eye_cylinder'] : '' ?>">
+          <label for="diagnosis">Diagnosis</label>
+          <input class="form-control" name="diagnosis" id="diagnosis" placeholder="e.g., 0"
+            value="<?= isset($eyeExamination) ? $eyeExamination['diagnosis'] : '' ?>">
         </div>
       </div>
 

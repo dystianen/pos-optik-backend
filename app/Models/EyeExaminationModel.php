@@ -19,23 +19,4 @@ class EyeExaminationModel extends Model
         'symptoms',
         'diagnosis'
     ];
-
-    // Relasi ke customer
-    public function customer()
-    {
-        return $this->belongsTo('App\Models\CustomerModel', 'customer_id', 'id');
-    }
-
-    // Method untuk klasifikasi gangguan mata (Naive Bayes)
-    public function classifyEyeCondition(array $symptoms)
-    {
-        // Contoh sederhana (bisa diganti dengan model ML)
-        if (strpos($symptoms['symptoms'], 'pandangan buram jauh') !== false) {
-            return 'miopi';
-        } elseif (strpos($symptoms['symptoms'], 'sulit baca dekat') !== false) {
-            return 'hipermetropi';
-        }
-
-        return 'unknown';
-    }
 }

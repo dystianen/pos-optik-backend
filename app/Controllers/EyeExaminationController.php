@@ -64,13 +64,9 @@ class EyeExaminationController extends BaseController
     public function save()
     {
         $id = $this->request->getVar('id');
-        $session = session();
 
         $rules = [
-            'product_id' => 'required|integer',
-            'transaction_type' => 'required|in_list[IN,OUT]',
-            'quantity' => 'required|integer',
-            'description' => 'permit_empty|string'
+            'customer_id' => 'required',
         ];
 
         if (!$this->validate($rules)) {
@@ -78,21 +74,25 @@ class EyeExaminationController extends BaseController
         }
 
         $data = [
-            'product_id' => $this->request->getVar('product_id'),
-            'transaction_type' => $this->request->getVar('transaction_type'),
-            'quantity' => $this->request->getVar('quantity'),
-            'description' => $this->request->getVar('description'),
-            'user_id' => $session->get('id')
+            'customer_id' => $this->request->getVar('customer_id'),
+            'left_eye_axis' => $this->request->getVar('left_eye_axis'),
+            'left_eye_sphere' => $this->request->getVar('left_eye_sphere'),
+            'left_eye_cylinder' => $this->request->getVar('left_eye_cylinder'),
+            'right_eye_axis' => $this->request->getVar('right_eye_axis'),
+            'right_eye_sphere' => $this->request->getVar('right_eye_sphere'),
+            'right_eye_cylinder' => $this->request->getVar('right_eye_cylinder'),
+            'symptomps' => $this->request->getVar('symptomps'),
+            'diagnosis' => $this->request->getVar('diagnosis'),
         ];
 
         if ($id) {
             $this->eyeExaminationModel->update($id, $data);
-            $message = 'Transaction updated successfully!';
+            $message = 'Eye examination updated successfully!';
         } else {
             $this->eyeExaminationModel->insert($data);
-            $message = 'Transaction created successfully!';
+            $message = 'Eye examination created successfully!';
         }
 
-        return redirect()->to('/inventory')->with('success', $message);
+        return redirect()->to('/eye-examinations')->with('success', $message);
     }
 }

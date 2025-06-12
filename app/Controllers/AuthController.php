@@ -171,8 +171,6 @@ class AuthController extends BaseController
         ], 200);
     }
 
-
-
     /**
      * Logout
      */

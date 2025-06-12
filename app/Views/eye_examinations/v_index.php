@@ -29,7 +29,6 @@
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-
           <?php if (empty($eyeExaminations)): ?>
             <tr>
               <td colspan="11" class="text-center text-muted">No eye examination data available.</td>
@@ -45,8 +44,9 @@
                 <td><?= $eyeExamination['right_eye_axis'] ?></td>
                 <td><?= $eyeExamination['right_eye_sphere'] ?></td>
                 <td><?= $eyeExamination['right_eye_cylinder'] ?></td>
-                <td><?= $eyeExamination['symptomps'] ?></td>
-                <td><?= $eyeExamination['diagnosis'] ?></td>
+                <td><?= esc($eyeExamination['symptoms']) ?></td>
+                <td><?= esc($eyeExamination['diagnosis']) ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($eyeExamination['created_at'])) ?></td>
                 <td>
                   <a href="<?= base_url('/eye-examinations/form?id=' . $eyeExamination['eye_examination_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
                   <form action="<?= base_url('/eye-examinations/delete/' . $eyeExamination['eye_examination_id']) ?>" method="post" style="display:inline-block;">
