@@ -10,7 +10,7 @@ class InventoryTransactionsModel extends Model
     protected $primaryKey       = 'inventory_transaction_id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['product_id', 'transaction_type', 'quantity', 'transaction_date', 'description', 'user_id', 'created_at', 'updated_at'];
 

@@ -17,6 +17,18 @@ class CreateProductCategoriesTable extends Migration
             ],
             'category_name'        => ['type' => 'VARCHAR', 'constraint' => 50],
             'category_description' => ['type' => 'TEXT', 'null' => true],
+            'created_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
+            'updated_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
+            'deleted_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addPrimaryKey('category_id');

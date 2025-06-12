@@ -34,7 +34,11 @@ class CreateUsers extends Migration
                 'unsigned' => TRUE
             ],
             'created_at timestamp DEFAULT CURRENT_TIMESTAMP',
-            'updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+            'updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            'deleted_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addKey('user_id', TRUE);

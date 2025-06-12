@@ -130,7 +130,6 @@ class CartController extends BaseController
         ], 200);
     }
 
-
     public function getTotalCart()
     {
         $decoded = $this->decodedToken();
@@ -169,6 +168,15 @@ class CartController extends BaseController
                 'order_id' => $order['order_id'],
                 'total_items' => (int) $totalItems
             ]
+        ], 200);
+    }
+
+    public function deleteItemCart($id)
+    {
+        $this->orderItemModel->delete($id);
+        return $this->respond([
+            'status' => 200,
+            'message' => 'Deleted item cart successfully'
         ], 200);
     }
 }

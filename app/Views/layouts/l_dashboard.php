@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="icon" type="image/png" href="favicon.ico">
   <title>
     Optikers
   </title>
@@ -16,6 +16,7 @@
   <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"> -->
   <!-- CSS Files -->
   <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
   <!-- JQUERY -->
@@ -57,10 +58,9 @@
   <div class="min-height-300 bg-dark position-fixed w-100"></div>
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
-      <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0 d-flex gap-2" href="<?= base_url('dashboard') ?>" target="_blank">
-        <img src="/assets/img/logo-ct-dark.png" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
-        <h5 class="ms-1 font-weight-bold">OPTIKERS</h5>
+        <img src="favicon.ico" />
+        <h5 class="ms-1 font-weight-bold">OPTIKERS<span color="#7048E8">.</span></h5>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
@@ -69,34 +69,50 @@
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'dashboard' ? 'active' : '' ?>" href="/dashboard">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-tv-2 text-dark text-sm opacity-10"></i>
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-tv"></i>
             </div>
             <span class="nav-link-text ms-1">Dashboard</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'products' ? 'active' : '' ?>" href="/products">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-basket text-dark text-sm opacity-10"></i>
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-shopping-basket"></i>
             </div>
             <span class="nav-link-text ms-1">Products</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'product-category' ? 'active' : '' ?>" href="/product-category">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-books text-dark text-sm opacity-10"></i>
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-filter"></i>
             </div>
             <span class="nav-link-text ms-1">Product Category</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?= $currentURI === 'inventory-transactions' ? 'active' : '' ?>" href="/inventory-transactions">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-credit-card text-dark text-sm opacity-10"></i>
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-truck-loading"></i>
             </div>
             <span class="nav-link-text ms-1">Inventory Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $currentURI === 'customers' ? 'active' : '' ?>" href="/customers">
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-users"></i>
+            </div>
+            <span class="nav-link-text ms-1">Customers</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <?= $currentURI === 'eye-examinations' ? 'active' : '' ?>" href="/eye-examinations">
+            <div class="me-2 d-flex align-items-center justify-content-center">
+              <i class="fas fa-glasses"></i>
+            </div>
+            <span class="nav-link-text ms-1">Eye Examinations</span>
           </a>
         </li>
       </ul>

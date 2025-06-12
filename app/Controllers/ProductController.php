@@ -163,7 +163,7 @@ class ProductController extends BaseController
 
         $products = $this->productModel
             ->join('product_categories', 'product_categories.category_id = products.category_id')
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('products.created_at', 'DESC')
             ->findAll($totalLimit, $offset);
 
         $totalRows = $this->productModel

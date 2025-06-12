@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card  py-4">
   <div class="card-header pb-0 d-flex justify-content-between">
-    <h4>Inventory Transactions List</h4>
-    <a href="<?= base_url('/inventory-transactions/form') ?>" class="btn btn-primary mb-3">+ Add</a>
+    <h4>Customers List</h4>
+    <a href="<?= base_url('/customers/form') ?>" class="btn btn-primary mb-3">Add Customer</a>
   </div>
   <?php if (session()->getFlashdata('message')): ?>
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -14,42 +14,29 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Category</th>
             <th>Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Transaction Date</th>
-            <th>Image URL</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>Occupation</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-          <?php foreach ($inventory_transactions as $inventory_transaction): ?>
+          <?php foreach ($customers as $customer): ?>
             <tr>
               <td><?= $startIndex++ ?></td>
+              <td><?= $customer['customer_name'] ?></td>
+              <td><?= $customer['customer_email'] ?></td>
+              <td><?= $customer['customer_phone'] ?></td>
+              <td><?= date('d/m/Y', strtotime($customer['customer_dob'])) ?></td>
+              <td><?= $customer['customer_gender'] ?></td>
+              <td><?= $customer['customer_occupation'] ?></td>
               <td>
-                <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
-                  <span class="badge bg-success">IN</span>
-                <?php else : ?>
-                  <span class="badge bg-danger">OUT</span>
-                <?php endif; ?>
-              </td>
-
-              <td><?= esc($inventory_transaction['product_name']) ?></td>
-              <td><?= number_format($inventory_transaction['product_price'], 0, ',', '.') ?></td>
-              <td><?= esc($inventory_transaction['quantity']) ?></td>
-              <td>
-                <?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?>
-              </td>
-
-              <td>
-                <img src="<?= base_url() . esc($inventory_transaction['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
-              </td>
-
-              <td>
-                <a href="<?= base_url('/inventory-transactions/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/inventory-transactions/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
+                <a href="<?= base_url('/customers/form?id=' . $customer['customer_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                <form action="<?= base_url('/customers/delete/' . $customer['customer_id']) ?>" method="post" style="display:inline-block;">
                   <?= csrf_field() ?>
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                 </form>
@@ -60,7 +47,7 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation example" class="mt-4 ml-4">
+    <nav aria-label="Page navigation example" class="mt-4">
       <ul class="pagination" id="pagination">
       </ul>
     </nav>
@@ -76,7 +63,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>inventory_transactions?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>customers?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

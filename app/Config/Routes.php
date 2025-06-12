@@ -30,6 +30,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->post('add-to-cart', 'CartController::addToCart');
     $routes->get('', 'CartController::getCart');
     $routes->get('total-cart', 'CartController::getTotalCart');
+    $routes->delete('delete/(:num)', 'CartController::deleteItemCart/$1');
   });
 });
 
@@ -57,4 +58,11 @@ $routes->group('inventory-transactions', ['filter' => 'authGuard'], function ($r
   $routes->get('', 'InventoryTransactionsController::webIndex');
   $routes->get('form', 'InventoryTransactionsController::form');
   $routes->post('save', 'InventoryTransactionsController::save');
+});
+
+$routes->group('customers', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'CustomerController::index');
+  $routes->get('form', 'CustomerController::form');
+  $routes->post('save', 'CustomerController::save');
+  $routes->post('delete/(:num)', 'CustomerController::delete/$1');
 });
