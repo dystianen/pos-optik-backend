@@ -62,3 +62,10 @@ $routes->group('customers', ['filter' => 'authGuard'], function ($routes) {
   $routes->post('save', 'CustomerController::save');
   $routes->post('delete/(:num)', 'CustomerController::delete/$1');
 });
+
+$routes->group('eye-examinations', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'EyeExaminationController::index');
+  $routes->get('form', 'EyeExaminationController::form');
+  $routes->post('save', 'EyeExaminationController::save');
+  $routes->post('delete/(:num)', 'EyeExaminationController::delete/$1');
+});

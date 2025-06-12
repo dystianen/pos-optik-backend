@@ -25,27 +25,35 @@
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-          <?php foreach ($products as $product): ?>
+
+          <?php if (empty($products)): ?>
             <tr>
-              <td><?= $startIndex++ ?></td>
-              <td><?= $product['category_name'] ?></td>
-              <td><?= $product['product_name'] ?></td>
-              <td><?= $product['product_brand'] ?></td>
-              <td><?= $product['product_price'] ?></td>
-              <td><?= $product['product_stock'] ?></td>
-              <td>
-                <img src="<?= base_url() . esc($product['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
-              </td>
-              <td>
-                <a href="<?= base_url('/products/form?id=' . $product['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/product/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                </form>
-              </td>
+              <td colspan="8" class="text-center text-muted">No product data available.</td>
             </tr>
-          <?php endforeach; ?>
+          <?php else: ?>
+            <?php foreach ($products as $product): ?>
+              <tr>
+                <td><?= $startIndex++ ?></td>
+                <td><?= $product['category_name'] ?></td>
+                <td><?= $product['product_name'] ?></td>
+                <td><?= $product['product_brand'] ?></td>
+                <td><?= $product['product_price'] ?></td>
+                <td><?= $product['product_stock'] ?></td>
+                <td>
+                  <img src="<?= base_url() . esc($product['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+                </td>
+                <td>
+                  <a href="<?= base_url('/products/form?id=' . $product['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <form action="<?= base_url('/product/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin?')">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </tbody>
+
       </table>
     </div>
 

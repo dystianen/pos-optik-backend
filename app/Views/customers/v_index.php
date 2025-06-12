@@ -25,25 +25,33 @@
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-          <?php foreach ($customers as $customer): ?>
+
+          <?php if (empty($customers)): ?>
             <tr>
-              <td><?= $startIndex++ ?></td>
-              <td><?= $customer['customer_name'] ?></td>
-              <td><?= $customer['customer_email'] ?></td>
-              <td><?= $customer['customer_phone'] ?></td>
-              <td><?= date('d/m/Y', strtotime($customer['customer_dob'])) ?></td>
-              <td><?= $customer['customer_gender'] ?></td>
-              <td><?= $customer['customer_occupation'] ?></td>
-              <td>
-                <a href="<?= base_url('/customers/form?id=' . $customer['customer_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/customers/delete/' . $customer['customer_id']) ?>" method="post" style="display:inline-block;">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                </form>
-              </td>
+              <td colspan="8" class="text-center text-muted">No customer data available.</td>
             </tr>
-          <?php endforeach; ?>
+          <?php else: ?>
+            <?php foreach ($customers as $customer): ?>
+              <tr>
+                <td><?= $startIndex++ ?></td>
+                <td><?= $customer['customer_name'] ?></td>
+                <td><?= $customer['customer_email'] ?></td>
+                <td><?= $customer['customer_phone'] ?></td>
+                <td><?= date('d/m/Y', strtotime($customer['customer_dob'])) ?></td>
+                <td><?= $customer['customer_gender'] ?></td>
+                <td><?= $customer['customer_occupation'] ?></td>
+                <td>
+                  <a href="<?= base_url('/customers/form?id=' . $customer['customer_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <form action="<?= base_url('/customers/delete/' . $customer['customer_id']) ?>" method="post" style="display:inline-block;">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </tbody>
+
       </table>
     </div>
 

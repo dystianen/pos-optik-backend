@@ -25,38 +25,41 @@
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
-          <?php foreach ($inventory_transactions as $inventory_transaction): ?>
+
+          <?php if (empty($inventory_transactions)): ?>
             <tr>
-              <td><?= $startIndex++ ?></td>
-              <td>
-                <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
-                  <span class="badge bg-success">IN</span>
-                <?php else : ?>
-                  <span class="badge bg-danger">OUT</span>
-                <?php endif; ?>
-              </td>
-
-              <td><?= esc($inventory_transaction['product_name']) ?></td>
-              <td><?= number_format($inventory_transaction['product_price'], 0, ',', '.') ?></td>
-              <td><?= esc($inventory_transaction['quantity']) ?></td>
-              <td>
-                <?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?>
-              </td>
-
-              <td>
-                <img src="<?= base_url() . esc($inventory_transaction['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
-              </td>
-
-              <td>
-                <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/inventory/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                </form>
-              </td>
+              <td colspan="8" class="text-center text-muted">No inventory transactions available.</td>
             </tr>
-          <?php endforeach; ?>
+          <?php else: ?>
+            <?php foreach ($inventory_transactions as $inventory_transaction): ?>
+              <tr>
+                <td><?= $startIndex++ ?></td>
+                <td>
+                  <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
+                    <span class="badge bg-success">IN</span>
+                  <?php else : ?>
+                    <span class="badge bg-danger">OUT</span>
+                  <?php endif; ?>
+                </td>
+                <td><?= esc($inventory_transaction['product_name']) ?></td>
+                <td><?= number_format($inventory_transaction['product_price'], 0, ',', '.') ?></td>
+                <td><?= esc($inventory_transaction['quantity']) ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?></td>
+                <td>
+                  <img src="<?= base_url() . esc($inventory_transaction['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+                </td>
+                <td>
+                  <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <form action="<?= base_url('/inventory/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </tbody>
+
       </table>
     </div>
 

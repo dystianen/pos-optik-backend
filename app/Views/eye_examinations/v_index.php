@@ -2,8 +2,8 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card  py-4">
   <div class="card-header pb-0 d-flex justify-content-between">
-    <h4>Product Category List</h4>
-    <a href="<?= base_url('/product-category/form') ?>" class="btn btn-primary mb-3">Add Product</a>
+    <h4>Eye Examinations</h4>
+    <a href="<?= base_url('/eye-examinations/form') ?>" class="btn btn-primary mb-3">Add Examinations</a>
   </div>
   <?php if (session()->getFlashdata('message')): ?>
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -14,27 +14,42 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Name</th>
-            <th>Description</th>
+            <th>Customer</th>
+            <th>Left Eye Axis</th>
+            <th>Left Eye Sphere</th>
+            <th>Left Eye Cylinder</th>
+            <th>Right Eye Axis</th>
+            <th>Right Eye Sphere</th>
+            <th>Right Eye Cylinder</th>
+            <th>Symptomps</th>
+            <th>Diagnosis</th>
+            <th>Created Date</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
-          <?php if (empty($categories)): ?>
+          <?php if (empty($eyeExaminations)): ?>
             <tr>
-              <td colspan="4" class="text-center text-muted">No category data available.</td>
+              <td colspan="11" class="text-center text-muted">No eye examination data available.</td>
             </tr>
           <?php else: ?>
-            <?php foreach ($categories as $category): ?>
+            <?php foreach ($eyeExaminations as $eyeExamination): ?>
               <tr>
                 <td><?= $startIndex++ ?></td>
-                <td><?= $category['category_name'] ?></td>
-                <td><?= $category['category_description'] ?></td>
+                <td><?= $eyeExamination['customer_name'] ?></td>
+                <td><?= $eyeExamination['left_eye_axis'] ?></td>
+                <td><?= $eyeExamination['left_eye_sphere'] ?></td>
+                <td><?= $eyeExamination['left_eye_cylinder'] ?></td>
+                <td><?= $eyeExamination['right_eye_axis'] ?></td>
+                <td><?= $eyeExamination['right_eye_sphere'] ?></td>
+                <td><?= $eyeExamination['right_eye_cylinder'] ?></td>
+                <td><?= $eyeExamination['symptomps'] ?></td>
+                <td><?= $eyeExamination['diagnosis'] ?></td>
                 <td>
-                  <a href="<?= base_url('/product-category/form?id=' . $category['category_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                  <form action="<?= base_url('/product-category/delete/' . $category['category_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/eye-examinations/form?id=' . $eyeExamination['eye_examination_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <form action="<?= base_url('/eye-examinations/delete/' . $eyeExamination['eye_examination_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                   </form>
@@ -63,7 +78,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>product-category?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>eye-examinations?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');
