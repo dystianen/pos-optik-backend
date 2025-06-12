@@ -8,11 +8,10 @@
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
   <?php endif; ?>
   <div class="card-body">
-    <form action="<?= isset($product) ? base_url('/products/update/' . $product['product_id']) : base_url('/products/store') ?>" method="post" enctype="multipart/form-data">
+    <form action="<?= site_url('products/save') ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
-      <?php if (isset($product)): ?>
-        <input type="hidden" name="_method" value="PUT">
-      <?php endif; ?>
+      <input type="hidden" name="id" value="<?= isset($product) ? $product['product_id'] : '' ?>">
+
       <div class="row">
         <div class="col-12 col-md-6 mb-3">
           <label for="category_id" class="form-label">Category</label>

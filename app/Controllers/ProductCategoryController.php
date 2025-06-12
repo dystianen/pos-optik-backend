@@ -44,45 +44,49 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-    // CREATE
-    public function webCreate()
+    public function form()
     {
-        return view('product_category/v_form');
-    }
 
-    public function webStore()
-    {
-        $data = [
-            'category_name' => $this->request->getPost('category_name'),
-            'category_description' => $this->request->getPost('category_description'),
-        ];
-
-        $this->categoryModel->insert($data);
-        return redirect()->to('/product-category')->with('success', 'Category added successfully.');
-    }
-
-    // EDIT
-    public function webEdit($id)
-    {
-        $category = $this->categoryModel->find($id);
-        if (!$category) {
-            return redirect()->to('/product-category')->with('error', 'Category not found.');
+        $id = $this->request->getVar('id');
+        $data = [];
+        if ($id) {
+            $category = $this->categoryModel->find($id);
+            if (!$category) {
+                return redirect()->to('/product-category')->with('error', 'Transaction not found.');
+            }
+            $data['category'] = $category;
         }
 
-        return view('product_category/v_form', [
-            'category' => $category
-        ]);
+        return view('product_category/v_form', $data);
     }
 
-    public function webUpdate($id)
+    public function save()
     {
+        $id = $this->request->getVar('id');
+
+        $rules = [
+            'category_name' => 'required',
+            'category_description' => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+        };
+
         $data = [
             'category_name' => $this->request->getPost('category_name'),
             'category_description' => $this->request->getPost('category_description'),
         ];
 
-        $this->categoryModel->update($id, $data);
-        return redirect()->to('/product-category')->with('success', 'Category updated successfully.');
+        if ($id) {
+            $this->categoryModel->update($id, $data);
+            $message = 'Transaction updated successfully!';
+        } else {
+            $this->categoryModel->insert($data);
+            $message = 'Transaction created successfully!';
+        }
+
+        return redirect()->to('/product-category')->with('success', $message);
     }
 
     // DELETE

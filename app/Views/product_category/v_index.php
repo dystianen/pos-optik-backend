@@ -3,7 +3,7 @@
 <div class="container-fluid card  py-4">
   <div class="card-header pb-0 d-flex justify-content-between">
     <h4>Product Category List</h4>
-    <a href="<?= base_url('/products/create') ?>" class="btn btn-primary mb-3">Add Product</a>
+    <a href="<?= base_url('/product-category/form') ?>" class="btn btn-primary mb-3">Add Product</a>
   </div>
   <?php if (session()->getFlashdata('message')): ?>
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -27,7 +27,7 @@
               <td><?= $category['category_name'] ?></td>
               <td><?= $category['category_description'] ?></td>
               <td>
-                <a href="<?= base_url('/product-category/edit/' . $category['category_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                <a href="<?= base_url('/product-category/form?id=' . $category['category_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
                 <form action="<?= base_url('/product-category/delete/' . $category['category_id']) ?>" method="post" style="display:inline-block;">
                   <?= csrf_field() ?>
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>

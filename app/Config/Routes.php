@@ -38,23 +38,19 @@ $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authGuard
 
 $routes->group('products', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('/', 'ProductController::webIndex');
-  $routes->get('create', 'ProductController::webCreateForm');
-  $routes->post('store', 'ProductController::webStore');
-  $routes->get('edit/(:num)', 'ProductController::webEditForm/$1');
-  $routes->put('update/(:num)', 'ProductController::webUpdate/$1');
+  $routes->get('form', 'ProductController::form');
+  $routes->post('save', 'ProductController::save');
   $routes->post('delete/(:num)', 'ProductController::webDelete/$1');
 });
 
 $routes->group('product-category', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('/', 'ProductCategoryController::webIndex');
-  $routes->get('create', 'ProductCategoryController::webCreate');
-  $routes->post('store', 'ProductCategoryController::webStore');
-  $routes->get('edit/(:num)', 'ProductCategoryController::webEdit/$1');
-  $routes->post('update/(:num)', 'ProductCategoryController::webUpdate/$1');
+  $routes->get('form', 'ProductCategoryController::form');
+  $routes->post('save', 'ProductCategoryController::save');
   $routes->post('delete/(:num)', 'ProductCategoryController::webDelete/$1');
 });
 
-$routes->group('inventory-transactions', ['filter' => 'authGuard'], function ($routes) {
+$routes->group('inventory', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'InventoryTransactionsController::webIndex');
   $routes->get('form', 'InventoryTransactionsController::form');
   $routes->post('save', 'InventoryTransactionsController::save');

@@ -184,77 +184,42 @@ class ProductController extends BaseController
         return view('products/v_index', $data);
     }
 
-    // GET /products/create
-    public function webCreateForm()
+    public function form()
     {
+
+        $data = [];
+        $id = $this->request->getVar('id');
         $categories = $this->categoryModel->findAll();
+        $data['categories'] = $categories;
 
-        $data = [
-            'categories' => $categories
-        ];
-
-        return view('products/v_form', $data);
-    }
-
-    // POST /products/store
-    public function webStore()
-    {
-        helper(['form', 'url']);
-
-        // Ambil data POST
-        $data = [
-            'category_id'    => $this->request->getPost('category_id'),
-            'product_name'   => $this->request->getPost('product_name'),
-            'product_price'  => $this->request->getPost('product_price'),
-            'product_stock'  => $this->request->getPost('product_stock'),
-            'product_brand'  => $this->request->getPost('product_brand'),
-            'model'       => $this->request->getPost('model'),
-            'duration'          => $this->request->getPost('duration'),
-            'material'          => $this->request->getPost('material'),
-            'base_curve'         => $this->request->getPost('base_curve'),
-            'diameter'  => $this->request->getPost('diameter'),
-            'power_range'  => $this->request->getPost('power_range'),
-            'water_content'  => $this->request->getPost('water_content'),
-            'water_content'  => $this->request->getPost('water_content'),
-            'uv_protection'  => $this->request->getPost('uv_protection'),
-            'color'  => $this->request->getPost('color'),
-            'coating'  => $this->request->getPost('coating'),
-        ];
-
-        // Handle file upload
-        $file = $this->request->getFile('product_image_url');
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $newName = $file->getRandomName();
-            $file->move(ROOTPATH . 'public/uploads/products', $newName);
-            $data['product_image_url'] = '/uploads/products/' . $newName;
+        if ($id) {
+            $product = $this->productModel->find($id);
+            if (!$product) {
+                return redirect()->to('/product-category')->with('error', 'Transaction not found.');
+            }
+            $data['product'] = $product;
         }
 
-        // Simpan ke database
-        $this->productModel->insert($data);
-
-        return redirect()->to('/products')->with('success', 'Product added successfully');
-    }
-
-    // GET /products/edit/{id}
-    public function webEditForm($id)
-    {
-        $product = $this->productModel->find($id);
-        $categories = $this->categoryModel->findAll();
-
-        $data = [
-            'product' => $product,
-            'categories' => $categories
-        ];
-
         return view('products/v_form', $data);
     }
 
-    // PUT /products/update/{id}
-    public function webUpdate($id)
+    public function save()
     {
-        helper(['form', 'url']);
+        $id = $this->request->getVar('id');
 
-        // Ambil data POST
+        $rules = [
+            'category_id' => 'required',
+            'product_name' => 'required',
+            'product_price' => 'required',
+            'product_stock' => 'required',
+            'product_brand' => 'required',
+            'model' => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+        };
+
         $data = [
             'category_id'    => $this->request->getPost('category_id'),
             'product_name'   => $this->request->getPost('product_name'),
@@ -268,12 +233,12 @@ class ProductController extends BaseController
             'diameter'       => $this->request->getPost('diameter'),
             'power_range'    => $this->request->getPost('power_range'),
             'water_content'  => $this->request->getPost('water_content'),
+            'water_content'  => $this->request->getPost('water_content'),
             'uv_protection'  => $this->request->getPost('uv_protection'),
             'color'          => $this->request->getPost('color'),
             'coating'        => $this->request->getPost('coating'),
         ];
 
-        // Handle file upload jika ada file baru diunggah
         $file = $this->request->getFile('product_image_url');
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $newName = $file->getRandomName();
@@ -281,13 +246,18 @@ class ProductController extends BaseController
             $data['product_image_url'] = '/uploads/products/' . $newName;
         }
 
-        $this->productModel->update($id, $data);
+        if ($id) {
+            $this->productModel->update($id, $data);
+            $message = 'Product updated successfully!';
+        } else {
+            $this->productModel->insert($data);
+            $message = 'Product created successfully!';
+        }
 
-        return redirect()->to('/products')->with('success', 'Product updated successfully');
+        return redirect()->to('/products')->with('success', $message);
     }
 
 
-    // POST /web/products/delete/{id}
     public function webDelete($id)
     {
         $this->productModel->delete($id);

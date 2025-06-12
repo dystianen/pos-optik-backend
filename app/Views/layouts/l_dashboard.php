@@ -26,15 +26,32 @@
 <body class="g-sidenav-show bg-gray-100">
   <?php
   $currentURI = uri_string();
+  $segments = explode('/', $currentURI);
 
-  // Menentukan breadcrumb berdasarkan route
-  $breadcrumbs = [
-    '/dashboard' => ['Dashboard'],
-    '/products' => ['Products'],
-    '/product-category' => ['Product Category'],
+  // Mapping khusus untuk label
+  $breadcrumbLabels = [
+    'dashboard' => 'Dashboard',
+    'products' => 'Products',
+    'product-category' => 'Product Category',
+    'inventory' => 'Inventory',
+    'customers' => 'Customers',
+    'customers/form' => 'Customer Form',
+    'eye-examinations' => 'Eye Examinations',
   ];
 
-  $currentPage = isset($breadcrumbs[$currentURI]) ? $breadcrumbs[$currentURI][0] : 'Dashboard'; // Default 'Dashboard' jika tidak ditemukan
+  // Build breadcrumbs dengan URL
+  $breadcrumbTrail = [];
+  $path = '';
+  foreach ($segments as $segment) {
+    $path .= ($path === '' ? '' : '/') . $segment;
+    $label = $breadcrumbLabels[$segment] ?? ucwords(str_replace('-', ' ', $segment));
+    $breadcrumbTrail[] = [
+      'label' => $label,
+      'url' => base_url($path),
+    ];
+  }
+
+  $currentPage = end($breadcrumbTrail)['label'];
   ?>
 
   <div class="position-fixed top-5 start-50 translate-middle p-3" style="z-index: 1100">
@@ -92,11 +109,11 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $currentURI === 'inventory-transactions' ? 'active' : '' ?>" href="/inventory-transactions">
+          <a class="nav-link <?= $currentURI === 'inventory' ? 'active' : '' ?>" href="/inventory">
             <div class="me-2 d-flex align-items-center justify-content-center">
               <i class="fas fa-truck-loading"></i>
             </div>
-            <span class="nav-link-text ms-1">Inventory Transactions</span>
+            <span class="nav-link-text ms-1">Inventory</span>
           </a>
         </li>
         <li class="nav-item">
@@ -126,11 +143,23 @@
         <div class="container-fluid py-1">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-              <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
-              <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $currentPage ?></li>
+              <li class="breadcrumb-item text-sm">
+                <a class="opacity-5 text-white" href="<?= base_url('dashboard') ?>">Pages</a>
+              </li>
+
+              <?php foreach (array_slice($breadcrumbTrail, 0, -1) as $item): ?>
+                <li class="breadcrumb-item text-sm text-white">
+                  <a href="<?= esc($item['url']) ?>" class="text-white opacity-8"><?= esc($item['label']) ?></a>
+                </li>
+              <?php endforeach; ?>
+
+              <li class="breadcrumb-item text-sm text-white active" aria-current="page">
+                <?= esc($currentPage) ?>
+              </li>
             </ol>
-            <h6 class="font-weight-bolder text-white mb-0"><?= $currentPage ?></h6>
+            <h6 class="font-weight-bolder text-white mb-0"><?= esc($currentPage) ?></h6>
           </nav>
+
           <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto" />
             <ul class="navbar-nav justify-content-end">

@@ -8,7 +8,7 @@
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
   <?php endif; ?>
   <div class="card-body">
-    <form action="<?= site_url('inventory-transactions/save') ?>" method="post">
+    <form action="<?= site_url('inventory/save') ?>" method="post">
       <input type="hidden" name="id" value="<?= isset($transaction) ? $transaction['inventory_transaction_id'] : '' ?>">
 
       <div class="row">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="mt-4">
-          <a href="<?= base_url('/inventory-transactions') ?>" class="btn btn-secondary">Cancel</a>
+          <a href="<?= base_url('/inventory') ?>" class="btn btn-secondary">Cancel</a>
           <button type="submit" class="btn btn-primary"><?= isset($transaction) ? 'Update' : 'Save' ?></button>
         </div>
       </div>

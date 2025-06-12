@@ -3,7 +3,7 @@
 <div class="container-fluid card  py-4">
   <div class="card-header pb-0 d-flex justify-content-between">
     <h4>Inventory Transactions List</h4>
-    <a href="<?= base_url('/inventory-transactions/form') ?>" class="btn btn-primary mb-3">+ Add</a>
+    <a href="<?= base_url('/inventory/form') ?>" class="btn btn-primary mb-3">Add Inventory</a>
   </div>
   <?php if (session()->getFlashdata('message')): ?>
     <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -48,8 +48,8 @@
               </td>
 
               <td>
-                <a href="<?= base_url('/inventory-transactions/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                <form action="<?= base_url('/inventory-transactions/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
+                <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                <form action="<?= base_url('/inventory/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
                   <?= csrf_field() ?>
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                 </form>

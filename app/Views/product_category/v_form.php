@@ -5,8 +5,10 @@
     <h4><?= isset($category) ? 'Edit' : 'Add' ?> Product Category</h4>
   </div>
   <div class="card-body">
-    <form action="<?= isset($category) ? base_url('/product-category/update/' . $category['category_id']) : base_url('/product-category/store') ?>" method="post">
+    <form action="<?= site_url('/product-category/save') ?>" method="post">
       <?= csrf_field() ?>
+      <input type="hidden" name="id" value="<?= isset($category) ? $category['category_id'] : '' ?>">
+
       <div class="mb-3">
         <label for="category_name" class="form-label">Category Name</label>
         <input
@@ -22,8 +24,8 @@
           name="category_description"
           class="form-control"><?= isset($category) ? esc($category['category_description']) : '' ?></textarea>
       </div>
-      <button type="submit" class="btn btn-primary"><?= isset($category) ? 'Update' : 'Save' ?></button>
       <a href="<?= base_url('/product-category') ?>" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary"><?= isset($category) ? 'Update' : 'Save' ?></button>
     </form>
   </div>
 </div>

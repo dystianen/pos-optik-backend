@@ -53,7 +53,7 @@ class InventoryTransactionsController extends BaseController
         if ($id) {
             $transaction = $this->inventoryTransactionsModel->find($id);
             if (!$transaction) {
-                return redirect()->to('/inventory-transactions')->with('error', 'Transaction not found.');
+                return redirect()->to('/inventory')->with('error', 'Transaction not found.');
             }
             $data['transaction'] = $transaction;
         }
@@ -93,6 +93,6 @@ class InventoryTransactionsController extends BaseController
             $message = 'Transaction created successfully!';
         }
 
-        return redirect()->to('/inventory-transactions')->with('success', $message);
+        return redirect()->to('/inventory')->with('success', $message);
     }
 }
