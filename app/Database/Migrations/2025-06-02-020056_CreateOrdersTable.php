@@ -25,17 +25,33 @@ class CreateOrdersTable extends Migration
                 'type' => 'TIMESTAMP',
                 'default' => new RawSql('CURRENT_TIMESTAMP'),
             ],
+            'grand_total'   => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+                'null' => true
+            ],
             'total_price'   => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2'
             ],
-            'payment_method' => [
+            'proof_of_payment' => [
                 'type' => 'VARCHAR',
-                'constraint' => 50
+                'constraint' => 50,
+                'null' => true,
+            ],
+            'address' => [
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+                'null' => true,
+            ],
+            'shipping_costs' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+                'null' => true
             ],
             'status'        => [
                 'type' => 'ENUM',
-                'constraint' => ['pending', 'paid', 'shipped', 'cancelled']
+                'constraint' => ['cart', 'pending', 'paid', 'shipped', 'cancelled']
             ],
             'updated_at'  => [
                 'type' => 'DATETIME',

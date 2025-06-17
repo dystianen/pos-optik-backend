@@ -34,6 +34,7 @@ class CartController extends BaseController
         $productId = $this->request->getVar('product_id') ?? null;
         $quantity = $this->request->getVar('quantity') ?? 1;
         $price = $this->request->getVar('price') ?? '0';
+        $shipping_cost = 20000;
 
         if (!$productId || !$price) {
             return $this->respond([
@@ -52,8 +53,10 @@ class CartController extends BaseController
             $orderData = [
                 'customer_id' => $customerId,
                 'order_date' => date('Y-m-d H:i:s'),
+                'grand_total' => 0,
                 'total_price' => 0,
-                'payment_method' => null,
+                'shipping_costs' => $shipping_cost,
+                'proof_of_payment' => null,
                 'status' => 'cart',
             ];
             $orderId = $this->orderModel->insert($orderData);
@@ -78,7 +81,10 @@ class CartController extends BaseController
             ->getRow()
             ->total;
 
-        $this->orderModel->update($orderId, ['total_price' => $totalPrice]);
+        $this->orderModel->update($orderId, [
+            'total_price' => $totalPrice,
+            'grand_total' => $totalPrice + $shipping_cost
+        ]);
 
         return $this->respond([
             'status' => 200,
@@ -124,7 +130,9 @@ class CartController extends BaseController
             'message' => 'Cart retrieved successfully.',
             'data' => [
                 'order_id' => $order['order_id'],
+                'shipping_costs' => $order['shipping_costs'],
                 'total_price' => $order['total_price'],
+                'grand_total' => $order['grand_total'],
                 'items' => $orderItems,
             ]
         ], 200);
@@ -171,12 +179,63 @@ class CartController extends BaseController
         ], 200);
     }
 
-    public function deleteItemCart($id)
+    public function deleteCartItem($itemId)
     {
-        $this->orderItemModel->delete($id);
+        $decoded = $this->decodedToken();
+        $customerId = $decoded->user_id;
+
+        if (!$customerId) {
+            return $this->respond([
+                'status' => 401,
+                'message' => 'Please login first to delete items from the cart.'
+            ], 401);
+        }
+
+        // Ambil item yang akan dihapus
+        $item = $this->orderItemModel->find($itemId);
+
+        if (!$item) {
+            return $this->respond([
+                'status' => 404,
+                'message' => 'Item not found.'
+            ], 404);
+        }
+
+        // Ambil order cart milik user
+        $order = $this->orderModel
+            ->where('order_id', $item['order_id'])
+            ->where('customer_id', $customerId)
+            ->where('status', 'cart')
+            ->first();
+
+        if (!$order) {
+            return $this->respond([
+                'status' => 403,
+                'message' => 'Unauthorized access to cart.'
+            ], 403);
+        }
+
+        // Hapus item dari order_items
+        $this->orderItemModel->delete($itemId);
+
+        // Hitung ulang total_price
+        $totalPrice = $this->orderItemModel
+            ->select('SUM(quantity * price) AS total')
+            ->where('order_id', $order['order_id'])
+            ->get()
+            ->getRow()
+            ->total ?? 0;
+
+        // Update total_price di order
+        $this->orderModel->update($order['order_id'], ['total_price' => $totalPrice]);
+
         return $this->respond([
             'status' => 200,
-            'message' => 'Deleted item cart successfully'
-        ], 200);
+            'message' => 'Item deleted and cart updated.',
+            'data' => [
+                'order_id' => $order['order_id'],
+                'total_price' => $totalPrice
+            ]
+        ]);
     }
 }

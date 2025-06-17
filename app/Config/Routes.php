@@ -19,6 +19,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
 
   // PRODUCTS
   $routes->group('products', function ($routes) {
+    $routes->get('/', 'ProductController::apiProduct');
     $routes->get('new-eyewear', 'ProductController::apiListNewEyewear');
     $routes->get('recommendations', 'ProductController::apiProductRecommendations');
     $routes->get('(:num)', 'ProductController::apiProductDetail/$1');
@@ -30,7 +31,12 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->post('add-to-cart', 'CartController::addToCart');
     $routes->get('', 'CartController::getCart');
     $routes->get('total-cart', 'CartController::getTotalCart');
-    $routes->delete('delete/(:num)', 'CartController::deleteItemCart/$1');
+    $routes->delete('delete/(:num)', 'CartController::deleteCartItem/$1');
+  });
+
+  $routes->group('order', ['filter' => 'authApi'], function ($routes) {
+    $routes->post('checkout', 'OrderController::checkout');
+    $routes->post('payment', 'OrderController::uploadPaymentProof');
   });
 });
 
