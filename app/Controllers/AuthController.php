@@ -81,26 +81,43 @@ class AuthController extends BaseController
             ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        // Cek JSON valid atau tidak
-        $eyeHistoryJson = $this->request->getVar('customer_eye_history');
-        $preferencesJson = $this->request->getVar('customer_preferences');
+        // Ambil data JSON atau object dari request
+        $eyeHistory = $this->request->getVar('customer_eye_history');
+        $preferences = $this->request->getVar('customer_preferences');
 
-        json_decode($eyeHistoryJson);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        // Validasi format JSON untuk customer_eye_history
+        if (is_string($eyeHistory)) {
+            json_decode($eyeHistory);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid JSON format in customer_eye_history'
+                ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+            }
+        } elseif (!is_array($eyeHistory) && !is_object($eyeHistory)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'message' => 'Invalid JSON format in customer_eye_history'
+                'message' => 'Invalid data type for customer_eye_history'
             ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        json_decode($preferencesJson);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        // Validasi format JSON untuk customer_preferences
+        if (is_string($preferences)) {
+            json_decode($preferences);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid JSON format in customer_preferences'
+                ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+            }
+        } elseif (!is_array($preferences) && !is_object($preferences)) {
             return $this->response->setJSON([
                 'status' => 'error',
-                'message' => 'Invalid JSON format in customer_preferences'
+                'message' => 'Invalid data type for customer_preferences'
             ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
+        // Simpan sebagai string JSON untuk database
         $data = [
             'customer_name' => $this->request->getVar('customer_name'),
             'customer_email' => $this->request->getVar('customer_email'),
@@ -109,8 +126,8 @@ class AuthController extends BaseController
             'customer_dob' => $this->request->getVar('customer_dob'),
             'customer_gender' => $this->request->getVar('customer_gender'),
             'customer_occupation' => $this->request->getVar('customer_occupation'),
-            'customer_eye_history' => $eyeHistoryJson,
-            'customer_preferences' => $preferencesJson,
+            'customer_eye_history' => json_encode($eyeHistory),
+            'customer_preferences' => json_encode($preferences),
         ];
 
         $this->customerModel->insert($data);
