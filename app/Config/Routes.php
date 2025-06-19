@@ -5,11 +5,20 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
+$routes->get('/', function () {
+  return redirect()->to('/signin');
+});
+
 $routes->get('signin', 'AuthController::signin');
 $routes->post('signin/store', 'AuthController::signinStore');
 $routes->get('logout', 'AuthController::logout');
 $routes->match(['options'], '(:any)', 'CorsController::handleOptions');
+$routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authGuard']);
 
+/** ================================= 
+ *             ENDPOINT
+ * ================================== */
 $routes->group('api', ['filter' => 'cors'], function ($routes) {
   // AUTH
   $routes->group('auth', function ($routes) {
@@ -34,14 +43,19 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->delete('delete/(:num)', 'CartController::deleteCartItem/$1');
   });
 
-  $routes->group('order', ['filter' => 'authApi'], function ($routes) {
+  // ORDER
+  $routes->group('orders', ['filter' => 'authApi'], function ($routes) {
+    $routes->get('', 'OrderController::orders',  ['filter' => 'authApi']);
     $routes->post('checkout', 'OrderController::checkout');
     $routes->post('payment', 'OrderController::uploadPaymentProof');
+    $routes->get('check-status', 'OrderController::checkIfShipped');
   });
 });
 
-$routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authGuard']);
 
+/** ================================= 
+ *          WEB DASHBOARD
+ * ================================== */
 $routes->group('products', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('/', 'ProductController::webIndex');
   $routes->get('form', 'ProductController::form');
@@ -81,4 +95,11 @@ $routes->group('users', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('form', 'UserController::form');
   $routes->post('save', 'UserController::save');
   $routes->post('delete/(:num)', 'UserController::delete/$1');
+});
+
+$routes->group('orders', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'OrderController::index');
+  $routes->get('form', 'OrderController::form');
+  $routes->post('save', 'OrderController::save');
+  $routes->post('delete/(:num)', 'OrderController::delete/$1');
 });

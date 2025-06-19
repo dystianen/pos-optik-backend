@@ -36,12 +36,11 @@ class CreateOrdersTable extends Migration
             ],
             'proof_of_payment' => [
                 'type' => 'VARCHAR',
-                'constraint' => 50,
+                'constraint' => 255,
                 'null' => true,
             ],
             'address' => [
-                'type' => 'VARCHAR',
-                'constraint' => 50,
+                'type' => 'TEXT',
                 'null' => true,
             ],
             'shipping_costs' => [
@@ -49,7 +48,7 @@ class CreateOrdersTable extends Migration
                 'constraint' => '10,2',
                 'null' => true
             ],
-            'status'        => [
+            'status' => [
                 'type' => 'ENUM',
                 'constraint' => ['cart', 'pending', 'paid', 'shipped', 'cancelled']
             ],
