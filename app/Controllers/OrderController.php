@@ -57,7 +57,6 @@ class OrderController extends BaseController
         ]);
     }
 
-
     public function checkout()
     {
         $decoded = $this->decodedToken();
@@ -113,6 +112,7 @@ class OrderController extends BaseController
         if (!$customerId) {
             return $this->respond(['status' => 401, 'message' => 'Unauthorized'], 401);
         }
+        log_message('debug', print_r($_FILES, true));
 
         // Cari order yang masih 'pending'
         $order = $this->orderModel

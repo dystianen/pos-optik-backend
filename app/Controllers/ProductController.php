@@ -159,8 +159,9 @@ class ProductController extends BaseController
     public function apiProduct()
     {
         $category = $this->request->getVar('category');
-        $page = $this->request->getVar('page') ?? 1;
-        $limit = $this->request->getVar('limit') ?? 10;
+        $search   = $this->request->getVar('search');
+        $page     = $this->request->getVar('page') ?? 1;
+        $limit    = $this->request->getVar('limit') ?? 10;
 
         $builder = $this->productModel;
 
@@ -168,10 +169,15 @@ class ProductController extends BaseController
             $builder = $builder->where('category_id', $category);
         }
 
-        // Hitung total item sebelum paginate
+        if ($search) {
+            $builder = $builder->groupStart()
+                ->like('product_name', $search)
+                ->orLike('product_brand', $search)
+                ->groupEnd();
+        }
+
         $totalItems = $builder->countAllResults(false);
 
-        // Gunakan group 'products' agar pager bekerja dengan benar
         $products = $builder
             ->orderBy('product_id', 'DESC')
             ->paginate($limit, 'products', $page);
@@ -182,7 +188,6 @@ class ProductController extends BaseController
                 ->setJSON(['message' => 'No products found']);
         }
 
-        // Ambil informasi pagination dari model yang digunakan untuk paginate
         $pager = [
             'currentPage' => $this->productModel->pager->getCurrentPage('products'),
             'totalPages'  => $this->productModel->pager->getPageCount('products'),
@@ -191,10 +196,10 @@ class ProductController extends BaseController
         ];
 
         $response = [
-            'status' => 200,
+            'status'  => 200,
             'message' => 'Succesfully!',
-            'data' => $products,
-            'pager'    => $pager
+            'data'    => $products,
+            'pager'   => $pager,
         ];
 
         return $this->response->setJSON($response);

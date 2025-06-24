@@ -33,7 +33,7 @@
               <i class="bi bi-shield-lock"></i>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-2">Log in</button>
+          <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-2 w-100">Log in</button>
           </button>
         </form>
       </div>
