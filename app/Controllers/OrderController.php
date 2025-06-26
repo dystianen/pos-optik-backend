@@ -3,20 +3,23 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\InventoryTransactionsModel;
 use App\Models\OrderItemModel;
 use App\Models\OrderModel;
+use App\Models\ProductModel;
 use CodeIgniter\API\ResponseTrait;
 
 class OrderController extends BaseController
 {
     use ResponseTrait;
-    protected $orderModel;
-    protected $orderItemModel;
+    protected $orderModel, $orderItemModel, $inventoryTransactionsModel, $productModel;
 
     public function __construct()
     {
         $this->orderModel = new OrderModel();
         $this->orderItemModel = new OrderItemModel();
+        $this->inventoryTransactionsModel = new InventoryTransactionsModel();
+        $this->productModel = new ProductModel();
     }
 
     public function orders()
@@ -75,7 +78,6 @@ class OrderController extends BaseController
             return $this->respond(['status' => 404, 'message' => 'Cart not found'], 404);
         }
 
-        // Validasi input
         $shippingAddress = $this->request->getVar('shipping_address');
         $shippingCost = 20000;
 
@@ -83,16 +85,46 @@ class OrderController extends BaseController
             return $this->respond(['status' => 400, 'message' => 'Incomplete checkout data'], 400);
         }
 
-        // Hitung total final: total_price + shipping_cost
         $finalTotal = $order['total_price'] + $shippingCost;
 
-        // Update order
+        // Update order data
         $this->orderModel->update($order['order_id'], [
             'address' => $shippingAddress,
             'proof_of_payment' => null,
             'order_date' => date('Y-m-d H:i:s'),
             'status' => 'pending',
+            'shipping_costs' => $shippingCost,
+            'grand_total' => $finalTotal,
+            'updated_at' => date('Y-m-d H:i:s')
         ]);
+
+        // Ambil item-item dari order (order_details)
+        $orderDetails = $this->orderItemModel
+            ->where('order_id', $order['order_id'])
+            ->findAll();
+
+        foreach ($orderDetails as $item) {
+            // 1. Insert ke inventory_transactions (out)
+            $this->inventoryTransactionsModel->insert([
+                'user_id' => $customerId,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'transaction_type' => 'out',
+                'description' => 'Checkout Order #' . $order['order_id'],
+                'transaction_date' => date('Y-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // 2. Kurangi stok produk
+            $product = $this->productModel->find($item['product_id']);
+            $currentStock = (int)$product['product_stock'];
+            $newStock = $currentStock - (int)$item['quantity'];
+
+            $this->productModel->update($item['product_id'], [
+                'product_stock' => $newStock
+            ]);
+        }
 
         return $this->respond([
             'status' => 200,
@@ -103,6 +135,8 @@ class OrderController extends BaseController
             ]
         ]);
     }
+
+
 
     public function uploadPaymentProof()
     {
