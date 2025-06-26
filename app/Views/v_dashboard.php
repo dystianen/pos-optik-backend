@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid py-4">
   <div class="row">
-    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
           <div class="row">
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
           <div class="row">
@@ -44,15 +44,36 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">
         <div class="card-body p-3">
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Selling</p>
+                <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Selling (Unit)</p>
                 <h5 class="font-weight-bolder">
-                  <?= $totalSelling ?>
+                  <?= $totalSellingUnits ?>
+                </h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle">
+                <i class="ni ni-basket text-lg opacity-10" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Selling (Rp)</p>
+                <h5 class="font-weight-bolder">
+                  Rp <?= number_format($totalSellingRupiah, 0, ',', '.') ?>
                 </h5>
               </div>
             </div>
@@ -66,11 +87,12 @@
       </div>
     </div>
   </div>
+
   <div class="row mt-4">
     <div class="col-lg-7 mb-lg-0 mb-4">
       <div class="card z-index-2 h-100">
         <div class="card-header pb-0 pt-3 bg-transparent">
-          <h6 class="text-capitalize">Monthly Selling</h6>
+          <h6 class="text-capitalize">Monthly Selling (Unit & Rp)</h6>
         </div>
         <div class="card-body p-3">
           <div class="chart">
@@ -133,8 +155,9 @@
 <?= $this->section('scripts') ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const months = <?= $months; ?>;
-  const totals = <?= $totals; ?>;
+  const months = <?= $months ?>;
+  const unitTotals = <?= $unitTotals ?>;
+  const rupiahTotals = <?= $rupiahTotals ?>;
 
   const ctx = document.getElementById('chart-line').getContext('2d');
   const chart = new Chart(ctx, {
@@ -142,13 +165,24 @@
     data: {
       labels: months,
       datasets: [{
-        label: 'Total Penjualan',
-        data: totals,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.4,
-        fill: true
-      }]
+          label: 'Unit Terjual (pcs)',
+          data: unitTotals,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          tension: 0.4,
+          fill: true,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Penjualan (Rp)',
+          data: rupiahTotals,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          tension: 0.4,
+          fill: true,
+          yAxisID: 'y1'
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -158,7 +192,15 @@
         },
         tooltip: {
           mode: 'index',
-          intersect: false
+          intersect: false,
+          callbacks: {
+            label: function(context) {
+              if (context.dataset.label.includes("Rp")) {
+                return context.dataset.label + ': Rp ' + context.formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+              }
+              return context.dataset.label + ': ' + context.formattedValue;
+            }
+          }
         }
       },
       interaction: {
@@ -168,7 +210,23 @@
       },
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          position: 'left',
+          title: {
+            display: true,
+            text: 'Unit'
+          }
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Rupiah'
+          },
+          grid: {
+            drawOnChartArea: false
+          }
         }
       }
     }
