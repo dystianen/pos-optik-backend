@@ -160,7 +160,7 @@ class CartController extends BaseController
             // Tidak ada cart, tetap return sukses dengan 0 item
             return $this->respond([
                 'status' => 200,
-                'message' => 'No cart found. Returning zero quantity.',
+                'message' => 'No cart found.',
                 'data' => [
                     'order_id' => null,
                     'total_items' => 0
