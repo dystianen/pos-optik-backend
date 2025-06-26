@@ -150,18 +150,25 @@ class CartController extends BaseController
             ], 401);
         }
 
+        // Ambil order dengan status cart
         $order = $this->orderModel
             ->where('customer_id', $customerId)
             ->where('status', 'cart')
             ->first();
 
         if (!$order) {
+            // Tidak ada cart, tetap return sukses dengan 0 item
             return $this->respond([
-                'status' => 404,
-                'message' => 'No cart found.'
-            ], 404);
+                'status' => 200,
+                'message' => 'No cart found. Returning zero quantity.',
+                'data' => [
+                    'order_id' => null,
+                    'total_items' => 0
+                ]
+            ]);
         }
 
+        // Hitung total item di order tersebut
         $totalItems = $this->orderItemModel
             ->select('SUM(quantity) AS total_items')
             ->where('order_id', $order['order_id'])
@@ -176,7 +183,7 @@ class CartController extends BaseController
                 'order_id' => $order['order_id'],
                 'total_items' => (int) $totalItems
             ]
-        ], 200);
+        ]);
     }
 
     public function deleteCartItem($itemId)
