@@ -48,7 +48,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('', 'OrderController::orders',  ['filter' => 'authApi']);
     $routes->post('checkout', 'OrderController::checkout');
     $routes->post('payment', 'OrderController::uploadPaymentProof');
-    $routes->get('check-status', 'OrderController::checkIfShipped');
+    $routes->get('check-status', 'OrderController::checkIfPaid');
   });
 });
 

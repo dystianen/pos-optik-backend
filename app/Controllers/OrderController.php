@@ -33,6 +33,7 @@ class OrderController extends BaseController
 
         $orders = $this->orderModel
             ->where('customer_id', $customerId)
+            ->whereNotIn('status', ['cart'])
             ->orderBy('order_date', 'DESC')
             ->findAll();
 
@@ -177,7 +178,7 @@ class OrderController extends BaseController
         // Update order
         $this->orderModel->update($order['order_id'], [
             'proof_of_payment' => 'uploads/payments/' . $newName,
-            'status' => 'paid',
+            'status' => 'waiting_confirmation',
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
@@ -252,7 +253,7 @@ class OrderController extends BaseController
         return redirect()->to('/orders')->with('success', $message);
     }
 
-    public function checkIfShipped()
+    public function checkIfPaid()
     {
         $decoded = $this->decodedToken();
         $customerId = $decoded->user_id;
@@ -271,7 +272,7 @@ class OrderController extends BaseController
             return $this->respond(['status' => 404, 'message' => 'Order not found'], 404);
         }
 
-        $isShipped = $order['status'] === 'shipped';
+        $isShipped = $order['status'] === 'paid';
 
         return $this->respond([
             'status' => 200,

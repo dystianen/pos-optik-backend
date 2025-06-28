@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
                 'product_price' => 150000.00,
                 'product_stock' => 50,
                 'product_brand' => 'OptiClear',
-                'product_image_url' => '/uploads/products/1749105020_0cd8fea486d980dd21a7.jpeg',
+                'product_image_url' => '/uploads/products/1749105020_0cd8fea486d980dd21a7.jpg',
                 'model'         => 'NLC-123',
                 'duration'      => 'Daily',
                 'material'      => 'Hydrogel',

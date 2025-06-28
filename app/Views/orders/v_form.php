@@ -63,7 +63,8 @@
         <label class="form-label">Status</label>
         <select class="form-control" name="status" required>
           <option value="pending" disabled <?= isset($order) && $order['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-          <option value="paid" disabled <?= isset($order) && $order['status'] === 'paid' ? 'selected' : '' ?>>Paid</option>
+          <option value="waiting_confirmation" disabled <?= isset($order) && $order['status'] === 'waiting_confirmation' ? 'selected' : '' ?>>Waiting Confirmation</option>
+          <option value="paid" <?= isset($order) && $order['status'] === 'paid' ? 'selected' : '' ?>>Paid</option>
           <option value="shipped" <?= isset($order) && $order['status'] === 'shipped' ? 'selected' : '' ?>>Shipped</option>
           <option value="cancelled" <?= isset($order) && $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
         </select>

@@ -42,7 +42,24 @@
                 <td>
                   <img src="<?= base_url() . esc($order['proof_of_payment']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
                 </td>
-                <td><?= $order['status'] ?></td>
+                <td>
+                  <?php
+                  $status = $order['status'];
+                  $badgeClass = match ($status) {
+                    'cart' => 'secondary',
+                    'pending' => 'warning',
+                    'waiting_confirmation' => 'info',
+                    'paid' => 'primary',
+                    'shipped' => 'dark',
+                    'done' => 'success',
+                    'cancelled' => 'danger',
+                    default => 'secondary',
+                  };
+
+                  $label = ucwords(str_replace('_', ' ', $status));
+                  ?>
+                  <span class="badge bg-<?= $badgeClass ?>"><?= $label ?></span>
+                </td>
                 <td>
                   <a href="<?= base_url('/orders/form?id=' . $order['order_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
                 </td>
