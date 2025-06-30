@@ -41,7 +41,7 @@
         <input
           type="text"
           class="form-control"
-          value="<?= isset($order) ? esc($order['order_date']) : '' ?>"
+          value="<?= isset($order) ? date('d/m/Y H:i', strtotime(esc($order['order_date']))) : '' ?>"
           disabled>
       </div>
 
@@ -73,6 +73,7 @@
           <option value="waiting_confirmation" disabled <?= isset($order) && $order['status'] === 'waiting_confirmation' ? 'selected' : '' ?>>Waiting Confirmation</option>
           <option value="paid" <?= isset($order) && $order['status'] === 'paid' ? 'selected' : '' ?>>Paid</option>
           <option value="shipped" <?= isset($order) && $order['status'] === 'shipped' ? 'selected' : '' ?>>Shipped</option>
+          <option value="done" <?= isset($order) && $order['status'] === 'done' ? 'selected' : '' ?>>Done</option>
           <option value="cancelled" <?= isset($order) && $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
         </select>
       </div>
