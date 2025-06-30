@@ -197,6 +197,7 @@ class OrderController extends BaseController
         $perPage = 10;
         $orders = $this->orderModel
             ->join('customers', 'customers.customer_id = orders.customer_id')
+            ->orderBy('order_date',  'DESC')
             ->paginate($perPage, 'default', $page);
 
         $pager = [

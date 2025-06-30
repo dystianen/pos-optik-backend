@@ -25,6 +25,7 @@ class UserController extends BaseController
 
         $users = $this->userModel
             ->join('roles', 'roles.role_id = users.role_id')
+            ->orderBy('users.created_at',  'DESC')
             ->findAll($totalLimit, $offset);
 
         $totalRows = $this->userModel

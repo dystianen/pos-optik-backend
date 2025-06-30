@@ -46,6 +46,13 @@
       </div>
 
       <div class="mb-3">
+        <label class="form-label">Address</label>
+        <textarea
+          class="form-control"
+          disabled><?= isset($order) ? esc($order['address']) : '' ?></textarea>
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">Total Price</label>
         <input
           type="text"

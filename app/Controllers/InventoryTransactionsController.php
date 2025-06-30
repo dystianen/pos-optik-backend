@@ -25,6 +25,7 @@ class InventoryTransactionsController extends BaseController
         $transactions = $this->inventoryTransactionsModel
             ->join('products p1', 'inventory_transactions.product_id = p1.product_id')
             ->join('product_categories p2', 'p1.category_id = p2.category_id')
+            ->orderBy('transaction_date',  'DESC')
             ->findAll($totalLimit, $offset);
 
         $totalRows = $this->inventoryTransactionsModel

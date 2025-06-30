@@ -79,7 +79,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>inventory_transactions?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>inventory?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');
