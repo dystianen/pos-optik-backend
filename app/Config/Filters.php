@@ -4,13 +4,13 @@ namespace Config;
 
 use App\Filters\AuthApi;
 use App\Filters\AuthGuard;
+use App\Filters\Options;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
-use Fluent\Cors\Filters\CorsFilter as FiltersCorsFilter;
 
 class Filters extends BaseConfig
 {
@@ -29,7 +29,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'authApi'       => AuthApi::class,
         'authGuard'     => AuthGuard::class,
-        'cors'          => FiltersCorsFilter::class,
+        'cors'          => Options::class,
     ];
 
     /**
@@ -40,7 +40,6 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            'cors'
             // 'auth'
             // 'honeypot',
             // 'csrf',
