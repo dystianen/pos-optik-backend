@@ -50,7 +50,7 @@ class CreateOrdersTable extends Migration
             ],
             'status' => [
                 'type' => 'ENUM',
-                'constraint' => ['cart', 'pending', 'paid', 'shipped', 'cancelled']
+                'constraint' => ['cart', 'pending', 'waiting_confirmation', 'paid', 'shipped', 'done', 'cancelled']
             ],
             'updated_at'  => [
                 'type' => 'DATETIME',
