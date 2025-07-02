@@ -44,7 +44,7 @@
                 </td>
                 <td>
                   <a href="<?= base_url('/products/form?id=' . $product['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                  <form action="<?= base_url('/product/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;">
+                  <form action="<?= base_url('/products/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin?')">Delete</button>
                   </form>
