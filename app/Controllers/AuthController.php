@@ -75,9 +75,12 @@ class AuthController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
+            $errors = $this->validator->getErrors();
+            $firstErrorMessage = reset($errors); // Ambil error pertama
+
             return $this->response->setJSON([
                 'status' => 'error',
-                'message' => $this->validator->getErrors()
+                'message' => $firstErrorMessage
             ])->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
 
