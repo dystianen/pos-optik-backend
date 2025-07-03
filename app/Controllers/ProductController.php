@@ -316,6 +316,6 @@ class ProductController extends BaseController
     public function webDelete($id)
     {
         $this->productModel->delete($id);
-        return redirect()->to('products/v_index')->with('message', 'Product deleted successfully');
+        return redirect()->to('/products')->with('message', 'Product deleted successfully');
     }
 }
