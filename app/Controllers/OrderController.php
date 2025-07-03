@@ -86,58 +86,106 @@ class OrderController extends BaseController
             return $this->respond(['status' => 400, 'message' => 'Incomplete checkout data'], 400);
         }
 
-        $finalTotal = $order['total_price'] + $shippingCost;
+        // Start DB transaction
+        $this->db->transBegin();
 
-        // Update order data
-        $this->orderModel->update($order['order_id'], [
-            'address' => $shippingAddress,
-            'proof_of_payment' => null,
-            'order_date' => date('Y-m-d H:i:s'),
-            'status' => 'pending',
-            'shipping_costs' => $shippingCost,
-            'grand_total' => $finalTotal,
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
+        try {
+            $orderDetails = $this->orderItemModel
+                ->where('order_id', $order['order_id'])
+                ->findAll();
 
-        // Ambil item-item dari order (order_details)
-        $orderDetails = $this->orderItemModel
-            ->where('order_id', $order['order_id'])
-            ->findAll();
+            // Validasi stok
+            foreach ($orderDetails as $item) {
+                $product = $this->productModel->find($item['product_id']);
 
-        foreach ($orderDetails as $item) {
-            // 1. Insert ke inventory_transactions (out)
-            $this->inventoryTransactionsModel->insert([
-                'user_id' => $customerId,
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'transaction_type' => 'out',
-                'description' => 'Checkout Order #' . $order['order_id'],
-                'transaction_date' => date('Y-m-d H:i:s'),
-                'created_at' => date('Y-m-d H:i:s'),
+                if (!$product) {
+                    $this->db->transRollback();
+                    return $this->respond([
+                        'status' => 400,
+                        'message' => 'Product not found: ID ' . $item['product_id']
+                    ], 400);
+                }
+
+                $currentStock = (int)$product['product_stock'];
+                $requestedQty = (int)$item['quantity'];
+
+                if ($requestedQty <= 0) {
+                    $this->db->transRollback();
+                    return $this->respond([
+                        'status' => 400,
+                        'message' => 'Invalid quantity for product ID: ' . $item['product_id']
+                    ], 400);
+                }
+
+                if ($currentStock < $requestedQty) {
+                    $this->db->transRollback();
+                    return $this->respond([
+                        'status' => 400,
+                        'message' => 'Insufficient stock for product ID: ' . $item['product_id']
+                    ], 400);
+                }
+            }
+
+            $finalTotal = $order['total_price'] + $shippingCost;
+
+            // Update order
+            $this->orderModel->update($order['order_id'], [
+                'address' => $shippingAddress,
+                'proof_of_payment' => null,
+                'order_date' => date('Y-m-d H:i:s'),
+                'status' => 'pending',
+                'shipping_costs' => $shippingCost,
+                'grand_total' => $finalTotal,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
-            // 2. Kurangi stok produk
-            $product = $this->productModel->find($item['product_id']);
-            $currentStock = (int)$product['product_stock'];
-            $newStock = $currentStock - (int)$item['quantity'];
+            // Proses inventory dan pengurangan stok
+            foreach ($orderDetails as $item) {
+                $this->inventoryTransactionsModel->insert([
+                    'user_id' => $customerId,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'transaction_type' => 'out',
+                    'description' => 'Checkout Order #' . $order['order_id'],
+                    'transaction_date' => date('Y-m-d H:i:s'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
 
-            $this->productModel->update($item['product_id'], [
-                'product_stock' => $newStock
+                // Kurangi stok
+                $product = $this->productModel->find($item['product_id']);
+                $newStock = (int)$product['product_stock'] - (int)$item['quantity'];
+
+                $this->productModel->update($item['product_id'], [
+                    'product_stock' => $newStock
+                ]);
+            }
+
+            // Commit transaksi
+            if ($this->db->transStatus() === false) {
+                $this->db->transRollback();
+                return $this->respond(['status' => 500, 'message' => 'Checkout failed. Please try again.'], 500);
+            }
+
+            $this->db->transCommit();
+
+            return $this->respond([
+                'status' => 200,
+                'message' => 'Checkout successful. Awaiting payment confirmation.',
+                'data' => [
+                    'order_id' => $order['order_id'],
+                    'grand_total' => $finalTotal,
+                    'items' => $orderDetails
+                ]
             ]);
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            return $this->respond([
+                'status' => 500,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
         }
-
-        return $this->respond([
-            'status' => 200,
-            'message' => 'Checkout successful. Awaiting payment confirmation.',
-            'data' => [
-                'order_id' => $order['order_id'],
-                'grand_total' => $finalTotal
-            ]
-        ]);
     }
-
-
 
     public function uploadPaymentProof()
     {
