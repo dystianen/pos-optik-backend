@@ -273,7 +273,7 @@
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Total Stock'
+            text: 'Total Stock (pcs)'
           }
         }
       }
