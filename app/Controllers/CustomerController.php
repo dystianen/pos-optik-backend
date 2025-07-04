@@ -47,7 +47,7 @@ class CustomerController extends BaseController
             $customer = $this->customerModel->find($id);
 
             if (!$customer) {
-                return redirect()->to('/customers')->with('error', 'Customer not found');
+                return redirect()->to('/customers')->with('failed', 'Customer not found');
             }
 
             $preferences = [];
@@ -159,6 +159,6 @@ class CustomerController extends BaseController
     public function delete($id)
     {
         $this->customerModel->delete($id);
-        return redirect()->to('customers')->with('message', 'Customer deleted successfully');
+        return redirect()->to('customers')->with('success', 'Customer deleted successfully');
     }
 }

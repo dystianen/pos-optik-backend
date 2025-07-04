@@ -5,9 +5,7 @@
     <h4>Users List</h4>
     <a href="<?= base_url('/users/form') ?>" class="btn btn-primary mb-3">Add User</a>
   </div>
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
+
   <div class="card-body px-0 pt-0 pb-2">
     <div class="table-responsive px-4">
       <table class="table align-items-center mb-0">
@@ -65,7 +63,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>product-category?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>users?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

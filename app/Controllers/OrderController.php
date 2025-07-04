@@ -142,7 +142,7 @@ class OrderController extends BaseController
             // Proses inventory dan pengurangan stok
             foreach ($orderDetails as $item) {
                 $this->inventoryTransactionsModel->insert([
-                    'user_id' => $customerId,
+                    'user_id' => 5,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'transaction_type' => 'out',
@@ -274,7 +274,7 @@ class OrderController extends BaseController
             ->find($id);
 
         if (!$order) {
-            return redirect()->to('/orders')->with('error', 'Order not found.');
+            return redirect()->to('/orders')->with('failed', 'Order not found.');
         }
 
         $orderItems = $this->orderItemModel

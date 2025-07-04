@@ -5,10 +5,6 @@
     <h4><?= isset($customer) ? 'Edit Customer' : 'Add Customer' ?></h4>
   </div>
 
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
-
   <div class="card-body">
     <form action="<?= site_url('customers/save') ?>" method="post">
       <input type="hidden" name="id" value="<?= isset($customer) ? $customer['customer_id'] : '' ?>">

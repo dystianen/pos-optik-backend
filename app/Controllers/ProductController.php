@@ -250,7 +250,7 @@ class ProductController extends BaseController
         if ($id) {
             $product = $this->productModel->find($id);
             if (!$product) {
-                return redirect()->to('/product-category')->with('error', 'Transaction not found.');
+                return redirect()->to('/product-category')->with('failed', 'Transaction not found.');
             }
             $data['product'] = $product;
         }
@@ -272,7 +272,7 @@ class ProductController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
         };
 
         $data = [
@@ -316,6 +316,6 @@ class ProductController extends BaseController
     public function webDelete($id)
     {
         $this->productModel->delete($id);
-        return redirect()->to('/products')->with('message', 'Product deleted successfully');
+        return redirect()->to('/products')->with('success', 'Product deleted successfully');
     }
 }

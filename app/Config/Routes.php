@@ -74,6 +74,7 @@ $routes->group('inventory', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'InventoryTransactionsController::webIndex');
   $routes->get('form', 'InventoryTransactionsController::form');
   $routes->post('save', 'InventoryTransactionsController::save');
+  $routes->post('delete/(:num)', 'InventoryTransactionsController::delete/$1');
 });
 
 $routes->group('customers', ['filter' => 'authGuard'], function ($routes) {
@@ -102,4 +103,11 @@ $routes->group('orders', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('form', 'OrderController::form');
   $routes->post('save', 'OrderController::save');
   $routes->post('delete/(:num)', 'OrderController::delete/$1');
+});
+
+$routes->group('roles', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'RoleController::index');
+  $routes->get('form', 'RoleController::form');
+  $routes->post('save', 'RoleController::save');
+  $routes->post('delete/(:num)', 'RoleController::delete/$1');
 });

@@ -5,9 +5,7 @@
     <h4>Product Category List</h4>
     <a href="<?= base_url('/product-category/form') ?>" class="btn btn-primary mb-3">Add Product</a>
   </div>
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
+
   <div class="card-body px-0 pt-0 pb-2">
     <div class="table-responsive px-4">
       <table class="table align-items-center mb-0">

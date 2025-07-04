@@ -53,7 +53,7 @@ class EyeExaminationController extends BaseController
         if ($id) {
             $eyeExamination = $this->eyeExaminationModel->find($id);
             if (!$eyeExamination) {
-                return redirect()->to('/eye-examinations')->with('error', 'Transaction not found.');
+                return redirect()->to('/eye-examinations')->with('failed', 'Transaction not found.');
             }
             $data['eyeExamination'] = $eyeExamination;
         }
@@ -70,7 +70,7 @@ class EyeExaminationController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
         }
 
         $data = [
@@ -94,5 +94,11 @@ class EyeExaminationController extends BaseController
         }
 
         return redirect()->to('/eye-examinations')->with('success', $message);
+    }
+
+    public function delete($id)
+    {
+        $this->eyeExaminationModel->delete($id);
+        return redirect()->to('/eye-examinations')->with('success', 'Eye examination deleted successfully.');
     }
 }

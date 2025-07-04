@@ -52,7 +52,7 @@ class ProductCategoryController extends BaseController
         if ($id) {
             $category = $this->categoryModel->find($id);
             if (!$category) {
-                return redirect()->to('/product-category')->with('error', 'Transaction not found.');
+                return redirect()->to('/product-category')->with('failed', 'Transaction not found.');
             }
             $data['category'] = $category;
         }
@@ -70,7 +70,7 @@ class ProductCategoryController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
         };
 
         $data = [

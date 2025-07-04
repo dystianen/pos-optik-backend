@@ -32,6 +32,12 @@ class UserSeeder extends Seeder
                 'user_email' => 'inventory@gmail.com',
                 'password' => password_hash('123', PASSWORD_DEFAULT),
                 'role_id' => 4
+            ],
+            [
+                'user_name' => 'Customer',
+                'user_email' => 'customer@gmail.com',
+                'password' => password_hash('123', PASSWORD_DEFAULT),
+                'role_id' => 5
             ]
         ];
 

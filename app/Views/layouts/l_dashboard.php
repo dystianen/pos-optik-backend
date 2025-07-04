@@ -169,6 +169,15 @@
               <span class="nav-link-text ms-1">Users</span>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'roles' ? 'active' : '' ?>" href="/roles">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-user-shield"></i>
+              </div>
+              <span class="nav-link-text ms-1">Roles</span>
+            </a>
+          </li>
         <?php endif; ?>
       </ul>
     </div>
@@ -326,10 +335,10 @@
   </div>
   </div>
   <!--   Core JS Files   -->
-  <script src="<?= base_url('assets'); ?>/assets/js/core/popper.min.js"></script>
-  <script src="<?= base_url('assets'); ?>/assets/js/core/bootstrap.min.js"></script>
-  <script src="<?= base_url('assets'); ?>/assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="<?= base_url('assets'); ?>/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="<?= base_url('assets'); ?>/js/core/popper.min.js"></script>
+  <script src="<?= base_url('assets'); ?>/js/core/bootstrap.min.js"></script>
+  <script src="<?= base_url('assets'); ?>/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="<?= base_url('assets'); ?>/js/plugins/smooth-scrollbar.min.js"></script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

@@ -6,18 +6,6 @@
       <div id="auth-left">
         <h1>OPTIKERS <span color="#7048E8">.</span></h1>
 
-        <?php if (session()->getFlashData('failed')) : ?>
-          <div class="alert alert-danger" role="alert">
-            <?php echo session("failed") ?>
-          </div>
-        <?php endif; ?>
-
-        <?php if (session()->getFlashData('success')) : ?>
-          <div class="alert success alert-success" role="alert">
-            <?php echo session("success") ?>
-          </div>
-        <?php endif; ?>
-
         <p class="auth-subtitle mb-5">Log in with your data that the admin entered.</p>
 
         <form action="<?php echo base_url(); ?>signin/store" method="post">

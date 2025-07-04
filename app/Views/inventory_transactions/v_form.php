@@ -4,9 +4,7 @@
   <div class="card-header pb-0">
     <h4><?= isset($product) ? 'Edit Inventory Transaction' : 'Create Inventory Transaction' ?></h4>
   </div>
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
+
   <div class="card-body">
     <form action="<?= site_url('inventory/save') ?>" method="post">
       <input type="hidden" name="id" value="<?= isset($transaction) ? $transaction['inventory_transaction_id'] : '' ?>">
@@ -27,8 +25,8 @@
         <div class="col-12 col-md-6 mb-3">
           <label for="transaction_type">Transaction Type</label>
           <select class="form-control" name="transaction_type" id="transaction_type" required>
-            <option value="IN" <?= isset($transaction) && $transaction['transaction_type'] == 'IN' ? 'selected' : '' ?>>IN</option>
-            <option value="OUT" <?= isset($transaction) && $transaction['transaction_type'] == 'OUT' ? 'selected' : '' ?>>OUT</option>
+            <option value="in" <?= isset($transaction) && $transaction['transaction_type'] == 'in' ? 'selected' : '' ?>>IN</option>
+            <option value="out" <?= isset($transaction) && $transaction['transaction_type'] == 'out' ? 'selected' : '' ?>>OUT</option>
           </select>
         </div>
 

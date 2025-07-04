@@ -4,9 +4,7 @@
   <div class="card-header pb-0">
     <h4><?= isset($eyeExamination) ? 'Edit Eye Examinations' : 'Create Eye Examinations' ?></h4>
   </div>
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
+
   <div class="card-body">
     <form action="<?= site_url('eye-examinations/save') ?>" method="post">
       <?= csrf_field() ?>

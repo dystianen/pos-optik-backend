@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card py-4">
   <div class="card-header pb-0">
-    <h4><?= isset($category) ? 'Edit' : 'Add' ?> User</h4>
+    <h4><?= isset($role) ? 'Edit' : 'Add' ?> User</h4>
   </div>
   <div class="card-body">
     <form action="<?= site_url('/users/save') ?>" method="post">
@@ -52,8 +52,8 @@
         </select>
       </div>
 
-      <a href="<?= base_url('/product-category') ?>" class="btn btn-secondary">Cancel</a>
-      <button type="submit" class="btn btn-primary"><?= isset($category) ? 'Update' : 'Save' ?></button>
+      <a href="<?= base_url('/users') ?>" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary"><?= isset($user) ? 'Update' : 'Save' ?></button>
     </form>
   </div>
 </div>

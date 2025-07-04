@@ -5962,6 +5962,7 @@ fieldset:disabled .btn {
   background-color: var(--bs-alert-bg);
   border: var(--bs-alert-border);
   border-radius: var(--bs-alert-border-radius);
+  margin: 0 16px;
 }
 
 .alert-heading {

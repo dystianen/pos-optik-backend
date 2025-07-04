@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\RoleModel;
 use App\Models\UserModel;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class UserController extends BaseController
 {
@@ -57,7 +56,7 @@ class UserController extends BaseController
         if ($id) {
             $user = $this->userModel->find($id);
             if (!$user) {
-                return redirect()->to('/users')->with('error', 'Transaction not found.');
+                return redirect()->to('/users')->with('failed', 'Transaction not found.');
             }
             $data['user'] = $user;
         }
@@ -70,22 +69,26 @@ class UserController extends BaseController
         $id = $this->request->getVar('id');
 
         $rules = [
-            'user_name' => 'required',
-            'user_email' => 'required',
-            'password' => 'required',
-            'role_id' => 'required',
+            'user_name'  => 'required',
+            'user_email' => 'required|valid_email',
+            'password'   => $id ? 'permit_empty' : 'required',
+            'role_id'    => 'required',
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Please check your input.');
-        };
+            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
+        }
 
         $data = [
-            'user_name' => $this->request->getPost('user_name'),
+            'user_name'  => $this->request->getPost('user_name'),
             'user_email' => $this->request->getPost('user_email'),
-            'password' => $this->request->getPost('password'),
-            'role_id' => $this->request->getPost('role_id'),
+            'role_id'    => $this->request->getPost('role_id'),
         ];
+
+        $password = $this->request->getPost('password');
+        if ($password) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
 
         if ($id) {
             $this->userModel->update($id, $data);
@@ -96,5 +99,12 @@ class UserController extends BaseController
         }
 
         return redirect()->to('/users')->with('success', $message);
+    }
+
+
+    public function delete($id)
+    {
+        $this->userModel->delete($id);
+        return redirect()->to('/users')->with('success', 'User deleted successfully.');
     }
 }

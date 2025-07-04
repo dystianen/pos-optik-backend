@@ -24,6 +24,10 @@ class RoleSeeder extends Seeder
             [
                 'role_name'        => 'inventory',
                 'role_description' => 'Staff gudang mengelola produk'
+            ],
+            [
+                'role_name'        => 'customer',
+                'role_description' => 'Customer/Buyer'
             ]
         ];
 

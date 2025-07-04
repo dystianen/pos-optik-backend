@@ -5,9 +5,7 @@
     <h4>Inventory Transactions List</h4>
     <a href="<?= base_url('/inventory/form') ?>" class="btn btn-primary mb-3">Add Inventory</a>
   </div>
-  <?php if (session()->getFlashdata('message')): ?>
-    <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-  <?php endif; ?>
+
   <div class="card-body px-0 pt-0 pb-2">
     <div class="table-responsive px-4">
       <table class="table align-items-center mb-0">
@@ -49,8 +47,8 @@
                   <img src="<?= base_url() . esc($inventory_transaction['product_image_url']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
                 </td>
                 <td>
-                  <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['product_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                  <form action="<?= base_url('/inventory/delete/' . $inventory_transaction['product_id']) ?>" method="post" style="display:inline-block;">
+                  <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['inventory_transaction_id']) ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <form action="<?= base_url('/inventory/delete/' . $inventory_transaction['inventory_transaction_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                   </form>

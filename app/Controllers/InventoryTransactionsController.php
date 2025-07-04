@@ -54,7 +54,7 @@ class InventoryTransactionsController extends BaseController
         if ($id) {
             $transaction = $this->inventoryTransactionsModel->find($id);
             if (!$transaction) {
-                return redirect()->to('/inventory')->with('error', 'Transaction not found.');
+                return redirect()->to('/inventory')->with('failed', 'Transaction not found.');
             }
             $data['transaction'] = $transaction;
         }
@@ -69,13 +69,13 @@ class InventoryTransactionsController extends BaseController
 
         $rules = [
             'product_id' => 'required|integer',
-            'transaction_type' => 'required|in_list[IN,OUT]',
+            'transaction_type' => 'required|in_list[in,out]',
             'quantity' => 'required|integer',
             'description' => 'permit_empty|string'
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('error', 'Please check your input.');
+            return redirect()->back()->withInput()->with('failed', 'Please check your input.');
         }
 
         $data = [
@@ -95,5 +95,11 @@ class InventoryTransactionsController extends BaseController
         }
 
         return redirect()->to('/inventory')->with('success', $message);
+    }
+
+    public function delete($id)
+    {
+        $this->inventoryTransactionsModel->delete($id);
+        return redirect()->to('/inventory')->with('success', 'Inventory transaction deleted successfully.');
     }
 }
