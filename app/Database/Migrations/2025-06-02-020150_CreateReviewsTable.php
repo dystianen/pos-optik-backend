@@ -19,7 +19,18 @@ class CreateReviewsTable extends Migration
             'customer_id'   => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
             'rating'        => ['type' => 'INT', 'constraint' => 1], // 1-5
             'comment'       => ['type' => 'TEXT', 'null' => true],
-            'created_at'    => ['type' => 'DATETIME', 'null' => true],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'deleted_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addPrimaryKey('review_id');

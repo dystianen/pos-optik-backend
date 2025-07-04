@@ -19,7 +19,18 @@ class CreateSalesPredictionsTable extends Migration
             'prediction_date'   => ['type' => 'DATE'],
             'predicted_quantity' => ['type' => 'FLOAT'], // Hasil prediksi ML
             'confidence_score'  => ['type' => 'FLOAT'], // Akurasi prediksi (0-1)
-            'created_at'         => ['type' => 'DATETIME', 'null' => true],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'deleted_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addPrimaryKey('sales_prediction_id');

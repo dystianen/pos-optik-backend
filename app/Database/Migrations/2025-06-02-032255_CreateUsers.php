@@ -33,8 +33,14 @@ class CreateUsers extends Migration
                 'constraint' => 11,
                 'unsigned' => TRUE
             ],
-            'created_at timestamp DEFAULT CURRENT_TIMESTAMP',
-            'updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
             'deleted_at'  => [
                 'type' => 'DATETIME',
                 'null' => true

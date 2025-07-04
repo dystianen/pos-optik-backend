@@ -53,13 +53,13 @@ class CreateEyeExaminationsTable extends Migration
                 'constraint' => 100,
                 'null' => true
             ], // e.g., "miopi", "astigmatisme"
-            'created_at'         => [
-                'type' => 'DATETIME',
-                'null' => true
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
             ],
-            'updated_at'  => [
-                'type' => 'DATETIME',
-                'null' => true
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
             ],
             'deleted_at'  => [
                 'type' => 'DATETIME',

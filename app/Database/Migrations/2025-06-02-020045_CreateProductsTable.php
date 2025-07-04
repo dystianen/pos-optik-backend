@@ -33,8 +33,14 @@ class CreateProductsTable extends Migration
             'uv_protection'         => ['type' => 'BOOLEAN', 'null' => true],
             'color'                 => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
             'coating'               => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true],
-            'created_at'            => ['type' => 'DATETIME', 'null' => true],
-            'updated_at'            => ['type' => 'DATETIME', 'null' => true],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
             'deleted_at'  => [
                 'type' => 'DATETIME',
                 'null' => true

@@ -19,6 +19,18 @@ class CreateOrderItemsTable extends Migration
             'product_id'    => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
             'quantity'      => ['type' => 'INT', 'constraint' => 11],
             'price'         => ['type' => 'DECIMAL', 'constraint' => '10,2'],
+            'created_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+            ],
+            'deleted_at'  => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addPrimaryKey('order_item_id');
