@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card py-4">
+<div class="container-fluid card">
   <div class="card-header pb-0">
     <h4><?= isset($role) ? 'Edit' : 'Add' ?> User</h4>
   </div>

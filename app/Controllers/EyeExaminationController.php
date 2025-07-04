@@ -22,27 +22,40 @@ class EyeExaminationController extends BaseController
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
+        $search = $this->request->getVar('search');
 
-        $eyeExaminations = $this->eyeExaminationModel
+        // Base query
+        $builder = $this->eyeExaminationModel
             ->join('customers', 'customers.customer_id = eye_examinations.customer_id')
-            ->findAll($totalLimit, $offset);
+            ->orderBy('eye_examinations.created_at', 'DESC');
 
-        $totalRows = $this->eyeExaminationModel
-            ->join('customers', 'customers.customer_id = eye_examinations.customer_id')
-            ->countAllResults();
+        // Filter pencarian jika ada input search
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('customers.customer_name', $search)
+                ->orLike('eye_examinations.symptoms', $search)
+                ->orLike('eye_examinations.diagnosis', $search)
+                ->groupEnd();
+        }
+
+        // Clone builder untuk total rows
+        $countBuilder = clone $builder;
+        $totalRows = $countBuilder->countAllResults(false); // false agar tidak reset builder
+
+        // Ambil data paginated
+        $eyeExaminations = $builder->findAll($totalLimit, $offset);
 
         $totalPages = ceil($totalRows / $totalLimit);
 
-        $data = [
+        return view('eye_examinations/v_index', [
             "eyeExaminations" => $eyeExaminations,
             "pager" => [
                 "totalPages" => $totalPages,
                 "currentPage" => $currentPage,
                 "limit" => $totalLimit,
             ],
-        ];
-
-        return view('eye_examinations/v_index', $data);
+            "search" => $search,
+        ]);
     }
 
     public function form()
@@ -81,7 +94,7 @@ class EyeExaminationController extends BaseController
             'right_eye_axis' => $this->request->getVar('right_eye_axis'),
             'right_eye_sphere' => $this->request->getVar('right_eye_sphere'),
             'right_eye_cylinder' => $this->request->getVar('right_eye_cylinder'),
-            'symptomps' => $this->request->getVar('symptomps'),
+            'symptoms' => $this->request->getVar('symptoms'),
             'diagnosis' => $this->request->getVar('diagnosis'),
         ];
 

@@ -1,8 +1,21 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card  py-4">
-  <div class="card-header pb-0 d-flex justify-content-between">
+<div class="container-fluid card">
+  <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Order List</h4>
+
+    <form action="<?= base_url('/orders') ?>" method="get" class="d-flex align-items-center">
+      <input
+        type="text"
+        name="search"
+        class="form-control form-control-sm me-2"
+        placeholder="Search..."
+        value="<?= esc($search ?? '') ?>"
+        style="min-width: 200px;">
+      <button type="submit" class="btn btn-sm btn-secondary">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </form>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -73,7 +86,7 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation example" class="mt-4">
+    <nav aria-label="Page navigation example" class="mt-4 mx-4">
       <ul class="pagination" id="pagination">
       </ul>
     </nav>
@@ -89,7 +102,9 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>product-category?page=${pageNumber}`);
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', pageNumber);
+    window.location.replace(`<?php echo base_url(); ?>orders?${params.toString()}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

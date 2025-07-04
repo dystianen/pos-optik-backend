@@ -1,9 +1,25 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card  py-4">
-  <div class="card-header pb-0 d-flex justify-content-between">
+<div class="container-fluid card">
+  <div class="card-header mb-4 pb-0 d-flex justify-content-between">
     <h4>Eye Examinations</h4>
-    <a href="<?= base_url('/eye-examinations/form') ?>" class="btn btn-primary mb-3">Add Examinations</a>
+
+    <div class="d-flex align-items-center gap-2">
+      <form action="<?= base_url('/eye-examinations') ?>" method="get" class="d-flex align-items-center">
+        <input
+          type="text"
+          name="search"
+          class="form-control form-control-sm me-2"
+          placeholder="Search..."
+          value="<?= esc($search ?? '') ?>"
+          style="min-width: 200px;">
+        <button type="submit" class="btn btn-sm btn-secondary">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+
+      <a href="<?= base_url('/eye-examinations/form') ?>" class="btn btn-sm btn-primary">Add</a>
+    </div>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -13,15 +29,9 @@
           <tr>
             <th>No</th>
             <th>Customer</th>
-            <th>Left Eye Axis</th>
-            <th>Left Eye Sphere</th>
-            <th>Left Eye Cylinder</th>
-            <th>Right Eye Axis</th>
-            <th>Right Eye Sphere</th>
-            <th>Right Eye Cylinder</th>
             <th>Symptomps</th>
             <th>Diagnosis</th>
-            <th>Created Date</th>
+            <th>Inspection Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -36,12 +46,6 @@
               <tr>
                 <td><?= $startIndex++ ?></td>
                 <td><?= $eyeExamination['customer_name'] ?></td>
-                <td><?= $eyeExamination['left_eye_axis'] ?></td>
-                <td><?= $eyeExamination['left_eye_sphere'] ?></td>
-                <td><?= $eyeExamination['left_eye_cylinder'] ?></td>
-                <td><?= $eyeExamination['right_eye_axis'] ?></td>
-                <td><?= $eyeExamination['right_eye_sphere'] ?></td>
-                <td><?= $eyeExamination['right_eye_cylinder'] ?></td>
                 <td><?= esc($eyeExamination['symptoms']) ?></td>
                 <td><?= esc($eyeExamination['diagnosis']) ?></td>
                 <td><?= date('d/m/Y H:i', strtotime($eyeExamination['created_at'])) ?></td>
@@ -60,7 +64,7 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation example" class="mt-4">
+    <nav aria-label="Page navigation example" class="mt-4 mx-4">
       <ul class="pagination" id="pagination">
       </ul>
     </nav>
@@ -76,7 +80,9 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>eye-examinations?page=${pageNumber}`);
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', pageNumber);
+    window.location.replace(`<?php echo base_url(); ?>eye-examinations?${params.toString()}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

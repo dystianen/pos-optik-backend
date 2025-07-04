@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card  py-4">
-  <div class="card-header pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+<div class="container-fluid card">
+  <div class="card-header mb-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
     <h4 class="mb-0">Product List</h4>
 
     <div class="d-flex align-items-center gap-2">
@@ -72,7 +72,7 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation example" class="mt-4">
+    <nav aria-label="Page navigation example" class="mt-4 mx-4">
       <ul class="pagination" id="pagination">
       </ul>
     </nav>

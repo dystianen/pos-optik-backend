@@ -19,18 +19,28 @@ class InventoryTransactionsController extends BaseController
     public function webIndex()
     {
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
+        $search = $this->request->getVar('search'); // Ambil keyword dari input
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $transactions = $this->inventoryTransactionsModel
+        $builder = $this->inventoryTransactionsModel
             ->join('products p1', 'inventory_transactions.product_id = p1.product_id')
             ->join('product_categories p2', 'p1.category_id = p2.category_id')
-            ->orderBy('transaction_date',  'DESC')
-            ->findAll($totalLimit, $offset);
+            ->orderBy('transaction_date', 'DESC');
 
-        $totalRows = $this->inventoryTransactionsModel
-            ->join('products', 'inventory_transactions.product_id = products.product_id')
-            ->countAllResults();
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('p1.product_name', $search)
+                ->orLike('p2.category_name', $search)
+                ->orLike('inventory_transactions.transaction_type', $search)
+                ->groupEnd();
+        }
+
+        // Clone builder for count
+        $countBuilder = clone $builder;
+
+        $transactions = $builder->findAll($totalLimit, $offset);
+        $totalRows = $countBuilder->countAllResults(false); // avoid re-joining
 
         $totalPages = ceil($totalRows / $totalLimit);
 
@@ -41,10 +51,12 @@ class InventoryTransactionsController extends BaseController
                 "currentPage" => $currentPage,
                 "limit" => $totalLimit,
             ],
+            "search" => $search, // kirim ke view supaya input tetap muncul
         ];
 
         return view('inventory_transactions/v_index', $data);
     }
+
 
     public function form()
     {

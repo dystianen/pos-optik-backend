@@ -1,9 +1,9 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
-<div class="container-fluid card  py-4">
-  <div class="card-header pb-0 d-flex justify-content-between">
+<div class="container-fluid card">
+  <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Customers List</h4>
-    <a href="<?= base_url('/customers/form') ?>" class="btn btn-primary mb-3">Add Customer</a>
+    <a href="<?= base_url('/customers/form') ?>" class="btn btn-primary btn-sm">Add Customer</a>
   </div>
 
   <div class="card-body px-0 pt-0 pb-2">
@@ -53,7 +53,7 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation example" class="mt-4">
+    <nav aria-label="Page navigation example" class="mt-4 mx-4">
       <ul class="pagination" id="pagination">
       </ul>
     </nav>

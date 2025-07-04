@@ -244,10 +244,20 @@ class OrderController extends BaseController
     {
         $page = $this->request->getVar('page') ?? 1;
         $perPage = 10;
-        $orders = $this->orderModel
+        $search = $this->request->getVar('search');
+
+        $builder = $this->orderModel
             ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->orderBy('order_date',  'DESC')
-            ->paginate($perPage, 'default', $page);
+            ->orderBy('order_date', 'DESC');
+
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('customers.customer_name', $search)
+                ->orLike('customers.customer_email', $search)
+                ->groupEnd();
+        }
+
+        $orders = $builder->paginate($perPage, 'default', $page);
 
         $pager = [
             'currentPage' => $this->orderModel->pager->getCurrentPage('default'),
@@ -257,9 +267,11 @@ class OrderController extends BaseController
 
         return view('orders/v_index', [
             'orders' => $orders,
-            'pager' => $pager
+            'pager' => $pager,
+            'search' => $search
         ]);
     }
+
 
     public function form()
     {
