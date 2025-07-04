@@ -14,6 +14,7 @@
             <th>No</th>
             <th>Category</th>
             <th>Name</th>
+            <th>Description</th>
             <th>Price</th>
             <th>Quantity</th>
             <th>Transaction Date</th>
@@ -40,6 +41,7 @@
                   <?php endif; ?>
                 </td>
                 <td><?= esc($inventory_transaction['product_name']) ?></td>
+                <td><?= esc($inventory_transaction['description']) ?></td>
                 <td><?= number_format($inventory_transaction['product_price'], 0, ',', '.') ?></td>
                 <td><?= esc($inventory_transaction['quantity']) ?></td>
                 <td><?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?></td>

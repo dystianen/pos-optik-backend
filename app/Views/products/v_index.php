@@ -1,10 +1,27 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
 <div class="container-fluid card  py-4">
-  <div class="card-header pb-0 d-flex justify-content-between">
-    <h4>Product List</h4>
-    <a href="<?= base_url('/products/form') ?>" class="btn btn-primary mb-3">Add Product</a>
+  <div class="card-header pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h4 class="mb-0">Product List</h4>
+
+    <div class="d-flex align-items-center gap-2">
+      <form action="<?= base_url('/products') ?>" method="get" class="d-flex align-items-center">
+        <input
+          type="text"
+          name="search"
+          class="form-control form-control-sm me-2"
+          placeholder="Search..."
+          value="<?= esc($search ?? '') ?>"
+          style="min-width: 200px;">
+        <button type="submit" class="btn btn-sm btn-secondary">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+
+      <a href="<?= base_url('/products/form') ?>" class="btn btn-primary btn-sm">Add Product</a>
+    </div>
   </div>
+
 
   <div class="card-body px-0 pt-0 pb-2">
     <div class="table-responsive px-4">
@@ -71,7 +88,9 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>products?page=${pageNumber}`);
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', pageNumber);
+    window.location.replace(`<?php echo base_url(); ?>products?${params.toString()}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

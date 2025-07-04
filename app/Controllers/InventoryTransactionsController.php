@@ -94,7 +94,8 @@ class InventoryTransactionsController extends BaseController
             'transaction_type' => $transactionType,
             'quantity' => $quantity,
             'description' => $this->request->getVar('description'),
-            'user_id' => $session->get('id')
+            'user_id' => $session->get('id'),
+            'transaction_date' => date('Y-m-d H:i'),
         ];
 
         // Jalankan transaksi DB agar rollback jika error

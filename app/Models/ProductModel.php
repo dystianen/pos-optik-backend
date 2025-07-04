@@ -27,7 +27,12 @@ class ProductModel extends Model
         'product_image_url'
     ];
 
+    // Dates
     protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     protected $validationRules = [
         'category_id' => 'required|integer',

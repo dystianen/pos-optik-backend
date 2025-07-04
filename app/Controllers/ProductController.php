@@ -216,15 +216,26 @@ class ProductController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $products = $this->productModel
-            ->join('product_categories', 'product_categories.category_id = products.category_id')
-            ->orderBy('products.created_at', 'DESC')
-            ->findAll($totalLimit, $offset);
+        $search = $this->request->getGet('search');
 
-        $totalRows = $this->productModel
+        $builder = $this->productModel
             ->join('product_categories', 'product_categories.category_id = products.category_id')
-            ->countAllResults();
+            ->orderBy('products.created_at', 'DESC');
 
+        // Tambahkan filter pencarian jika ada keyword
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('products.product_name', $search)
+                ->orLike('products.product_brand', $search)
+                ->orLike('product_categories.category_name', $search)
+                ->groupEnd();
+        }
+
+        // Clone builder untuk count
+        $countBuilder = clone $builder;
+
+        $products = $builder->findAll($totalLimit, $offset);
+        $totalRows = $countBuilder->countAllResults(false);
         $totalPages = ceil($totalRows / $totalLimit);
 
         $data = [
@@ -234,10 +245,12 @@ class ProductController extends BaseController
                 "currentPage" => $currentPage,
                 "limit" => $totalLimit,
             ],
+            "search" => $search, // lempar ke view agar input tetap terisi
         ];
 
         return view('products/v_index', $data);
     }
+
 
     public function form()
     {

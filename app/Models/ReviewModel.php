@@ -9,7 +9,13 @@ class ReviewModel extends Model
     protected $table            = 'reviews';
     protected $primaryKey       = 'review_id';
     protected $allowedFields    = ['product_id', 'customer_id', 'rating', 'comment'];
-    protected $useTimestamps    = true;
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     // Relasi ke product
     public function product()
