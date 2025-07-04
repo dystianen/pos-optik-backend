@@ -119,7 +119,11 @@
 
         <div class="col-12 col-md-6 mb-3">
           <label for="product_image_url" class="form-label">Image</label>
-          <input type="file" class="form-control" name="product_image_url">
+          <input
+            type="file"
+            class="form-control"
+            name="product_image_url"
+            accept=".jpg,.png" />
           <?php if (isset($product['product_image_url'])): ?>
             <small class="form-text text-muted">Current: <?= $product['product_image_url'] ?></small>
           <?php endif; ?>
