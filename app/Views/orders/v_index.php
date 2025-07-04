@@ -38,7 +38,11 @@
                 <td><?= date('d/m/Y H:i', strtotime($order['order_date'])) ?></td>
                 <td><?= number_format($order['total_price'], 0, ',', '.') ?></td>
                 <td>
-                  <img src="<?= base_url() . esc($order['proof_of_payment']) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+                  <?php if (!empty($order['proof_of_payment'])): ?>
+                    <img src="<?= base_url(esc($order['proof_of_payment'])) ?>" alt="image" width="70" height="70" style="border-radius: 15px">
+                  <?php else: ?>
+                    -
+                  <?php endif; ?>
                 </td>
                 <td>
                   <?php

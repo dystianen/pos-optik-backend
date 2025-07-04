@@ -76,8 +76,7 @@
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <a class="navbar-brand m-0 d-flex gap-2" href="<?= base_url('dashboard') ?>" target="_blank">
-        <img src="/favicon.ico" />
-        <h5 class="ms-1 font-weight-bold">OPTIKERS<span color="#7048E8">.</span></h5>
+        <h5 class="ms-1 font-weight-bolder" style="font-size: 32px;">OPTIKERS<span style="color: #7048E8">.</span></h5>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
