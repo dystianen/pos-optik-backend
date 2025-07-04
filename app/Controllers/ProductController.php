@@ -25,54 +25,62 @@ class ProductController extends BaseController
     // GET /api/products/new-eyewear
     public function apiListNewEyewear()
     {
-        $products = $this->productModel
-            ->builder()
-            ->limit(10)
+        $search = $this->request->getVar('search');
+
+        $builder = $this->productModel->builder();
+
+        if (!empty($search)) {
+            $builder->like('product_name', $search);
+        }
+
+        $products = $builder
             ->orderBy('created_at', 'DESC')
             ->get()
             ->getResultArray();
 
         $response = [
             'status' => 200,
-            'message' => 'Succesfully!',
+            'message' => 'Successfully!',
             'data' => $products
         ];
+
         return $this->response->setJSON($response);
     }
+
 
     // GET /api/product/recommendations
     public function apiProductRecommendations()
     {
         $limit = (int) $this->request->getVar('limit');
-        if ($limit <= 0) {
-            $limit = 10; // default limit
-        }
+        $search = $this->request->getVar('search');
 
         try {
             $decode = $this->decodedToken();
             $customer = $this->customerModel->find($decode->user_id);
         } catch (\Exception $e) {
-            // Token tidak ada atau invalid
             $customer = null;
         }
 
-        $products = $this->productModel
-            ->builder()
+        // Query produk dengan pencarian jika ada
+        $builder = $this->productModel->builder();
+
+        if (!empty($search)) {
+            $builder->like('product_name', $search);
+        }
+
+        $products = $builder
             ->limit($limit)
             ->get()
             ->getResultArray();
 
         $recommendations = [];
 
-
         if (!$customer || empty($customer['customer_eye_history']) || empty($customer['customer_preferences'])) {
-            // fallback: tampilkan semua produk dengan skor 0
             foreach ($products as $product) {
                 $product['score'] = 0;
                 $recommendations[] = $product;
             }
         } else {
-            // customer ada, lanjut hitung score rekomendasi seperti biasa
             $eyeHistoryData = json_decode($customer['customer_eye_history'], true);
             $preferencesData = json_decode($customer['customer_preferences'], true);
 
@@ -130,12 +138,13 @@ class ProductController extends BaseController
 
         $response = [
             'status' => 200,
-            'message' => 'Succesfully!',
-            'data' => $recommendations
+            'message' => 'Successfully!',
+            'data' => $recommendations,
         ];
 
         return $this->response->setJSON($response);
     }
+
 
 
     // GET /api/products/{id}
@@ -251,7 +260,6 @@ class ProductController extends BaseController
         return view('products/v_index', $data);
     }
 
-
     public function form()
     {
 
@@ -324,7 +332,6 @@ class ProductController extends BaseController
 
         return redirect()->to('/products')->with('success', $message);
     }
-
 
     public function webDelete($id)
     {
