@@ -78,24 +78,88 @@ class InventoryTransactionsController extends BaseController
             return redirect()->back()->withInput()->with('failed', 'Please check your input.');
         }
 
+        $productId = (int) $this->request->getVar('product_id');
+        $transactionType = $this->request->getVar('transaction_type');
+        $quantity = (int) $this->request->getVar('quantity');
+
+        $product = $this->productModel->find($productId);
+        if (!$product) {
+            return redirect()->back()->withInput()->with('failed', 'Product not found.');
+        }
+
+        $currentStock = (int) $product['product_stock'];
+
         $data = [
-            'product_id' => $this->request->getVar('product_id'),
-            'transaction_type' => $this->request->getVar('transaction_type'),
-            'quantity' => $this->request->getVar('quantity'),
+            'product_id' => $productId,
+            'transaction_type' => $transactionType,
+            'quantity' => $quantity,
             'description' => $this->request->getVar('description'),
             'user_id' => $session->get('id')
         ];
 
-        if ($id) {
-            $this->inventoryTransactionsModel->update($id, $data);
-            $message = 'Transaction updated successfully!';
-        } else {
-            $this->inventoryTransactionsModel->insert($data);
-            $message = 'Transaction created successfully!';
-        }
+        // Jalankan transaksi DB agar rollback jika error
+        $this->db->transBegin();
 
-        return redirect()->to('/inventory')->with('success', $message);
+        try {
+            if ($id) {
+                // Get old transaction
+                $oldTransaction = $this->inventoryTransactionsModel->find($id);
+
+                if (!$oldTransaction) {
+                    $this->db->transRollback();
+                    return redirect()->back()->withInput()->with('failed', 'Old transaction not found.');
+                }
+
+                $oldQty = (int) $oldTransaction['quantity'];
+                $oldType = $oldTransaction['transaction_type'];
+
+                // Hitung rollback stok lama
+                if ($oldType === 'in') {
+                    $currentStock -= $oldQty;
+                } else {
+                    $currentStock += $oldQty;
+                }
+
+                // Hitung apply stok baru
+                if ($transactionType === 'in') {
+                    $currentStock += $quantity;
+                } else {
+                    $currentStock -= $quantity;
+                }
+
+                if ($currentStock < 0) {
+                    $this->db->transRollback();
+                    return redirect()->back()->withInput()->with('failed', 'Insufficient stock after update.');
+                }
+
+                $this->productModel->update($productId, ['product_stock' => $currentStock]);
+                $this->inventoryTransactionsModel->update($id, $data);
+                $message = 'Transaction updated successfully!';
+            } else {
+                // INSERT baru
+                if ($transactionType === 'in') {
+                    $currentStock += $quantity;
+                } else {
+                    if ($currentStock < $quantity) {
+                        $this->db->transRollback();
+                        return redirect()->back()->withInput()->with('failed', 'Insufficient stock.');
+                    }
+                    $currentStock -= $quantity;
+                }
+
+                $this->productModel->update($productId, ['product_stock' => $currentStock]);
+                $this->inventoryTransactionsModel->insert($data);
+                $message = 'Transaction created successfully!';
+            }
+
+            $this->db->transCommit();
+            return redirect()->to('/inventory')->with('success', $message);
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            return redirect()->back()->withInput()->with('failed', 'Error: ' . $e->getMessage());
+        }
     }
+
 
     public function delete($id)
     {

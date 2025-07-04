@@ -63,7 +63,11 @@
 
       <div class="mb-3">
         <label class="form-label">Proof of Payment</label> <br>
-        <img src="<?= base_url() . esc($order['proof_of_payment']) ?>" alt="image" width="300" height="400" style="border-radius: 15px">
+        <?php if (!empty($order['proof_of_payment'])): ?>
+          <img src="<?= base_url(esc($order['proof_of_payment'])) ?>" alt="image" width="300" height="400" style="border-radius: 15px">
+        <?php else: ?>
+          <p>-</p>
+        <?php endif; ?>
       </div>
 
       <div class="mb-3">
@@ -84,7 +88,7 @@
   </div>
 
   <?php if (isset($orderItems) && count($orderItems) > 0): ?>
-    <div class="card-body mt-4">
+    <div class="card-body">
       <h5>Order Items</h5>
       <table class="table table-responsive table-bordered">
         <thead>

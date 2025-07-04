@@ -172,7 +172,7 @@
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'roles' ? 'active' : '' ?>" href="/roles">
               <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fas fa-user-shield"></i>
+                <i class="fa-solid fa-user-lock"></i>
               </div>
               <span class="nav-link-text ms-1">Roles</span>
             </a>
