@@ -39,7 +39,7 @@
 
           <?php if (empty($orders)): ?>
             <tr>
-              <td colspan="4" class="text-center text-muted">No user data available.</td>
+              <td colspan="12" class="text-center text-muted">No user data available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($orders as $order): ?>
