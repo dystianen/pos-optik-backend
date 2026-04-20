@@ -23,6 +23,7 @@
   <!-- JQUERY -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -718,7 +719,98 @@
 
     /* initial + realtime */
     loadNotifications();
-    setInterval(loadNotifications, 10000);
+
+    // ==========================================
+    // REAL-TIME LIST UPDATES (PUSHER)
+    // ==========================================
+    const pusherKey = '<?= env('pusher.key') ?>';
+    if (pusherKey) {
+      const pusher = new Pusher(pusherKey, {
+        cluster: 'ap1'
+      });
+
+      const channel = pusher.subscribe('pos-channel');
+      channel.bind_global(function(eventName, data) {
+        console.log('Global Event:', eventName, data);
+
+        // Map events to potential updates
+        const updateEvents = [
+          'dashboard-update',
+          'order-online-new',
+          'pos-order-new',
+          'order-approved',
+          'order-rejected',
+          'order-shipped',
+          'order-status-update',
+          'cancellation-requested',
+          'refund-requested',
+          'stock-update'
+        ];
+
+        if (updateEvents.includes(eventName)) {
+          // Refresh notifications
+          loadNotifications();
+
+          // If we are on dashboard, trigger its refresh function
+          if (typeof refreshDashboardData === 'function') {
+            refreshDashboardData();
+          }
+
+          // Trigger global table refresh for list views
+          refreshRealtimeTable();
+        }
+      });
+
+      // Export pusher for specialized views (like dashboard)
+      window.pusher = pusher;
+    }
+
+    /**
+     * Re-fetches the current page via AJAX and replaces table content
+     * This keeps filters/pagination while showing new data
+     */
+    function refreshRealtimeTable() {
+      const tbody = document.getElementById('realtime-tbody');
+      if (!tbody) return;
+
+      console.log('Refreshing table data...');
+      const currentUrl = window.location.href;
+
+      fetch(currentUrl)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Swap Tbody
+          const newTbody = doc.getElementById('realtime-tbody');
+          if (newTbody) {
+            tbody.innerHTML = newTbody.innerHTML;
+          }
+
+          // Swap Pagination
+          const oldPagination = document.getElementById('realtime-pagination');
+          const newPagination = doc.getElementById('realtime-pagination');
+          if (oldPagination && newPagination) {
+            oldPagination.innerHTML = newPagination.innerHTML;
+          }
+
+          // // Optional: Show toast
+          // const Toast = Swal.mixin({
+          //   toast: true,
+          //   position: 'top-end',
+          //   showConfirmButton: false,
+          //   timer: 2000,
+          //   timerProgressBar: true
+          // });
+
+          // Toast.fire({
+          //   icon: 'info',
+          //   title: 'Data updated'
+          // });
+        })
+        .catch(err => console.error('Refresh table error:', err));
+    }
   </script>
 
   </script>

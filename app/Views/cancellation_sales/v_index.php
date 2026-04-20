@@ -39,7 +39,7 @@ function cancellationStatusBadge($status)
             <th class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
           <?php if (empty($cancellations)): ?>
             <tr>
               <td colspan="6" class="text-center text-muted">No cancellation requests available.</td>

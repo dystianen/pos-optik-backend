@@ -42,7 +42,7 @@
       ],
     ];
 
-    foreach ($cards as $card): ?>
+    foreach ($cards as $index => $card): ?>
       <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
         <div class="card">
           <div class="card-body p-3">
@@ -52,7 +52,7 @@
                   <p class="text-sm mb-0 text-uppercase font-weight-bold">
                     <?= $card['title'] ?>
                   </p>
-                  <h5 class="font-weight-bolder mb-0 mt-2">
+                  <h5 class="font-weight-bolder mb-0 mt-2" id="val-<?= strtolower(str_replace(' ', '-', $card['title'])) ?>">
                     <?= $card['value'] ?>
                   </h5>
                 </div>
@@ -91,7 +91,7 @@
           <h6>Top 5 Products</h6>
         </div>
         <div class="card-body p-3">
-          <ul class="list-group">
+          <ul class="list-group" id="val-top-products">
             <?php foreach ($topProducts as $p): ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <?= $p['product_name'] ?>
@@ -109,7 +109,7 @@
           <h6>Order Status</h6>
         </div>
         <div class="card-body p-3">
-          <ul class="list-group">
+          <ul class="list-group" id="val-order-statuses">
             <?php foreach ($orderStatuses as $s): ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <?= strtoupper($s['status']) ?>
@@ -120,15 +120,16 @@
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  new Chart(document.getElementById('monthlyChart'), {
+  // Initialize Chart
+  let monthlyChart = new Chart(document.getElementById('monthlyChart'), {
     type: 'line',
     data: {
       labels: <?= $months ?>,
@@ -158,5 +159,50 @@
       }
     }
   });
+
+
+  function refreshDashboardData() {
+    fetch('/dashboard/api-stats')
+      .then(response => response.json())
+      .then(data => {
+        // Update Card Values
+        document.getElementById('val-total-revenue').innerText = 'Rp ' + data.totalRevenue.toLocaleString('id-ID');
+        document.getElementById('val-orders-today').innerText = data.totalOrdersToday;
+        document.getElementById('val-online-sales').innerText = 'Rp ' + data.onlineSales.toLocaleString('id-ID');
+        document.getElementById('val-in-store-sales').innerText = 'Rp ' + data.posSales.toLocaleString('id-ID');
+        document.getElementById('val-customers').innerText = data.totalCustomers;
+        document.getElementById('val-low-stock-items').innerText = data.lowStockCount;
+
+        // Update Chart
+        monthlyChart.data.labels = JSON.parse(data.months);
+        monthlyChart.data.datasets[0].data = JSON.parse(data.revenues);
+        monthlyChart.update();
+
+        // Update Top Products List
+        const productList = document.getElementById('val-top-products');
+        productList.innerHTML = '';
+        data.topProducts.forEach(p => {
+          productList.innerHTML += `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              ${p.product_name}
+              <span class="badge bg-gradient-primary">${p.sold} pcs</span>
+            </li>
+          `;
+        });
+
+        // Update Order Status List
+        const statusList = document.getElementById('val-order-statuses');
+        statusList.innerHTML = '';
+        data.orderStatuses.forEach(s => {
+          statusList.innerHTML += `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              ${s.status.toUpperCase()}
+              <span class="badge bg-gradient-primary">${s.total}</span>
+            </li>
+          `;
+        });
+      })
+      .catch(error => console.error('Error fetching dashboard stats:', error));
+  }
 </script>
 <?= $this->endSection() ?>

@@ -50,7 +50,7 @@ $referenceBadges = [
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
           <?php if (empty($inventory_transactions)): ?>
@@ -112,7 +112,7 @@ $referenceBadges = [
     </div>
 
     <nav aria-label="Page navigation example" class="mt-4">
-      <ul class="pagination" id="pagination">
+      <ul class="pagination" id="realtime-pagination">
       </ul>
     </nav>
   </div>
@@ -132,7 +132,7 @@ $referenceBadges = [
     window.location.replace(`<?php echo base_url(); ?>inventory?${params.toString()}`);
   }
 
-  var paginationContainer = document.getElementById('pagination');
+  var paginationContainer = document.getElementById('realtime-pagination');
   var totalPages = <?= $pager["totalPages"] ?>;
   if (totalPages > 1) {
     for (var i = 1; i <= totalPages; i++) {

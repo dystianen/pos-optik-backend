@@ -55,7 +55,7 @@ function orderStatusBadge($status)
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
           <?php
           $startIndex = ($pager['currentPage'] - 1) * $pager['limit'] + 1;
           ?>
@@ -103,7 +103,7 @@ function orderStatusBadge($status)
     </div>
 
     <nav aria-label="Page navigation example" class="mt-4">
-      <ul class="pagination" id="pagination">
+      <ul class="pagination" id="realtime-pagination">
       </ul>
     </nav>
   </div>
@@ -122,7 +122,7 @@ function orderStatusBadge($status)
       `<?= base_url('/online-sales') ?>?page=${page}&q=<?= esc($search) ?>`;
   }
 
-  const paginationContainer = document.getElementById('pagination');
+  const paginationContainer = document.getElementById('realtime-pagination');
   const totalPages = <?= (int) $pager['totalPages'] ?>;
   const currentPage = <?= (int) $pager['currentPage'] ?>;
 

@@ -14,6 +14,7 @@ $routes->get('signin', 'AuthController::signin');
 $routes->post('signin/store', 'AuthController::signinStore');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authGuard']);
+$routes->get('/dashboard/api-stats', 'DashboardController::apiStats', ['filter' => 'authGuard']);
 
 /** ================================= 
  *             ENDPOINT

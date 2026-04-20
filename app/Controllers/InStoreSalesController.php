@@ -307,6 +307,9 @@ class InStoreSalesController extends BaseController
 
             $db->transComplete();
 
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('order-new');
+
             return redirect()
                 ->to(site_url('in-store-sales/success/' . $orderId))
                 ->with('success', 'Transaksi berhasil disimpan');

@@ -268,6 +268,9 @@ class InventoryTransactionsController extends BaseController
 
             $this->db->transCommit();
 
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('stock-update');
+
             return redirect()->to('/inventory')->with('success', 'Transaction saved.');
         } catch (\Throwable $e) {
             $this->db->transRollback();

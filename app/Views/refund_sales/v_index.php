@@ -41,7 +41,7 @@ function refundStatusBadge($status)
             <th class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
           <?php if (empty($refunds)): ?>
             <tr>
               <td colspan="7" class="text-center text-muted">No refund requests available.</td>

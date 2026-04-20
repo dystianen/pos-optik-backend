@@ -347,6 +347,13 @@ class OnlineSalesApiController extends BaseApiController
 
             $db->transComplete();
 
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('order-online-new');
+
+            // 🔔 ADD NOTIFICATION
+            $customerName = $this->getAuthenticatedCustomerName();
+            $this->notificationModel->addNotification('new_order', "New online order from {$customerName}", $orderId);
+
             return $this->successResponse([
                 'order_id' => $orderId,
                 'grand_total' => $summary['summary']['total']
@@ -460,6 +467,9 @@ class OnlineSalesApiController extends BaseApiController
             $this->notificationModel->addNotification('new_order', "Pembayaran baru dari {$customerName}", $orderId);
 
             $db->transComplete();
+
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('payment-received');
 
             return $this->successResponse([
                 'order_id'  => $orderId,
@@ -1078,6 +1088,9 @@ class OnlineSalesApiController extends BaseApiController
 
             $this->db->transCommit();
 
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('order-approved');
+
             return redirect()->back()->with('success', 'Payment approved & stock updated');
         } catch (\Throwable $e) {
             $this->db->transRollback();
@@ -1091,6 +1104,9 @@ class OnlineSalesApiController extends BaseApiController
         $this->orderModel->update($orderId, [
             'status_id' => $this->statusModel->getIdByCode(OrderStatus::REJECTED)
         ]);
+
+        // 🔥 TRIGGER REAL-TIME UPDATE
+        \App\Libraries\Realtime::triggerUpdate('order-rejected');
 
         return redirect()->back()->with('success', 'Payment rejected');
     }
@@ -1107,6 +1123,10 @@ class OnlineSalesApiController extends BaseApiController
         ];
 
         $this->orderModel->update($orderId, $data);
+
+        // 🔥 TRIGGER REAL-TIME UPDATE
+        \App\Libraries\Realtime::triggerUpdate('order-shipped');
+
         return redirect()->back()->with('success', 'Shipping added');
     }
 
@@ -1130,6 +1150,9 @@ class OnlineSalesApiController extends BaseApiController
         $this->orderModel->update($orderId, [
             'status_id' => $statusId
         ]);
+
+        // 🔥 TRIGGER REAL-TIME UPDATE
+        \App\Libraries\Realtime::triggerUpdate('order-status-update');
 
         return $this->successResponse(
             [

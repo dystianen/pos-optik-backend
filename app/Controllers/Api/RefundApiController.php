@@ -117,6 +117,9 @@ class RefundApiController extends BaseApiController
         'status_id' => $STATUS_CANCELLED,
       ]);
 
+      // 🔥 TRIGGER REAL-TIME UPDATE
+      \App\Libraries\Realtime::triggerUpdate('order-cancelled');
+
       return $this->messageResponse('Order has been cancelled successfully');
     } else {
       // === CASE 2: Sudah bayar - Perlu proses refund ===
@@ -148,6 +151,9 @@ class RefundApiController extends BaseApiController
 
       // Kirim notifikasi ke admin untuk review
       $this->notificationModel->addNotification('cancel_order', "New cancellation request from {$customerName}", $refundId);
+
+      // 🔥 TRIGGER REAL-TIME UPDATE
+      \App\Libraries\Realtime::triggerUpdate('cancellation-requested');
 
       $response = [
         'order_id' => $orderId,
@@ -260,6 +266,10 @@ class RefundApiController extends BaseApiController
 
     $refundId = $result['refund_id'];
 
+    // Kirim notifikasi ke admin untuk review
+    $customerName = $this->getAuthenticatedCustomerName();
+    $this->notificationModel->addNotification('refund_order', "New refund request from {$customerName}", $refundId);
+
     // Jika partial refund, insert items ke order_refund_items table
     $itemsCreated = 0;
     if ($refundType === 'partial' && !empty($selectedItems)) {
@@ -279,6 +289,9 @@ class RefundApiController extends BaseApiController
       'refund_items_created' => $itemsCreated,
       'selected_items_count' => count($selectedItems),
     ];
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-requested');
 
     return $this->successResponse($response);
   }
@@ -330,6 +343,9 @@ class RefundApiController extends BaseApiController
         'courier' => $courier,
         'tracking_number' => $trackingNumber
     ], 'Return shipping information submitted successfully');
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-return-shipped');
   }
 
   // =====================================================
@@ -398,6 +414,9 @@ class RefundApiController extends BaseApiController
     ];
 
     return $this->successResponse($response, 'Refund approve successfully');
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-approved');
   }
 
   public function adminReject($refundId)
@@ -427,6 +446,9 @@ class RefundApiController extends BaseApiController
       'admin_note' => $adminNote,
     ];
     return $this->successResponse($response, 'Refund reject successfully');
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-rejected');
   }
 
   public function adminReceive($refundId)
@@ -448,6 +470,9 @@ class RefundApiController extends BaseApiController
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_RETURN_RECEIVED
     ], 'Refund item marked as received');
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-item-received');
   }
 
   public function adminFinalApprove($refundId)
@@ -469,6 +494,9 @@ class RefundApiController extends BaseApiController
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_APPROVED
     ], 'Refund approved. You can now proceed to process the payment.');
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-final-approved');
   }
 
   public function adminRefund($refundId)
@@ -535,6 +563,9 @@ class RefundApiController extends BaseApiController
         'status' => OrderRefundModel::STATUS_REFUNDED,
         'order_status' => $statusCode ?? null
     ], 'Refund marked as completed and order status updated to ' . $statusLabel);
+
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-completed');
   }
 
   // =====================================================

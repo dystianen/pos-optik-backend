@@ -22,6 +22,32 @@ class DashboardController extends BaseController
 
     public function index()
     {
+        $stats = cache()->remember('dashboard_stats', 300, function () {
+            return $this->getStats();
+        });
+
+        return view('v_dashboard', array_merge($stats, [
+            'pusherKey' => env('pusher.key')
+        ]));
+    }
+
+    /**
+     * AJAX endpoint for real-time updates
+     */
+    public function apiStats()
+    {
+        $stats = cache()->remember('dashboard_stats', 300, function () {
+            return $this->getStats();
+        });
+
+        return $this->response->setJSON($stats);
+    }
+
+    /**
+     * Centralized logic for dashboard statistics calculation
+     */
+    private function getStats(): array
+    {
         /** =======================
          * CARD SUMMARY
          * ======================= */
@@ -110,17 +136,17 @@ class DashboardController extends BaseController
             ->groupBy(['os.status_code', 'os.status_name'])
             ->findAll();
 
-        return view('v_dashboard', [
-            'totalRevenue'      => $totalRevenue,
-            'totalOrdersToday'  => $totalOrdersToday,
-            'onlineSales'       => $onlineSales,
-            'posSales'          => $posSales,
-            'totalCustomers'    => $totalCustomers,
-            'lowStockCount'     => $lowStockCount,
+        return [
+            'totalRevenue'      => (int)$totalRevenue,
+            'totalOrdersToday'  => (int)$totalOrdersToday,
+            'onlineSales'       => (int)$onlineSales,
+            'posSales'          => (int)$posSales,
+            'totalCustomers'    => (int)$totalCustomers,
+            'lowStockCount'     => (int)$lowStockCount,
             'months'            => json_encode($months),
             'revenues'          => json_encode($revenues),
             'topProducts'       => $topProducts,
             'orderStatuses'     => $orderStatuses,
-        ]);
+        ];
     }
 }

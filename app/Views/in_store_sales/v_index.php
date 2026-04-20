@@ -43,7 +43,7 @@
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
 
           <?php
           $startIndex = ($pager['currentPage'] - 1) * $pager['limit'] + 1;
@@ -96,7 +96,7 @@
 
     <!-- PAGINATION -->
     <nav aria-label="Page navigation" class="mt-4">
-      <ul class="pagination" id="pagination"></ul>
+      <ul class="pagination" id="realtime-pagination"></ul>
     </nav>
   </div>
 </div>
@@ -110,7 +110,7 @@
       `<?= base_url('/in-store-sales') ?>?page=${page}&q=<?= esc($search) ?>`;
   }
 
-  const paginationContainer = document.getElementById('pagination');
+  const paginationContainer = document.getElementById('realtime-pagination');
   const totalPages = <?= (int) $pager['totalPages'] ?>;
   const currentPage = <?= (int) $pager['currentPage'] ?>;
 
