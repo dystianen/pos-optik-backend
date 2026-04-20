@@ -170,7 +170,6 @@ class ProductApiController extends BaseApiController
         $customerId = $jwtUser->user_id ?? null;
 
         $search = $this->request->getVar('search');
-        $newLimitDate = date('Y-m-d H:i:s', strtotime('-30 days'));
 
         $builder = $this->db->table('products p');
 
@@ -184,6 +183,7 @@ class ProductApiController extends BaseApiController
             IF(w.wishlist_id IS NULL, 0, 1) AS is_wishlist
         ');
 
+        $builder->join('product_categories pc', 'pc.category_id = p.category_id');
         $builder->join(
             'product_images pi',
             'pi.product_id = p.product_id AND pi.is_primary = 1',
@@ -212,7 +212,7 @@ class ProductApiController extends BaseApiController
         }
 
         $builder->where('p.deleted_at', null);
-        $builder->where('p.created_at >=', $newLimitDate);
+        $builder->where('pc.category_name', 'Sunglasses');
         $builder->orderBy('p.created_at', 'DESC');
         $builder->limit(10);
 
