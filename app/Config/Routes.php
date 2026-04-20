@@ -29,6 +29,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->post('login', 'Api\AuthApiController::login');
     $routes->post('register', 'Api\AuthApiController::register');
     $routes->post('refresh', 'Api\AuthApiController::refresh');
+    $routes->get('profile', 'Api\AuthApiController::profile', ['filter' => 'authApi']);
   });
 
   // PRODUCTS

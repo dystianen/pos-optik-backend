@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Models\CustomerModel;
+use App\Models\EyeExaminationModel;
 use App\Models\RoleModel;
 use App\Models\UserModel;
 use Exception;
@@ -11,13 +12,14 @@ use Firebase\JWT\Key;
 
 class AuthApiController extends BaseApiController
 {
-  protected $customerModel, $userModel, $roleModel;
+  protected $customerModel, $userModel, $roleModel, $eyeExaminationModel;
 
   public function __construct()
   {
     $this->customerModel = new CustomerModel();
     $this->userModel     = new UserModel();
-    $this->roleModel     = new RoleModel();
+    $this->roleModel           = new RoleModel();
+    $this->eyeExaminationModel = new EyeExaminationModel();
     helper(['form', 'url']);
   }
 
@@ -169,6 +171,55 @@ class AuthApiController extends BaseApiController
       ], 'Token refreshed successfully');
     } catch (Exception $e) {
       return $this->serverErrorResponse('Failed to refresh token');
+    }
+  }
+
+  // =======================
+  // GET /api/auth/profile
+  // =======================
+  public function profile()
+  {
+    try {
+      $userId = $this->getAuthenticatedCustomerId();
+      $user   = $this->customerModel->find($userId);
+
+      if (!$user) {
+        return $this->notFoundResponse('User not found');
+      }
+
+      // Ambil riwayat pemeriksaan mata terakhir
+      $eyeHistory = $this->eyeExaminationModel
+        ->where('customer_id', $userId)
+        ->orderBy('created_at', 'DESC')
+        ->first();
+
+      // Hapus sensitive data
+      unset($user['customer_password']);
+
+      // Gabungkan data profil dengan history & preference placeholder
+      $response = [
+        'personal_info' => $user,
+        'preferences_history' => [
+          'eye_history' => $eyeHistory ? [
+            'last_check' => $eyeHistory['created_at'],
+            'diagnosis'  => $eyeHistory['diagnosis'],
+            'left_eye'   => [
+              'sph' => $eyeHistory['left_eye_sphere'],
+              'cyl' => $eyeHistory['left_eye_cylinder'],
+              'axs' => $eyeHistory['left_eye_axis'],
+            ],
+            'right_eye'  => [
+              'sph' => $eyeHistory['right_eye_sphere'],
+              'cyl' => $eyeHistory['right_eye_cylinder'],
+              'axs' => $eyeHistory['right_eye_axis'],
+            ],
+          ] : null,
+        ]
+      ];
+
+      return $this->successResponse($response, 'Profile retrieved successfully');
+    } catch (Exception $e) {
+      return $this->serverErrorResponse('Failed to retrieve profile');
     }
   }
 }
