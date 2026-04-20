@@ -241,32 +241,54 @@ class OnlineSalesApiController extends BaseApiController
             log_message('debug', 'SUMMARY: ' . json_encode($summary));
 
             // ======================
-            // VALIDASI STOK (MARKETPLACE)
+            // VALIDASI & KURANGI STOK (PREVENT OVERSELLING)
             // ======================
             foreach ($summary['items'] as $item) {
-
                 $productId = $item['product_id'];
                 $variantId = $item['variant_id'] ?? null;
                 $qty       = (int) $item['quantity'];
 
                 if ($variantId) {
                     $variant = $db->query(
-                        "SELECT * FROM product_variants WHERE variant_id = ? FOR UPDATE",
+                        "SELECT stock FROM product_variants WHERE variant_id = ? FOR UPDATE",
                         [$variantId]
                     )->getRowArray();
 
-                    if (!$variant || $variant['stock'] < $qty) {
+                    if (!$variant || (int)$variant['stock'] < $qty) {
                         throw new \Exception('Stok produk tidak mencukupi');
                     }
+
+                    // Potong stok variant
+                    $this->productVariantModel
+                        ->where('variant_id', $variantId)
+                        ->set('stock', 'stock - ' . $qty, false)
+                        ->update();
+
+                    // Sinkronisasi ke total stok produk
+                    $db->query("
+                        UPDATE products p
+                        SET p.product_stock = (
+                            SELECT COALESCE(SUM(pv.stock), 0)
+                            FROM product_variants pv
+                            WHERE pv.product_id = p.product_id
+                        )
+                        WHERE p.product_id = ?
+                    ", [$productId]);
                 } else {
                     $product = $db->query(
-                        "SELECT * FROM products WHERE product_id = ? FOR UPDATE",
+                        "SELECT product_stock FROM products WHERE product_id = ? FOR UPDATE",
                         [$productId]
                     )->getRowArray();
 
-                    if (!$product || $product['product_stock'] < $qty) {
+                    if (!$product || (int)$product['product_stock'] < $qty) {
                         throw new \Exception('Stok produk tidak mencukupi');
                     }
+
+                    // Potong stok produk
+                    $this->productModel
+                        ->where('product_id', $productId)
+                        ->set('product_stock', 'product_stock - ' . $qty, false)
+                        ->update();
                 }
             }
 
