@@ -38,6 +38,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('new-eyewear', 'Api\ProductApiController::apiListNewEyewear');
     $routes->get('best-seller', 'Api\ProductApiController::apiListBestSeller');
     $routes->get('categories', 'Api\ProductCategoryApiController::apiListProductCategory');
+    $routes->get('my-recommendations', 'Api\ProductApiController::apiMyRecommendations', ['filter' => 'authApi']);
     $routes->get('recommendations/(:segment)', 'Api\ProductApiController::apiProductRecommendations/$1');
     $routes->get('search', 'Api\ProductApiController::apiSearchProduct');
     $routes->get('(:segment)', 'Api\ProductApiController::apiProductDetail/$1');

@@ -342,51 +342,111 @@ class ProductApiController extends BaseApiController
         return $this->successResponse($bestSeller);
     }
 
-    // GET /api/products/recommendations
+    // ===================================================================
+    // GET /api/products/recommendations/{productId}
+    // Product-based CBF: rekomendasi mirip dengan produk tertentu
+    // ===================================================================
     public function apiProductRecommendations($productId)
     {
-        $limit     = (int) ($this->request->getVar('limit') ?? 10);
-        $search    = $this->request->getVar('search');
+        $limit  = (int) ($this->request->getVar('limit') ?? 10);
+        $search = $this->request->getVar('search');
 
         if (!$productId) {
             return $this->errorResponse('productId is required');
         }
 
-        /**
-         * ==========================
-         * 1. BASE PRODUCT ATTRIBUTES
-         * ==========================
-         */
-        $baseAttributes = $this->db->table('product_attribute_values pav')
+        // ──────────────────────────────────────────────
+        // STEP 1 · Input data pengguna (opsional)
+        // Baca JWT customer untuk personalisasi
+        // ──────────────────────────────────────────────
+        $jwtUser    = getJWTUser(false);
+        $customerId = $jwtUser->user_id ?? null;
+
+        // ──────────────────────────────────────────────
+        // STEP 2 · Ekstraksi fitur produk dasar
+        // ──────────────────────────────────────────────
+        $baseAttrRows = $this->db->table('product_attribute_values pav')
             ->select('pav.attribute_id, pav.value')
             ->where('pav.product_id', $productId)
             ->where('pav.deleted_at', null)
             ->get()
             ->getResultArray();
 
-        if (empty($baseAttributes)) {
+        if (empty($baseAttrRows)) {
             return $this->successResponse();
         }
 
-        $baseAttrMap = [];
-        foreach ($baseAttributes as $row) {
-            $baseAttrMap[$row['attribute_id']][] = strtolower(trim($row['value']));
+        // Bangun one-hot vector untuk produk dasar
+        $baseVector = [];
+        foreach ($baseAttrRows as $row) {
+            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
+            $baseVector[$key] = 1;
         }
 
-        /**
-         * ==========================
-         * 2. CANDIDATE PRODUCTS
-         * ==========================
-         */
+        // ──────────────────────────────────────────────
+        // STEP 3 · Profil pengguna dari histori POS
+        // ──────────────────────────────────────────────
+        $purchasedIds   = [];
+        $userVector     = [];
+        $hasPosData     = false;
+        $posVector      = [];
+
+        if ($customerId) {
+            $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+
+            // Ambil semua order completed customer
+            $purchaseRows = $this->db->table('order_items oi')
+                ->select('oi.product_id, o.order_type')
+                ->join('orders o', 'o.order_id = oi.order_id')
+                ->where('o.customer_id', $customerId)
+                ->where('o.status_id', $completedStatusId)
+                ->where('o.deleted_at', null)
+                ->get()
+                ->getResultArray();
+
+            $purchasedIds = array_unique(array_column($purchaseRows, 'product_id'));
+
+            // Cek apakah ada transaksi offline (data POS)
+            $hasPosData = !empty(array_filter($purchaseRows, fn($r) => $r['order_type'] === 'offline'));
+
+            // Ambil atribut semua produk yang pernah dibeli → bangun user profile vector
+            if (!empty($purchasedIds)) {
+                $userAttrRows = $this->db->table('product_attribute_values pav')
+                    ->select('pav.attribute_id, pav.value, o.order_type')
+                    ->join('order_items oi', 'oi.product_id = pav.product_id')
+                    ->join('orders o', 'o.order_id = oi.order_id')
+                    ->whereIn('pav.product_id', $purchasedIds)
+                    ->where('o.customer_id', $customerId)
+                    ->where('o.status_id', $completedStatusId)
+                    ->where('pav.deleted_at', null)
+                    ->get()
+                    ->getResultArray();
+
+                foreach ($userAttrRows as $row) {
+                    $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
+                    // User vector: frekuensi (TF sederhana)
+                    $userVector[$key] = ($userVector[$key] ?? 0) + 1;
+
+                    // POS vector: hanya dari transaksi offline
+                    if ($row['order_type'] === 'offline') {
+                        $posVector[$key] = ($posVector[$key] ?? 0) + 1;
+                    }
+                }
+            }
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 4 · Kandidat produk
+        // ──────────────────────────────────────────────
         $builder = $this->db->table('products p')
             ->select('
-            p.product_id,
-            p.product_name,
-            p.product_brand,
-            p.product_price,
-            p.product_stock,
-            pi.url AS product_image_url
-        ')
+                p.product_id,
+                p.product_name,
+                p.product_brand,
+                p.product_price,
+                p.product_stock,
+                pi.url AS product_image_url
+            ')
             ->join(
                 'product_images pi',
                 'pi.product_id = p.product_id
@@ -397,7 +457,6 @@ class ProductApiController extends BaseApiController
             ->where('p.deleted_at', null)
             ->where('p.product_id !=', $productId);
 
-        // 🔍 SEARCH FILTER (TETAP ADA)
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('p.product_name', $search)
@@ -405,86 +464,333 @@ class ProductApiController extends BaseApiController
                 ->groupEnd();
         }
 
-        // Ambil lebih banyak untuk scoring
-        $products = $builder
-            ->limit($limit * 3)
-            ->get()
-            ->getResultArray();
+        $products = $builder->limit($limit * 5)->get()->getResultArray();
 
         if (empty($products)) {
             return $this->successResponse();
         }
 
-        /**
-         * ==========================
-         * 3. ATTRIBUTES FOR CANDIDATES
-         * ==========================
-         */
-        $productIds = array_column($products, 'product_id');
+        // ──────────────────────────────────────────────
+        // STEP 5 · Atribut semua kandidat
+        // ──────────────────────────────────────────────
+        $candidateIds = array_column($products, 'product_id');
 
-        $allAttributes = $this->db->table('product_attribute_values pav')
+        $allAttrRows = $this->db->table('product_attribute_values pav')
             ->select('pav.product_id, pav.attribute_id, pav.value')
-            ->whereIn('pav.product_id', $productIds)
+            ->whereIn('pav.product_id', $candidateIds)
             ->where('pav.deleted_at', null)
             ->get()
             ->getResultArray();
 
-        $attrByProduct = [];
-        foreach ($allAttributes as $row) {
-            $attrByProduct[$row['product_id']][] = [
-                'attribute_id' => $row['attribute_id'],
-                'value'        => strtolower(trim($row['value']))
-            ];
+        // Bangun vector per kandidat produk (one-hot)
+        $vectorByProduct = [];
+        foreach ($allAttrRows as $row) {
+            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
+            $vectorByProduct[$row['product_id']][$key] = 1;
         }
 
-        /**
-         * ==========================
-         * 4. CONTENT-BASED SCORING
-         * ==========================
-         */
+        // ──────────────────────────────────────────────
+        // STEP 6 · Representasi Vektor + Cosine Similarity
+        // sim(u, p) = (u · p) / (|u| × |p|)
+        // ──────────────────────────────────────────────
         $recommendations = [];
 
-        foreach ($products as $product) {
-            $pid   = $product['product_id'];
-            $score = 0;
+        // Bobot: 40% produk-dasar CBF + 40% user profile + 20% POS (jika ada)
+        $wBase = 0.40;
+        $wUser = $hasPosData ? 0.40 : 0.60;
+        $wPos  = $hasPosData ? 0.20 : 0.00;
 
-            if (!isset($attrByProduct[$pid])) {
+        foreach ($products as $product) {
+            $pid = $product['product_id'];
+
+            if (!isset($vectorByProduct[$pid])) {
                 continue;
             }
 
-            foreach ($attrByProduct[$pid] as $attr) {
-                $attrId = $attr['attribute_id'];
-                $value  = $attr['value'];
+            $candidateVec = $vectorByProduct[$pid];
 
-                if (!isset($baseAttrMap[$attrId])) {
-                    continue;
-                }
+            // Cosine similarity: produk dasar vs kandidat
+            $cbfScore = $this->cosineSimilarity($baseVector, $candidateVec);
 
-                // Same attribute
-                $score += 1;
-
-                // Exact value match
-                if (in_array($value, $baseAttrMap[$attrId], true)) {
-                    $score += 2;
-                }
+            if ($cbfScore <= 0 && empty($userVector)) {
+                continue;
             }
 
-            if ($score > 0) {
-                $product['score'] = $score;
+            // Cosine similarity: user profile vs kandidat
+            $userScore = empty($userVector) ? 0.0 : $this->cosineSimilarity($userVector, $candidateVec);
+
+            // STEP 6a · Ada data POS? → Bobot POS (Gabung Skor)
+            $posScore = $hasPosData ? $this->cosineSimilarity($posVector, $candidateVec) : 0.0;
+
+            $finalScore = ($wBase * $cbfScore) + ($wUser * $userScore) + ($wPos * $posScore);
+
+            if ($finalScore > 0) {
+                $product['score']     = round($finalScore, 6);
+                $product['cbf_score'] = round($cbfScore, 6);
+                $recommendations[]    = $product;
+            }
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 7 · Urutkan Skor Similarity
+        // ──────────────────────────────────────────────
+        usort($recommendations, fn($a, $b) => $b['score'] <=> $a['score']);
+
+        // ──────────────────────────────────────────────
+        // STEP 8 · Filter produk yang sudah dibeli
+        // ──────────────────────────────────────────────
+        if (!empty($purchasedIds)) {
+            $recommendations = array_values(array_filter(
+                $recommendations,
+                fn($p) => !in_array($p['product_id'], $purchasedIds)
+            ));
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 9 · Ambil Top-N Rekomendasi
+        // ──────────────────────────────────────────────
+        $recommendations = array_slice($recommendations, 0, $limit);
+
+        return $this->successResponse($recommendations);
+    }
+
+    // ===================================================================
+    // GET /api/products/my-recommendations  (auth required)
+    // User-centric CBF: rekomendasi berdasar histori beli customer
+    // ===================================================================
+    public function apiMyRecommendations()
+    {
+        $jwtUser = getJWTUser();
+        if (!$jwtUser) {
+            return $this->errorResponse('Unauthorized', 401);
+        }
+
+        $customerId = $jwtUser->user_id;
+        $limit      = (int) ($this->request->getVar('limit') ?? 10);
+
+        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+
+        // ──────────────────────────────────────────────
+        // STEP 1 · Input: riwayat beli + POS data
+        // ──────────────────────────────────────────────
+        $purchaseRows = $this->db->table('order_items oi')
+            ->select('oi.product_id, o.order_type')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->where('o.customer_id', $customerId)
+            ->where('o.status_id', $completedStatusId)
+            ->where('o.deleted_at', null)
+            ->get()
+            ->getResultArray();
+
+        $purchasedIds = array_unique(array_column($purchaseRows, 'product_id'));
+
+        // Cold start: belum ada histori → fallback best seller (tanpa filter)
+        if (empty($purchasedIds)) {
+            return $this->apiBestSellerFallback($limit);
+        }
+
+        $hasPosData = !empty(array_filter($purchaseRows, fn($r) => $r['order_type'] === 'offline'));
+
+        // ──────────────────────────────────────────────
+        // STEP 2 · Ekstraksi fitur dari produk yang dibeli
+        // ──────────────────────────────────────────────
+        $userAttrRows = $this->db->table('product_attribute_values pav')
+            ->select('pav.attribute_id, pav.value, o.order_type')
+            ->join('order_items oi', 'oi.product_id = pav.product_id')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->whereIn('pav.product_id', $purchasedIds)
+            ->where('o.customer_id', $customerId)
+            ->where('o.status_id', $completedStatusId)
+            ->where('pav.deleted_at', null)
+            ->get()
+            ->getResultArray();
+
+        // ──────────────────────────────────────────────
+        // STEP 3 · Pembuatan Profil Pengguna (vektor TF)
+        // ──────────────────────────────────────────────
+        $userVector = [];
+        $posVector  = [];
+
+        foreach ($userAttrRows as $row) {
+            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
+            $userVector[$key] = ($userVector[$key] ?? 0) + 1;
+            if ($row['order_type'] === 'offline') {
+                $posVector[$key] = ($posVector[$key] ?? 0) + 1;
+            }
+        }
+
+        if (empty($userVector)) {
+            return $this->apiBestSellerFallback($limit);
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 4 · Kandidat produk (exclude yang sudah dibeli)
+        // ──────────────────────────────────────────────
+        $builder = $this->db->table('products p')
+            ->select('
+                p.product_id,
+                p.product_name,
+                p.product_brand,
+                p.product_price,
+                p.product_stock,
+                pi.url AS product_image_url
+            ')
+            ->join(
+                'product_images pi',
+                'pi.product_id = p.product_id
+                    AND pi.type = "gallery"
+                    AND pi.is_primary = 1',
+                'left'
+            )
+            ->where('p.deleted_at', null)
+            ->whereNotIn('p.product_id', $purchasedIds)
+            ->limit($limit * 5);
+
+        $products = $builder->get()->getResultArray();
+
+        if (empty($products)) {
+            return $this->successResponse([]);
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 5 · Atribut kandidat → vektor
+        // ──────────────────────────────────────────────
+        $candidateIds = array_column($products, 'product_id');
+
+        $allAttrRows = $this->db->table('product_attribute_values pav')
+            ->select('pav.product_id, pav.attribute_id, pav.value')
+            ->whereIn('pav.product_id', $candidateIds)
+            ->where('pav.deleted_at', null)
+            ->get()
+            ->getResultArray();
+
+        $vectorByProduct = [];
+        foreach ($allAttrRows as $row) {
+            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
+            $vectorByProduct[$row['product_id']][$key] = 1;
+        }
+
+        // ──────────────────────────────────────────────
+        // STEP 6 · Cosine Similarity + POS Weighting
+        // ──────────────────────────────────────────────
+        $wUser = $hasPosData ? 0.60 : 1.00;
+        $wPos  = $hasPosData ? 0.40 : 0.00;
+
+        $recommendations = [];
+
+        foreach ($products as $product) {
+            $pid = $product['product_id'];
+
+            if (!isset($vectorByProduct[$pid])) {
+                continue;
+            }
+
+            $candidateVec = $vectorByProduct[$pid];
+            $userScore    = $this->cosineSimilarity($userVector, $candidateVec);
+            $posScore     = $hasPosData ? $this->cosineSimilarity($posVector, $candidateVec) : 0.0;
+            $finalScore   = ($wUser * $userScore) + ($wPos * $posScore);
+
+            if ($finalScore > 0) {
+                $product['score'] = round($finalScore, 6);
                 $recommendations[] = $product;
             }
         }
 
-        /**
-         * ==========================
-         * 5. SORT & LIMIT
-         * ==========================
-         */
+        // ──────────────────────────────────────────────
+        // STEP 7 · Urutkan + Ambil Top-N
+        // ──────────────────────────────────────────────
         usort($recommendations, fn($a, $b) => $b['score'] <=> $a['score']);
-
         $recommendations = array_slice($recommendations, 0, $limit);
 
         return $this->successResponse($recommendations);
+    }
+
+    // ===================================================================
+    // HELPER: Cosine Similarity antara dua vektor asosiatif
+    // sim(u, p) = (u · p) / (|u| × |p|)
+    // ===================================================================
+    private function cosineSimilarity(array $vecA, array $vecB): float
+    {
+        $dot  = 0.0;
+        $magA = 0.0;
+        $magB = 0.0;
+
+        foreach ($vecA as $key => $val) {
+            $dot  += $val * ($vecB[$key] ?? 0);
+            $magA += $val * $val;
+        }
+        foreach ($vecB as $val) {
+            $magB += $val * $val;
+        }
+
+        if ($magA == 0.0 || $magB == 0.0) {
+            return 0.0;
+        }
+
+        return $dot / (sqrt($magA) * sqrt($magB));
+    }
+
+    // ===================================================================
+    // HELPER: Cold-start fallback → kembalikan best seller
+    // ===================================================================
+    private function apiBestSellerFallback(int $limit): \CodeIgniter\HTTP\ResponseInterface
+    {
+        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+
+        $bsRows = $this->db->table('order_items oi')
+            ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->join('products p', 'p.product_id = oi.product_id')
+            ->where('o.status_id', $completedStatusId)
+            ->where('p.deleted_at', null)
+            ->groupBy('oi.product_id')
+            ->orderBy('total_sold', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->getResultArray();
+
+        if (empty($bsRows)) {
+            return $this->successResponse([]);
+        }
+
+        $bsIds    = array_column($bsRows, 'product_id');
+        $bsTotals = array_column($bsRows, 'total_sold', 'product_id');
+
+        $products = $this->db->table('products p')
+            ->select('
+                p.product_id,
+                p.product_name,
+                p.product_brand,
+                p.product_price,
+                p.product_stock,
+                pi.url AS product_image_url
+            ')
+            ->join(
+                'product_images pi',
+                'pi.product_id = p.product_id AND pi.type = "gallery" AND pi.is_primary = 1',
+                'left'
+            )
+            ->whereIn('p.product_id', $bsIds)
+            ->get()
+            ->getResultArray();
+
+        $byId = [];
+        foreach ($products as $p) {
+            $byId[$p['product_id']] = $p;
+        }
+
+        $result = [];
+        foreach ($bsRows as $bs) {
+            $pid = $bs['product_id'];
+            if (isset($byId[$pid])) {
+                $item               = $byId[$pid];
+                $item['total_sold'] = (int) $bsTotals[$pid];
+                $item['score']      = 0;
+                $result[]           = $item;
+            }
+        }
+
+        return $this->successResponse($result);
     }
 
     // GET /api/products/{id}
