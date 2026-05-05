@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/l_dashboard') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid card mt-4">
+<div class="container-fluid card">
   <div class="card-header pb-0">
     <h4>Transaksi Penjualan Toko</h4>
   </div>

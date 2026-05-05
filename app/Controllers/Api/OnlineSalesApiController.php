@@ -753,17 +753,17 @@ class OnlineSalesApiController extends BaseApiController
             $items = $this->orderItemModel
                 ->select("
                     order_items.order_item_id,
-                    ANY_VALUE(order_items.product_id) AS product_id,
-                    ANY_VALUE(order_items.variant_id) AS variant_id,
-                    ANY_VALUE(order_items.quantity) AS qty_purchased,
+                    order_items.product_id,
+                    order_items.variant_id,
+                    order_items.quantity AS qty_purchased,
                     COALESCE(SUM(ori.qty_refunded), 0) AS qty_refunded,
-                    (ANY_VALUE(order_items.quantity) - COALESCE(SUM(ori.qty_refunded), 0)) AS qty_active,
-                    ANY_VALUE(order_items.price) AS price,
+                    (order_items.quantity - COALESCE(SUM(ori.qty_refunded), 0)) AS qty_active,
+                    order_items.price,
                     
-                    ANY_VALUE(products.product_name) AS product_name,
-                    ANY_VALUE(product_variants.variant_name) AS variant_name,
+                    products.product_name,
+                    product_variants.variant_name,
                     
-                    ANY_VALUE(COALESCE(pvi_img.url, pi_img.url)) AS image
+                    MAX(COALESCE(pvi_img.url, pi_img.url)) AS image
                 ")
                 ->join('products', 'products.product_id = order_items.product_id')
                 ->join('product_variants', 'product_variants.variant_id = order_items.variant_id', 'left')
@@ -933,17 +933,17 @@ class OnlineSalesApiController extends BaseApiController
             ->select("
                 order_items.order_id,
                 order_items.order_item_id,
-                ANY_VALUE(order_items.product_id) AS product_id,
-                ANY_VALUE(order_items.variant_id) AS variant_id,
-                ANY_VALUE(order_items.quantity) AS qty_purchased,
+                order_items.product_id,
+                order_items.variant_id,
+                order_items.quantity AS qty_purchased,
                 COALESCE(SUM(ori.qty_refunded), 0) AS qty_refunded,
-                (ANY_VALUE(order_items.quantity) - COALESCE(SUM(ori.qty_refunded), 0)) AS qty_active,
-                ANY_VALUE(order_items.price) AS price,
+                (order_items.quantity - COALESCE(SUM(ori.qty_refunded), 0)) AS qty_active,
+                order_items.price,
                 
-                ANY_VALUE(products.product_name) AS product_name,
-                ANY_VALUE(product_variants.variant_name) AS variant_name,
+                products.product_name,
+                product_variants.variant_name,
                 
-                ANY_VALUE(COALESCE(pvi_img.url, pi_img.url)) AS image
+                MAX(COALESCE(pvi_img.url, pi_img.url)) AS image
             ")
             ->join('products', 'products.product_id = order_items.product_id')
             ->join('product_variants', 'product_variants.variant_id = order_items.variant_id', 'left')
