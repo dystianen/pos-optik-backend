@@ -8,7 +8,6 @@ use App\Models\ProductAttributeModel;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
-use CodeIgniter\HTTP\ResponseInterface;
 use Config\OrderStatus;
 
 class ProductApiController extends BaseApiController
@@ -158,7 +157,27 @@ class ProductApiController extends BaseApiController
             return $this->errorResponse('No products found');
         }
 
-        $currentPage = $this->productModel->pager->getCurrentPage('products');
+        // Ambil ID produk yang ditarik untuk query aggregate total_sold yang lebih efisien
+        $productIds = array_column($products, 'product_id');
+
+        $soldQuery = $this->db->table('order_items oi')
+            ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->whereIn('oi.product_id', $productIds)
+            ->where('o.status_id', $this->statusModel->getIdByCode(OrderStatus::COMPLETED))
+            ->groupBy('oi.product_id')
+            ->get()
+            ->getResultArray();
+
+        $soldMap = [];
+        foreach ($soldQuery as $row) {
+            $soldMap[$row['product_id']] = (int) $row['total_sold'];
+        }
+
+        foreach ($products as &$product) {
+            $product['total_sold'] = $soldMap[$product['product_id']] ?? 0;
+        }
+        unset($product);
 
         return $this->successResponse($products);
     }
