@@ -31,7 +31,9 @@ class RefundSalesController extends BaseController
 
   public function index()
   {
-    $search = $this->request->getVar('q');
+    $search    = $this->request->getVar('q');
+    $startDate = $this->request->getVar('start_date');
+    $endDate   = $this->request->getVar('end_date');
 
     $builder = $this->refundModel->withAll()->orderBy('order_refunds.created_at', 'DESC');
 
@@ -43,11 +45,20 @@ class RefundSalesController extends BaseController
         ->groupEnd();
     }
 
+    if (!empty($startDate)) {
+      $builder->where('DATE(order_refunds.created_at) >=', $startDate);
+    }
+    if (!empty($endDate)) {
+      $builder->where('DATE(order_refunds.created_at) <=', $endDate);
+    }
+
     $refunds = $builder->findAll();
 
     return view('refund_sales/v_index', [
-      'refunds' => $refunds,
-      'search' => $search,
+      'refunds'   => $refunds,
+      'search'    => $search,
+      'startDate' => $startDate,
+      'endDate'   => $endDate,
     ]);
   }
 

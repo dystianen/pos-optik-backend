@@ -17,26 +17,39 @@ function orderStatusBadge($status)
 ?>
 
 <div class="container-fluid card">
-  <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
+  <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
     <h4>Online Sales</h4>
 
-    <div class="d-flex align-items-center gap-2">
-      <form action="<?= base_url('/online-sales') ?>" method="get" class="d-flex align-items-center">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <form action="<?= base_url('/online-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
         <input
           type="text"
           name="q"
-          class="form-control form-control-sm me-2"
+          class="form-control form-control-sm"
           placeholder="Search..."
           value="<?= esc($search ?? '') ?>"
-          style="min-width: 200px;">
-        <button type="submit" class="btn btn-sm btn-secondary">
-          <i class="fa-solid fa-magnifying-glass"></i>
+          style="min-width: 150px; width: auto;">
+        <input
+          type="date"
+          name="start_date"
+          class="form-control form-control-sm"
+          placeholder="Start Date"
+          value="<?= esc($startDate ?? '') ?>"
+          style="width: auto;">
+        <input
+          type="date"
+          name="end_date"
+          class="form-control form-control-sm"
+          placeholder="End Date"
+          value="<?= esc($endDate ?? '') ?>"
+          style="width: auto;">
+        <button type="submit" class="btn btn-sm btn-secondary mb-0">
+          <i class="fa-solid fa-magnifying-glass"></i> Filter
         </button>
+        <?php if (!empty($search) || !empty($startDate) || !empty($endDate)): ?>
+          <a href="<?= base_url('/online-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
+        <?php endif; ?>
       </form>
-      <a href="<?= base_url('online-sales/export' . (!empty($search) ? '?q=' . $search : '')) ?>"
-        class="btn btn-success btn-sm">
-        <i class="fas fa-file-excel"></i> Export Excel
-      </a>
     </div>
   </div>
 
@@ -119,7 +132,7 @@ function orderStatusBadge($status)
   // PAGINATION
   function handlePagination(page) {
     window.location.href =
-      `<?= base_url('/online-sales') ?>?page=${page}&q=<?= esc($search) ?>`;
+      `<?= base_url('/online-sales') ?>?page=${page}&q=<?= esc($search) ?>&start_date=<?= esc($startDate) ?>&end_date=<?= esc($endDate) ?>`;
   }
 
   const paginationContainer = document.getElementById('realtime-pagination');

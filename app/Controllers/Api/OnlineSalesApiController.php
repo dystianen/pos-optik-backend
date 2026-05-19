@@ -604,6 +604,22 @@ class OnlineSalesApiController extends BaseApiController
                 ->where('orders.customer_id', $customerId)
                 ->where('orders.deleted_at', null);
 
+            // Date filtering (single date or from-to range)
+            $date = $this->request->getVar('date');
+            $startDate = $this->request->getVar('start_date') ?: $this->request->getVar('from');
+            $endDate = $this->request->getVar('end_date') ?: $this->request->getVar('to');
+
+            if ($date) {
+                $builder->where('DATE(orders.created_at)', $date);
+            } else {
+                if ($startDate) {
+                    $builder->where('DATE(orders.created_at) >=', $startDate);
+                }
+                if ($endDate) {
+                    $builder->where('DATE(orders.created_at) <=', $endDate);
+                }
+            }
+
             if ($statusId && $statusId !== 'all') {
                 $refundedId = $this->statusModel->getIdByCode(OrderStatus::REFUNDED);
                 $completedId = $this->statusModel->getIdByCode(OrderStatus::COMPLETED);

@@ -15,14 +15,21 @@ function refundStatusBadge($status)
 ?>
 
 <div class="container-fluid card">
-  <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
+  <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
     <h4>Refund Requests</h4>
 
-    <div class="d-flex align-items-center gap-2">
-      <form action="<?= base_url('/refund-sales') ?>" method="get" class="d-flex align-items-center">
-        <input type="text" name="q" class="form-control form-control-sm me-2" placeholder="Search..."
-          value="<?= esc($search ?? '') ?>" style="min-width:200px">
-        <button type="submit" class="btn btn-sm btn-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <form action="<?= base_url('/refund-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..."
+          value="<?= esc($search ?? '') ?>" style="min-width: 150px; width: auto;">
+        <input type="date" name="start_date" class="form-control form-control-sm" placeholder="Start Date"
+          value="<?= esc($startDate ?? '') ?>" style="width: auto;">
+        <input type="date" name="end_date" class="form-control form-control-sm" placeholder="End Date"
+          value="<?= esc($endDate ?? '') ?>" style="width: auto;">
+        <button type="submit" class="btn btn-sm btn-secondary mb-0"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
+        <?php if (!empty($search) || !empty($startDate) || !empty($endDate)): ?>
+          <a href="<?= base_url('/refund-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
+        <?php endif; ?>
       </form>
     </div>
   </div>

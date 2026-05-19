@@ -25,7 +25,9 @@ class CancellationSalesController extends BaseController
 
     public function index()
     {
-        $search = $this->request->getVar('q');
+        $search    = $this->request->getVar('q');
+        $startDate = $this->request->getVar('start_date');
+        $endDate   = $this->request->getVar('end_date');
 
         $builder = $this->cancellationModel
             ->select('order_cancellations.*, orders.grand_total, customers.customer_name, customers.customer_email, orders.created_at as order_date')
@@ -41,11 +43,20 @@ class CancellationSalesController extends BaseController
                 ->groupEnd();
         }
 
+        if (!empty($startDate)) {
+            $builder->where('DATE(order_cancellations.created_at) >=', $startDate);
+        }
+        if (!empty($endDate)) {
+            $builder->where('DATE(order_cancellations.created_at) <=', $endDate);
+        }
+
         $cancellations = $builder->findAll();
 
         return view('cancellation_sales/v_index', [
             'cancellations' => $cancellations,
-            'search' => $search,
+            'search'        => $search,
+            'startDate'     => $startDate,
+            'endDate'       => $endDate,
         ]);
     }
 

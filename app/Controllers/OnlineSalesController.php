@@ -56,6 +56,8 @@ class OnlineSalesController extends BaseController
     {
         $currentPage = (int) ($this->request->getVar('page') ?? 1);
         $search      = $this->request->getVar('q'); // keyword search
+        $startDate   = $this->request->getVar('start_date');
+        $endDate     = $this->request->getVar('end_date');
 
         $limit  = 10;
         $offset = ($currentPage - 1) * $limit;
@@ -92,6 +94,16 @@ class OnlineSalesController extends BaseController
         }
 
         // ============================
+        // DATE FILTER
+        // ============================
+        if (!empty($startDate)) {
+            $builder->where('DATE(orders.created_at) >=', $startDate);
+        }
+        if (!empty($endDate)) {
+            $builder->where('DATE(orders.created_at) <=', $endDate);
+        }
+
+        // ============================
         // DATA
         // ============================
         $orders = $builder
@@ -99,16 +111,39 @@ class OnlineSalesController extends BaseController
             ->orderBy('orders.created_at', 'DESC')
             ->findAll($limit, $offset);
 
-        $totalRows = $this->orderModel
-            ->where('order_type', 'online')
-            ->countAllResults();
+        // ============================
+        // COUNT FOR PAGINATION
+        // ============================
+        $countBuilder = $this->orderModel
+            ->join('customers', 'customers.customer_id = orders.customer_id')
+            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
+            ->where('orders.order_type', 'online');
 
+        if (!empty($search)) {
+            $countBuilder->groupStart()
+                ->like('orders.order_id', $search)
+                ->orLike('customers.customer_name', $search)
+                ->orLike('customers.customer_email', $search)
+                ->orLike('order_statuses.status_name', $search)
+                ->groupEnd();
+        }
+
+        if (!empty($startDate)) {
+            $countBuilder->where('DATE(orders.created_at) >=', $startDate);
+        }
+        if (!empty($endDate)) {
+            $countBuilder->where('DATE(orders.created_at) <=', $endDate);
+        }
+
+        $totalRows = $countBuilder->countAllResults();
         $totalPages = ceil($totalRows / $limit);
 
         return view('online_sales/v_index', [
-            'orders' => $orders,
-            'search' => $search,
-            'pager'  => [
+            'orders'    => $orders,
+            'search'    => $search,
+            'startDate' => $startDate,
+            'endDate'   => $endDate,
+            'pager'     => [
                 'totalPages'  => $totalPages,
                 'currentPage' => $currentPage,
                 'limit'       => $limit,
@@ -192,43 +227,5 @@ class OnlineSalesController extends BaseController
         ];
 
         return view('online_sales/v_detail', $data);
-    }
-
-    public function export()
-    {
-        $search = $this->request->getVar('q');
-
-        $builder = $this->orderModel
-            ->select('
-                orders.order_id,
-                orders.created_at,
-                orders.grand_total,
-                customers.customer_name,
-                customers.customer_email,
-                order_statuses.status_name,
-                COUNT(order_items.order_item_id) as total_items
-            ')
-            ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
-            ->join('order_items', 'order_items.order_id = orders.order_id', 'left')
-            ->where('orders.order_type', 'online');
-
-        if (!empty($search)) {
-            $builder->groupStart()
-                ->like('orders.order_id', $search)
-                ->orLike('customers.customer_name', $search)
-                ->orLike('customers.customer_email', $search)
-                ->orLike('order_statuses.status_name', $search)
-                ->groupEnd();
-        }
-
-        $orders = $builder
-            ->groupBy('orders.order_id')
-            ->orderBy('orders.created_at', 'DESC')
-            ->findAll();
-
-        // Export using helper
-        $filename = 'Online-Sales_' . date('Y-m-d_His') . '.xlsx';
-        return exportSalesExcelSpout($orders, $filename, 'online');
     }
 }
