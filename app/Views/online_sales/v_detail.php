@@ -136,8 +136,13 @@ function badgeStatus($status)
               <img
                 src="<?= esc($payment['proof']) ?>"
                 class="img-thumbnail"
-                style="max-height:120px"
-                alt="payment proof">
+                style="max-height:120px; cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'"
+                alt="payment proof"
+                data-bs-toggle="modal"
+                data-bs-target="#imageZoomModal"
+                onclick="document.getElementById('zoomedImage').src = this.src">
             </div>
 
             <dl class="row mb-0 small">
@@ -259,4 +264,20 @@ function badgeStatus($status)
     </div>
   <?php endif ?>
 </div>
+
+<!-- Image Zoom Modal -->
+<div class="modal fade" id="imageZoomModal" tabindex="-1" aria-labelledby="imageZoomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0" style="border-radius: 16px;">
+      <div class="modal-header bg-light d-flex justify-content-between align-items-center" style="border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 12px 20px;">
+        <h6 class="modal-title font-weight-bold mb-0" id="imageZoomModalLabel">Image Preview</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.25rem; color: #888;">&times;</button>
+      </div>
+      <div class="modal-body text-center p-3 bg-white" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+        <img id="zoomedImage" src="" class="img-fluid rounded shadow-sm" style="max-height: 70vh; object-fit: contain; background: #f8f9fa; padding: 10px; width: 100%;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <?= $this->endSection() ?>
