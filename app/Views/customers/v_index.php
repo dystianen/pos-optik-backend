@@ -37,12 +37,18 @@
                 <td><?= date('d/m/Y', strtotime($customer['customer_dob'])) ?></td>
                 <td><?= $customer['customer_gender'] ?></td>
                 <td class="sticky-action text-center">
-                  <a href="<?= base_url('/customers/form?id=' . $customer['customer_id']) ?>" class="btn btn-sm btn-warning">
+                  <a href="<?= base_url('/customers/form?id=' . $customer['customer_id']) ?>" class="btn btn-sm btn-warning" title="Edit Customer">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </a>
+                  <form action="<?= base_url('/customers/reset-password/' . $customer['customer_id']) ?>" method="post" style="display:inline-block;" class="reset-password-form">
+                    <?= csrf_field() ?>
+                    <button type="button" class="btn btn-sm btn-info reset-btn" data-name="<?= esc($customer['customer_name']) ?>" title="Reset Password">
+                      <i class="fa-solid fa-key"></i>
+                    </button>
+                  </form>
                   <form action="<?= base_url('/customers/delete/' . $customer['customer_id']) ?>" method="post" style="display:inline-block;">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa-solid fa-trash"></i></button>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')" title="Delete Customer"><i class="fa-solid fa-trash"></i></button>
                   </form>
                 </td>
               </tr>
@@ -97,5 +103,58 @@
       paginationContainer.appendChild(pageItem);
     }
   }
+
+  $(document).ready(function() {
+    // Confirmation dialog for Reset Password
+    $('.reset-btn').on('click', function(e) {
+      e.preventDefault();
+      var form = $(this).closest('form');
+      var customerName = $(this).data('name');
+      
+      Swal.fire({
+        title: 'Reset Password?',
+        html: `Apakah Anda yakin ingin mereset password untuk customer <b>${customerName}</b>? Password baru akan digenerate secara acak.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#7048E8',
+        cancelButtonColor: '#8392ab',
+        confirmButtonText: 'Ya, Reset!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+
+    // Alert showing newly reset random password
+    <?php if (session()->getFlashdata('reset_password')): ?>
+      var tempPassword = '<?= esc(session()->getFlashdata('reset_password')) ?>';
+      Swal.fire({
+        title: 'Password Berhasil Direset!',
+        html: `Berikut adalah password baru untuk customer <b><?= esc(session()->getFlashdata('customer_name')) ?></b>:<br><br><h3 class="text-primary font-weight-bold" style="letter-spacing: 2px; font-family: monospace; background: #f3f3f3; padding: 10px; border-radius: 5px; border: 1px dashed #7048E8; display: inline-block; margin: 10px 0;">${tempPassword}</h3><br><br>Silakan salin dan berikan password ini kepada customer.`,
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonColor: '#7048E8',
+        cancelButtonColor: '#8392ab',
+        confirmButtonText: '<i class="fa fa-copy"></i> Salin Password',
+        cancelButtonText: 'Tutup'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigator.clipboard.writeText(tempPassword).then(function() {
+            Swal.fire({
+              title: 'Disalin!',
+              text: 'Password telah disalin ke clipboard.',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }).catch(function(err) {
+            Swal.fire('Error', 'Gagal menyalin password ke clipboard.', 'error');
+          });
+        }
+      });
+    <?php endif; ?>
+  });
 </script>
 <?= $this->endSection() ?>

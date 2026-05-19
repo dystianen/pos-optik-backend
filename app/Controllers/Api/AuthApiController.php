@@ -72,7 +72,7 @@ class AuthApiController extends BaseApiController
       ->first();
 
     if (!$user || !password_verify($password, $user['customer_password'])) {
-      return $this->unauthorizedResponse('Invalid username or password');
+      return $this->validationErrorResponse(['customer_email' => 'Invalid username or password']);
     }
 
     $key = getenv('JWT_SECRET_KEY');
@@ -222,4 +222,47 @@ class AuthApiController extends BaseApiController
       return $this->serverErrorResponse('Failed to retrieve profile');
     }
   }
+
+  // =======================
+  // POST /api/auth/forgot-password
+  // =======================
+  public function forgotPassword()
+  {
+    try {
+      $rules = [
+        'customer_email'    => 'required|valid_email',
+        'confirm_password'  => 'required|matches[customer_password]'
+      ];
+
+      $validate = $this->validateRequest($rules);
+      if ($validate !== true) {
+        return $validate;
+      }
+
+      $email       = $this->request->getVar('customer_email');
+      $newPassword = $this->request->getVar('customer_password');
+      
+      $customer = $this->customerModel
+        ->where('customer_email', $email)
+        ->first();
+
+      if (!$customer) {
+        return $this->notFoundResponse('Customer dengan email tersebut tidak ditemukan');
+      }
+
+      $customerData = [
+        'customer_password' => password_hash($newPassword, PASSWORD_DEFAULT)
+      ];
+
+      if (!$this->customerModel->update($customer['customer_id'], $customerData)) {
+        return $this->serverErrorResponse('Gagal mereset password customer');
+      }
+
+      return $this->messageResponse('Password customer berhasil diperbarui');
+
+    } catch (Exception $e) {
+      return $this->serverErrorResponse('Terjadi kesalahan saat memproses reset password');
+    }
+  }
 }
+

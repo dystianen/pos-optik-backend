@@ -112,4 +112,34 @@ class CustomerController extends BaseController
         $this->customerModel->delete($id);
         return redirect()->to('customers')->with('success', 'Customer deleted successfully');
     }
+
+    public function resetPassword($id)
+    {
+        $customer = $this->customerModel->find($id);
+        if (!$customer) {
+            return redirect()->to('/customers')->with('failed', 'Customer tidak ditemukan.');
+        }
+
+        // Generate random 8-character password
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $randomPassword = substr(str_shuffle(str_repeat($chars, 5)), 0, 8);
+
+        $customerData = [
+            'customer_password' => password_hash($randomPassword, PASSWORD_DEFAULT)
+        ];
+
+        try {
+            if (!$this->customerModel->update($id, $customerData)) {
+                return redirect()->back()->with('failed', 'Gagal mereset password customer.');
+            }
+
+            return redirect()->to('/customers')
+                ->with('success', 'Password customer berhasil direset.')
+                ->with('reset_password', $randomPassword)
+                ->with('customer_name', $customer['customer_name']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('failed', $e->getMessage());
+        }
+    }
 }
+

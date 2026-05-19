@@ -29,6 +29,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->post('login', 'Api\AuthApiController::login');
     $routes->post('register', 'Api\AuthApiController::register');
     $routes->post('refresh', 'Api\AuthApiController::refresh');
+    $routes->post('forgot-password', 'Api\AuthApiController::forgotPassword');
     $routes->get('profile', 'Api\AuthApiController::profile', ['filter' => 'authApi']);
   });
 
@@ -177,6 +178,7 @@ $routes->group('customers', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('form', 'CustomerController::form');
   $routes->post('save', 'CustomerController::save');
   $routes->post('delete/(:any)', 'CustomerController::delete/$1');
+  $routes->post('reset-password/(:any)', 'CustomerController::resetPassword/$1');
 });
 
 $routes->group('eye-examinations', ['filter' => 'authGuard'], function ($routes) {
