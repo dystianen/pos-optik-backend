@@ -5,7 +5,7 @@
   <!-- FILTER CARD -->
   <div class="card mb-4 border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-header pb-2 bg-transparent border-0 d-flex justify-content-between align-items-center">
-      <h5 class="mb-0 font-weight-bolder">Laporan Penjualan</h5>
+      <h5 class="mb-0 font-weight-bolder">Sales Report</h5>
       
       <!-- EXPORT ACTIONS -->
       <div class="d-flex align-items-center gap-2">
@@ -28,9 +28,9 @@
       <!-- Form Filters -->
       <form action="<?= base_url('/reports') ?>" method="get" class="row g-3 align-items-end">
         <div class="col-md-3">
-          <label class="form-label font-weight-bold text-xs text-uppercase">Kategori Penjualan</label>
+          <label class="form-label font-weight-bold text-xs text-uppercase">Sales Category</label>
           <select name="category" class="form-select form-select-sm" style="border-radius: 8px;">
-            <option value="all" <?= $category === 'all' ? 'selected' : '' ?>>Semua Penjualan</option>
+            <option value="all" <?= $category === 'all' ? 'selected' : '' ?>>All Sales</option>
             <option value="online" <?= $category === 'online' ? 'selected' : '' ?>>Online Sales</option>
             <option value="offline" <?= $category === 'offline' ? 'selected' : '' ?>>Offline Sales</option>
             <option value="refund" <?= $category === 'refund' ? 'selected' : '' ?>>Refund Sales</option>
@@ -38,11 +38,11 @@
           </select>
         </div>
         <div class="col-md-3">
-          <label class="form-label font-weight-bold text-xs text-uppercase">Dari Tanggal</label>
+          <label class="form-label font-weight-bold text-xs text-uppercase">From Date</label>
           <input type="date" name="start_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($startDate) ?>">
         </div>
         <div class="col-md-3">
-          <label class="form-label font-weight-bold text-xs text-uppercase">Sampai Tanggal</label>
+          <label class="form-label font-weight-bold text-xs text-uppercase">To Date</label>
           <input type="date" name="end_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($endDate) ?>">
         </div>
         <div class="col-md-3 d-flex gap-2">
@@ -67,7 +67,7 @@
             <div class="col-8">
               <div class="numbers">
                 <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">
-                  <?= $category === 'refund' ? 'Total Refund' : ($category === 'cancellation' ? 'Total Dibatalkan' : 'Total Pendapatan') ?>
+                  <?= $category === 'refund' ? 'Total Refund' : ($category === 'cancellation' ? 'Total Cancelled' : 'Total Revenue') ?>
                 </p>
                 <h4 class="font-weight-bolder mb-0 mt-1" style="font-size: 20px;">
                   Rp <?= number_format($summary['total_revenue'], 0, ',', '.') ?>
@@ -92,7 +92,7 @@
             <div class="col-8">
               <div class="numbers">
                 <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">
-                  <?= $category === 'refund' ? 'Total Retur' : ($category === 'cancellation' ? 'Total Pembatalan' : 'Total Transaksi') ?>
+                  <?= $category === 'refund' ? 'Total Returns' : ($category === 'cancellation' ? 'Total Cancellations' : 'Total Transactions') ?>
                 </p>
                 <h4 class="font-weight-bolder mb-0 mt-1" style="font-size: 20px;">
                   <?= number_format($summary['total_transactions'], 0, ',', '.') ?>
@@ -117,7 +117,7 @@
             <div class="col-8">
               <div class="numbers">
                 <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">
-                  <?= $category === 'refund' ? 'Item Direfund' : ($category === 'cancellation' ? 'Item Dibatalkan' : 'Item Terjual') ?>
+                  <?= $category === 'refund' ? 'Refunded Items' : ($category === 'cancellation' ? 'Cancelled Items' : 'Items Sold') ?>
                 </p>
                 <h4 class="font-weight-bolder mb-0 mt-1" style="font-size: 20px;">
                   <?= number_format($summary['total_items'], 0, ',', '.') ?>
@@ -141,7 +141,7 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">Rata-rata Transaksi</p>
+                <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">Average Transaction</p>
                 <h4 class="font-weight-bolder mb-0 mt-1" style="font-size: 20px;">
                   Rp <?= number_format($summary['average_value'], 0, ',', '.') ?>
                 </h4>
@@ -161,8 +161,8 @@
   <!-- DETAILS TABLE CARD -->
   <div class="card border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-header pb-0 bg-transparent border-0">
-      <h6 class="mb-0 font-weight-bold">Rincian Transaksi Penjualan</h6>
-      <p class="text-xs text-muted mb-0">Daftar transaksi berdasarkan kriteria filter aktif</p>
+      <h6 class="mb-0 font-weight-bold">Sales Transaction Details</h6>
+      <p class="text-xs text-muted mb-0">List of transactions based on active filter criteria</p>
     </div>
     
     <div class="card-body pt-3">
@@ -171,11 +171,11 @@
           <thead class="bg-light">
             <tr>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7" style="width: 50px;">No</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Transaksi</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kategori</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transaction ID</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Total Item</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Total Items</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end opacity-7">Grand Total</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Status</th>
             </tr>
@@ -184,7 +184,7 @@
             <?php if (empty($orders)): ?>
               <tr>
                 <td colspan="8" class="text-center py-4 text-muted font-weight-bold">
-                  Tidak ada data transaksi yang ditemukan untuk periode ini.
+                  No transaction data found for this period.
                 </td>
               </tr>
             <?php else: ?>

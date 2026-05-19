@@ -49,7 +49,7 @@ class ReportController extends BaseController
         $summary = $this->calculateSummary($orders, $category);
 
         $categoryText = $this->getCategoryText($category);
-        $filename = 'Laporan_Penjualan_' . str_replace(' ', '_', $categoryText) . '_' . str_replace('-', '', $startDate) . '_' . str_replace('-', '', $endDate);
+        $filename = 'Sales_Report_' . str_replace(' ', '_', $categoryText) . '_' . str_replace('-', '', $startDate) . '_' . str_replace('-', '', $endDate);
 
         if ($format === 'pdf') {
             return $this->exportToPdf($orders, $categoryText, $startDate, $endDate, $summary, $filename . '.pdf', $category);
@@ -65,7 +65,7 @@ class ReportController extends BaseController
             'offline'      => 'Offline Sales',
             'refund'       => 'Refund Sales',
             'cancellation' => 'Cancellation Sales',
-            default        => 'Semua Penjualan',
+            default        => 'All Sales',
         };
     }
 
@@ -233,27 +233,27 @@ class ReportController extends BaseController
             ->setBackgroundColor(Color::rgb(241, 243, 245))
             ->build();
 
-        // 1. RINGKASAN SHEET
+        // 1. SALES SUMMARY SHEET
         $sheet = $writer->getCurrentSheet();
-        $sheet->setName('Ringkasan Penjualan');
+        $sheet->setName('Sales Summary');
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['LAPORAN PENJUALAN OPTIKERS'], $titleStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Kategori:', $categoryText]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Periode:', date('d M Y', strtotime($startDate)) . ' s/d ' . date('d M Y', strtotime($endDate))]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Tanggal Unduh:', date('d M Y H:i')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['OPTIKERS SALES REPORT'], $titleStyle));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Category:', $categoryText]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Downloaded At:', date('d M Y H:i')]));
         $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Metrik Ringkasan', 'Nilai'], $subHeaderStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Transaksi', number_format($summary['total_transactions'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Dana Direfund' : 'Total Pendapatan', 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Item Terjual / Direfund', number_format($summary['total_items'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Rata-rata Nilai Transaksi', 'Rp ' . number_format($summary['average_value'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Returns' : ($category === 'cancellation' ? 'Total Cancellations' : 'Total Transactions'), number_format($summary['total_transactions'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Refund Amount' : ($category === 'cancellation' ? 'Total Cancelled Amount' : 'Total Revenue'), 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Refunded Items' : ($category === 'cancellation' ? 'Total Cancelled Items' : 'Total Items Sold'), number_format($summary['total_items'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Average Transaction Value', 'Rp ' . number_format($summary['average_value'], 0, ',', '.')]));
 
-        // 2. DETAIL TRANSAKSI SHEET
+        // 2. TRANSACTION DETAILS SHEET
         $writer->addNewSheetAndMakeItCurrent();
-        $writer->getCurrentSheet()->setName('Detail Transaksi');
+        $writer->getCurrentSheet()->setName('Transaction Details');
 
-        $headers = ['No', 'ID Transaksi', 'Tanggal', 'Kategori', 'Customer', 'Email', 'Total Item', 'Grand Total', 'Status'];
+        $headers = ['No', 'Transaction ID', 'Date', 'Category', 'Customer', 'Email', 'Total Items', 'Grand Total', 'Status'];
         $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
 
         $no = 1;
