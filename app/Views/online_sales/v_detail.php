@@ -10,6 +10,7 @@ function badgeStatus($status)
     'shipped'    => 'badge bg-secondary',
     'completed'  => 'badge bg-success',
     'cancelled'  => 'badge bg-danger',
+    'expired'    => 'badge bg-dark',
     default      => 'badge bg-light text-dark'
   };
 }
@@ -188,10 +189,26 @@ function badgeStatus($status)
 
   </div>
 
-  <?php if (in_array($order['status_code'], ['waiting_confirmation', 'processing'])): ?>
+  <?php if (in_array($order['status_code'], ['pending', 'waiting_confirmation', 'processing'])): ?>
     <div class="card">
       <div class="card-body">
         <h5 class="mb-3">Admin Actions</h5>
+
+        <!-- PENDING ACTIONS (EXPIRED) -->
+        <?php if ($order['status_code'] === 'pending'): ?>
+          <div class="mb-4">
+            <p class="mb-2 fw-semibold">Pending Payment Actions</p>
+            <p class="text-muted small">Customer has not uploaded payment proof yet. If they exceed the payment deadline, you can mark this order as Expired to release/restore the inventory stock.</p>
+            <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/expire') ?>">
+              <?= csrf_field() ?>
+              <button type="submit"
+                class="btn btn-warning text-white"
+                onclick="return confirm('Apakah Anda yakin ingin membatalkan order ini karena waktu pembayaran kadaluwarsa (Expired)? Tindakan ini akan mengembalikan stok barang.')">
+                <i class="fa fa-clock-o me-2"></i>Mark as Expired (Restore Stock)
+              </button>
+            </form>
+          </div>
+        <?php endif ?>
 
         <!-- PAYMENT ACTIONS -->
         <?php if (in_array($order['status_code'], ['waiting_confirmation'])): ?>

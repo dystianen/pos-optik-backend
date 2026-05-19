@@ -54,6 +54,9 @@ class OnlineSalesController extends BaseController
 
     public function index()
     {
+        // Auto check and expire expired orders
+        $this->orderModel->bulkCheckAndExpirePendingOrders();
+
         $currentPage = (int) ($this->request->getVar('page') ?? 1);
         $search      = $this->request->getVar('q'); // keyword search
         $startDate   = $this->request->getVar('start_date');
@@ -153,6 +156,9 @@ class OnlineSalesController extends BaseController
 
     public function detail($orderId)
     {
+        // Auto check and expire expired orders
+        $this->orderModel->bulkCheckAndExpirePendingOrders();
+
         // 🧾 ORDER
         $order = $this->orderModel
             ->select('

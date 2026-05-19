@@ -11,6 +11,7 @@ function orderStatusBadge($status)
     'shipped'    => 'badge bg-secondary',
     'completed'  => 'badge bg-success',
     'cancelled'  => 'badge bg-danger',
+    'expired'    => 'badge bg-dark',
     default      => 'badge bg-light text-dark',
   };
 }

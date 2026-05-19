@@ -228,7 +228,7 @@
                     $statusColor = match (strtolower($order['status_name'] ?? '')) {
                       'approved', 'refunded', 'completed' => 'bg-success',
                       'pending', 'requested', 'processing', 'return_approved', 'return_shipped', 'return_received' => 'bg-warning text-dark',
-                      'rejected', 'cancelled', 'request_rejected', 'return_rejected' => 'bg-danger',
+                      'rejected', 'cancelled', 'request_rejected', 'return_rejected', 'payment expired', 'expired' => 'bg-danger',
                       default => 'bg-light text-dark'
                     };
                     ?>

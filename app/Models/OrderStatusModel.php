@@ -54,6 +54,21 @@ class OrderStatusModel extends Model
             );
         }
 
+        if (!isset(self::$statusMap[$code])) {
+            if ($code === 'expired') {
+                $statusId = service('uuid')->uuid4()->toString();
+                // Direct database insert to bypass recursive callbacks or static maps
+                $this->db->table($this->table)->insert([
+                    'status_id'   => $statusId,
+                    'status_code' => 'expired',
+                    'status_name' => 'Payment Expired',
+                    'created_at'  => date('Y-m-d H:i:s'),
+                    'updated_at'  => date('Y-m-d H:i:s'),
+                ]);
+                self::$statusMap['expired'] = $statusId;
+            }
+        }
+
         return self::$statusMap[$code]
             ?? throw new \Exception("Invalid order status: {$code}");
     }

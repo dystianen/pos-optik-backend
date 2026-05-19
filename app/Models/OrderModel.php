@@ -83,4 +83,123 @@ class OrderModel extends Model
             ->get()
             ->getRowArray();
     }
+
+    /**
+     * Restore order items stock back to products and product_variants
+     */
+    public function restoreStock(string $orderId, string $reason, string $userId = 'system')
+    {
+        $items = $this->db->table('order_items')
+            ->where('order_id', $orderId)
+            ->get()
+            ->getResultArray();
+
+        foreach ($items as $item) {
+            $qty = (int)$item['quantity'];
+
+            // 1️⃣ Increase stock
+            if (!empty($item['variant_id'])) {
+                // Restore variant stock
+                $this->db->table('product_variants')
+                    ->where('variant_id', $item['variant_id'])
+                    ->set('stock', 'stock + ' . $qty, false)
+                    ->update();
+
+                // sync total product stock
+                $this->db->query("
+                    UPDATE products p
+                    SET product_stock = (
+                        SELECT COALESCE(SUM(stock), 0)
+                        FROM product_variants
+                        WHERE product_id = p.product_id
+                    )
+                    WHERE p.product_id = ?
+                ", [$item['product_id']]);
+            } else {
+                // Restore simple product stock
+                $this->db->table('products')
+                    ->where('product_id', $item['product_id'])
+                    ->set('product_stock', 'product_stock + ' . $qty, false)
+                    ->update();
+            }
+
+            // 2️⃣ Record inventory transaction IN (to balance it out)
+            $this->db->table('inventory_transactions')->insert([
+                'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                'user_id'                  => $userId ?: 'system',
+                'product_id'               => $item['product_id'],
+                'variant_id'               => $item['variant_id'] ?: null,
+                'transaction_type'         => 'in',
+                'reference_type'           => 'order_return',
+                'reference_id'             => $orderId,
+                'quantity'                 => $qty,
+                'transaction_date'         => date('Y-m-d H:i:s'),
+                'description'              => $reason,
+                'created_at'               => date('Y-m-d H:i:s'),
+                'updated_at'               => date('Y-m-d H:i:s')
+            ]);
+        }
+    }
+
+    /**
+     * Bulk check and expire any pending orders that have exceeded the 12-hour deadline.
+     */
+    public function bulkCheckAndExpirePendingOrders()
+    {
+        $statusModel = new \App\Models\OrderStatusModel();
+        $pendingStatusId = $statusModel->getIdByCode(\Config\OrderStatus::PENDING);
+        $expiredStatusId = $statusModel->getIdByCode(\Config\OrderStatus::EXPIRED);
+
+        // Find all pending orders older than 12 hours
+        $twelveHoursAgo = date('Y-m-d H:i:s', time() - (12 * 3600));
+        $expiredOrders = $this->where('status_id', $pendingStatusId)
+            ->where('created_at <', $twelveHoursAgo)
+            ->findAll();
+
+        foreach ($expiredOrders as $order) {
+            // Update status to EXPIRED
+            $this->update($order['order_id'], [
+                'status_id' => $expiredStatusId,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Restore Stock
+            $this->restoreStock($order['order_id'], 'Payment deadline exceeded (Auto-Expired)', 'system');
+        }
+    }
+
+    /**
+     * Check if a pending order has exceeded the payment deadline (e.g., 12 hours),
+     * and if so, mark it as expired and restore the stock.
+     */
+    public function checkAndExpireOrder(array $order): array
+    {
+        $statusModel = new \App\Models\OrderStatusModel();
+        $pendingStatusId = $statusModel->getIdByCode(\Config\OrderStatus::PENDING);
+
+        if ($order['status_id'] === $pendingStatusId) {
+            $createdAt = strtotime($order['created_at']);
+            $deadline = $createdAt + (12 * 3600); // 12 hours deadline
+
+            if (time() >= $deadline) {
+                $expiredStatusId = $statusModel->getIdByCode(\Config\OrderStatus::EXPIRED);
+
+                // Update database
+                $this->update($order['order_id'], [
+                    'status_id' => $expiredStatusId,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+
+                // Restore stock
+                $this->restoreStock($order['order_id'], 'Payment deadline exceeded (Auto-Expired)', 'system');
+
+                // Return the updated status data
+                $order['status_id'] = $expiredStatusId;
+                $order['status_code'] = \Config\OrderStatus::EXPIRED;
+                $order['status_name'] = 'Payment Expired';
+            }
+        }
+
+        return $order;
+    }
 }

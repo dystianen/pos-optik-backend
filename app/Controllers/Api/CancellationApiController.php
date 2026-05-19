@@ -124,6 +124,9 @@ class CancellationApiController extends BaseApiController
             $this->orderModel->update($orderId, [
                 'status_id' => $STATUS_CANCELLED,
             ]);
+
+            // Restore Stock
+            $this->orderModel->restoreStock($orderId, 'Order cancelled by customer (Pending Payment)', $customerId);
             
             // Create record for history
              $data = [
@@ -227,8 +230,10 @@ class CancellationApiController extends BaseApiController
          $STATUS_CANCELLED = $this->statusModel->getIdByCode(OrderStatus::CANCELLED);
          $this->orderModel->update($cancellation['order_id'], [
             'status_id' => $STATUS_CANCELLED,
-            // 'cancelled_at' => date('Y-m-d H:i:s'), // If order table has cancelled_at
          ]);
+
+         // Restore Stock
+         $this->orderModel->restoreStock($cancellation['order_id'], 'Order cancellation approved by Admin', $adminId);
 
         return $this->successResponse(['cancellation_id' => $cancellationId, 'status' => 'approved'], 'Cancellation approved');
     }

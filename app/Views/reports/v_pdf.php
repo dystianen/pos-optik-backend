@@ -213,7 +213,7 @@
               } elseif (in_array($lowerStatus, ['pending', 'requested', 'processing', 'return_approved', 'return_shipped', 'return_received'])) {
                 $statusBg = '#fff3cd';
                 $statusColor = '#856404';
-              } elseif (in_array($lowerStatus, ['rejected', 'cancelled', 'request_rejected', 'return_rejected'])) {
+              } elseif (in_array($lowerStatus, ['rejected', 'cancelled', 'request_rejected', 'return_rejected', 'payment expired', 'expired'])) {
                 $statusBg = '#f8d7da';
                 $statusColor = '#721c24';
               }

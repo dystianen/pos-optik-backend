@@ -560,6 +560,9 @@ class OnlineSalesApiController extends BaseApiController
     public function listOrders()
     {
         try {
+            // Auto check and expire expired orders
+            $this->orderModel->bulkCheckAndExpirePendingOrders();
+
             $customerId = $this->getAuthenticatedCustomerId();
 
             // Get filters from query params
@@ -734,6 +737,9 @@ class OnlineSalesApiController extends BaseApiController
     public function getOrderDetail($orderId)
     {
         try {
+            // Auto check and expire expired orders
+            $this->orderModel->bulkCheckAndExpirePendingOrders();
+
             $customerId = $this->getAuthenticatedCustomerId();
 
             // Get order detail
@@ -1147,6 +1153,39 @@ class OnlineSalesApiController extends BaseApiController
         \App\Libraries\Realtime::triggerUpdate('order-rejected');
 
         return redirect()->back()->with('success', 'Payment rejected');
+    }
+
+    // POST /api/online-sales/{id}/expire
+    public function expirePayment($orderId)
+    {
+        $this->db->transBegin();
+        $session = session();
+        $adminId = $session->get('id') ?? $session->get('admin_id') ?? 'system';
+
+        try {
+            $order = $this->orderModel->find($orderId);
+            if (!$order) {
+                return redirect()->back()->with('error', 'Order tidak ditemukan');
+            }
+
+            // Update status to EXPIRED
+            $this->orderModel->update($orderId, [
+                'status_id' => $this->statusModel->getIdByCode(OrderStatus::EXPIRED)
+            ]);
+
+            // Restore Stock!
+            $this->orderModel->restoreStock($orderId, 'Payment expired (Stock restored)', $adminId);
+
+            $this->db->transCommit();
+
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('order-expired');
+
+            return redirect()->back()->with('success', 'Order marked as Expired and stock has been restored successfully');
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     // POST /api/online-sales/{id}/ship

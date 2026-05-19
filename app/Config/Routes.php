@@ -74,6 +74,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
   $routes->group('online-sales', ['filter' => 'authGuard'], function ($routes) {
     $routes->post('(:segment)/approve', 'Api\OnlineSalesApiController::approvePayment/$1');
     $routes->post('(:segment)/reject', 'Api\OnlineSalesApiController::rejectPayment/$1');
+    $routes->post('(:segment)/expire', 'Api\OnlineSalesApiController::expirePayment/$1');
     $routes->post('(:segment)/status', 'Api\OnlineSalesApiController::updateStatus/$1');
     $routes->post('(:segment)/ship', 'Api\OnlineSalesApiController::shipOrder/$1');
   });

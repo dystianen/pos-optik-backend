@@ -13,4 +13,5 @@ class OrderStatus
     public const REFUNDED              = 'refunded';
     public const PARTIALLY_REFUNDED    = 'partially_refunded';
     public const REJECTED              = 'rejected';
+    public const EXPIRED               = 'expired';
 }

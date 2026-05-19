@@ -52,6 +52,11 @@ class OrderStatusSeeder extends Seeder
                 'status_code' => 'rejected',
                 'status_name' => 'Payment Rejected',
             ],
+            [
+                'status_id'   => '234af2ae-bba4-4fa3-b386-5f1390c51146',
+                'status_code' => 'expired',
+                'status_name' => 'Payment Expired',
+            ],
         ];
 
 
