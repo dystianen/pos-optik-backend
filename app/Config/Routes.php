@@ -220,6 +220,11 @@ $routes->group('cancellation-sales', ['filter' => 'authGuard'], function ($route
   $routes->get('(:segment)', 'CancellationSalesController::detail/$1');
 });
 
+$routes->group('reports', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'ReportController::index');
+  $routes->get('export', 'ReportController::export');
+});
+
 $routes->group('roles', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('', 'RoleController::index');
   $routes->get('form', 'RoleController::form');

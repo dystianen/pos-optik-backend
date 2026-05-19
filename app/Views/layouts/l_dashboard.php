@@ -166,6 +166,17 @@
           </li>
         <?php endif; ?>
 
+        <!-- Admin (1) dan Cashier (3) - Reports -->
+        <?php if (in_array($roleName, ['admin', 'cashier'])) : ?>
+          <li class="nav-item">
+            <a class="nav-link <?= $segments[0] === 'reports' ? 'active' : '' ?>" href="/reports">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+              </div>
+              <span class="nav-link-text ms-1">Reports</span>
+            </a>
+          </li>
+        <?php endif; ?>
 
         <!-- Admin (1) dan Optometrist (2) -->
         <?php if (in_array($roleName, ['admin', 'optometrist'])) : ?>
