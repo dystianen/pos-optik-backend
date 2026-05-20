@@ -15,7 +15,7 @@ function cancellationStatusBadge($status)
 
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-    <h4>Cancellation Requests</h4>
+    <h4>Cancellation Request</h4>
 
     <div class="d-flex flex-wrap align-items-center gap-2">
       <form action="<?= base_url('/cancellation-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
