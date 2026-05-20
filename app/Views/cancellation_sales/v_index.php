@@ -39,8 +39,9 @@ function cancellationStatusBadge($status)
         <thead class="thead-light">
           <tr>
             <th class="text-center">No</th>
-            <th>Order / Customer</th>
+            <th>Order ID</th>
             <th>Request Date</th>
+            <th>Customer</th>
             <th class="text-end">Order Amount</th>
             <th>Status</th>
             <th class="text-center">Actions</th>
@@ -57,12 +58,15 @@ function cancellationStatusBadge($status)
               <tr>
                 <td class="text-center"><?= $no++ ?></td>
                 <td>
-                  <div class="d-flex flex-column">
-                    <strong><?= esc($r['order_id']) ?></strong>
-                    <small class="text-muted"><?= esc($r['customer_name'] ?? '-') ?><br><?= esc($r['customer_email'] ?? '') ?></small>
-                  </div>
+                  <strong>#<?= $r['order_id'] ?></strong>
                 </td>
                 <td><?= date('d M Y H:i', strtotime($r['created_at'])) ?></td>
+                <td>
+                  <div class="d-flex flex-column">
+                    <strong><?= esc($r['customer_name'] ?? '-') ?></strong>
+                    <small class="text-muted"><?= esc($r['customer_email'] ?? '') ?></small>
+                  </div>
+                </td>
                 <td class="text-end">Rp <?= number_format($r['grand_total'] ?? 0) ?></td>
                 <td><span class="<?= cancellationStatusBadge($r['status']) ?>"><?= strtoupper($r['status']) ?></span></td>
                 <td class="text-center">

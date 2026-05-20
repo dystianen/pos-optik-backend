@@ -40,8 +40,9 @@ function refundStatusBadge($status)
         <thead class="thead-light">
           <tr>
             <th class="text-center">No</th>
-            <th>Order / Customer</th>
-            <th>Date</th>
+            <th>Order ID</th>
+            <th>Request Date</th>
+            <th>Customer</th>
             <th>Refund Type</th>
             <th class="text-end">Amount</th>
             <th>Status</th>
@@ -59,12 +60,15 @@ function refundStatusBadge($status)
               <tr>
                 <td class="text-center"><?= $no++ ?></td>
                 <td>
-                  <div class="d-flex flex-column">
-                    <strong><?= esc($r['order_id']) ?></strong>
-                    <small class="text-muted"><?= esc($r['customer_name'] ?? '-') ?><br><?= esc($r['customer_email'] ?? '') ?></small>
-                  </div>
+                  <strong>#<?= $r['order_id'] ?></strong>
                 </td>
                 <td><?= date('d M Y H:i', strtotime($r['order_date'] ?? now())) ?></td>
+                <td>
+                  <div class="d-flex flex-column">
+                    <strong><?= esc($r['customer_name'] ?? '-') ?></strong>
+                    <small class="text-muted"><?= esc($r['customer_email'] ?? '') ?></small>
+                  </div>
+                </td>
                 <td>
                   <span class="badge <?= ($r['refund_type'] === 'partial') ? 'bg-info' : 'bg-secondary' ?>">
                     <?= ucfirst($r['refund_type'] ?? 'full') ?>
