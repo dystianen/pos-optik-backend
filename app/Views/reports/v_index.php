@@ -6,24 +6,24 @@
   <div class="card mb-4 border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-header pb-2 bg-transparent border-0 d-flex justify-content-between align-items-center">
       <h5 class="mb-0 font-weight-bolder">Sales Report</h5>
-      
+
       <!-- EXPORT ACTIONS -->
       <div class="d-flex align-items-center gap-2">
-        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=excel') ?>" 
-           class="btn btn-sm btn-success mb-0 d-flex align-items-center gap-2" 
-           style="border-radius: 8px;">
-          <i class="fa-solid fa-file-excel"></i> 
+        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=excel') ?>"
+          class="btn btn-sm btn-success mb-0 d-flex align-items-center gap-2"
+          style="border-radius: 8px;">
+          <i class="fa-solid fa-file-excel"></i>
           <span>Excel</span>
         </a>
-        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=pdf') ?>" 
-           class="btn btn-sm btn-danger mb-0 d-flex align-items-center gap-2" 
-           style="border-radius: 8px;">
-          <i class="fa-solid fa-file-pdf"></i> 
+        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=pdf') ?>"
+          class="btn btn-sm btn-danger mb-0 d-flex align-items-center gap-2"
+          style="border-radius: 8px;">
+          <i class="fa-solid fa-file-pdf"></i>
           <span>PDF</span>
         </a>
       </div>
     </div>
-    
+
     <div class="card-body">
       <!-- Form Filters -->
       <form action="<?= base_url('/reports') ?>" method="get" class="row g-3 align-items-end">
@@ -141,7 +141,7 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">Average Transaction</p>
+                <p class="text-sm mb-0 text-uppercase font-weight-bold text-muted">AVG Transaction</p>
                 <h4 class="font-weight-bolder mb-0 mt-1" style="font-size: 20px;">
                   Rp <?= number_format($summary['average_value'], 0, ',', '.') ?>
                 </h4>
@@ -164,7 +164,7 @@
       <h6 class="mb-0 font-weight-bold">Sales Transaction Details</h6>
       <p class="text-xs text-muted mb-0">List of transactions based on active filter criteria</p>
     </div>
-    
+
     <div class="card-body pt-3">
       <div class="table-responsive">
         <table class="table align-items-center mb-0 table-hover table-bordered">
@@ -188,7 +188,8 @@
                 </td>
               </tr>
             <?php else: ?>
-              <?php $no = 1; foreach ($orders as $order): ?>
+              <?php $no = 1;
+              foreach ($orders as $order): ?>
                 <tr>
                   <td class="text-center font-weight-bold text-xs"><?= $no++ ?></td>
                   <td class="text-xs font-weight-bold text-dark">
