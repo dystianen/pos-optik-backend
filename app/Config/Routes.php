@@ -62,6 +62,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
   // ORDER
   $routes->group('orders', ['filter' => 'authApi'], function ($routes) {
     $routes->get('', 'Api\OnlineSalesApiController::listOrders');
+    $routes->get('active', 'Api\OnlineSalesApiController::getActiveOrder');
     $routes->post('payment', 'Api\OnlineSalesApiController::uploadPaymentProof');
     $routes->get('check-payment-status/(:segment)', 'Api\OnlineSalesApiController::checkPaymentStatus/$1');
     $routes->get('summary/(:segment)', 'Api\OnlineSalesApiController::summaryOrders/$1');

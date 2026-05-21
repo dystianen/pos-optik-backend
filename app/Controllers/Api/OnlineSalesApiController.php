@@ -235,6 +235,42 @@ class OnlineSalesApiController extends BaseApiController
 
             log_message('debug', 'SUBMIT ORDER START');
 
+            // Check if user still has a pending order (active payment)
+            $pendingStatusId = $this->statusModel->getIdByCode(OrderStatus::PENDING);
+            $activeOrder = $this->orderModel
+                ->where('customer_id', $customerId)
+                ->where('status_id', $pendingStatusId)
+                ->where('deleted_at', null)
+                ->first();
+
+            if ($activeOrder) {
+                $cancelActive = $this->request->getVar('cancel_active');
+                if ($cancelActive === 'true' || $cancelActive === '1' || $cancelActive === true) {
+                    // Cancel the active order
+                    $expiredStatusId = $this->statusModel->getIdByCode(OrderStatus::EXPIRED);
+                    $this->orderModel->update($activeOrder['order_id'], [
+                        'status_id' => $expiredStatusId,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                    $this->orderModel->restoreStock($activeOrder['order_id'], 'Cancelled by starting new checkout', $customerId);
+                    
+                    // Trigger real-time update
+                    \App\Libraries\Realtime::triggerUpdate('order-expired');
+                } else {
+                    $db->transRollback();
+                    return $this->response->setStatusCode(409)->setJSON([
+                        'success' => false,
+                        'code' => 'ACTIVE_PAYMENT_EXISTS',
+                        'message' => 'Anda masih memiliki pembayaran yang belum selesai.',
+                        'data' => [
+                            'order_id' => $activeOrder['order_id'],
+                            'grand_total' => (int) $activeOrder['grand_total'],
+                            'created_at' => $activeOrder['created_at']
+                        ]
+                    ]);
+                }
+            }
+
             // 🔁 Ambil snapshot summary
             $summaryResponse = $this->summaryOrders($addressId);
             $summary = json_decode($summaryResponse->getBody(), true)['data'];
@@ -506,6 +542,44 @@ class OnlineSalesApiController extends BaseApiController
             return $this->response->setStatusCode(400)->setJSON([
                 'message' => $e->getMessage()
             ]);
+        }
+    }
+
+    // GET /api/orders/active
+    public function getActiveOrder()
+    {
+        try {
+            // Auto check and expire expired orders
+            $this->orderModel->bulkCheckAndExpirePendingOrders();
+
+            $customerId = $this->getAuthenticatedCustomerId();
+
+            $pendingStatusId = $this->statusModel->getIdByCode(OrderStatus::PENDING);
+
+            $order = $this->orderModel
+                ->where('customer_id', $customerId)
+                ->where('status_id', $pendingStatusId)
+                ->where('deleted_at', null)
+                ->orderBy('created_at', 'DESC')
+                ->first();
+
+            if ($order) {
+                return $this->successResponse([
+                    'hasActivePayment' => true,
+                    'status' => 'pending',
+                    'order' => [
+                        'order_id' => $order['order_id'],
+                        'grand_total' => (int) $order['grand_total'],
+                        'created_at' => $order['created_at']
+                    ]
+                ]);
+            }
+
+            return $this->successResponse([
+                'hasActivePayment' => false
+            ]);
+        } catch (\Throwable $e) {
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 

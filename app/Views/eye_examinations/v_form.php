@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid card">
   <div class="card-header pb-0">
-    <h4><?= isset($eyeExamination) ? 'Edit Eye Examinations' : 'Create Eye Examinations' ?></h4>
+    <h4>Form Eye Examinations</h4>
   </div>
 
   <div class="card-body">
@@ -62,13 +62,13 @@
 
         <div class="col-12 col-md-6 mb-3">
           <label for="symptoms">Symptoms</label>
-          <input class="form-control" name="symptoms" id="symptoms" placeholder="e.g., Teks"
+          <input class="form-control" name="symptoms" id="symptoms" placeholder="e.g., Mata merah, gatal, berair"
             value="<?= isset($eyeExamination) ? $eyeExamination['symptoms'] : '' ?>">
         </div>
 
         <div class="col-12 col-md-6 mb-3">
           <label for="diagnosis">Diagnosis</label>
-          <input class="form-control" name="diagnosis" id="diagnosis" placeholder="e.g., 0"
+          <input class="form-control" name="diagnosis" id="diagnosis" placeholder="e.g., Konjungtivitis"
             value="<?= isset($eyeExamination) ? $eyeExamination['diagnosis'] : '' ?>">
         </div>
       </div>
