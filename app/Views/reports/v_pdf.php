@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <title>Laporan Penjualan Optikers</title>
@@ -11,11 +12,13 @@
       padding: 0;
       font-size: 11px;
     }
+
     .header {
       margin-bottom: 20px;
       border-bottom: 2px solid #2FB8AA;
       padding-bottom: 10px;
     }
+
     .header h2 {
       margin: 0 0 5px 0;
       color: #2FB8AA;
@@ -23,22 +26,27 @@
       text-transform: uppercase;
       font-weight: bold;
     }
+
     .header p {
       margin: 2px 0;
       color: #666;
     }
+
     .info-table {
       width: 100%;
       margin-bottom: 20px;
     }
+
     .info-table td {
       padding: 3px 0;
     }
+
     .summary-grid {
       width: 100%;
       margin-bottom: 25px;
       border-collapse: collapse;
     }
+
     .summary-card {
       background-color: #f8f9fa;
       border: 1px solid #dee2e6;
@@ -47,6 +55,7 @@
       text-align: center;
       width: 23%;
     }
+
     .summary-card .title {
       font-size: 9px;
       text-transform: uppercase;
@@ -54,16 +63,19 @@
       margin-bottom: 5px;
       font-weight: bold;
     }
+
     .summary-card .value {
       font-size: 14px;
       font-weight: bold;
       color: #212529;
     }
+
     .data-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
+
     .data-table th {
       background-color: #2FB8AA;
       color: #ffffff;
@@ -73,20 +85,25 @@
       font-size: 10px;
       text-transform: uppercase;
     }
+
     .data-table td {
       padding: 7px 8px;
       border-bottom: 1px solid #dee2e6;
       font-size: 10px;
     }
+
     .data-table tr:nth-child(even) {
       background-color: #f8f9fa;
     }
+
     .text-center {
       text-align: center;
     }
+
     .text-right {
       text-align: right;
     }
+
     .badge {
       padding: 2px 6px;
       border-radius: 4px;
@@ -94,22 +111,27 @@
       font-weight: bold;
       text-transform: uppercase;
     }
+
     .badge-online {
       background-color: #e8f4fd;
       color: #0b69a3;
     }
+
     .badge-offline {
       background-color: #e9ecef;
       color: #495057;
     }
+
     .badge-refund {
       background-color: #fff3cd;
       color: #856404;
     }
+
     .badge-cancellation {
       background-color: #f8d7da;
       color: #721c24;
     }
+
     .footer {
       position: fixed;
       bottom: 0;
@@ -122,6 +144,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
@@ -169,26 +192,27 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th class="text-center" style="width: 30px;">No</th>
-        <th style="width: 80px;">Transaction ID</th>
-        <th style="width: 100px;">Date</th>
-        <th style="width: 70px;">Category</th>
+        <th class="text-center">No</th>
+        <th>Transaction ID</th>
+        <th>Date</th>
+        <th>Category</th>
         <th>Customer</th>
         <th>Email</th>
-        <th class="text-center" style="width: 70px;">Total Items</th>
-        <th class="text-right" style="width: 110px;">Grand Total</th>
-        <th class="text-center" style="width: 80px;">Status</th>
+        <th>Total Items</th>
+        <th>Grand Total</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
       <?php if (empty($orders)): ?>
         <tr>
-          <td colspan="9" class="text-center" style="padding: 20px; font-weight: bold; color: #666;">
+          <td colspan=" 9" class="text-center" style="padding: 20px; font-weight: bold; color: #666;">
             No transaction data found.
           </td>
         </tr>
       <?php else: ?>
-        <?php $no = 1; foreach ($orders as $order): ?>
+        <?php $no = 1;
+        foreach ($orders as $order): ?>
           <tr>
             <td class="text-center"><?= $no++ ?></td>
             <td><strong>#<?= $order['order_id'] ?></strong></td>
@@ -200,9 +224,9 @@
             </td>
             <td><?= esc($order['customer_name'] ?? '-') ?></td>
             <td><?= esc($order['customer_email'] ?? '-') ?></td>
-            <td class="text-center"><?= $order['total_items'] ?></td>
-            <td class="text-right"><strong>Rp <?= number_format($order['grand_total'], 0, ',', '.') ?></strong></td>
-            <td class="text-center">
+            <td><?= $order['total_items'] ?></td>
+            <td><strong>Rp <?= number_format($order['grand_total'], 0, ',', '.') ?></strong></td>
+            <td>
               <?php
               $statusBg = '#e2e3e5';
               $statusColor = '#383d41';
@@ -234,4 +258,5 @@
   </div>
 
 </body>
+
 </html>

@@ -16,7 +16,7 @@
 
     if (document.getElementsByClassName("navbar-collapse")[0]) {
       var fixedplugin = document.querySelector(
-        ".navbar:not(.navbar-expand-lg) .navbar-collapse"
+        ".navbar:not(.navbar-expand-lg) .navbar-collapse",
       );
       var ps2 = new PerfectScrollbar(fixedplugin);
     }
@@ -38,7 +38,7 @@ if (
 
 // initialization of Tooltips
 var tooltipTriggerList = [].slice.call(
-  document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  document.querySelectorAll('[data-bs-toggle="tooltip"]'),
 );
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -72,7 +72,7 @@ if (document.querySelectorAll(".input-group").length != 0) {
     setAttributes(el, {
       onfocus: "focused(this)",
       onfocusout: "defocused(this)",
-    })
+    }),
   );
 }
 
@@ -83,7 +83,7 @@ if (document.querySelector(".fixed-plugin")) {
   var fixedPluginButtonNav = document.querySelector(".fixed-plugin-button-nav");
   var fixedPluginCard = document.querySelector(".fixed-plugin .card");
   var fixedPluginCloseButton = document.querySelectorAll(
-    ".fixed-plugin-close-button"
+    ".fixed-plugin-close-button",
   );
   var navbar = document.getElementById("navbarBlur");
   var buttonNavbarFixed = document.getElementById("navbarFixed");
@@ -199,7 +199,7 @@ function sidebarType(a) {
   // Remove text-white/text-dark classes
   if (color == "bg-transparent" || color == "bg-white") {
     var textWhites = document.querySelectorAll(
-      ".sidenav .text-white:not(.nav-link-text):not(.active)"
+      ".sidenav .text-white:not(.nav-link-text):not(.active)",
     );
     for (let i = 0; i < textWhites.length; i++) {
       textWhites[i].classList.remove("text-white");
@@ -327,14 +327,14 @@ function navbarBlurOnScroll(id) {
           } else {
             transparentNavbar();
           }
-        }, 10)
+        }, 10),
       );
     } else {
       content.addEventListener(
         "ps-scroll-y",
         debounce(function () {
           transparentNavbar();
-        }, 10)
+        }, 10),
       );
     }
   }
@@ -356,7 +356,7 @@ function navbarBlurOnScroll(id) {
   function toggleNavLinksColor(type) {
     let navLinks = document.querySelectorAll(".navbar-main .nav-link");
     let navLinksToggler = document.querySelectorAll(
-      ".navbar-main .sidenav-toggler-line"
+      ".navbar-main .sidenav-toggler-line",
     );
 
     if (type === "blur") {
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
   toastButtonList.map(function (toastButtonEl) {
     toastButtonEl.addEventListener("click", function () {
       var toastToTrigger = document.getElementById(
-        toastButtonEl.dataset.target
+        toastButtonEl.dataset.target,
       );
 
       if (toastToTrigger) {
@@ -460,18 +460,18 @@ function initNavs() {
             if (item.classList.contains("flex-column")) {
               for (var j = 1; j <= nodes.indexOf(li); j++) {
                 sum += item.querySelector(
-                  "li:nth-child(" + j + ")"
+                  "li:nth-child(" + j + ")",
                 ).offsetHeight;
               }
               moving_div.style.transform =
                 "translate3d(0px," + sum + "px, 0px)";
               moving_div.style.height = item.querySelector(
-                "li:nth-child(" + j + ")"
+                "li:nth-child(" + j + ")",
               ).offsetHeight;
             } else {
               for (var j = 1; j <= nodes.indexOf(li); j++) {
                 sum += item.querySelector(
-                  "li:nth-child(" + j + ")"
+                  "li:nth-child(" + j + ")",
                 ).offsetWidth;
               }
               moving_div.style.transform =
@@ -522,7 +522,7 @@ window.addEventListener("resize", function (event) {
         moving_div.style.width =
           item.querySelector("li:nth-child(" + index + ")").offsetWidth + "px";
         moving_div.style.height = item.querySelector(
-          "li:nth-child(" + j + ")"
+          "li:nth-child(" + j + ")",
         ).offsetHeight;
       } else {
         for (var j = 1; j <= nodes.indexOf(li); j++) {
@@ -601,7 +601,7 @@ window.onload = function () {
       function (e) {
         this.parentElement.classList.add("is-focused");
       },
-      false
+      false,
     );
 
     inputs[i].onkeyup = function (e) {
@@ -620,34 +620,7 @@ window.onload = function () {
         }
         this.parentElement.classList.remove("is-focused");
       },
-      false
-    );
-  }
-
-  // Ripple Effect
-  var ripples = document.querySelectorAll(".btn");
-
-  for (var i = 0; i < ripples.length; i++) {
-    ripples[i].addEventListener(
-      "click",
-      function (e) {
-        var targetEl = e.target;
-        var rippleDiv = targetEl.querySelector(".ripple");
-
-        rippleDiv = document.createElement("span");
-        rippleDiv.classList.add("ripple");
-        rippleDiv.style.width = rippleDiv.style.height =
-          Math.max(targetEl.offsetWidth, targetEl.offsetHeight) + "px";
-        targetEl.appendChild(rippleDiv);
-
-        rippleDiv.style.left = e.offsetX - rippleDiv.offsetWidth / 2 + "px";
-        rippleDiv.style.top = e.offsetY - rippleDiv.offsetHeight / 2 + "px";
-        rippleDiv.classList.add("ripple");
-        setTimeout(function () {
-          rippleDiv.parentElement.removeChild(rippleDiv);
-        }, 600);
-      },
-      false
+      false,
     );
   }
 };
@@ -730,29 +703,29 @@ function darkMode(el) {
   const hr_card = document.querySelectorAll("div:not(.bg-gradient-dark) hr");
   const text_btn = document.querySelectorAll("button:not(.btn) > .text-dark");
   const text_span = document.querySelectorAll(
-    "span.text-dark, .breadcrumb .text-dark"
+    "span.text-dark, .breadcrumb .text-dark",
   );
   const text_span_white = document.querySelectorAll(
-    "span.text-white, .breadcrumb .text-white"
+    "span.text-white, .breadcrumb .text-white",
   );
   const text_strong = document.querySelectorAll("strong.text-dark");
   const text_strong_white = document.querySelectorAll("strong.text-white");
   const text_nav_link = document.querySelectorAll("a.nav-link.text-dark");
   const text_nav_link_white = document.querySelectorAll(
-    "a.nav-link.text-white"
+    "a.nav-link.text-white",
   );
   const secondary = document.querySelectorAll(".text-secondary");
   const bg_gray_100 = document.querySelectorAll(".bg-gray-100");
   const bg_gray_600 = document.querySelectorAll(".bg-gray-600");
   const btn_text_dark = document.querySelectorAll(
-    ".btn.btn-link.text-dark, .material-symbols-rounded.text-dark"
+    ".btn.btn-link.text-dark, .material-symbols-rounded.text-dark",
   );
   const btn_text_white = document.querySelectorAll(
-    ".btn.btn-link.text-white, .material-symbols-rounded.text-white"
+    ".btn.btn-link.text-white, .material-symbols-rounded.text-white",
   );
   const card_border = document.querySelectorAll(".card.border");
   const card_border_dark = document.querySelectorAll(
-    ".card.border.border-dark"
+    ".card.border.border-dark",
   );
 
   const svg = document.querySelectorAll("g");
@@ -919,7 +892,7 @@ if (indicators) {
             resetCurrentActiveIndicator();
             const element = entry.target;
             const indicator = document.querySelector(
-              `a[href='#${element.id}']`
+              `a[href='#${element.id}']`,
             );
             if (indicator) {
               indicator.classList.add("active");
@@ -932,7 +905,7 @@ if (indicators) {
         root: null,
         rootMargin: "0px",
         threshold: 0.75,
-      }
+      },
     );
     observer.observe(section);
   };

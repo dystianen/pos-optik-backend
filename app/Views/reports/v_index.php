@@ -198,7 +198,7 @@
                   <td class=text-muted">
                     <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
                   </td>
-                  <td class=">
+                  <td>
                     <?php
                     $badgeClass = match ($order['order_type']) {
                       'online' => 'bg-info',
@@ -209,13 +209,13 @@
                     };
                     ?>
                     <span class=" badge badge-sm <?= $badgeClass ?>" style="text-transform: uppercase;">
-                    <?= $order['order_type'] ?>
+                      <?= $order['order_type'] ?>
                     </span>
                   </td>
                   <td>
                     <div class="d-flex flex-column">
-                      <h6 class="mb-0 font-weight-bold"><?= esc($order['customer_name'] ?? '-') ?></h6>
-                      <small class="text-muted text-xs"><?= esc($order['customer_email'] ?? '') ?></small>
+                      <strong><?= esc($order['customer_name']) ?></strong>
+                      <small class="text-muted"><?= esc($order['customer_email']) ?></small>
                     </div>
                   </td>
                   <td class="text-center font-weight-bold">
