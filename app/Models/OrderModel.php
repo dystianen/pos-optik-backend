@@ -87,7 +87,7 @@ class OrderModel extends Model
     /**
      * Restore order items stock back to products and product_variants
      */
-    public function restoreStock(string $orderId, string $reason, string $userId = 'system')
+    public function restoreStock(string $orderId, string $reason, string $userId = null)
     {
         $items = $this->db->table('order_items')
             ->where('order_id', $orderId)
@@ -126,7 +126,7 @@ class OrderModel extends Model
             // 2️⃣ Record inventory transaction IN (to balance it out)
             $this->db->table('inventory_transactions')->insert([
                 'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
-                'user_id'                  => $userId ?: 'system',
+                'user_id'                  => $userId,
                 'product_id'               => $item['product_id'],
                 'variant_id'               => $item['variant_id'] ?: null,
                 'transaction_type'         => 'in',

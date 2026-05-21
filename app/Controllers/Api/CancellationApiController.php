@@ -126,7 +126,7 @@ class CancellationApiController extends BaseApiController
             ]);
 
             // Restore Stock
-            $this->orderModel->restoreStock($orderId, 'Order cancelled by customer (Pending Payment)', $customerId);
+            $this->orderModel->restoreStock($orderId, 'Order cancelled by customer (Pending Payment)', null);
             
             // Create record for history
              $data = [
