@@ -57,3 +57,7 @@ table.table tbody tr {
 table.table tbody tr:hover {
   background-color: #f8f9fa !important;
 }
+
+.text-right {
+  text-align: right !important;
+}

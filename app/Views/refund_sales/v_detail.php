@@ -116,16 +116,16 @@ function badgeStatus($status)
         <div class="card-body">
           <dl class="row mb-0 small">
             <dt class="col-5 text-muted">Method</dt>
-            <dd class="col-7 fw-semibold"><?= $order['shipping_method'] ?></dd>
+            <dd class="col-7 fw-semibold text-right"><?= $order['shipping_method'] ?></dd>
 
             <dt class="col-5 text-muted">Estimated</dt>
-            <dd class="col-7"><?= $order['estimated_days'] ?> days</dd>
+            <dd class="col-7 text-right"><?= $order['estimated_days'] ?> days</dd>
 
             <dt class="col-5 text-muted">Courier</dt>
-            <dd class="col-7"><?= $order['courier'] ?></dd>
+            <dd class="col-7 text-right"><?= $order['courier'] ?: '-' ?></dd>
 
             <dt class="col-5 text-muted">Tracking</dt>
-            <dd class="col-7 fw-semibold"><?= $order['tracking_number'] ?: '-' ?></dd>
+            <dd class="col-7 fw-semibold text-right"><?= $order['tracking_number'] ?: '-' ?></dd>
 
             <dt class="col-12 text-muted mt-2">Address</dt>
             <dd class="col-12 mb-0"><?= $shippingAddress['address'] ?? '-' ?></dd>
@@ -156,15 +156,15 @@ function badgeStatus($status)
 
             <dl class="row mb-0 small">
               <dt class="col-5 text-muted">Amount</dt>
-              <dd class="col-7 fw-semibold">
+              <dd class="col-7 fw-semibold text-right">
                 Rp <?= number_format($payment['amount']) ?>
               </dd>
 
               <dt class="col-5 text-muted">Method</dt>
-              <dd class="col-7"><?= $payment['method_name'] ?></dd>
+              <dd class="col-7 text-right"><?= $payment['method_name'] ?></dd>
 
               <dt class="col-5 text-muted">Paid At</dt>
-              <dd class="col-7"><?= $payment['paid_at'] ?></dd>
+              <dd class="col-7 text-right"><?= $payment['paid_at'] ?></dd>
             </dl>
           </div>
         </div>
@@ -180,13 +180,13 @@ function badgeStatus($status)
           <?php if (!empty($refund['account_name'])): ?>
             <dl class="row mb-0 small">
               <dt class="col-5 text-muted">Account Name</dt>
-              <dd class="col-7 fw-semibold"><?= esc($refund['account_name']) ?></dd>
+              <dd class="col-7 fw-semibold text-right"><?= esc($refund['account_name'] ?? '-') ?></dd>
 
               <dt class="col-5 text-muted">Bank</dt>
-              <dd class="col-7"><?= esc($refund['bank_name'] ?? '-') ?></dd>
+              <dd class="col-7 text-right"><?= esc($refund['bank_name'] ?? '-') ?></dd>
 
               <dt class="col-5 text-muted">Account No</dt>
-              <dd class="col-7"><?= esc($refund['account_number'] ?? '-') ?></dd>
+              <dd class="col-7 text-right"><?= esc($refund['account_number'] ?? '-') ?></dd>
             </dl>
           <?php else: ?>
             <p class="text-muted mb-0">No refund account</p>
@@ -269,7 +269,7 @@ function badgeStatus($status)
               $ext = pathinfo($refund['evidence_url'], PATHINFO_EXTENSION);
               $isVideo = in_array(strtolower($ext), ['mp4', 'webm', 'ogg', 'mov']);
               ?>
-              
+
               <?php if ($isVideo): ?>
                 <video src="<?= esc($refund['evidence_url']) ?>" controls class="img-fluid rounded" style="max-height: 300px;"></video>
               <?php else: ?>
@@ -412,7 +412,10 @@ function badgeStatus($status)
         return data;
       } catch (err) {
         console.error('Fetch error:', err);
-        return { success: false, message: 'Network error or server failed: ' + err.message };
+        return {
+          success: false,
+          message: 'Network error or server failed: ' + err.message
+        };
       }
     }
 
@@ -427,15 +430,15 @@ function badgeStatus($status)
       });
 
       if (!confirm.isConfirmed) return;
-      
+
       const adjusted = document.getElementById('approve_amount').value || null;
       const note = document.getElementById('approve_note').value || null;
       const url = `<?= base_url('api/admin/refund') ?>/${refundId}/approve`;
-      
+
       const payload = {};
       if (adjusted) payload.adjusted_amount = parseFloat(adjusted);
       if (note) payload.admin_note = note;
-      
+
       Swal.fire({
         title: 'Approving...',
         allowOutsideClick: false,
@@ -443,7 +446,7 @@ function badgeStatus($status)
       });
 
       const resp = await postJson(url, payload);
-      
+
       if (resp.success !== false) {
         Swal.fire({
           icon: 'success',
@@ -482,17 +485,19 @@ function badgeStatus($status)
       });
 
       if (!confirm.isConfirmed) return;
-      
+
       const url = `<?= base_url('api/admin/refund') ?>/${refundId}/reject`;
-      
+
       Swal.fire({
         title: 'Rejecting...',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
       });
 
-      const resp = await postJson(url, { admin_note: note });
-      
+      const resp = await postJson(url, {
+        admin_note: note
+      });
+
       if (resp.success !== false) {
         Swal.fire({
           icon: 'success',
@@ -523,14 +528,30 @@ function badgeStatus($status)
 
       const note = document.getElementById('receive_note').value || null;
       const url = `<?= base_url('api/admin/refund') ?>/${refundId}/receive`;
-      
-      Swal.fire({ title: 'Processing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-      const resp = await postJson(url, { admin_note: note });
+      Swal.fire({
+        title: 'Processing...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const resp = await postJson(url, {
+        admin_note: note
+      });
       if (resp.success !== false) {
-        Swal.fire({ icon: 'success', title: 'Received', text: resp.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+        Swal.fire({
+          icon: 'success',
+          title: 'Received',
+          text: resp.message,
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => location.reload());
       } else {
-        Swal.fire({ icon: 'error', title: 'Failed', text: resp.message });
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: resp.message
+        });
       }
     });
 
@@ -548,14 +569,30 @@ function badgeStatus($status)
 
       const note = document.getElementById('final_approve_note').value || null;
       const url = `<?= base_url('api/admin/refund') ?>/${refundId}/final-approve`;
-      
-      Swal.fire({ title: 'Processing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-      const resp = await postJson(url, { admin_note: note });
+      Swal.fire({
+        title: 'Processing...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const resp = await postJson(url, {
+        admin_note: note
+      });
       if (resp.success !== false) {
-        Swal.fire({ icon: 'success', title: 'Success', text: resp.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: resp.message,
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => location.reload());
       } else {
-        Swal.fire({ icon: 'error', title: 'Failed', text: resp.message });
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: resp.message
+        });
       }
     });
 
@@ -573,14 +610,30 @@ function badgeStatus($status)
 
       const note = document.getElementById('refund_note').value || null;
       const url = `<?= base_url('api/admin/refund') ?>/${refundId}/refund`;
-      
-      Swal.fire({ title: 'Processing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-      const resp = await postJson(url, { admin_note: note });
+      Swal.fire({
+        title: 'Processing...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const resp = await postJson(url, {
+        admin_note: note
+      });
       if (resp.success !== false) {
-        Swal.fire({ icon: 'success', title: 'Refunded', text: resp.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+        Swal.fire({
+          icon: 'success',
+          title: 'Refunded',
+          text: resp.message,
+          timer: 1500,
+          showConfirmButton: false
+        }).then(() => location.reload());
       } else {
-        Swal.fire({ icon: 'error', title: 'Failed', text: resp.message });
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: resp.message
+        });
       }
     });
   });
