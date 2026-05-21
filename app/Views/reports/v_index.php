@@ -215,7 +215,7 @@
                   <td>
                     <div class="d-flex flex-column">
                       <h6 class="mb-0 font-weight-bold"><?= esc($order['customer_name'] ?? '-') ?></h6>
-                      <small class="text-muted text-xxs"><?= esc($order['customer_email'] ?? '') ?></small>
+                      <small class="text-muted text-xs"><?= esc($order['customer_email'] ?? '') ?></small>
                     </div>
                   </td>
                   <td class="text-center font-weight-bold">
