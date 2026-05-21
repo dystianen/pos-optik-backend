@@ -61,11 +61,11 @@ function orderStatusBadge($status)
           <tr>
             <th class="text-center">No</th>
             <th>Order ID</th>
+            <th>Status</th>
             <th>Order Date</th>
             <th>Customer</th>
             <th>Total Item</th>
             <th>Grand Total</th>
-            <th>Status</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -78,6 +78,12 @@ function orderStatusBadge($status)
               <td class="text-center"><?= $startIndex++ ?></td>
               <td>
                 <strong>#<?= $order['order_id'] ?></strong>
+              </td>
+
+              <td>
+                <span class="<?= orderStatusBadge($order['status_code']) ?>">
+                  <?= strtoupper($order['status_name']) ?>
+                </span>
               </td>
 
               <td>
@@ -95,12 +101,6 @@ function orderStatusBadge($status)
 
               <td>
                 <strong>Rp <?= number_format($order['grand_total']) ?></strong>
-              </td>
-
-              <td>
-                <span class="<?= orderStatusBadge($order['status_code']) ?>">
-                  <?= strtoupper($order['status_name']) ?>
-                </span>
               </td>
 
               <td class="sticky-action text-center">

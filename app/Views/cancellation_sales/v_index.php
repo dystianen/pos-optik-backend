@@ -40,10 +40,10 @@ function cancellationStatusBadge($status)
           <tr>
             <th class="text-center">No</th>
             <th>Order ID</th>
+            <th>Status</th>
             <th>Request Date</th>
             <th>Customer</th>
             <th class="text-end">Order Amount</th>
-            <th>Status</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
@@ -60,6 +60,7 @@ function cancellationStatusBadge($status)
                 <td>
                   <strong>#<?= $r['order_id'] ?></strong>
                 </td>
+                <td><span class="<?= cancellationStatusBadge($r['status']) ?>"><?= strtoupper($r['status']) ?></span></td>
                 <td><?= date('d M Y H:i', strtotime($r['created_at'])) ?></td>
                 <td>
                   <div class="d-flex flex-column">
@@ -68,7 +69,6 @@ function cancellationStatusBadge($status)
                   </div>
                 </td>
                 <td class="text-end">Rp <?= number_format($r['grand_total'] ?? 0) ?></td>
-                <td><span class="<?= cancellationStatusBadge($r['status']) ?>"><?= strtoupper($r['status']) ?></span></td>
                 <td class="text-center">
                   <a href="<?= base_url('/cancellation-sales/' . $r['order_cancellation_id']) ?>" class="btn btn-sm btn-info"><i
                       class="fa-solid fa-eye"></i></a>

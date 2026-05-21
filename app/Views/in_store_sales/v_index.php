@@ -48,11 +48,11 @@
           <tr>
             <th class="text-center">No</th>
             <th>Order ID</th>
+            <th>Status</th>
             <th>Order Date</th>
             <th>Customer</th>
             <th>Total Item</th>
             <th>Grand Total</th>
-            <th>Status</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -76,6 +76,11 @@
                   <strong>#<?= $order['order_id'] ?></strong>
                 </td>
                 <td>
+                  <span class="badge bg-success">
+                    <?= esc($order['status_name']) ?>
+                  </span>
+                </td>
+                <td>
                   <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
                 </td>
                 <td>
@@ -87,11 +92,6 @@
                 <td><?= $order['total_items'] ?></td>
                 <td>
                   Rp <?= number_format($order['grand_total'], 0, ',', '.') ?>
-                </td>
-                <td>
-                  <span class="badge bg-success">
-                    <?= esc($order['status_name']) ?>
-                  </span>
                 </td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/in-store-sales/' . $order['order_id']) ?>"
