@@ -103,17 +103,17 @@ class CancellationApiController extends BaseApiController
         // But for now let's just create the request regardless of order status unless it's completed/cancelled.
         // Ideally check status here.
         if ($order['status_id'] == $this->statusModel->getIdByCode(OrderStatus::CANCELLED)) { // Already cancelled
-             return $this->errorResponse('Order is already cancelled');
+            return $this->errorResponse('Order is already cancelled');
         }
-        
+
         // Cek duplicate request
         $existing = $this->cancellationModel
             ->where('order_id', $orderId)
             ->where('status', 'requested')
             ->first();
-            
+
         if ($existing) {
-             return $this->errorResponse('Cancellation request already under review');
+            return $this->errorResponse('Cancellation request already under review');
         }
 
         $STATUS_PENDING = $this->statusModel->getIdByCode(OrderStatus::PENDING);
@@ -127,9 +127,9 @@ class CancellationApiController extends BaseApiController
 
             // Restore Stock
             $this->orderModel->restoreStock($orderId, 'Order cancelled by customer (Pending Payment)', null);
-            
+
             // Create record for history
-             $data = [
+            $data = [
                 'order_id' => $orderId,
                 'reason' => $reason,
                 'additional_note' => $additionalNote,
@@ -139,8 +139,8 @@ class CancellationApiController extends BaseApiController
             $this->cancellationModel->insert($data);
 
             return $this->messageResponse('Order has been cancelled successfully');
-        } 
-        
+        }
+
         // === CASE 2: Sudah bayar / Processing - Masuk Request ===
         $data = [
             'order_id' => $orderId,
@@ -151,7 +151,7 @@ class CancellationApiController extends BaseApiController
 
         $result = $this->cancellationModel->insert($data);
         if (!$result) {
-            return $this->errorResponse($this->cancellationModel->errors(),  'Failed to submit cancellation');
+            return $this->errorResponse('Failed to submit cancellation');
         }
         $cancellationId = $this->cancellationModel->getInsertID();
 
@@ -227,13 +227,13 @@ class CancellationApiController extends BaseApiController
         ]);
 
         // Update Order Status to Cancelled
-         $STATUS_CANCELLED = $this->statusModel->getIdByCode(OrderStatus::CANCELLED);
-         $this->orderModel->update($cancellation['order_id'], [
+        $STATUS_CANCELLED = $this->statusModel->getIdByCode(OrderStatus::CANCELLED);
+        $this->orderModel->update($cancellation['order_id'], [
             'status_id' => $STATUS_CANCELLED,
-         ]);
+        ]);
 
-         // Restore Stock
-         $this->orderModel->restoreStock($cancellation['order_id'], 'Order cancellation approved by Admin', $adminId);
+        // Restore Stock
+        $this->orderModel->restoreStock($cancellation['order_id'], 'Order cancellation approved by Admin', $adminId);
 
         return $this->successResponse(['cancellation_id' => $cancellationId, 'status' => 'approved'], 'Cancellation approved');
     }
@@ -246,10 +246,10 @@ class CancellationApiController extends BaseApiController
         // $json = $this->request->getJSON(); // If raw json
         // Check input method, View Controller sends JSON? Or form data? 
         // Based on Refund view, it sends JSON using fetch.
-        
+
         $json = $this->request->getJSON();
         $adminNote = $json->admin_note ?? null;
-        
+
         /* 
         // Fallback for form data if needed (if not using fetch json)
         if (!$adminNote) {
@@ -269,7 +269,7 @@ class CancellationApiController extends BaseApiController
 
         $this->cancellationModel->update($cancellationId, [
             'status' => 'rejected',
-            'additional_note' => $cancellation['additional_note'] . "\n[Admin Reject Note]: " . $adminNote, 
+            'additional_note' => $cancellation['additional_note'] . "\n[Admin Reject Note]: " . $adminNote,
             // Or if we don't have admin_note column, append to additional_note or create a new column. 
             // Plan said `additional_note` (TEXT) optional user/admin notes. So appending is fine.
             'processed_by' => $adminId,
