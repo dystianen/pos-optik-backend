@@ -81,7 +81,7 @@ function orderStatusBadge($status)
               </td>
 
               <td>
-                <?= date('d M Y', strtotime($order['created_at'])) ?>
+                <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
               </td>
 
               <td>

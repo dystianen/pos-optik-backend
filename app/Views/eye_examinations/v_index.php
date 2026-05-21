@@ -29,15 +29,9 @@
           <tr>
             <th class="text-center">No</th>
             <th>Customer</th>
-            <th>Left Eye Sphere</th>
-            <th>Left Eye Cylinder</th>
-            <th>Left Eye Axis</th>
-            <th>Right Eye Sphere</th>
-            <th>Right Eye Cylinder</th>
-            <th>Right Eye Axis</th>
+            <th>Inspection Date</th>
             <th>Symptomps</th>
             <th>Diagnosis</th>
-            <th>Inspection Date</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -52,15 +46,9 @@
               <tr>
                 <td class="text-center"><?= $startIndex++ ?></td>
                 <td><?= $eyeExamination['customer_name'] ?></td>
-                <td><?= $eyeExamination['left_eye_sphere'] ?></td>
-                <td><?= $eyeExamination['left_eye_cylinder'] ?></td>
-                <td><?= $eyeExamination['left_eye_axis'] ?></td>
-                <td><?= $eyeExamination['right_eye_sphere'] ?></td>
-                <td><?= $eyeExamination['right_eye_cylinder'] ?></td>
-                <td><?= $eyeExamination['right_eye_axis'] ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($eyeExamination['created_at'])) ?></td>
                 <td><?= esc($eyeExamination['symptoms']) ?></td>
                 <td><?= esc($eyeExamination['diagnosis']) ?></td>
-                <td><?= date('d/m/Y H:i', strtotime($eyeExamination['created_at'])) ?></td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/eye-examinations/form?id=' . $eyeExamination['eye_examination_id']) ?>" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square"></i></a>
                   <form action="<?= base_url('/eye-examinations/delete/' . $eyeExamination['eye_examination_id']) ?>" method="post" style="display:inline-block;">

@@ -170,14 +170,14 @@
         <table class="table align-items-center mb-0 table-hover table-bordered">
           <thead class="bg-light">
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7" style="width: 50px;">No</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transaction ID</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Total Items</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-end opacity-7">Grand Total</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Status</th>
+              <th>No</th>
+              <th>Transaction ID</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Customer</th>
+              <th>Total Items</th>
+              <th>Grand Total</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -191,14 +191,14 @@
               <?php $no = 1;
               foreach ($orders as $order): ?>
                 <tr>
-                  <td class="text-center font-weight-bold text-xs"><?= $no++ ?></td>
-                  <td class="text-xs font-weight-bold text-dark">
+                  <td class="text-center font-weight-bold"><?= $no++ ?></td>
+                  <td class=font-weight-bold text-dark">
                     <strong>#<?= $order['order_id'] ?></strong>
                   </td>
-                  <td class="text-xs text-muted">
+                  <td class=text-muted">
                     <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
                   </td>
-                  <td class="text-xs">
+                  <td class=">
                     <?php
                     $badgeClass = match ($order['order_type']) {
                       'online' => 'bg-info',
@@ -208,20 +208,20 @@
                       default => 'bg-light text-dark'
                     };
                     ?>
-                    <span class="badge badge-sm <?= $badgeClass ?>" style="text-transform: uppercase;">
-                      <?= $order['order_type'] ?>
+                    <span class=" badge badge-sm <?= $badgeClass ?>" style="text-transform: uppercase;">
+                    <?= $order['order_type'] ?>
                     </span>
                   </td>
                   <td>
                     <div class="d-flex flex-column">
-                      <h6 class="mb-0 text-xs font-weight-bold"><?= esc($order['customer_name'] ?? '-') ?></h6>
+                      <h6 class="mb-0 font-weight-bold"><?= esc($order['customer_name'] ?? '-') ?></h6>
                       <small class="text-muted text-xxs"><?= esc($order['customer_email'] ?? '') ?></small>
                     </div>
                   </td>
-                  <td class="text-center text-xs font-weight-bold">
+                  <td class="text-center font-weight-bold">
                     <?= $order['total_items'] ?>
                   </td>
-                  <td class="text-end text-xs font-weight-bold text-dark">
+                  <td class="text-end font-weight-bold text-dark">
                     Rp <?= number_format($order['grand_total'], 0, ',', '.') ?>
                   </td>
                   <td class="text-center">
@@ -234,7 +234,7 @@
                     };
                     ?>
                     <span class="badge badge-sm <?= $statusColor ?>" style="font-size: 10px;">
-                      <?= strtoupper(esc($order['status_name'] ?? 'Completed')) ?>
+                      <?= strtoupper(esc((string) ($order['status_name'] ?? 'Completed'))) ?>
                     </span>
                   </td>
                 </tr>
