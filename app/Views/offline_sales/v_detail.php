@@ -69,6 +69,43 @@ function badgeStatus($status)
   </div>
 
 
+  <?php if (!empty($payment)): ?>
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <strong>Payment Information</strong>
+            <dl class="row mt-2 mb-0">
+              <dt class="col-5">Metode</dt>
+              <dd class="col-7 text-end"><?= esc($payment['method_name']) ?></dd>
+
+              <dt class="col-5">Total Bayar</dt>
+              <dd class="col-7 text-end">Rp <?= number_format($payment['amount']) ?></dd>
+
+              <?php $change = max(0, $payment['amount'] - $order['grand_total']); ?>
+              <?php if ($change > 0): ?>
+                <dt class="col-5">Kembalian</dt>
+                <dd class="col-7 text-end">Rp <?= number_format($change) ?></dd>
+              <?php endif ?>
+
+              <?php if ($payment['proof']): ?>
+                <dt class="col-5">Bukti</dt>
+                <dd class="col-7 text-end">
+                  <a href="<?= esc($payment['proof']) ?>" target="_blank">Lihat Bukti</a>
+                </dd>
+              <?php endif ?>
+
+              <?php if ($payment['paid_at']): ?>
+                <dt class="col-5">Dibayar Pada</dt>
+                <dd class="col-7 text-end"><?= esc($payment['paid_at']) ?></dd>
+              <?php endif ?>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <div class="card">
     <div class="card-body">
       <strong>Order Items</strong>

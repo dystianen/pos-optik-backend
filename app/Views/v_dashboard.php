@@ -169,7 +169,7 @@
         document.getElementById('val-total-revenue').innerText = 'Rp ' + data.totalRevenue.toLocaleString('id-ID');
         document.getElementById('val-orders-today').innerText = data.totalOrdersToday;
         document.getElementById('val-online-sales').innerText = 'Rp ' + data.onlineSales.toLocaleString('id-ID');
-        document.getElementById('val-in-store-sales').innerText = 'Rp ' + data.posSales.toLocaleString('id-ID');
+        document.getElementById('val-offline-sales').innerText = 'Rp ' + data.posSales.toLocaleString('id-ID');
         document.getElementById('val-customers').innerText = data.totalCustomers;
         document.getElementById('val-low-stock-items').innerText = data.lowStockCount;
 

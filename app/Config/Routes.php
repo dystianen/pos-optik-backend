@@ -131,7 +131,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
       $routes->post('(:segment)/final-approve', 'Api\RefundApiController::adminFinalApprove/$1');
       $routes->post('(:segment)/refund', 'Api\RefundApiController::adminRefund/$1');
     });
-    
+
     // ADMIN CANCEL
     $routes->group('cancel', function ($routes) {
       $routes->get('', 'Api\CancellationApiController::getPendingCancellations');
@@ -197,14 +197,14 @@ $routes->group('users', ['filter' => 'authGuard'], function ($routes) {
   $routes->post('delete/(:any)', 'UserController::delete/$1');
 });
 
-$routes->group('in-store-sales', ['filter' => 'authGuard'], function ($routes) {
-  $routes->get('', 'InStoreSalesController::index');
-  $routes->get('create', 'InStoreSalesController::create');
-  $routes->post('store', 'InStoreSalesController::store');
+$routes->group('offline-sales', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('', 'OfflineSalesController::index');
+  $routes->get('create', 'OfflineSalesController::create');
+  $routes->post('store', 'OfflineSalesController::store');
 
-  $routes->get('success/(:segment)', 'InStoreSalesController::success/$1');
-  $routes->get('print/(:segment)', 'InStoreSalesController::print/$1');
-  $routes->get('(:segment)', 'InStoreSalesController::detail/$1');
+  $routes->get('success/(:segment)', 'OfflineSalesController::success/$1');
+  $routes->get('print/(:segment)', 'OfflineSalesController::print/$1');
+  $routes->get('(:segment)', 'OfflineSalesController::detail/$1');
 });
 
 $routes->group('online-sales', ['filter' => 'authGuard'], function ($routes) {

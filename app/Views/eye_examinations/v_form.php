@@ -116,10 +116,10 @@
 
       <div class="mt-4">
         <a href="<?= base_url('eye-examinations') ?>" class="btn btn-secondary">
-          <i class="fas fa-times"></i> Cancel
+          Cancel
         </a>
         <button type="submit" class="btn btn-primary">
-          <i class="fas fa-save"></i> <?= isset($eyeExamination) ? 'Update Examination' : 'Save Examination' ?>
+          <?= isset($eyeExamination) ? 'Update Examination' : 'Save Examination' ?>
         </button>
       </div>
     </form>

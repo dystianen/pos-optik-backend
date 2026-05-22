@@ -3,9 +3,9 @@
 
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-    <h4>In-Store Sales</h4>
+    <h4>Offline Sales</h4>
     <div class="d-flex flex-wrap align-items-center gap-2">
-      <form action="<?= base_url('/in-store-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+      <form action="<?= base_url('/offline-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
         <input
           type="text"
           name="q"
@@ -31,10 +31,10 @@
           <i class="fa-solid fa-magnifying-glass"></i> Filter
         </button>
         <?php if (!empty($search) || !empty($startDate) || !empty($endDate)): ?>
-          <a href="<?= base_url('/in-store-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
+          <a href="<?= base_url('/offline-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
         <?php endif; ?>
       </form>
-      <a href="<?= base_url('/in-store-sales/create') ?>"
+      <a href="<?= base_url('/offline-sales/create') ?>"
         class="btn btn-primary btn-sm mb-0">
         <i class="fas fa-plus"></i> Add Sales
       </a>
@@ -94,7 +94,7 @@
                   Rp <?= number_format($order['grand_total'], 0, ',', '.') ?>
                 </td>
                 <td class="sticky-action text-center">
-                  <a href="<?= base_url('/in-store-sales/' . $order['order_id']) ?>"
+                  <a href="<?= base_url('/offline-sales/' . $order['order_id']) ?>"
                     class="btn btn-sm btn-info">
                     <i class="fa-solid fa-eye"></i>
                   </a>
@@ -120,7 +120,7 @@
 <script>
   function handlePagination(page) {
     window.location.href =
-      `<?= base_url('/in-store-sales') ?>?page=${page}&q=<?= esc($search) ?>&start_date=<?= esc($startDate) ?>&end_date=<?= esc($endDate) ?>`;
+      `<?= base_url('/offline-sales') ?>?page=${page}&q=<?= esc($search) ?>&start_date=<?= esc($startDate) ?>&end_date=<?= esc($endDate) ?>`;
   }
 
   const paginationContainer = document.getElementById('realtime-pagination');

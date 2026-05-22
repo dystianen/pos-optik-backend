@@ -3,7 +3,7 @@
 
 <div class="container-fluid card">
   <div class="card-header pb-0">
-    <h4>Transaksi Penjualan Toko</h4>
+    <h4>Offline Sales</h4>
   </div>
 
   <?php if (session()->getFlashdata('error')): ?>
@@ -13,7 +13,7 @@
   <?php endif; ?>
 
   <div class="card-body">
-    <form action="<?= site_url('in-store-sales/store') ?>" method="post">
+    <form action="<?= site_url('offline-sales/store') ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
 
       <!-- CUSTOMER -->
@@ -127,6 +127,47 @@
         </tbody>
       </table>
 
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5>Pembayaran</h5>
+          <div class="row g-3 mt-2">
+            <div class="col-md-4">
+              <label class="form-label">Metode Pembayaran</label>
+              <select id="paymentMethod" name="payment_method_id" class="form-select" required>
+                <option value="">-- Pilih Metode Pembayaran --</option>
+                <?php foreach ($paymentMethods as $method): ?>
+                  <option value="<?= esc($method['payment_method_id']) ?>"
+                    data-method-type="<?= esc($method['method_type']) ?>">
+                    <?= esc($method['method_name']) ?>
+                  </option>
+                <?php endforeach ?>
+              </select>
+            </div>
+
+            <div class="col-md-4 cash-only d-none">
+              <label class="form-label">Nominal Uang Customer</label>
+              <input type="number" name="cash_received" id="cashReceived"
+                class="form-control" min="0" step="0.01" placeholder="0">
+            </div>
+
+            <div class="col-md-4 noncash-only d-none">
+              <label class="form-label">Upload Bukti Pembayaran</label>
+              <input type="file" name="payment_proof" id="paymentProof"
+                class="form-control" accept="image/*">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Total Bayar</label>
+              <input type="text" id="paymentTotal" class="form-control" readonly value="Rp 0">
+            </div>
+
+            <div class="col-md-4 cash-only d-none">
+              <label class="form-label">Kembalian</label>
+              <input type="text" id="paymentChange" class="form-control" readonly value="Rp 0">
+            </div>
+          </div>
+        </div>
+      </div>
 
       <button type="button" class="btn btn-secondary btn-sm" id="addRow">
         + Tambah Produk
@@ -141,7 +182,7 @@
         <button type="submit" class="btn btn-primary">
           Simpan Transaksi
         </button>
-        <a href="<?= site_url('in_store_sales/v_index') ?>" class="btn btn-secondary">
+        <a href="<?= site_url('offline_sales/v_index') ?>" class="btn btn-secondary">
           Batal
         </a>
       </div>
@@ -219,6 +260,10 @@
     }
   });
 
+  function formatCurrency(value) {
+    return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
+  }
+
   function updateSubtotal(row) {
     const price = Number(row.querySelector('.price').value || 0);
     const qty = Number(row.querySelector('.qty').value || 1);
@@ -231,8 +276,36 @@
     document.querySelectorAll('.subtotal').forEach(el => {
       total += Number(el.value || 0);
     });
-    document.getElementById('grandTotal').innerText =
-      total.toLocaleString('id-ID');
+    document.getElementById('grandTotal').innerText = formatCurrency(total);
+    document.getElementById('paymentTotal').value = formatCurrency(total);
+    updatePaymentSummary(total);
+  }
+
+  function updatePaymentSummary(grandTotal = 0) {
+    const paymentMethod = document.getElementById('paymentMethod');
+    const selected = paymentMethod.selectedOptions[0];
+    const cashInput = document.getElementById('cashReceived');
+    const changeInput = document.getElementById('paymentChange');
+    const cashOnly = document.querySelectorAll('.cash-only');
+    const noncashOnly = document.querySelectorAll('.noncash-only');
+
+    const methodType = selected?.dataset?.methodType;
+
+    if (methodType === 'cash') {
+      cashOnly.forEach(el => el.classList.remove('d-none'));
+      noncashOnly.forEach(el => el.classList.add('d-none'));
+      const cashValue = Number(cashInput.value || 0);
+      const change = cashValue - grandTotal;
+      changeInput.value = formatCurrency(change > 0 ? change : 0);
+    } else if (methodType) {
+      cashOnly.forEach(el => el.classList.add('d-none'));
+      noncashOnly.forEach(el => el.classList.remove('d-none'));
+      changeInput.value = formatCurrency(0);
+    } else {
+      cashOnly.forEach(el => el.classList.add('d-none'));
+      noncashOnly.forEach(el => el.classList.add('d-none'));
+      changeInput.value = formatCurrency(0);
+    }
   }
 
   /* EVENT HANDLER */
@@ -253,6 +326,16 @@
       updateSubtotal(row);
     }
   });
+
+  document.getElementById('paymentMethod').addEventListener('change', function() {
+    updatePaymentSummary(Number(document.getElementById('grandTotal').innerText.replace(/[^0-9]/g, '')) || 0);
+  });
+
+  document.getElementById('cashReceived').addEventListener('input', function() {
+    updatePaymentSummary(Number(document.getElementById('grandTotal').innerText.replace(/[^0-9]/g, '')) || 0);
+  });
+
+  updateTotal();
 
   /* ADD ROW */
   document.getElementById('addRow').addEventListener('click', function() {

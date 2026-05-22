@@ -3,13 +3,11 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Entity\Style\Style;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use App\Models\PaymentMethodModel;
+use App\Models\PaymentModel;
 use Config\OrderStatus;
 
-class InStoreSalesController extends BaseController
+class OfflineSalesController extends BaseController
 {
     protected $orderModel;
     protected $productModel;
@@ -17,21 +15,25 @@ class InStoreSalesController extends BaseController
     protected $orderItemPrescriptionModel;
     protected $customerModel;
     protected $orderItemModel;
+    protected $paymentModel;
+    protected $paymentMethodModel;
     protected $notificationModel;
     protected $statusModel;
     protected $db;
 
     public function __construct()
     {
-        $this->orderModel    = new \App\Models\OrderModel();
-        $this->productModel  = new \App\Models\ProductModel();
+        $this->orderModel           = new \App\Models\OrderModel();
+        $this->productModel         = new \App\Models\ProductModel();
         $this->productVariantModel  = new \App\Models\ProductVariantModel();
         $this->orderItemPrescriptionModel  = new \App\Models\OrderItemPrescriptionModel();
-        $this->customerModel = new \App\Models\CustomerModel();
-        $this->orderItemModel = new \App\Models\OrderItemModel();
-        $this->notificationModel = new \App\Models\NotificationModel();
-        $this->statusModel = new \App\Models\OrderStatusModel();
-        $this->db            = \Config\Database::connect();
+        $this->customerModel        = new \App\Models\CustomerModel();
+        $this->orderItemModel       = new \App\Models\OrderItemModel();
+        $this->paymentModel         = new PaymentModel();
+        $this->paymentMethodModel   = new PaymentMethodModel();
+        $this->notificationModel    = new \App\Models\NotificationModel();
+        $this->statusModel          = new \App\Models\OrderStatusModel();
+        $this->db                   = \Config\Database::connect();
     }
 
     public function index()
@@ -119,7 +121,7 @@ class InStoreSalesController extends BaseController
         $totalRows = $countBuilder->countAllResults();
         $totalPages = ceil($totalRows / $limit);
 
-        return view('in_store_sales/v_index', [
+        return view('offline_sales/v_index', [
             'orders'    => $orders,
             'search'    => $search,
             'startDate' => $startDate,
@@ -134,9 +136,10 @@ class InStoreSalesController extends BaseController
 
     public function create()
     {
-        return view('in_store_sales/v_create', [
-            'customers' => $this->customerModel->findAll(),
-            'products'  => $this->productModel->findAll(),
+        return view('offline_sales/v_create', [
+            'customers'      => $this->customerModel->findAll(),
+            'products'       => $this->productModel->findAll(),
+            'paymentMethods' => $this->paymentMethodModel->where('is_active', 1)->orderBy('method_name', 'ASC')->findAll(),
         ]);
     }
 
@@ -146,8 +149,11 @@ class InStoreSalesController extends BaseController
         $db->transStart();
 
         try {
-            $customerId   = $this->request->getPost('customer_id');
-            $items        = $this->request->getPost('items');
+            $customerId     = $this->request->getPost('customer_id');
+            $items          = $this->request->getPost('items');
+            $paymentMethodId = $this->request->getPost('payment_method_id');
+            $cashReceived   = $this->request->getPost('cash_received');
+            $paymentProof   = $this->request->getFile('payment_proof');
 
             if (!$customerId) {
                 throw new \Exception('Customer wajib dipilih');
@@ -155,6 +161,15 @@ class InStoreSalesController extends BaseController
 
             if (empty($items)) {
                 throw new \Exception('Item tidak boleh kosong');
+            }
+
+            if (!$paymentMethodId) {
+                throw new \Exception('Metode pembayaran wajib dipilih');
+            }
+
+            $paymentMethod = $this->paymentMethodModel->find($paymentMethodId);
+            if (!$paymentMethod || ! (int) $paymentMethod['is_active']) {
+                throw new \Exception('Metode pembayaran tidak valid');
             }
 
             // ======================
@@ -179,6 +194,34 @@ class InStoreSalesController extends BaseController
                 }
 
                 $grandTotal += $price * $qty;
+            }
+
+            // ======================
+            // VALIDASI PAYMENT
+            // ======================
+            $paymentAmount = $grandTotal;
+            $paymentProofUrl = null;
+
+            if ($paymentMethod['method_type'] === 'cash') {
+                if ($cashReceived === null || $cashReceived === '') {
+                    throw new \Exception('Nominal uang customer wajib diisi untuk pembayaran tunai');
+                }
+
+                $cashReceivedValue = (float) $cashReceived;
+                if ($cashReceivedValue < $grandTotal) {
+                    throw new \Exception('Nominal uang customer kurang dari total pembayaran');
+                }
+
+                $paymentAmount = $cashReceivedValue;
+            } else {
+                if (!$paymentProof || !$paymentProof->isValid()) {
+                    throw new \Exception('Bukti pembayaran wajib diunggah untuk metode non-tunai');
+                }
+
+                $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!in_array($paymentProof->getMimeType(), $allowedMime)) {
+                    throw new \Exception('Bukti pembayaran harus berupa gambar JPG, PNG, atau WEBP');
+                }
             }
 
             // ======================
@@ -340,13 +383,35 @@ class InStoreSalesController extends BaseController
                 }
             }
 
+            // ======================
+            // INSERT PAYMENT
+            // ======================
+            if ($paymentMethod['method_type'] !== 'cash') {
+                $paymentDir = PUBLICPATH . 'uploads/payments/' . $orderId . '/';
+                if (!is_dir($paymentDir)) {
+                    mkdir($paymentDir, 0755, true);
+                }
+
+                $proofName = $paymentProof->getRandomName();
+                $paymentProof->move($paymentDir, $proofName);
+                $paymentProofUrl = base_url('uploads/payments/' . $orderId . '/' . $proofName);
+            }
+
+            $this->paymentModel->insert([
+                'order_id'          => $orderId,
+                'payment_method_id' => $paymentMethodId,
+                'amount'            => $paymentAmount,
+                'proof'             => $paymentProofUrl,
+                'paid_at'           => date('Y-m-d H:i:s'),
+            ]);
+
             $db->transComplete();
 
             // 🔥 TRIGGER REAL-TIME UPDATE
             \App\Libraries\Realtime::triggerUpdate('order-new');
 
             return redirect()
-                ->to(site_url('in-store-sales/success/' . $orderId))
+                ->to(site_url('offline-sales/success/' . $orderId))
                 ->with('success', 'Transaksi berhasil disimpan');
         } catch (\Throwable $e) {
             $db->transRollback();
@@ -391,17 +456,25 @@ class InStoreSalesController extends BaseController
         // 📦 Order items
         $items = $this->orderModel->getOrderItems($orderId);
 
+        $payment = $this->paymentModel
+            ->select('payments.*, payment_methods.method_name, payment_methods.method_type')
+            ->join('payment_methods', 'payment_methods.payment_method_id = payments.payment_method_id', 'left')
+            ->where('payments.order_id', $orderId)
+            ->orderBy('payments.created_at', 'DESC')
+            ->first();
+
         $data = [
-            'order' => $order,
-            'items' => $items,
+            'order'   => $order,
+            'items'   => $items,
+            'payment' => $payment,
         ];
 
-        return view('in_store_sales/v_detail', $data);
+        return view('offline_sales/v_detail', $data);
     }
 
     public function success($orderId)
     {
-        return view('in_store_sales/v_success', [
+        return view('offline_sales/v_success', [
             'order_id' => $orderId
         ]);
     }
@@ -435,10 +508,9 @@ class InStoreSalesController extends BaseController
             ->where('order_items.order_id', $orderId)
             ->findAll();
 
-        return view('in_store_sales/v_print_struk', [
+        return view('offline_sales/v_print_struk', [
             'order' => $order,
             'items' => $items
         ]);
     }
-
 }

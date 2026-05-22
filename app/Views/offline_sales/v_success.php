@@ -20,12 +20,12 @@
       </div>
 
       <div class="modal-footer">
-        <a href="<?= site_url('in-store-sales') ?>"
+        <a href="<?= site_url('offline-sales') ?>"
           class="btn btn-secondary">
           Tidak
         </a>
 
-        <a href="<?= site_url('in-store-sales/print/' . $order_id) ?>"
+        <a href="<?= site_url('offline-sales/print/' . $order_id) ?>"
           target="_blank"
           class="btn btn-primary">
           🖨️ Cetak Struk
