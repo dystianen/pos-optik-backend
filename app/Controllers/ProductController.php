@@ -264,7 +264,7 @@ class ProductController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('failed', 'Invalid input');
+            return redirect()->back()->withInput()->with('failed', implode('<br>', $this->validator->getErrors()));
         }
 
         $productData = [

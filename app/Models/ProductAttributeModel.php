@@ -31,7 +31,18 @@ class ProductAttributeModel extends Model
         'attribute_type' => 'required|string|max_length[20]',
     ];
 
-    protected $validationMessages = [];
+    protected $validationMessages = [
+        'attribute_name' => [
+            'required'   => 'Attribute name is required.',
+            'string'     => 'Attribute name must be text.',
+            'max_length' => 'Attribute name must not exceed 50 characters.',
+        ],
+        'attribute_type' => [
+            'required'   => 'Attribute type is required.',
+            'string'     => 'Attribute type must be text.',
+            'max_length' => 'Attribute type must not exceed 20 characters.',
+        ],
+    ];
     protected $skipValidation     = false;
 
     protected $beforeInsert = ['generateUuid'];

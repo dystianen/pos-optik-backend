@@ -38,11 +38,35 @@ class InventoryTransactionModel extends Model
     protected $validationRules = [
         'product_id'        => 'required',
         'transaction_type'  => 'required|in_list[in,out]',
-        'quantity'          => 'required|integer',
+        'quantity'          => 'required|integer|is_natural_no_zero',
         'transaction_date'  => 'required|valid_date',
-        'description'       => 'permit_empty',
+        'description'       => 'permit_empty|max_length[500]',
         'user_id'           => 'permit_empty',
     ];
+
+    protected $validationMessages = [
+        'product_id' => [
+            'required' => 'Please select a product for the inventory transaction.',
+        ],
+        'transaction_type' => [
+            'required' => 'Transaction type is required.',
+            'in_list' => 'Transaction type must be either "In" or "Out".',
+        ],
+        'quantity' => [
+            'required' => 'Quantity is required.',
+            'integer' => 'Quantity must be a whole number.',
+            'is_natural_no_zero' => 'Quantity must be a positive number greater than zero.',
+        ],
+        'transaction_date' => [
+            'required'   => 'Transaction date is required.',
+            'valid_date' => 'Transaction date must be a valid date (format: YYYY-MM-DD).',
+        ],
+        'description' => [
+            'max_length' => 'Description must not exceed 500 characters.',
+        ],
+    ];
+
+    protected $skipValidation = false;
 
     protected $beforeInsert = ['generateUuid'];
 

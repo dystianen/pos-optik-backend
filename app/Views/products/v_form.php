@@ -7,7 +7,25 @@
   </div>
 
   <div class="card-body">
-    <form id="productForm" action="<?= site_url('products/save') ?>" method="post" enctype="multipart/form-data">
+    <!-- Error Messages Display -->
+    <?php if (session()->getFlashdata('failed')): ?>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-exclamation-circle"></i> Validation Error</h5>
+        <div><?= session()->getFlashdata('failed') ?></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <?php endif; ?>
+
+    <!-- Success Messages Display -->
+    <?php if (session()->getFlashdata('success')): ?>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-check-circle"></i> Success</h5>
+        <div><?= session()->getFlashdata('success') ?></div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <?php endif; ?>
+
+    <form id="productForm" action="<?= site_url('products/save') ?>" method="post" enctype="multipart/form-data" novalidate>
       <?= csrf_field() ?>
 
       <input type="hidden" name="id" value="<?= $product['product_id'] ?? '' ?>">
@@ -15,31 +33,38 @@
       <div class="row">
         <!-- Category -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label">Category</label>
+          <label class="form-label">Category <span class="text-danger">*</span></label>
           <select class="form-control" name="category_id" required>
-            <option value="" disabled <?= !isset($product) ? 'selected' : '' ?>>Select category</option>
+            <option value="" disabled <?= !isset($product) ? 'selected' : '' ?>>-- Select a category --</option>
             <?php foreach ($categories as $c): ?>
-              <option value="<?= $c['category_id'] ?>"
+              <option value="<?= htmlspecialchars($c['category_id']) ?>"
                 <?= (old('category_id', $product['category_id'] ?? '') == $c['category_id']) ? 'selected' : '' ?>>
-                <?= esc($c['category_name']) ?>
+                <?= htmlspecialchars($c['category_name']) ?>
               </option>
             <?php endforeach; ?>
           </select>
+          <small class="form-text text-muted d-block mt-1">Select the product category</small>
         </div>
 
         <!-- Name -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label">Name</label>
+          <label class="form-label">Product Name <span class="text-danger">*</span></label>
           <input type="text" name="product_name" class="form-control"
+            placeholder="e.g., Blue Light Glasses"
             value="<?= old('product_name', $product['product_name'] ?? '') ?>" required>
+          <small class="form-text text-muted d-block mt-1">Enter product name (max 100 characters)</small>
         </div>
 
         <!-- Price (base) -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label">Base Price</label>
-          <input type="number" step="0.01" name="product_price" class="form-control"
-            value="<?= old('product_price', $product['product_price'] ?? '') ?>" required>
-          <small class="text-muted">This is the default price (used if variant price not provided).</small>
+          <label class="form-label">Base Price <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="number" step="0.01" name="product_price" class="form-control"
+              placeholder="0.00"
+              value="<?= old('product_price', $product['product_price'] ?? '') ?>" required>
+          </div>
+          <small class="text-muted d-block mt-1">Default price used if variant price not provided</small>
         </div>
 
         <!-- Stock (base) -->
@@ -47,36 +72,47 @@
           <label class="form-label">Base Stock</label>
           <input disabled type="number" name="product_stock" class="form-control"
             value="<?= old('product_stock', $product['product_stock'] ?? '') ?>" placeholder="Auto-calculated">
+          <small class="text-muted d-block mt-1">Auto-calculated from variant stocks</small>
         </div>
 
         <!-- Brand -->
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label">Brand</label>
           <input type="text" name="product_brand" class="form-control"
-            value="<?= old('product_brand', $product['product_brand'] ?? '') ?>" required>
+            placeholder="e.g., Ray-Ban"
+            value="<?= old('product_brand', $product['product_brand'] ?? '') ?>">
+          <small class="form-text text-muted d-block mt-1">Optional: Product brand (max 50 characters)</small>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12 mb-3">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="4"
+            placeholder="Enter product description..."><?= old('description', $product['description'] ?? '') ?></textarea>
+          <small class="form-text text-muted d-block mt-1">Optional: Detailed product description (max 1000 characters)</small>
         </div>
 
         <!-- MULTIPLE IMAGES -->
         <div class="col-12 mb-3">
           <label class="form-label">Product Images</label>
           <input type="file" name="images[]" class="form-control" multiple accept=".jpg,.jpeg,.png">
-          <small class="text-muted">You can upload multiple images. These are used as product images and fallback for variants.</small>
+          <small class="text-muted d-block mt-1">Upload multiple images (JPG, JPEG, or PNG). Used as product images and fallback for variants.</small>
 
           <?php if (!empty($product_images)): ?>
-            <div class="mt-2">
-              <label>Current Images:</label>
+            <div class="mt-3">
+              <label class="fw-bold">Current Images:</label>
               <div class="d-flex flex-wrap">
                 <?php foreach ($product_images as $img): ?>
                   <div class="me-2 mb-2 position-relative image-container" style="width: 150px;">
-                    <img src="<?= esc($img['url']) ?>" class="rounded border w-100 h-100" style="object-fit: contain;" alt="<?= esc($img['alt_text']) ?>">
+                    <img src="<?= htmlspecialchars($img['url']) ?>" class="rounded border w-100 h-100" style="object-fit: contain;" alt="<?= htmlspecialchars($img['alt_text']) ?>">
 
                     <!-- Overlay dengan button delete di tengah -->
                     <div class="image-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
                       <button
                         type="button"
                         class="btn btn-danger btn-sm delete-image-btn"
-                        data-image-id="<?= $img['product_image_id'] ?>"
-                        data-product-id="<?= $product['product_id'] ?>"
+                        data-image-id="<?= htmlspecialchars($img['product_image_id']) ?>"
+                        data-product-id="<?= htmlspecialchars($product['product_id']) ?>"
                         title="Delete Image">
                         <i class="fas fa-trash"></i>
                       </button>

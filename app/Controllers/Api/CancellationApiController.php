@@ -85,7 +85,7 @@ class CancellationApiController extends BaseApiController
         ];
 
         if (!$this->validate($rules)) {
-            return $this->validationErrorResponse($this->validator->getErrors(), 'Validation failed');
+            return $this->validationErrorResponse($this->validator->getErrors());
         }
 
         $orderId = $this->request->getJSON()->order_id;

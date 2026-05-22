@@ -29,10 +29,18 @@ class RoleModel extends Model
     // Validation Rules
     protected $validationRules = [
         'role_name'        => 'required|max_length[100]',
-        'role_description' => 'permit_empty',
+        'role_description' => 'permit_empty|max_length[500]',
     ];
 
-    protected $validationMessages = [];
+    protected $validationMessages = [
+        'role_name' => [
+            'required'   => 'Role name is required.',
+            'max_length' => 'Role name must not exceed 100 characters.',
+        ],
+        'role_description' => [
+            'max_length' => 'Role description must not exceed 500 characters.',
+        ],
+    ];
     protected $skipValidation     = false;
 
     // Auto-generate UUID

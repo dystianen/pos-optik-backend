@@ -71,8 +71,16 @@ class AuthApiController extends BaseApiController
       ->where('customer_email', $email)
       ->first();
 
-    if (!$user || !password_verify($password, $user['customer_password'])) {
-      return $this->validationErrorResponse(['customer_email' => 'Invalid username or password']);
+    if (!$user) {
+      return $this->validationErrorResponse([
+        'customer_email' => 'No account found with that email address.'
+      ]);
+    }
+
+    if (!password_verify($password, $user['customer_password'])) {
+      return $this->validationErrorResponse([
+        'customer_password' => 'The password you entered is incorrect. Please try again.'
+      ]);
     }
 
     $key = getenv('JWT_SECRET_KEY');
@@ -241,13 +249,14 @@ class AuthApiController extends BaseApiController
 
       $email       = $this->request->getVar('customer_email');
       $newPassword = $this->request->getVar('customer_password');
-      
+
+
       $customer = $this->customerModel
         ->where('customer_email', $email)
         ->first();
 
       if (!$customer) {
-        return $this->notFoundResponse('Customer dengan email tersebut tidak ditemukan');
+        return $this->notFoundResponse('No account found with that email address.');
       }
 
       $customerData = [
@@ -255,14 +264,12 @@ class AuthApiController extends BaseApiController
       ];
 
       if (!$this->customerModel->update($customer['customer_id'], $customerData)) {
-        return $this->serverErrorResponse('Gagal mereset password customer');
+        return $this->serverErrorResponse('Failed to reset password. Please try again.');
       }
 
-      return $this->messageResponse('Password customer berhasil diperbarui');
-
+      return $this->messageResponse('Your password has been updated successfully.');
     } catch (Exception $e) {
-      return $this->serverErrorResponse('Terjadi kesalahan saat memproses reset password');
+      return $this->serverErrorResponse('An error occurred while resetting your password. Please try again.');
     }
   }
 }
-

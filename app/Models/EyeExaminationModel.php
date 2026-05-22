@@ -43,8 +43,38 @@ class EyeExaminationModel extends Model
         'right_eye_sphere'   => 'permit_empty|decimal',
         'right_eye_cylinder' => 'permit_empty|decimal',
         'right_eye_axis'     => 'permit_empty|integer',
-        'symptoms'           => 'permit_empty',
-        'diagnosis'          => 'permit_empty|max_length[100]',
+        'symptoms'           => 'permit_empty|max_length[500]',
+        'diagnosis'          => 'permit_empty|max_length[500]',
+    ];
+
+    protected $validationMessages = [
+        'customer_id' => [
+            'required' => 'Please select a customer for the eye examination.',
+        ],
+        'left_eye_sphere' => [
+            'decimal' => 'Left eye sphere must be a valid decimal number.',
+        ],
+        'left_eye_cylinder' => [
+            'decimal' => 'Left eye cylinder must be a valid decimal number.',
+        ],
+        'left_eye_axis' => [
+            'integer' => 'Left eye axis must be a whole number.',
+        ],
+        'right_eye_sphere' => [
+            'decimal' => 'Right eye sphere must be a valid decimal number.',
+        ],
+        'right_eye_cylinder' => [
+            'decimal' => 'Right eye cylinder must be a valid decimal number.',
+        ],
+        'right_eye_axis' => [
+            'integer' => 'Right eye axis must be a whole number.',
+        ],
+        'symptoms' => [
+            'max_length' => 'Symptoms description must not exceed 500 characters.',
+        ],
+        'diagnosis' => [
+            'max_length' => 'Diagnosis must not exceed 500 characters.',
+        ],
     ];
 
     protected $beforeInsert = ['generateUuid'];

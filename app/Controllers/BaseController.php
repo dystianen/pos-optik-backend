@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Traits\ValidationHelperTrait;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -27,6 +28,7 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseController extends Controller
 {
+    use ValidationHelperTrait;
     /**
      * Instance of the main Request object.
      *
@@ -62,6 +64,32 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         // E.g.: $this->session = \Config\Services::session();
+    }
+
+    /**
+     * Override validate() to automatically beautify validation error messages.
+     * Uses Reflection to inject formatted errors back into the validator instance.
+     *
+     * @param array|string $rules     Validation rules.
+     * @param array        $messages  Custom messages.
+     * @return bool
+     */
+    protected function validate($rules, array $messages = []): bool
+    {
+        $passed = parent::validate($rules, $messages);
+
+        if (!$passed && $this->validator) {
+            $beautified = $this->beautifyValidationErrors($this->validator->getErrors());
+            try {
+                $ref = new \ReflectionProperty(get_class($this->validator), 'errors');
+                $ref->setAccessible(true);
+                $ref->setValue($this->validator, $beautified);
+            } catch (\Throwable) {
+                // Reflection failed — not critical, raw errors will still show
+            }
+        }
+
+        return $passed;
     }
 
     public function decodedToken()
