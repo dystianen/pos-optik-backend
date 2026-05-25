@@ -29,6 +29,7 @@
         <thead>
           <tr>
             <th class="text-center">No</th>
+            <th>SKU</th>
             <th>Category</th>
             <th>Name</th>
             <th>Brand</th>
@@ -48,6 +49,7 @@
             <?php foreach ($products as $product): ?>
               <tr>
                 <td class="text-center"><?= $startIndex++ ?></td>
+                <td><?= $product['product_sku'] ?></td>
                 <td><?= $product['category_name'] ?></td>
                 <td><?= $product['product_name'] ?></td>
                 <td><?= $product['product_brand'] ?></td>

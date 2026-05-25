@@ -1,7 +1,19 @@
 <?= $this->extend('layouts/l_dashboard.php') ?>
 <?= $this->section('content') ?>
 
+<?php
+
+/**
+ * @var string $category
+ * @var string $startDate
+ * @var string $endDate
+ * @var array $summary
+ */
+?>
+<?php $request = service('request'); ?>
+
 <div class="container-fluid p-0">
+
   <!-- FILTER CARD -->
   <div class="card mb-4 border-0 shadow-sm" style="border-radius: 16px;">
     <div class="card-header pb-2 bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -9,13 +21,13 @@
 
       <!-- EXPORT ACTIONS -->
       <div class="d-flex align-items-center gap-2">
-        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=excel') ?>"
+        <a href="<?= base_url('/reports/sales/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=excel') ?>"
           class="btn btn-sm btn-success mb-0 d-flex align-items-center gap-2"
           style="border-radius: 8px;">
           <i class="fa-solid fa-file-excel"></i>
           <span>Excel</span>
         </a>
-        <a href="<?= base_url('/reports/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=pdf') ?>"
+        <a href="<?= base_url('/reports/sales/export?category=' . $category . '&start_date=' . $startDate . '&end_date=' . $endDate . '&format=pdf') ?>"
           class="btn btn-sm btn-danger mb-0 d-flex align-items-center gap-2"
           style="border-radius: 8px;">
           <i class="fa-solid fa-file-pdf"></i>
@@ -26,7 +38,7 @@
 
     <div class="card-body">
       <!-- Form Filters -->
-      <form action="<?= base_url('/reports') ?>" method="get" class="row g-3 align-items-end">
+      <form action="<?= base_url('/reports/sales') ?>" method="get" class="row g-3 align-items-end">
         <div class="col-md-3">
           <label class="form-label font-weight-bold text-xs text-uppercase">Sales Category</label>
           <select name="category" class="form-select form-select-sm" style="border-radius: 8px;">
@@ -49,7 +61,7 @@
           <button type="submit" class="btn btn-sm btn-secondary mb-0 w-100" style="border-radius: 8px; height: 38px;">
             <i class="fa-solid fa-magnifying-glass me-1"></i> Filter
           </button>
-          <a href="<?= base_url('/reports') ?>" class="btn btn-sm btn-outline-secondary mb-0 w-100 d-flex align-items-center justify-content-center" style="border-radius: 8px; height: 38px;">
+          <a href="<?= base_url('/reports/sales') ?>" class="btn btn-sm btn-outline-secondary mb-0 w-100 d-flex align-items-center justify-content-center" style="border-radius: 8px; height: 38px;">
             Reset
           </a>
         </div>

@@ -1,3 +1,14 @@
+<?php
+
+/**
+ * @var string $startDate
+ * @var string $endDate
+ * @var string $category
+ * @var string $categoryText
+ * @var array $summary
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 

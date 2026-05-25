@@ -29,7 +29,7 @@ class ReportController extends BaseController
         $orders  = $this->getFilteredOrders($category, $startDate, $endDate);
         $summary = $this->calculateSummary($orders, $category);
 
-        return view('reports/v_index', [
+        return view('reports/v_sales', [
             'orders'    => $orders,
             'category'  => $category,
             'startDate' => $startDate,
@@ -56,6 +56,203 @@ class ReportController extends BaseController
         } else {
             return $this->exportToExcel($orders, $categoryText, $startDate, $endDate, $summary, $filename . '.xlsx', $category);
         }
+    }
+
+    public function inventory()
+    {
+        $transactionType = $this->request->getVar('transaction_type') ?? 'all';
+        $startDate       = $this->request->getVar('start_date') ?? date('Y-m-01');
+        $endDate         = $this->request->getVar('end_date') ?? date('Y-m-d');
+
+        $transactions = $this->getFilteredInventory($transactionType, $startDate, $endDate);
+        $summary      = $this->calculateInventorySummary($transactions);
+
+        return view('reports/v_inventory', [
+            'transactions'    => $transactions,
+            'transactionType' => $transactionType,
+            'startDate'       => $startDate,
+            'endDate'         => $endDate,
+            'summary'         => $summary,
+        ]);
+    }
+
+    public function exportInventory()
+    {
+        $transactionType = $this->request->getVar('transaction_type') ?? 'all';
+        $startDate       = $this->request->getVar('start_date') ?? date('Y-m-01');
+        $endDate         = $this->request->getVar('end_date') ?? date('Y-m-d');
+        $format          = $this->request->getVar('format') ?? 'excel';
+
+        $transactions = $this->getFilteredInventory($transactionType, $startDate, $endDate);
+        $summary      = $this->calculateInventorySummary($transactions);
+        $typeText     = $this->getInventoryTypeText($transactionType);
+        $filename     = 'Inventory_Report_' . str_replace(' ', '_', $typeText) . '_' . str_replace('-', '', $startDate) . '_' . str_replace('-', '', $endDate);
+
+        if ($format === 'pdf') {
+            return $this->exportInventoryPdf($transactions, $typeText, $startDate, $endDate, $summary, $filename . '.pdf', $transactionType);
+        }
+
+        return $this->exportInventoryExcel($transactions, $typeText, $startDate, $endDate, $summary, $filename . '.xlsx', $transactionType);
+    }
+
+    private function getInventoryTypeText($transactionType)
+    {
+        return match ($transactionType) {
+            'in' => 'Inbound',
+            'out' => 'Outbound',
+            default => 'All_Transactions',
+        };
+    }
+
+    private function getFilteredInventory($transactionType, $startDate, $endDate)
+    {
+        $builder = $this->db->table('inventory_transactions')
+            ->select('inventory_transactions.*, products.product_name, product_variants.variant_name, users.user_name')
+            ->join('products', 'products.product_id = inventory_transactions.product_id', 'left')
+            ->join('product_variants', 'product_variants.variant_id = inventory_transactions.variant_id', 'left')
+            ->join('users', 'users.user_id = inventory_transactions.user_id', 'left')
+            ->orderBy('inventory_transactions.transaction_date', 'DESC');
+
+        if ($transactionType === 'in' || $transactionType === 'out') {
+            $builder->where('inventory_transactions.transaction_type', $transactionType);
+        }
+
+        if (!empty($startDate)) {
+            $builder->where('DATE(inventory_transactions.transaction_date) >=', $startDate);
+        }
+
+        if (!empty($endDate)) {
+            $builder->where('DATE(inventory_transactions.transaction_date) <=', $endDate);
+        }
+
+        return $builder->get()->getResultArray();
+    }
+
+    private function calculateInventorySummary(array $transactions)
+    {
+        $totalTransactions = count($transactions);
+        $totalIn           = 0;
+        $totalOut          = 0;
+        $totalQuantity     = 0;
+
+        foreach ($transactions as $transaction) {
+            if (strtolower($transaction['transaction_type']) === 'in') {
+                $totalIn += (int) $transaction['quantity'];
+            } else {
+                $totalOut += (int) $transaction['quantity'];
+            }
+
+            $totalQuantity += (int) $transaction['quantity'];
+        }
+
+        return [
+            'total_transactions' => $totalTransactions,
+            'total_in'           => $totalIn,
+            'total_out'          => $totalOut,
+            'net_quantity'       => $totalIn - $totalOut,
+            'average_quantity'   => $totalTransactions > 0 ? $totalQuantity / $totalTransactions : 0,
+        ];
+    }
+
+    private function exportInventoryPdf($transactions, $typeText, $startDate, $endDate, $summary, $filename, $transactionType)
+    {
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $html = view('reports/v_inventory_pdf', [
+            'transactions'    => $transactions,
+            'typeText'        => $typeText,
+            'transactionType' => $transactionType,
+            'startDate'       => date('d M Y', strtotime($startDate)),
+            'endDate'         => date('d M Y', strtotime($endDate)),
+            'summary'         => $summary,
+        ]);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($dompdf->output());
+    }
+
+    private function exportInventoryExcel($transactions, $typeText, $startDate, $endDate, $summary, $filename, $transactionType)
+    {
+        $filePath = WRITEPATH . 'uploads/' . $filename;
+
+        if (!is_dir(WRITEPATH . 'uploads/')) {
+            mkdir(WRITEPATH . 'uploads/', 0777, true);
+        }
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($filePath);
+
+        $titleStyle = (new StyleBuilder())
+            ->setFontBold()
+            ->setFontSize(16)
+            ->setFontColor(Color::rgb(33, 37, 41))
+            ->build();
+
+        $headerStyle = (new StyleBuilder())
+            ->setFontBold()
+            ->setFontSize(11)
+            ->setBackgroundColor(Color::rgb(47, 184, 170))
+            ->setFontColor(Color::WHITE)
+            ->build();
+
+        $subHeaderStyle = (new StyleBuilder())
+            ->setFontBold()
+            ->setBackgroundColor(Color::rgb(241, 243, 245))
+            ->build();
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setName('Inventory Summary');
+
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['OPTIKERS INVENTORY REPORT'], $titleStyle));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Transaction Type:', $typeText]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Downloaded At:', date('d M Y H:i')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
+
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Transactions', number_format($summary['total_transactions'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total In Quantity', number_format($summary['total_in'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Out Quantity', number_format($summary['total_out'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Net Quantity', number_format($summary['net_quantity'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Average Quantity per Transaction', number_format($summary['average_quantity'], 2, ',', '.')]));
+
+        $writer->addNewSheetAndMakeItCurrent();
+        $writer->getCurrentSheet()->setName('Transaction Details');
+
+        $headers = ['No', 'Transaction ID', 'Date', 'Transaction Type', 'Reference Type', 'Reference ID', 'Product', 'Variant', 'User', 'Quantity', 'Description'];
+        $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
+
+        $no = 1;
+        foreach ($transactions as $transaction) {
+            $rowData = [
+                $no++,
+                '#' . $transaction['inventory_transaction_id'],
+                date('d M Y H:i', strtotime($transaction['transaction_date'])),
+                strtoupper($transaction['transaction_type']),
+                strtoupper($transaction['reference_type']),
+                $transaction['reference_id'] ?? '-',
+                $transaction['product_name'] ?? '-',
+                $transaction['variant_name'] ?? '-',
+                $transaction['user_name'] ?? 'System',
+                (int) $transaction['quantity'],
+                $transaction['description'] ?? '-',
+            ];
+            $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
+        }
+
+        $writer->close();
+
+        return $this->response->download($filePath, null)->setFileName($filename);
     }
 
     private function getCategoryText($category)
@@ -141,7 +338,7 @@ class ReportController extends BaseController
                 $builder->where('DATE(orders.created_at) >=', $startDate);
             }
         }
-        
+
         if (!empty($endDate)) {
             if ($category === 'refund') {
                 $builder->where('DATE(order_refunds.created_at) <=', $endDate);
@@ -181,10 +378,10 @@ class ReportController extends BaseController
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isPhpEnabled', true);
-        
+
         $dompdf = new Dompdf($options);
 
-        $html = view('reports/v_pdf', [
+        $html = view('reports/v_sales_pdf', [
             'orders'       => $orders,
             'categoryText' => $categoryText,
             'category'     => $category,

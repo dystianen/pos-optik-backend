@@ -224,8 +224,10 @@ $routes->group('cancellation-sales', ['filter' => 'authGuard'], function ($route
 });
 
 $routes->group('reports', ['filter' => 'authGuard'], function ($routes) {
-  $routes->get('', 'ReportController::index');
-  $routes->get('export', 'ReportController::export');
+  $routes->get('sales', 'ReportController::index');
+  $routes->get('sales/export', 'ReportController::export');
+  $routes->get('inventory', 'ReportController::inventory');
+  $routes->get('inventory/export', 'ReportController::exportInventory');
 });
 
 $routes->group('roles', ['filter' => 'authGuard'], function ($routes) {

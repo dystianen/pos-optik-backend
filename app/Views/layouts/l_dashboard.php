@@ -168,13 +168,35 @@
 
         <!-- Admin (1) dan Cashier (3) - Reports -->
         <?php if (in_array($roleName, ['admin', 'cashier'])) : ?>
+          <?php
+          $isReportsActive = $segments[0] === 'reports';
+          $isReportsSalesActive = $currentURI === 'reports' || (isset($segments[1]) && $segments[1] === 'sales');
+          $isReportsInventoryActive = isset($segments[1]) && $segments[1] === 'inventory';
+          ?>
           <li class="nav-item">
-            <a class="nav-link <?= $segments[0] === 'reports' ? 'active' : '' ?>" href="/reports">
+            <a class="nav-link <?= $isReportsActive ? 'active' : '' ?>" data-bs-toggle="collapse" href="#reportsMenu" role="button" aria-expanded="<?= $isReportsActive ? 'true' : 'false' ?>" aria-controls="reportsMenu">
               <div class="me-2 d-flex align-items-center justify-content-center">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
               </div>
               <span class="nav-link-text ms-1">Reports</span>
             </a>
+
+            <div class="collapse <?= $isReportsActive ? 'show' : '' ?>" id="reportsMenu">
+              <ul class="navbar-nav ms-4 flex-column">
+                <li class="nav-item">
+                  <a class="nav-link <?= $isReportsSalesActive ? 'active' : '' ?>" href="/reports/sales">
+                    <i class="fa-solid fa-chart-line me-1"></i>
+                    <span class="nav-link-text">Sales Report</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link <?= $isReportsInventoryActive ? 'active' : '' ?>" href="/reports/inventory">
+                    <i class="fa-solid fa-boxes-packing me-1"></i>
+                    <span class="nav-link-text">Inventory Report</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
         <?php endif; ?>
 
