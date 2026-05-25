@@ -103,23 +103,25 @@
 
         <div class="col-12 mb-3">
           <label for="symptoms" class="form-label">Symptoms</label>
-          <textarea class="form-control" name="symptoms" id="symptoms" rows="3" placeholder="e.g., Red eyes, itching, watery eyes"><?= old('symptoms', isset($eyeExamination) ? htmlspecialchars($eyeExamination['symptoms']) : '') ?></textarea>
+          <textarea class="form-control" name="symptoms" id="symptoms" rows="3" placeholder="e.g., Red eyes, itching, watery eyes"
+            ><?= old('symptoms', isset($eyeExamination) ? htmlspecialchars($eyeExamination['symptoms']) : '') ?></textarea>
           <small class="form-text text-muted d-block mt-1">Optional: Describe any symptoms reported by the customer (max 500 characters)</small>
         </div>
 
         <div class="col-12 mb-3">
           <label for="diagnosis" class="form-label">Diagnosis</label>
-          <textarea class="form-control" name="diagnosis" id="diagnosis" rows="3" placeholder="e.g., Myopia, Hyperopia, Astigmatism"><?= old('diagnosis', isset($eyeExamination) ? htmlspecialchars($eyeExamination['diagnosis']) : '') ?></textarea>
+          <textarea class="form-control" name="diagnosis" id="diagnosis" rows="3" placeholder="e.g., Myopia, Hyperopia, Astigmatism"
+            ><?= old('diagnosis', isset($eyeExamination) ? htmlspecialchars($eyeExamination['diagnosis']) : '') ?></textarea>
           <small class="form-text text-muted d-block mt-1">Optional: Clinical diagnosis (max 500 characters)</small>
         </div>
       </div>
 
       <div class="mt-4">
         <a href="<?= base_url('eye-examinations') ?>" class="btn btn-secondary">
-          Cancel
+          <i class="fas fa-times"></i> Cancel
         </a>
         <button type="submit" class="btn btn-primary">
-          <?= isset($eyeExamination) ? 'Update Examination' : 'Save Examination' ?>
+          <i class="fas fa-save"></i> <?= isset($eyeExamination) ? 'Update Examination' : 'Save Examination' ?>
         </button>
       </div>
     </form>

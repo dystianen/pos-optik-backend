@@ -93,50 +93,72 @@ trait ValidationHelperTrait
             // Patterns to match the default CodeIgniter messages
             if (preg_match('/is required/i', $message)) {
                 $beautified[$field] = "$label is required.";
+
             } elseif (preg_match('/must contain a unique value/i', $message)) {
                 $beautified[$field] = "This $label is already taken.";
+
             } elseif (preg_match('/must contain a valid email/i', $message)) {
                 $beautified[$field] = "Please enter a valid email address.";
+
             } elseif (preg_match('/must be at least (\d+) characters/i', $message, $m)) {
                 $beautified[$field] = "$label must be at least {$m[1]} characters long.";
+
             } elseif (preg_match('/cannot exceed (\d+) characters/i', $message, $m)) {
                 $beautified[$field] = "$label cannot exceed {$m[1]} characters.";
+
             } elseif (preg_match('/not exceed (\d+) characters/i', $message, $m)) {
                 $beautified[$field] = "$label cannot exceed {$m[1]} characters.";
+
             } elseif (preg_match('/does not match the (\S+) field/i', $message, $m)) {
                 $mf = $m[1];
                 $ml = $fieldLabels[$mf] ?? ucwords(str_replace('_', ' ', preg_replace('/^(customer|product|order|user|variant|attribute)_/', '', $mf)));
                 $beautified[$field] = "$label does not match $ml.";
+
             } elseif (preg_match('/must contain only numbers/i', $message)) {
                 $beautified[$field] = "$label must be a number.";
+
             } elseif (preg_match('/must be a decimal/i', $message)) {
                 $beautified[$field] = "$label must be a valid decimal number.";
+
             } elseif (preg_match('/must be numeric/i', $message)) {
                 $beautified[$field] = "$label must be a numeric value.";
+
             } elseif (preg_match('/must be an integer/i', $message)) {
                 $beautified[$field] = "$label must be a whole number.";
+
             } elseif (preg_match('/must be greater than (\S+)/i', $message, $m)) {
                 $beautified[$field] = "$label must be greater than {$m[1]}.";
+
             } elseif (preg_match('/must be less than (\S+)/i', $message, $m)) {
                 $beautified[$field] = "$label must be less than {$m[1]}.";
+
             } elseif (preg_match('/must be greater than or equal/i', $message, $m)) {
                 $beautified[$field] = "$label must be 0 or more.";
+
             } elseif (preg_match('/must contain a valid date/i', $message)) {
                 $beautified[$field] = "Please enter a valid date for $label.";
+
             } elseif (preg_match('/must be one of:/i', $message)) {
                 $beautified[$field] = "Please select a valid $label.";
+
             } elseif (preg_match('/is not a permitted mime type/i', $message)) {
                 $beautified[$field] = "The $label file format is not allowed.";
+
             } elseif (preg_match('/exceeds the allowed filesize/i', $message)) {
                 $beautified[$field] = "The $label file is too large.";
+
             } elseif (preg_match('/no file was uploaded/i', $message)) {
                 $beautified[$field] = "$label file is required.";
+
             } elseif (preg_match('/uploaded file did not pass/i', $message)) {
                 $beautified[$field] = "The $label file upload failed. Please try again.";
+
             } elseif (preg_match('/must have a minimum length of (\d+)/i', $message, $m)) {
                 $beautified[$field] = "$label must be exactly {$m[1]} characters long.";
+
             } elseif (preg_match('/must have an exact length of (\d+)/i', $message, $m)) {
                 $beautified[$field] = "$label must be exactly {$m[1]} characters.";
+
             } else {
                 // Fallback: strip the raw field name from the message and clean it up
                 $cleanMsg = str_replace(["The $field field", "The " . str_replace('_', ' ', $field) . " field"], $label, $message);

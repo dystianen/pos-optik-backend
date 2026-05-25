@@ -31,7 +31,7 @@
         <!-- Customer Name -->
         <div class="col-md-6 mb-3">
           <label for="customer_name" class="form-label">Name <span class="text-danger">*</span></label>
-          <input type="text" class="form-control <?= old('customer_name') === false && session('failed') ? 'is-invalid' : '' ?>"
+          <input type="text" class="form-control <?= old('customer_name') === false && session('failed') ? 'is-invalid' : '' ?>" 
             name="customer_name" id="customer_name" placeholder="e.g., Rudi Amanah" required
             value="<?= old('customer_name', isset($customer) ? $customer['customer_name'] : '') ?>">
           <small class="form-text text-muted d-block mt-1">Enter customer's full name (max 100 characters)</small>
@@ -40,7 +40,7 @@
         <!-- Customer Email -->
         <div class="col-md-6 mb-3">
           <label for="customer_email" class="form-label">Email <span class="text-danger">*</span></label>
-          <input type="email" class="form-control <?= old('customer_email') === false && session('failed') ? 'is-invalid' : '' ?>"
+          <input type="email" class="form-control <?= old('customer_email') === false && session('failed') ? 'is-invalid' : '' ?>" 
             name="customer_email" id="customer_email" placeholder="your@email.com" required
             value="<?= old('customer_email', isset($customer) ? $customer['customer_email'] : '') ?>">
           <small class="form-text text-muted d-block mt-1">Use a valid email address (e.g., customer@example.com)</small>
@@ -50,14 +50,14 @@
         <?php if (!isset($customer)): ?>
           <div class="col-md-6 mb-3">
             <label for="customer_password" class="form-label">Password <span class="text-danger">*</span></label>
-            <input type="password" class="form-control <?= old('customer_password') === false && session('failed') ? 'is-invalid' : '' ?>"
+            <input type="password" class="form-control <?= old('customer_password') === false && session('failed') ? 'is-invalid' : '' ?>" 
               name="customer_password" id="customer_password" placeholder="Enter a strong password" required>
             <small class="form-text text-muted d-block mt-1">Password is required for new customer accounts</small>
           </div>
         <?php else: ?>
           <div class="col-md-6 mb-3">
             <label for="customer_password" class="form-label">Password</label>
-            <input type="password" class="form-control"
+            <input type="password" class="form-control" 
               name="customer_password" id="customer_password" placeholder="Leave blank to keep current password">
             <small class="form-text text-muted d-block mt-1">Leave blank to keep the current password</small>
           </div>
@@ -66,7 +66,7 @@
         <!-- Phone -->
         <div class="col-md-6 mb-3">
           <label for="customer_phone" class="form-label">Phone</label>
-          <input type="text" class="form-control <?= old('customer_phone') === false && session('failed') ? 'is-invalid' : '' ?>"
+          <input type="text" class="form-control <?= old('customer_phone') === false && session('failed') ? 'is-invalid' : '' ?>" 
             name="customer_phone" id="customer_phone" placeholder="e.g., +62 813-3948-3847"
             value="<?= old('customer_phone', isset($customer) ? $customer['customer_phone'] : '') ?>">
           <small class="form-text text-muted d-block mt-1">Optional: Enter customer's phone number (max 20 characters)</small>
@@ -75,7 +75,7 @@
         <!-- Date of Birth -->
         <div class="col-md-6 mb-3">
           <label for="customer_dob" class="form-label">Date of Birth</label>
-          <input type="date" class="form-control <?= old('customer_dob') === false && session('failed') ? 'is-invalid' : '' ?>"
+          <input type="date" class="form-control <?= old('customer_dob') === false && session('failed') ? 'is-invalid' : '' ?>" 
             name="customer_dob" id="customer_dob"
             value="<?= old('customer_dob', isset($customer) ? $customer['customer_dob'] : '') ?>">
           <small class="form-text text-muted d-block mt-1">Optional: Select date in YYYY-MM-DD format</small>
@@ -84,7 +84,7 @@
         <!-- Gender -->
         <div class="col-md-6 mb-3">
           <label for="customer_gender" class="form-label">Gender</label>
-          <select class="form-control <?= old('customer_gender') === false && session('failed') ? 'is-invalid' : '' ?>"
+          <select class="form-control <?= old('customer_gender') === false && session('failed') ? 'is-invalid' : '' ?>" 
             name="customer_gender" id="customer_gender">
             <option value="">-- Select Gender --</option>
             <option value="male" <?= old('customer_gender', isset($customer) ? $customer['customer_gender'] : '') === 'male' ? 'selected' : '' ?>>Male</option>
