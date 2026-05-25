@@ -38,36 +38,61 @@ class OfflineSalesController extends BaseController
 
     public function index()
     {
-        $currentPage = (int) ($this->request->getVar('page') ?? 1);
-        $search      = $this->request->getVar('q');
-        $startDate   = $this->request->getVar('start_date');
-        $endDate     = $this->request->getVar('end_date');
+        $currentPage = max(
+            1,
+            (int) ($this->request->getVar('page') ?? 1)
+        );
+
+        $search    = trim($this->request->getVar('q') ?? '');
+        $startDate = $this->request->getVar('start_date');
+        $endDate   = $this->request->getVar('end_date');
 
         $limit  = 10;
         $offset = ($currentPage - 1) * $limit;
 
-        // ============================
-        // BASE QUERY
-        // ============================
-        $builder = $this->orderModel
-            ->select('
-                orders.order_id,
-                orders.created_at,
-                orders.grand_total,
-                customers.customer_name,
-                customers.customer_email,
-                order_statuses.status_name,
-                COUNT(order_items.order_item_id) as total_items
-            ')
-            ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
-            ->join('order_items', 'order_items.order_id = orders.order_id', 'left')
-            ->where('orders.order_type', 'offline');
+        /**
+         * =========================
+         * MAIN QUERY
+         * =========================
+         */
+        $builder = $this->db->table('orders');
 
-        // ============================
-        // SEARCH FILTER
-        // ============================
-        if (!empty($search)) {
+        $builder->select("
+            orders.order_id,
+            orders.created_at,
+            orders.grand_total,
+
+            customers.customer_name,
+            customers.customer_email,
+
+            order_statuses.status_name,
+
+            (
+                SELECT COUNT(*)
+                FROM order_items oi
+                WHERE oi.order_id = orders.order_id
+            ) AS total_items
+        ");
+
+        $builder->join(
+            'customers',
+            'customers.customer_id = orders.customer_id'
+        );
+
+        $builder->join(
+            'order_statuses',
+            'order_statuses.status_id = orders.status_id'
+        );
+
+        $builder->where('orders.order_type', 'offline');
+
+        /**
+         * =========================
+         * SEARCH
+         * =========================
+         */
+        if ($search !== '') {
+
             $builder->groupStart()
                 ->like('orders.order_id', $search)
                 ->orLike('customers.customer_name', $search)
@@ -76,33 +101,57 @@ class OfflineSalesController extends BaseController
                 ->groupEnd();
         }
 
-        // ============================
-        // DATE FILTER
-        // ============================
+        /**
+         * =========================
+         * DATE FILTER
+         * =========================
+         */
         if (!empty($startDate)) {
-            $builder->where('DATE(orders.created_at) >=', $startDate);
+            $builder->where(
+                'orders.created_at >=',
+                $startDate . ' 00:00:00'
+            );
         }
+
         if (!empty($endDate)) {
-            $builder->where('DATE(orders.created_at) <=', $endDate);
+            $builder->where(
+                'orders.created_at <=',
+                $endDate . ' 23:59:59'
+            );
         }
 
-        // ============================
-        // DATA
-        // ============================
+        /**
+         * =========================
+         * DATA
+         * =========================
+         */
         $orders = $builder
-            ->groupBy('orders.order_id')
             ->orderBy('orders.created_at', 'DESC')
-            ->findAll($limit, $offset);
+            ->limit($limit, $offset)
+            ->get()
+            ->getResultArray();
 
-        // ============================
-        // COUNT FOR PAGINATION
-        // ============================
-        $countBuilder = $this->orderModel
-            ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
-            ->where('orders.order_type', 'offline');
+        /**
+         * =========================
+         * COUNT QUERY
+         * =========================
+         */
+        $countBuilder = $this->db->table('orders');
 
-        if (!empty($search)) {
+        $countBuilder->join(
+            'customers',
+            'customers.customer_id = orders.customer_id'
+        );
+
+        $countBuilder->join(
+            'order_statuses',
+            'order_statuses.status_id = orders.status_id'
+        );
+
+        $countBuilder->where('orders.order_type', 'offline');
+
+        if ($search !== '') {
+
             $countBuilder->groupStart()
                 ->like('orders.order_id', $search)
                 ->orLike('customers.customer_name', $search)
@@ -112,21 +161,32 @@ class OfflineSalesController extends BaseController
         }
 
         if (!empty($startDate)) {
-            $countBuilder->where('DATE(orders.created_at) >=', $startDate);
+            $countBuilder->where(
+                'orders.created_at >=',
+                $startDate . ' 00:00:00'
+            );
         }
+
         if (!empty($endDate)) {
-            $countBuilder->where('DATE(orders.created_at) <=', $endDate);
+            $countBuilder->where(
+                'orders.created_at <=',
+                $endDate . ' 23:59:59'
+            );
         }
 
         $totalRows = $countBuilder->countAllResults();
-        $totalPages = ceil($totalRows / $limit);
+
+        $totalPages = (int) ceil($totalRows / $limit);
 
         return view('offline_sales/v_index', [
-            'orders'    => $orders,
-            'search'    => $search,
+            'orders' => $orders,
+
+            'search' => $search,
+
             'startDate' => $startDate,
             'endDate'   => $endDate,
-            'pager'     => [
+
+            'pager' => [
                 'totalPages'  => $totalPages,
                 'currentPage' => $currentPage,
                 'limit'       => $limit,

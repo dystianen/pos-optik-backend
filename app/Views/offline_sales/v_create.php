@@ -32,100 +32,102 @@
       <!-- ITEMS -->
       <h5 class="mt-4">Produk Dibeli</h5>
 
-      <table class="table table-bordered" id="itemsTable">
-        <thead>
-          <tr>
-            <th>Produk</th>
-            <th>Variant</th>
-            <th width="120">Harga</th>
-            <th width="80">Qty</th>
-            <th width="120">Subtotal</th>
-            <th width="180">Prescription</th>
-            <th width="50"></th>
-          </tr>
-        </thead>
-        <tbody>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle" id="itemsTable" style="min-width: 1400px;">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>Variant</th>
+              <th style="min-width:120px;">Harga</th>
+              <th style="width:200px;">Qty</th>
+              <th style="min-width:120px;">Subtotal</th>
+              <th style="min-width:180px;">Prescription</th>
+              <th style="min-width:50px;"></th>
+            </tr>
+          </thead>
+          <tbody>
 
-          <tr>
-            <!-- PRODUCT -->
-            <td>
-              <select name="items[0][product_id]"
-                class="form-select product-select"
-                required>
-                <option value="">-- Pilih Produk --</option>
-                <?php foreach ($products as $p): ?>
-                  <option value="<?= $p['product_id'] ?>"
-                    data-price="<?= $p['product_price'] ?>">
-                    <?= $p['product_name'] ?>
-                  </option>
-                <?php endforeach ?>
-              </select>
-            </td>
-
-            <!-- VARIANT -->
-            <td>
-              <select name="items[0][variant_id]"
-                class="form-select variant-select"
-                disabled>
-                <option value="">-- Pilih Variant --</option>
-              </select>
-            </td>
-
-            <!-- PRICE -->
-            <td>
-              <input type="number" name="items[0][price]"
-                class="form-control price" readonly>
-            </td>
-
-            <!-- QTY -->
-            <td>
-              <input type="number" name="items[0][qty]"
-                class="form-control qty" value="1" min="1">
-            </td>
-
-            <!-- SUBTOTAL -->
-            <td>
-              <input type="text" class="form-control subtotal" readonly>
-            </td>
-
-            <td>
-              <div class="d-flex flex-column gap-2">
-
-                <!-- TOGGLE -->
-                <select name="items[0][prescription][type]"
-                  class="form-select rx-type">
-                  <option value="none">Tanpa Resep</option>
-                  <option value="manual">Input Manual</option>
+            <tr>
+              <!-- PRODUCT -->
+              <td>
+                <select name="items[0][product_id]"
+                  class="form-select product-select"
+                  required>
+                  <option value="">-- Pilih Produk --</option>
+                  <?php foreach ($products as $p): ?>
+                    <option value="<?= $p['product_id'] ?>"
+                      data-price="<?= $p['product_price'] ?>">
+                      <?= $p['product_name'] ?>
+                    </option>
+                  <?php endforeach ?>
                 </select>
+              </td>
 
-                <!-- RX FORM -->
-                <div class="rx-form d-none">
+              <!-- VARIANT -->
+              <td>
+                <select name="items[0][variant_id]"
+                  class="form-select variant-select"
+                  disabled>
+                  <option value="">-- Pilih Variant --</option>
+                </select>
+              </td>
 
-                  <small class="fw-bold">OD (Right Eye)</small>
-                  <div class="d-flex gap-2 flex-column mb-2">
-                    <input type="text" name="items[0][prescription][right][sph]" class="form-control form-control-sm" placeholder="SPH">
-                    <input type="text" name="items[0][prescription][right][cyl]" class="form-control form-control-sm" placeholder="CYL">
-                    <input type="text" name="items[0][prescription][right][axis]" class="form-control form-control-sm" placeholder="Axis">
-                    <input type="text" name="items[0][prescription][right][pd]" class="form-control form-control-sm" placeholder="PD">
-                  </div>
+              <!-- PRICE -->
+              <td>
+                <input type="number" name="items[0][price]"
+                  class="form-control price" readonly>
+              </td>
 
-                  <small class="fw-bold">OS (Left Eye)</small>
-                  <div class="d-flex gap-2 flex-column">
-                    <input type="text" name="items[0][prescription][left][sph]" class="form-control form-control-sm" placeholder="SPH">
-                    <input type="text" name="items[0][prescription][left][cyl]" class="form-control form-control-sm" placeholder="CYL">
-                    <input type="text" name="items[0][prescription][left][axis]" class="form-control form-control-sm" placeholder="Axis">
-                    <input type="text" name="items[0][prescription][left][pd]" class="form-control form-control-sm" placeholder="PD">
+              <!-- QTY -->
+              <td>
+                <input type="number" name="items[0][qty]"
+                  class="form-control qty" value="1" min="1">
+              </td>
+
+              <!-- SUBTOTAL -->
+              <td>
+                <input type="text" class="form-control subtotal" readonly>
+              </td>
+
+              <td>
+                <div class="d-flex flex-column gap-2">
+
+                  <!-- TOGGLE -->
+                  <select name="items[0][prescription][type]"
+                    class="form-select rx-type">
+                    <option value="none">Tanpa Resep</option>
+                    <option value="manual">Input Manual</option>
+                  </select>
+
+                  <!-- RX FORM -->
+                  <div class="rx-form d-none">
+
+                    <small class="fw-bold">OD (Right Eye)</small>
+                    <div class="d-flex gap-2 flex-column mb-2">
+                      <input type="text" name="items[0][prescription][right][sph]" class="form-control form-control-sm" placeholder="SPH">
+                      <input type="text" name="items[0][prescription][right][cyl]" class="form-control form-control-sm" placeholder="CYL">
+                      <input type="text" name="items[0][prescription][right][axis]" class="form-control form-control-sm" placeholder="Axis">
+                      <input type="text" name="items[0][prescription][right][pd]" class="form-control form-control-sm" placeholder="PD">
+                    </div>
+
+                    <small class="fw-bold">OS (Left Eye)</small>
+                    <div class="d-flex gap-2 flex-column">
+                      <input type="text" name="items[0][prescription][left][sph]" class="form-control form-control-sm" placeholder="SPH">
+                      <input type="text" name="items[0][prescription][left][cyl]" class="form-control form-control-sm" placeholder="CYL">
+                      <input type="text" name="items[0][prescription][left][axis]" class="form-control form-control-sm" placeholder="Axis">
+                      <input type="text" name="items[0][prescription][left][pd]" class="form-control form-control-sm" placeholder="PD">
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
+              </td>
 
-            <td>
-              <button type="button" class="btn btn-danger btn-sm remove-row">✕</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm remove-row">✕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="card mb-4">
         <div class="card-body">
