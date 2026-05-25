@@ -35,14 +35,39 @@ class ProductModel extends Model
 
     protected $validationRules = [
         'product_id'    => 'permit_empty|alpha_numeric_punct|min_length[1]|max_length[36]',
-        'category_id'   => 'permit_empty|alpha_numeric_punct|min_length[1]|max_length[36]',
+        'category_id'   => 'required',
         'product_name'  => 'required|string|max_length[100]',
-        'product_price' => 'required|decimal',
+        'product_price' => 'required|decimal|greater_than[0]',
+        'product_stock' => 'permit_empty|is_natural',
         'product_brand' => 'permit_empty|string|max_length[50]',
-        'description'   => 'permit_empty',
+        'description'   => 'permit_empty|max_length[1000]',
     ];
 
-    protected $validationMessages = [];
+    protected $validationMessages = [
+        'category_id' => [
+            'required' => 'Please select a product category.',
+        ],
+        'product_name' => [
+            'required'   => 'Product name is required.',
+            'string'     => 'Product name must be text.',
+            'max_length' => 'Product name must not exceed 100 characters.',
+        ],
+        'product_price' => [
+            'required'      => 'Product price is required.',
+            'decimal'       => 'Product price must be a valid decimal number (e.g., 99.99).',
+            'greater_than'  => 'Product price must be greater than 0.',
+        ],
+        'product_stock' => [
+            'is_natural' => 'Product stock must be a positive number.',
+        ],
+        'product_brand' => [
+            'string'     => 'Product brand must be text.',
+            'max_length' => 'Product brand must not exceed 50 characters.',
+        ],
+        'description' => [
+            'max_length' => 'Description must not exceed 1000 characters.',
+        ],
+    ];
     protected $skipValidation = false;
 
     protected $beforeInsert = ['generateUUID'];

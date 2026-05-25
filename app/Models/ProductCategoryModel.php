@@ -30,10 +30,18 @@ class ProductCategoryModel extends Model
     // Validation
     protected $validationRules = [
         'category_name'        => 'required|max_length[50]',
-        'category_description' => 'permit_empty',
+        'category_description' => 'permit_empty|max_length[500]',
     ];
 
-    protected $validationMessages = [];
+    protected $validationMessages = [
+        'category_name' => [
+            'required'   => 'Category name is required.',
+            'max_length' => 'Category name must not exceed 50 characters.',
+        ],
+        'category_description' => [
+            'max_length' => 'Category description must not exceed 500 characters.',
+        ],
+    ];
     protected $skipValidation     = false;
 
     // UUID generator

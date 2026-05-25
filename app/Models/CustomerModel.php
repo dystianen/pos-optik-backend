@@ -41,7 +41,30 @@ class CustomerModel extends Model
         'customer_gender'   => 'permit_empty|in_list[male,female,other]',
     ];
 
-    protected $validationMessages = [];
+    protected $validationMessages = [
+        'customer_name' => [
+            'required'   => 'Customer name is required.',
+            'max_length' => 'Customer name must not exceed 100 characters.',
+        ],
+        'customer_email' => [
+            'required'    => 'Email address is required.',
+            'valid_email' => 'Please enter a valid email address (e.g., customer@example.com).',
+            'max_length'  => 'Email address must not exceed 100 characters.',
+        ],
+        'customer_password' => [
+            'required'   => 'Password is required when creating a new customer account.',
+            'max_length' => 'Password must not exceed 255 characters.',
+        ],
+        'customer_phone' => [
+            'max_length' => 'Phone number must not exceed 20 characters.',
+        ],
+        'customer_dob' => [
+            'valid_date' => 'Date of birth must be a valid date (format: YYYY-MM-DD).',
+        ],
+        'customer_gender' => [
+            'in_list' => 'Gender must be one of: Male, Female, or Other.',
+        ],
+    ];
     protected $skipValidation     = false;
 
     // UUID Generator
