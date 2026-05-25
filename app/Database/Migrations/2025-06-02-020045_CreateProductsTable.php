@@ -24,7 +24,7 @@ class CreateProductsTable extends Migration
             'product_sku' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => true,
+                'unique' => true,
                 'after' => 'product_name',
             ],
             'product_price' => [

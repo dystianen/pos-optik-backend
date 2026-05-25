@@ -32,7 +32,7 @@ class CreateProductImages extends Migration
                 'type' => 'INT',
                 'default' => 0,
             ],
-            'type'      => [
+            'type' => [
                 'type' => 'ENUM',
                 'constraint' => ['gallery', 'variant']
             ],
@@ -63,13 +63,34 @@ class CreateProductImages extends Migration
             ],
         ]);
 
-        // Primary key
+        /**
+         * PRIMARY KEY
+         */
         $this->forge->addKey('product_image_id', true);
 
-        // Optional foreign key ke tabel products
-        $this->forge->addForeignKey('product_id', 'products', 'product_id', 'CASCADE', 'CASCADE');
+        /**
+         * INDEXES
+         */
+        $this->forge->addKey(
+            ['product_id', 'type', 'is_primary'],
+            false,
+            'idx_product_images_lookup'
+        );
 
-        // Create table
+        /**
+         * FOREIGN KEY
+         */
+        $this->forge->addForeignKey(
+            'product_id',
+            'products',
+            'product_id',
+            'CASCADE',
+            'CASCADE'
+        );
+
+        /**
+         * CREATE TABLE
+         */
         $this->forge->createTable('product_images');
     }
 

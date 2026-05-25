@@ -54,40 +54,64 @@ class OnlineSalesController extends BaseController
 
     public function index()
     {
-        // Auto check and expire expired orders
-        $this->orderModel->bulkCheckAndExpirePendingOrders();
+        $currentPage = max(
+            1,
+            (int) ($this->request->getVar('page') ?? 1)
+        );
 
-        $currentPage = (int) ($this->request->getVar('page') ?? 1);
-        $search      = $this->request->getVar('q'); // keyword search
-        $startDate   = $this->request->getVar('start_date');
-        $endDate     = $this->request->getVar('end_date');
+        $search    = trim($this->request->getVar('q') ?? '');
+        $startDate = $this->request->getVar('start_date');
+        $endDate   = $this->request->getVar('end_date');
 
         $limit  = 10;
         $offset = ($currentPage - 1) * $limit;
 
-        // ============================
-        // BASE QUERY
-        // ============================
-        $builder = $this->orderModel
-            ->select('
+        /**
+         * =========================
+         * MAIN QUERY
+         * =========================
+         */
+        $builder = $this->db->table('orders');
+
+        $builder->select("
             orders.order_id,
             orders.created_at,
             orders.grand_total,
+
             customers.customer_name,
             customers.customer_email,
+
             order_statuses.status_name,
             order_statuses.status_code,
-            COUNT(order_items.order_item_id) as total_items
-        ')
-            ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
-            ->join('order_items', 'order_items.order_id = orders.order_id', 'left')
-            ->where('orders.order_type', 'online');
 
-        // ============================
-        // SEARCH FILTER
-        // ============================
-        if (!empty($search)) {
+            COUNT(order_items.order_item_id) AS total_items
+        ");
+
+        $builder->join(
+            'customers',
+            'customers.customer_id = orders.customer_id'
+        );
+
+        $builder->join(
+            'order_statuses',
+            'order_statuses.status_id = orders.status_id'
+        );
+
+        $builder->join(
+            'order_items',
+            'order_items.order_id = orders.order_id',
+            'left'
+        );
+
+        $builder->where('orders.order_type', 'online');
+
+        /**
+         * =========================
+         * SEARCH
+         * =========================
+         */
+        if ($search !== '') {
+
             $builder->groupStart()
                 ->like('orders.order_id', $search)
                 ->orLike('customers.customer_name', $search)
@@ -96,33 +120,58 @@ class OnlineSalesController extends BaseController
                 ->groupEnd();
         }
 
-        // ============================
-        // DATE FILTER
-        // ============================
+        /**
+         * =========================
+         * DATE FILTER
+         * =========================
+         */
         if (!empty($startDate)) {
-            $builder->where('DATE(orders.created_at) >=', $startDate);
-        }
-        if (!empty($endDate)) {
-            $builder->where('DATE(orders.created_at) <=', $endDate);
+            $builder->where(
+                'orders.created_at >=',
+                $startDate . ' 00:00:00'
+            );
         }
 
-        // ============================
-        // DATA
-        // ============================
+        if (!empty($endDate)) {
+            $builder->where(
+                'orders.created_at <=',
+                $endDate . ' 23:59:59'
+            );
+        }
+
+        /**
+         * =========================
+         * GET DATA
+         * =========================
+         */
         $orders = $builder
             ->groupBy('orders.order_id')
             ->orderBy('orders.created_at', 'DESC')
-            ->findAll($limit, $offset);
+            ->limit($limit, $offset)
+            ->get()
+            ->getResultArray();
 
-        // ============================
-        // COUNT FOR PAGINATION
-        // ============================
-        $countBuilder = $this->orderModel
-            ->join('customers', 'customers.customer_id = orders.customer_id')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id')
-            ->where('orders.order_type', 'online');
+        /**
+         * =========================
+         * COUNT QUERY (LIGHTWEIGHT)
+         * =========================
+         */
+        $countBuilder = $this->db->table('orders');
 
-        if (!empty($search)) {
+        $countBuilder->join(
+            'customers',
+            'customers.customer_id = orders.customer_id'
+        );
+
+        $countBuilder->join(
+            'order_statuses',
+            'order_statuses.status_id = orders.status_id'
+        );
+
+        $countBuilder->where('orders.order_type', 'online');
+
+        if ($search !== '') {
+
             $countBuilder->groupStart()
                 ->like('orders.order_id', $search)
                 ->orLike('customers.customer_name', $search)
@@ -132,21 +181,33 @@ class OnlineSalesController extends BaseController
         }
 
         if (!empty($startDate)) {
-            $countBuilder->where('DATE(orders.created_at) >=', $startDate);
-        }
-        if (!empty($endDate)) {
-            $countBuilder->where('DATE(orders.created_at) <=', $endDate);
+            $countBuilder->where(
+                'orders.created_at >=',
+                $startDate . ' 00:00:00'
+            );
         }
 
-        $totalRows = $countBuilder->countAllResults();
-        $totalPages = ceil($totalRows / $limit);
+        if (!empty($endDate)) {
+            $countBuilder->where(
+                'orders.created_at <=',
+                $endDate . ' 23:59:59'
+            );
+        }
+
+        $totalRows = $countBuilder
+            ->countAllResults();
+
+        $totalPages = (int) ceil($totalRows / $limit);
 
         return view('online_sales/v_index', [
-            'orders'    => $orders,
-            'search'    => $search,
+            'orders' => $orders,
+
+            'search' => $search,
+
             'startDate' => $startDate,
             'endDate'   => $endDate,
-            'pager'     => [
+
+            'pager' => [
                 'totalPages'  => $totalPages,
                 'currentPage' => $currentPage,
                 'limit'       => $limit,
@@ -156,82 +217,121 @@ class OnlineSalesController extends BaseController
 
     public function detail($orderId)
     {
-        // Auto check and expire expired orders
-        $this->orderModel->bulkCheckAndExpirePendingOrders();
+        /**
+         * =========================
+         * ORDER
+         * =========================
+         */
+        $order = $this->db->table('orders')
+            ->select("
+                orders.order_id,
+                orders.created_at AS order_date,
+                orders.grand_total,
+                orders.shipping_cost,
+                orders.status_id,
+                orders.tracking_number,
+                orders.courier,
 
-        // 🧾 ORDER
-        $order = $this->orderModel
-            ->select('
-            orders.order_id,
-            orders.created_at AS order_date,
-            orders.grand_total,
-            orders.shipping_cost,
-            orders.status_id,
-            orders.tracking_number,
-            orders.courier,
+                customers.customer_name,
+                customers.customer_email,
 
-            customers.customer_name,
-            customers.customer_email,
+                order_statuses.status_name,
+                order_statuses.status_code,
 
-            order_statuses.status_name,
-            order_statuses.status_code,
-
-            shipping_methods.name AS shipping_method,
-            shipping_methods.estimated_days
-        ')
-            ->join('customers', 'customers.customer_id = orders.customer_id', 'left')
-            ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
-            ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
+                shipping_methods.name AS shipping_method,
+                shipping_methods.estimated_days
+            ")
+            ->join(
+                'customers',
+                'customers.customer_id = orders.customer_id',
+                'left'
+            )
+            ->join(
+                'order_statuses',
+                'order_statuses.status_id = orders.status_id',
+                'left'
+            )
+            ->join(
+                'shipping_methods',
+                'shipping_methods.shipping_method_id = orders.shipping_method_id',
+                'left'
+            )
             ->where('orders.order_id', $orderId)
             ->where('orders.deleted_at', null)
-            ->first();
+            ->get()
+            ->getRowArray();
 
         if (!$order) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Order not found');
+            throw new \CodeIgniter\Exceptions\PageNotFoundException(
+                'Order not found'
+            );
         }
 
-        // 📦 ORDER ITEMS
+        /**
+         * =========================
+         * ORDER ITEMS
+         * =========================
+         */
         $items = $this->orderModel->getOrderItems($orderId);
 
-        // 💳 PAYMENT
-        $payment = $this->paymentModel
-            ->select('
+        /**
+         * =========================
+         * PAYMENT
+         * =========================
+         */
+        $payment = $this->db->table('payments')
+            ->select("
             payments.proof,
             payments.amount,
             payments.paid_at,
+
             payment_methods.method_name
-        ')
-            ->join('payment_methods', 'payment_methods.payment_method_id = payments.payment_method_id', 'left')
+        ")
+            ->join(
+                'payment_methods',
+                'payment_methods.payment_method_id = payments.payment_method_id',
+                'left'
+            )
             ->where('payments.order_id', $orderId)
-            ->first();
+            ->get()
+            ->getRowArray();
 
-        // 📍 SHIPPING ADDRESS
-        $shippingAddress = $this->orderModel->getShippingAddress($orderId);
+        /**
+         * =========================
+         * SHIPPING ADDRESS
+         * =========================
+         */
+        $shippingAddress = $this->orderModel
+            ->getShippingAddress($orderId);
 
-        // 🔁 REFUND ACCOUNT
-        $refundAccount = $this->orderRefundModel
-            ->select('
-            user_refund_accounts.user_refund_account_id,
-            user_refund_accounts.account_name,
-            user_refund_accounts.bank_name,
-            user_refund_accounts.account_number
-        ')
+        /**
+         * =========================
+         * REFUND ACCOUNT
+         * =========================
+         */
+        $refundAccount = $this->db->table('order_refunds')
+            ->select("
+                user_refund_accounts.user_refund_account_id,
+                user_refund_accounts.account_name,
+                user_refund_accounts.bank_name,
+                user_refund_accounts.account_number
+            ")
             ->join(
                 'user_refund_accounts',
-                'user_refund_accounts.user_refund_account_id = order_refunds.user_refund_account_id',
+                'user_refund_accounts.user_refund_account_id =
+            order_refunds.user_refund_account_id',
                 'left'
             )
             ->where('order_refunds.order_id', $orderId)
-            ->first();
+            ->get()
+            ->getRowArray();
 
-        $data = [
+        return view('online_sales/v_detail', [
             'order'           => $order,
             'items'           => $items,
             'payment'         => $payment,
             'shippingAddress' => $shippingAddress,
             'refundAccount'   => $refundAccount,
-        ];
-
-        return view('online_sales/v_detail', $data);
+        ]);
     }
 }

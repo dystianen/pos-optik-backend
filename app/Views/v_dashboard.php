@@ -69,7 +69,7 @@
     <?php endforeach ?>
   </div>
 
-  <div class="row mt-4">
+  <div class="row mb-4">
     <div class="col-lg-12">
       <div class="card z-index-2 h-100">
         <div class="card-header pb-0 pt-3 bg-transparent">
@@ -77,14 +77,14 @@
         </div>
         <div class="card-body p-3">
           <div class="chart">
-            <canvas id="monthlyChart" class="chart-canvas" height="180"></canvas>
+            <canvas id="monthlyChart" class="chart-canvas" height="80"></canvas>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row mt-4">
+  <div class="row">
     <div class="col-lg-6 mb-4">
       <div class="card h-100">
         <div class="card-header pb-0">

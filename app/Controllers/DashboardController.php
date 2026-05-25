@@ -48,61 +48,127 @@ class DashboardController extends BaseController
      */
     private function getStats(): array
     {
-        /** =======================
-         * CARD SUMMARY
-         * ======================= */
+        /**
+         * =========================
+         * DATE RANGE
+         * =========================
+         */
+        $todayStart = date('Y-m-d 00:00:00');
+        $todayEnd   = date('Y-m-d 23:59:59');
 
-        // TOTAL REVENUE
-        $totalRevenue = $this->orderModel
-            ->selectSum('orders.grand_total', 'total')
-            ->join('order_statuses os', 'orders.status_id = os.status_id')
-            ->whereIn('os.status_code', ['paid', 'shipped', 'completed'])
-            ->first()['total'] ?? 0;
+        $yearStart  = date('Y-01-01 00:00:00');
+        $yearEnd    = date('Y-12-31 23:59:59');
 
-        // TOTAL ORDERS TODAY
-        $totalOrdersToday = $this->orderModel
+        /**
+         * =========================
+         * CACHE
+         * =========================
+         */
+        $cacheKey = 'dashboard_stats';
+
+        if ($cache = cache($cacheKey)) {
+            return $cache;
+        }
+
+        /**
+         * =========================
+         * SALES SUMMARY
+         * =========================
+         */
+        $salesStats = $this->db->table('orders')
+            ->select("
+            SUM(
+                CASE
+                    WHEN os.status_code IN ('paid', 'shipped', 'completed')
+                    THEN orders.grand_total
+                    ELSE 0
+                END
+            ) AS total_revenue,
+
+            SUM(
+                CASE
+                    WHEN orders.order_type = 'online'
+                    AND os.status_code IN ('paid', 'shipped', 'completed')
+                    THEN orders.grand_total
+                    ELSE 0
+                END
+            ) AS online_sales,
+
+            SUM(
+                CASE
+                    WHEN orders.order_type = 'offline'
+                    AND os.status_code IN ('paid', 'completed')
+                    THEN orders.grand_total
+                    ELSE 0
+                END
+            ) AS pos_sales
+        ")
+            ->join(
+                'order_statuses os',
+                'orders.status_id = os.status_id',
+                'left'
+            )
+            ->get()
+            ->getRowArray();
+
+        /**
+         * =========================
+         * TOTAL ORDERS TODAY
+         * =========================
+         */
+        $totalOrdersToday = $this->db->table('orders')
             ->selectSum('order_items.quantity', 'total_quantity')
-            ->join('order_items', 'order_items.order_id = orders.order_id')
-            ->where('DATE(orders.created_at)', date('Y-m-d'))
+            ->join(
+                'order_items',
+                'order_items.order_id = orders.order_id'
+            )
+            ->where('orders.created_at >=', $todayStart)
+            ->where('orders.created_at <=', $todayEnd)
             ->get()
             ->getRow()
             ->total_quantity ?? 0;
 
-        // ONLINE SALES
-        $onlineSales = $this->orderModel
-            ->selectSum('orders.grand_total', 'total')
-            ->join('order_statuses os', 'orders.status_id = os.status_id')
-            ->where('orders.order_type', 'online')
-            ->whereIn('os.status_code', ['paid', 'shipped', 'completed'])
-            ->first()['total'] ?? 0;
-
-        // POS SALES
-        $posSales = $this->orderModel
-            ->selectSum('orders.grand_total', 'total')
-            ->join('order_statuses os', 'orders.status_id = os.status_id')
-            ->where('orders.order_type', 'offline')
-            ->whereIn('os.status_code', ['paid', 'completed'])
-            ->first()['total'] ?? 0;
-
-        // TOTAL CUSTOMERS
-        $totalCustomers = $this->customerModel->countAllResults() ?? 0;
-
-        // LOW STOCK
-        $lowStockCount = $this->productModel
-            ->where('product_stock <= 5')
+        /**
+         * =========================
+         * TOTAL CUSTOMERS
+         * =========================
+         */
+        $totalCustomers = $this->db->table('customers')
             ->countAllResults();
 
-        /** =======================
-         * MONTHLY SALES CHART
-         * ======================= */
-        $monthly = $this->orderModel
-            ->select("MONTH(orders.created_at) AS month, SUM(orders.grand_total) AS total")
-            ->join('order_statuses os', 'orders.status_id = os.status_id')
-            ->where('YEAR(orders.created_at)', date('Y'))
-            ->whereIn('os.status_code', ['paid', 'shipped', 'completed'])
-            ->groupBy('month')
+        /**
+         * =========================
+         * LOW STOCK
+         * =========================
+         */
+        $lowStockCount = $this->db->table('products')
+            ->where('product_stock <=', 5)
+            ->countAllResults();
+
+        /**
+         * =========================
+         * MONTHLY SALES
+         * =========================
+         */
+        $monthly = $this->db->table('orders')
+            ->select("
+            MONTH(orders.created_at) AS month,
+            SUM(orders.grand_total) AS total
+        ")
+            ->join(
+                'order_statuses os',
+                'orders.status_id = os.status_id'
+            )
+            ->where('orders.created_at >=', $yearStart)
+            ->where('orders.created_at <=', $yearEnd)
+            ->whereIn(
+                'os.status_code',
+                ['paid', 'shipped', 'completed']
+            )
+            ->groupBy('MONTH(orders.created_at)')
             ->orderBy('month', 'ASC')
-            ->findAll();
+            ->get()
+            ->getResultArray();
 
         $months = [];
         $revenues = array_fill(0, 12, 0);
@@ -112,41 +178,77 @@ class DashboardController extends BaseController
         }
 
         foreach ($monthly as $row) {
-            $revenues[$row['month'] - 1] = (int)$row['total'];
+            $revenues[$row['month'] - 1] = (int) $row['total'];
         }
 
-        /** =======================
-         * TOP 5 PRODUCTS
-         * ======================= */
-        $topProducts = $this->inventoryModel
-            ->select('products.product_name, SUM(inventory_transactions.quantity) AS sold')
-            ->join('products', 'products.product_id = inventory_transactions.product_id')
+        /**
+         * =========================
+         * TOP PRODUCTS
+         * =========================
+         */
+        $topProducts = $this->db->table('inventory_transactions')
+            ->select("
+            products.product_name,
+            SUM(inventory_transactions.quantity) AS sold
+        ")
+            ->join(
+                'products',
+                'products.product_id = inventory_transactions.product_id'
+            )
             ->where('inventory_transactions.transaction_type', 'out')
-            ->groupBy('products.product_id')
+            ->groupBy('inventory_transactions.product_id')
             ->orderBy('sold', 'DESC')
             ->limit(5)
-            ->findAll();
+            ->get()
+            ->getResultArray();
 
-        /** =======================
+        /**
+         * =========================
          * ORDER STATUS SUMMARY
-         * ======================= */
-        $orderStatuses = $this->orderModel
-            ->select('os.status_name AS status, os.status_code, COUNT(order_id) AS total')
-            ->join('order_statuses os', 'orders.status_id = os.status_id')
-            ->groupBy(['os.status_code', 'os.status_name'])
-            ->findAll();
+         * =========================
+         */
+        $orderStatuses = $this->db->table('orders')
+            ->select("
+            os.status_name AS status,
+            os.status_code,
+            COUNT(orders.order_id) AS total
+        ")
+            ->join(
+                'order_statuses os',
+                'orders.status_id = os.status_id'
+            )
+            ->groupBy([
+                'os.status_code',
+                'os.status_name'
+            ])
+            ->get()
+            ->getResultArray();
 
-        return [
-            'totalRevenue'      => (int)$totalRevenue,
-            'totalOrdersToday'  => (int)$totalOrdersToday,
-            'onlineSales'       => (int)$onlineSales,
-            'posSales'          => (int)$posSales,
-            'totalCustomers'    => (int)$totalCustomers,
-            'lowStockCount'     => (int)$lowStockCount,
+        /**
+         * =========================
+         * RESPONSE
+         * =========================
+         */
+        $data = [
+            'totalRevenue'      => (int) ($salesStats['total_revenue'] ?? 0),
+            'totalOrdersToday'  => (int) $totalOrdersToday,
+            'onlineSales'       => (int) ($salesStats['online_sales'] ?? 0),
+            'posSales'          => (int) ($salesStats['pos_sales'] ?? 0),
+            'totalCustomers'    => (int) $totalCustomers,
+            'lowStockCount'     => (int) $lowStockCount,
             'months'            => json_encode($months),
             'revenues'          => json_encode($revenues),
             'topProducts'       => $topProducts,
             'orderStatuses'     => $orderStatuses,
         ];
+
+        /**
+         * =========================
+         * SAVE CACHE
+         * =========================
+         */
+        cache()->save($cacheKey, $data, 60);
+
+        return $data;
     }
 }

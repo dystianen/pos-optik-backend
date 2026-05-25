@@ -13,39 +13,80 @@ class CreateProductVariantImages extends Migration
                 'type' => 'CHAR',
                 'constraint' => 36,
             ],
+
             'variant_id' => [
                 'type' => 'CHAR',
                 'constraint' => 36,
                 'null' => false,
-                'unique' => true,
             ],
+
             'product_image_id' => [
                 'type' => 'CHAR',
                 'constraint' => 36,
                 'null' => false,
             ],
+
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
+
             'updated_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
+
             'deleted_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
         ]);
 
-        // Primary key
+        /**
+         * PRIMARY KEY
+         */
         $this->forge->addKey('pv_image_id', true);
 
-        // Foreign keys
-        $this->forge->addForeignKey('variant_id', 'product_variants', 'variant_id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('product_image_id', 'product_images', 'product_image_id', 'CASCADE', 'CASCADE');
+        /**
+         * UNIQUE
+         * 1 variant = 1 image
+         */
+        $this->forge->addUniqueKey(
+            ['variant_id'],
+            'uidx_variant_id'
+        );
 
-        // Create table
+        /**
+         * INDEXES
+         */
+        $this->forge->addKey(
+            ['product_image_id'],
+            false,
+            'idx_product_image_id'
+        );
+
+        /**
+         * FOREIGN KEYS
+         */
+        $this->forge->addForeignKey(
+            'variant_id',
+            'product_variants',
+            'variant_id',
+            'CASCADE',
+            'CASCADE'
+        );
+
+        $this->forge->addForeignKey(
+            'product_image_id',
+            'product_images',
+            'product_image_id',
+            'CASCADE',
+            'CASCADE'
+        );
+
+        /**
+         * CREATE TABLE
+         */
         $this->forge->createTable('product_variant_images');
     }
 
