@@ -15,7 +15,10 @@ class ProductCategoryModel extends Model
     protected $allowedFields = [
         'category_id',
         'category_name',
+        'category_slug',
         'category_description',
+        'variant_mode',
+        'is_prescription_supported',
         'created_at',
         'updated_at',
         'deleted_at',

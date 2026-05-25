@@ -298,7 +298,7 @@ class ProductApiController extends BaseApiController
         }
 
         $productIds = array_column($bestSellersRaw, 'product_id');
-        
+
         $totalsMap = [];
         foreach ($bestSellersRaw as $bs) {
             $totalsMap[$bs['product_id']] = (int) $bs['total_sold'];
@@ -820,7 +820,9 @@ class ProductApiController extends BaseApiController
          * PRODUCT
          * ======================
          */
-        $product = $this->productModel->find($id);
+        $product = $this->productModel
+            ->join('product_categories pc', 'pc.category_id = products.category_id')
+            ->find($id);
 
         if (!$product) {
             return $this->errorResponse('Product not found');
@@ -895,6 +897,7 @@ class ProductApiController extends BaseApiController
          */
         $product['gallery']  = $galleryImages;
         $product['variants'] = $variants;
+        $product['is_prescription_supported'] = (bool) $product['is_prescription_supported'];
 
         return $this->successResponse($product);
     }

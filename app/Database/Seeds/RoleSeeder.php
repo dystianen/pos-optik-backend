@@ -13,25 +13,17 @@ class RoleSeeder extends Seeder
 
         $data = [
             [
-                'role_name'        => 'admin',
-                'role_description' => 'Administrator dengan akses penuh'
+                'role_name'        => 'owner',
+                'role_description' => 'Owner has full access'
             ],
             [
-                'role_name'        => 'optometrist',
-                'role_description' => 'Dokter mata yang melakukan pemeriksaan'
+                'role_name'        => 'admin',
+                'role_description' => 'Admin has full access'
             ],
             [
                 'role_name'        => 'cashier',
-                'role_description' => 'Kasir yang menangani transaksi penjualan'
+                'role_description' => 'Cashier handles transactions'
             ],
-            [
-                'role_name'        => 'inventory',
-                'role_description' => 'Staff gudang mengelola produk'
-            ],
-            [
-                'role_name'        => 'customer',
-                'role_description' => 'Customer/Buyer'
-            ]
         ];
 
         foreach ($data as $row) {

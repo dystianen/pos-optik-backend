@@ -24,6 +24,7 @@ class ProductModel extends Model
         'product_id',
         'category_id',
         'product_name',
+        'product_sku',
         'product_price',
         'product_stock',
         'product_brand',

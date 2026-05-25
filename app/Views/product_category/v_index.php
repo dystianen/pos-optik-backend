@@ -14,6 +14,8 @@
             <th class="text-center">No</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Variant Mode</th>
+            <th class="text-center">Prescription Supported</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -22,7 +24,7 @@
 
           <?php if (empty($categories)): ?>
             <tr>
-              <td colspan="4" class="text-center text-muted">No category data available.</td>
+              <td colspan="6" class="text-center text-muted">No category data available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($categories as $category): ?>
@@ -30,6 +32,17 @@
                 <td class="text-center"><?= $startIndex++ ?></td>
                 <td><?= $category['category_name'] ?></td>
                 <td><?= $category['category_description'] ?></td>
+                <td>
+                  <span class="badge bg-<?= $category['variant_mode'] === 'combination' ? 'success' : 'secondary' ?>">
+                    <?= ucfirst($category['variant_mode']) ?>
+                  </span>
+                </td>
+                <td class="text-center">
+                  <?= $category['is_prescription_supported'] ?
+                    '<span class="badge bg-success"><i class="fas fa-check"></i> Yes</span>' :
+                    '<span class="badge bg-danger"><i class="fas fa-times"></i> No</span>'
+                  ?>
+                </td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/product-category/form?id=' . $category['category_id']) ?>" class="btn btn-sm btn-warning">
                     <i class="fa-solid fa-pen-to-square"></i>

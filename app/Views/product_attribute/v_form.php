@@ -39,6 +39,21 @@
         <small class="form-text text-muted d-block mt-1">Enter attribute name (max 50 characters)</small>
       </div>
 
+      <!-- Category -->
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select class="form-control" name="category_id">
+          <option value="">-- Select Category --</option>
+          <?php foreach ($categories ?? [] as $cat): ?>
+            <option value="<?= htmlspecialchars($cat['category_id']) ?>"
+              <?= isset($attribute) && $attribute['category_id'] === $cat['category_id'] ? 'selected' : '' ?>>
+              <?= htmlspecialchars($cat['category_name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+        <small class="form-text text-muted d-block mt-1">Link this attribute to a specific product category (optional)</small>
+      </div>
+
       <!-- Attribute Type -->
       <div class="mb-3">
         <label class="form-label">Attribute Type <span class="text-danger">*</span></label>
@@ -49,6 +64,61 @@
           <option value="dropdown" <?= isset($attribute) && $attribute['attribute_type'] === 'dropdown' ? 'selected' : '' ?>>Dropdown (predefined options)</option>
         </select>
         <small class="form-text text-muted d-block mt-1">Select the type of attribute data</small>
+      </div>
+
+      <!-- Attribute Options -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" name="is_variantable" id="is_variantable" class="form-check-input" value="1"
+              <?= isset($attribute) && $attribute['is_variantable'] ? 'checked' : '' ?>>
+            <label class="form-check-label" for="is_variantable">
+              Is Variantable
+            </label>
+            <small class="form-text text-muted d-block">Check if this attribute creates product variants</small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" name="is_required" id="is_required" class="form-check-input" value="1"
+              <?= isset($attribute) && $attribute['is_required'] ? 'checked' : '' ?>>
+            <label class="form-check-label" for="is_required">
+              Is Required
+            </label>
+            <small class="form-text text-muted d-block">Check if customers must select this attribute</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" name="is_filterable" id="is_filterable" class="form-check-input" value="1"
+              <?= isset($attribute) && $attribute['is_filterable'] ? 'checked' : '' ?>>
+            <label class="form-check-label" for="is_filterable">
+              Is Filterable
+            </label>
+            <small class="form-text text-muted d-block">Allow filtering products by this attribute</small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" name="use_master_values" id="use_master_values" class="form-check-input" value="1"
+              <?= isset($attribute) && $attribute['use_master_values'] ? 'checked' : '' ?>>
+            <label class="form-check-label" for="use_master_values">
+              Use Master Values
+            </label>
+            <small class="form-text text-muted d-block">Use predefined master values for this attribute</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sort Order -->
+      <div class="mb-3">
+        <label class="form-label">Sort Order</label>
+        <input type="number" name="sort_order" class="form-control"
+          value="<?= htmlspecialchars($attribute['sort_order'] ?? 0) ?>" min="0">
+        <small class="form-text text-muted d-block mt-1">Display order (lower numbers appear first)</small>
       </div>
 
       <!-- Dynamic Dropdown Values -->

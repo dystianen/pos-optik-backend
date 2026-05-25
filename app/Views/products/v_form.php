@@ -84,6 +84,15 @@
           <small class="form-text text-muted d-block mt-1">Optional: Product brand (max 50 characters)</small>
         </div>
 
+        <!-- SKU -->
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label">Product SKU</label>
+          <input type="text" id="product_sku" name="product_sku" class="form-control"
+            placeholder="Auto-generated SKU"
+            value="<?= old('product_sku', $product['product_sku'] ?? '') ?>" readonly>
+          <small class="text-muted d-block mt-1">This SKU is auto-generated based on the Category and a sequence number.</small>
+        </div>
+
         <!-- Description -->
         <div class="col-12 mb-3">
           <label class="form-label">Description</label>
@@ -130,111 +139,13 @@
           <h5>Product Attributes</h5>
           <p class="text-muted">Fill in the attributes and select which one you want to make a variant.</p>
 
-          <div class="row g-4">
-
-            <?php
-            // Daftar attribute yang boleh jadi variant
-            $variantAllowed = [
-              'Color',
-              'Lens Type',
-              'Frame Size (Width)',
-              'Bridge Size',
-              'Temple Length',
-            ];
-            ?>
-
-            <?php foreach ($attributes as $attr): ?>
-
-              <?php
-              $attrId = $attr['attribute_id'];
-              $attrName = $attr['attribute_name'];
-              $attrType = $attr['attribute_type'];
-
-              // ✅ Data yang sudah dipilih sebelumnya (array of values)
-              $selectedValues = $selected_attribute_values[$attrId] ?? [];
-
-              // ✅ Value untuk text input (join dengan koma)
-              $existingTextValue = isset($pav_values[$attrId])
-                ? implode(', ', $pav_values[$attrId]['values'])
-                : '';
-
-              // ✅ Apakah attribute ini dipilih sebagai variant
-              $isVariant = in_array($attrId, $selected_attributes ?? []) ? 'checked' : '';
-
-              // ✅ Cek apakah attribute boleh jadi variant
-              $allowed = in_array($attrName, $variantAllowed);
-              ?>
-
-              <div class="col-12 col-md-6">
-                <div class="p-3 border rounded-3 h-100">
-
-                  <!-- NAMA ATTRIBUTE + TOGGLE VARIANT -->
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <label class="fw-bold mb-1"><?= esc($attrName) ?></label>
-
-                    <?php if ($allowed): ?>
-                      <div class="form-check form-switch">
-                        <input type="checkbox"
-                          class="form-check-input variant-toggle"
-                          name="variant_attributes[]"
-                          value="<?= $attrId ?>"
-                          data-attr-id="<?= $attrId ?>"
-                          <?= in_array($attrId, $selected_attributes ?? []) ? 'checked' : '' ?>>
-
-                        <label class="form-check-label">Variant</label>
-                      </div>
-                    <?php endif; ?>
-
-                  </div>
-
-                  <!-- JIKA TIPE TEXT -->
-                  <?php if ($attrType === 'text'): ?>
-
-                    <input
-                      type="text"
-                      class="form-control attribute-input"
-                      name="attributes[<?= $attrId ?>]"
-                      data-attr-id="<?= $attrId ?>"
-                      placeholder="Enter <?= strtolower($attrName) ?> (comma separated for variants)"
-                      value="<?= esc($existingTextValue) ?>">
-
-
-                  <?php endif; ?>
-
-                  <!-- JIKA TIPE DROPDOWN: checkbox list -->
-                  <?php if ($attrType === 'dropdown'): ?>
-
-                    <?php if (!empty($attr['values'])): ?>
-                      <div class="mt-2 checkbox-group" data-attr-id="<?= $attrId ?>">
-                        <small class="text-muted d-block mb-2">Select one or more options:</small>
-
-                        <?php foreach ($attr['values'] as $val): ?>
-                          <div class="form-check mb-2">
-                            <input
-                              class="form-check-input attribute-checkbox"
-                              type="checkbox"
-                              name="attributes[<?= $attrId ?>][]"
-                              value="<?= esc($val['value']) ?>"
-                              data-attr-id="<?= $attrId ?>"
-                              id="attr_<?= $attrId ?>_<?= $val['attribute_master_id'] ?>"
-                              <?= in_array($val['value'], $selectedValues) ? 'checked' : '' ?>>
-                            <label class="form-check-label" for="attr_<?= $attrId ?>_<?= $val['attribute_master_id'] ?>">
-                              <?= esc($val['value']) ?>
-                            </label>
-                          </div>
-                        <?php endforeach; ?>
-
-                      </div>
-                    <?php else: ?>
-                      <p class="text-muted"><em>No options available</em></p>
-                    <?php endif; ?>
-
-                  <?php endif; ?>
-                </div>
-              </div>
-
-            <?php endforeach; ?>
-
+          <div class="row g-4" id="attributesContainer">
+            <?= view('products/partials/v_attributes_partial', [
+                'attributes' => $attributes,
+                'pav_values' => $pav_values ?? [],
+                'selected_attribute_values' => $selected_attribute_values ?? [],
+                'selected_attributes' => $selected_attributes ?? []
+            ]) ?>
           </div>
         </div>
 
@@ -249,6 +160,7 @@
               <thead>
                 <tr>
                   <th>Variant</th>
+                  <th>SKU</th>
                   <th>Price</th>
                   <th>Stock</th>
                   <th>Image</th>
@@ -328,6 +240,9 @@
     const variantSection = document.getElementById('variantSection');
     const variantTableBody = document.querySelector('#variantTable tbody');
     const rebuildBtn = document.getElementById('rebuildVariants');
+    const categorySelect = document.querySelector('select[name="category_id"]');
+    const attributesContainer = document.getElementById('attributesContainer');
+    const productIdInput = document.querySelector('input[name="id"]');
 
     // REHYDRATE VARIANTS FROM PHP
     const existingVariants = <?= isset($variants) ? json_encode($variants) : '[]' ?>;
@@ -335,11 +250,6 @@
     // TRACK NEXT INDEX untuk variant baru
     let nextVariantIndex = existingVariants.length;
 
-    /**
-     * ✅ Get variant attributes WITH CORRECT VALUES
-     * - Untuk TEXT: ambil dari input, split by comma
-     * - Untuk DROPDOWN: ambil dari checked checkboxes
-     */
     function getVariantAttributes() {
       const checked = Array.from(document.querySelectorAll('input[name="variant_attributes[]"]:checked'));
 
@@ -347,20 +257,45 @@
         const attrId = cb.value;
         const attrName = cb.closest('.p-3').querySelector('label.fw-bold').textContent.trim();
 
-        // ✅ CEK TYPE: text atau dropdown
-        const textInput = document.querySelector(`input.attribute-input[data-attr-id="${attrId}"]`);
-        const checkboxGroup = document.querySelector(`.checkbox-group[data-attr-id="${attrId}"]`);
-
         let values = [];
 
-        if (textInput) {
-          // TEXT TYPE: split by comma
-          const raw = textInput.value || '';
-          values = raw.split(',').map(s => s.trim()).filter(Boolean);
-        } else if (checkboxGroup) {
-          // DROPDOWN TYPE: ambil dari checked checkboxes
-          const checkedBoxes = checkboxGroup.querySelectorAll('input.attribute-checkbox:checked');
-          values = Array.from(checkedBoxes).map(cb => cb.value);
+        // 1. Check if there are checkboxes checked for this attribute (multiselect group)
+        const checkedBoxes = document.querySelectorAll(`.checkbox-group[data-attr-id="${attrId}"] input.attribute-checkbox:checked`);
+        if (checkedBoxes.length > 0) {
+          values = Array.from(checkedBoxes).map(c => c.value);
+        } else {
+          // 2. Check if it is a radio group
+          const checkedRadio = document.querySelector(`.radio-group[data-attr-id="${attrId}"] input.attribute-radio:checked`);
+          if (checkedRadio) {
+            values = [checkedRadio.value];
+          } else {
+            // 3. Check if it is a select element
+            const selectEl = document.querySelector(`select.attribute-input[data-attr-id="${attrId}"]`);
+            if (selectEl) {
+              if (selectEl.value) {
+                values = [selectEl.value];
+              }
+            } else {
+              // 4. Check if it is a textarea
+              const textareaEl = document.querySelector(`textarea.attribute-input[data-attr-id="${attrId}"]`);
+              if (textareaEl) {
+                const raw = textareaEl.value || '';
+                values = raw.split(',').map(s => s.trim()).filter(Boolean);
+              } else {
+                // 5. Fallback: text, number, or boolean checkbox input
+                const textInput = document.querySelector(`input.attribute-input[data-attr-id="${attrId}"]`);
+                if (textInput) {
+                  if (textInput.type === 'checkbox') {
+                    // Single boolean checkbox
+                    values = textInput.checked ? ['1'] : [];
+                  } else {
+                    const raw = textInput.value || '';
+                    values = raw.split(',').map(s => s.trim()).filter(Boolean);
+                  }
+                }
+              }
+            }
+          }
         }
 
         return {
@@ -409,62 +344,28 @@
       variantSection.style.display = combos.length ? 'block' : 'none';
 
       // ✅ STEP 1: Simpan SEMUA data variant yang ada dengan mapping attribute mereka
-      const existingVariantsData = [];
+      const existingVariantsMap = {};
       Array.from(variantTableBody.querySelectorAll('tr')).forEach(tr => {
-        const labelInput = tr.querySelector('input[name*="[label]"]');
         const variantIdInput = tr.querySelector('input[name*="[variant_id]"]');
+        const signatureInput = tr.querySelector('input[name*="[variant_signature]"]');
+        const skuInput = tr.querySelector('input[name*="[variant_sku]"]');
         const priceInput = tr.querySelector('input[name*="[price]"]');
         const stockInput = tr.querySelector('input[name*="[stock]"]');
         const imagePreview = tr.querySelector('img');
-        const mappingInput = tr.querySelector('input[name*="[mapping]"]');
 
-        let mapping = [];
-        const label = labelInput?.value || '';
-        const labelParts = label.split(' - ').map(s => s.trim());
-
-        try {
-          if (mappingInput && mappingInput.value) {
-            const parsed = JSON.parse(mappingInput.value);
-            console.log('📥 Raw mapping:', parsed);
-
-            // ✅ CEK FORMAT: apakah array of strings atau array of objects?
-            if (parsed.length > 0 && typeof parsed[0] === 'string') {
-              // Format lama: ['id1', 'id2'] → reconstruct dari label
-              console.log('🔄 Old format detected, reconstructing from label...');
-              mapping = parsed.map((attrId, index) => ({
-                attribute_id: attrId,
-                value: labelParts[index] || ''
-              }));
-            } else if (parsed.length > 0 && typeof parsed[0] === 'object') {
-              // Format baru: [{attribute_id: ..., value: ...}]
-              mapping = parsed;
-            }
-
-            console.log('✅ Final mapping:', mapping);
-          } else {
-            console.warn('⚠️ No mapping input, using label fallback');
-            // Fallback: parse dari label
-            const currentAttrs = getVariantAttributes();
-            mapping = labelParts.map((value, i) => ({
-              attribute_id: currentAttrs[i]?.id || null,
-              value: value
-            })).filter(m => m.attribute_id);
-          }
-        } catch (e) {
-          console.error('❌ Failed to parse mapping:', e);
+        const signature = signatureInput ? signatureInput.value : '';
+        if (signature) {
+          existingVariantsMap[signature] = {
+            variant_id: variantIdInput ? variantIdInput.value : null,
+            variant_sku: skuInput ? skuInput.value : '',
+            price: priceInput ? priceInput.value : '',
+            stock: stockInput ? stockInput.value : '',
+            image_url: imagePreview ? imagePreview.src : ''
+          };
         }
-
-        existingVariantsData.push({
-          variant_id: variantIdInput ? variantIdInput.value : null,
-          label: label,
-          price: priceInput ? priceInput.value : '',
-          stock: stockInput ? stockInput.value : '',
-          image_url: imagePreview ? imagePreview.src : '',
-          mapping: mapping
-        });
       });
 
-      console.log('📦 All existing variants data:', existingVariantsData);
+      console.log('📦 All existing variants map:', existingVariantsMap);
 
       // ✅ STEP 2: Hapus SEMUA variant dari table
       variantTableBody.innerHTML = '';
@@ -475,79 +376,57 @@
       // ✅ STEP 4: Generate variant baru berdasarkan kombinasi
       combos.forEach((combo) => {
         const variantLabel = combo.map(c => c.value).join(' - ');
+        const signature = generateSignature(combo);
 
-        // ✅ MATCHING LOGIC: Cari variant existing yang VALUE-nya adalah SUBSET dari combo baru
-        // Jadi jika combo baru = [Photochromic, Blue, 14mm]
-        // Dan ada variant lama = [Photochromic, Blue]
-        // Maka variant lama ini MATCH dan datanya akan digunakan
-
-        let bestMatch = null;
-        let maxMatches = 0;
-
-        existingVariantsData.forEach(v => {
-          const existingValues = v.mapping.map(m => m.value);
-          const newValues = combo.map(c => c.value);
-          const matchCount = existingValues.filter(ev => newValues.includes(ev)).length;
-
-          console.log('🔍 Checking variant:', v.label);
-          console.log('   Existing values:', existingValues);
-          console.log('   New combo values:', newValues);
-          console.log('   Match count:', matchCount, '/', existingValues.length);
-
-          if (matchCount === existingValues.length && matchCount > 0 && matchCount > maxMatches) {
-            console.log('   ✅ BEST MATCH FOUND!');
-            bestMatch = v;
-            maxMatches = matchCount;
-          }
-        });
-
-        console.log('📦 Final best match for', variantLabel, ':', bestMatch);
-
+        // LOOKUP BY SIGNATURE
+        const match = existingVariantsMap[signature];
 
         const idx = nextVariantIndex++;
         const tr = document.createElement('tr');
 
-        // Jika ada best match, gunakan data dari variant tersebut
-        if (bestMatch) {
-          const hasVariantId = bestMatch.variant_id;
+        const computedSku = match && match.variant_sku ? match.variant_sku : generateVariantSku(null, combo);
+
+        if (match) {
+          const hasVariantId = match.variant_id;
 
           tr.innerHTML = `
             <td>
               ${variantLabel}
               <input type="hidden" name="variants[${idx}][label]" value="${escapeHtml(variantLabel)}">
-              ${hasVariantId ? `<input type="hidden" name="variants[${idx}][variant_id]" value="${bestMatch.variant_id}">` : ''}
+              <input type="hidden" name="variants[${idx}][variant_signature]" value="${escapeHtml(signature)}">
+              ${hasVariantId ? `<input type="hidden" name="variants[${idx}][variant_id]" value="${match.variant_id}">` : ''}
+            </td>
+            <td>
+              <input type="text" name="variants[${idx}][variant_sku]" class="form-control form-control-sm"
+                value="${escapeHtml(computedSku)}" readonly placeholder="Auto-generated">
             </td>
             <td>
               <input type="number" step="0.01" name="variants[${idx}][price]" class="form-control form-control-sm"
-                value="${bestMatch.price || ''}" placeholder="Leave empty to use base price">
+                value="${match.price || ''}" placeholder="Leave empty to use base price">
             </td>
             <td>
               <input disabled type="number" name="variants[${idx}][stock]" class="form-control form-control-sm"
-                value="${bestMatch.stock || ''}" placeholder="Auto-calculated">
+                value="${match.stock || ''}" placeholder="Auto-calculated">
             </td>
             <td>
               <input type="file" name="variants[${idx}][image]" accept=".jpg,.jpeg,.png" class="form-control form-control-sm mb-1">
-              ${bestMatch.image_url ? `<img src="${bestMatch.image_url}" width="30" class="rounded">` : ''}
+              ${match.image_url ? `<img src="${match.image_url}" width="30" class="rounded">` : ''}
             </td>
             <td>
               <button type="button" class="btn btn-sm btn-danger remove-variant">Remove</button>
             </td>
           `;
-
-          // Update mapping dengan combo BARU (bukan mapping lama)
-          const hidden = document.createElement('input');
-          hidden.type = 'hidden';
-          hidden.name = `variants[${idx}][mapping]`;
-          hidden.value = JSON.stringify(combo.map(c => ({
-            attribute_id: c.attrId,
-            value: c.value
-          })));
-          tr.appendChild(hidden);
         } else {
           // Variant baru yang belum pernah ada
           tr.innerHTML = `
-            <td>${variantLabel}
+            <td>
+              ${variantLabel}
               <input type="hidden" name="variants[${idx}][label]" value="${escapeHtml(variantLabel)}">
+              <input type="hidden" name="variants[${idx}][variant_signature]" value="${escapeHtml(signature)}">
+            </td>
+            <td>
+              <input type="text" name="variants[${idx}][variant_sku]" class="form-control form-control-sm"
+                value="${escapeHtml(computedSku)}" readonly placeholder="Auto-generated">
             </td>
             <td><input type="number" step="0.01" name="variants[${idx}][price]" class="form-control form-control-sm" placeholder="Leave empty to use base price"></td>
             <td><input disabled type="number" name="variants[${idx}][stock]" class="form-control form-control-sm" placeholder="Auto-calculated"></td>
@@ -558,17 +437,17 @@
               <button type="button" class="btn btn-sm btn-danger remove-variant">Remove</button>
             </td>
           `;
-
-          // Store attribute mapping untuk variant baru
-          const hidden = document.createElement('input');
-          hidden.type = 'hidden';
-          hidden.name = `variants[${idx}][mapping]`;
-          hidden.value = JSON.stringify(combo.map(c => ({
-            attribute_id: c.attrId,
-            value: c.value
-          })));
-          tr.appendChild(hidden);
         }
+
+        // Store attribute mapping untuk variant baru/existing
+        const hiddenMapping = document.createElement('input');
+        hiddenMapping.type = 'hidden';
+        hiddenMapping.name = `variants[${idx}][mapping]`;
+        hiddenMapping.value = JSON.stringify(combo.map(c => ({
+          attribute_id: c.attrId,
+          value: c.value
+        })));
+        tr.appendChild(hiddenMapping);
 
         variantTableBody.appendChild(tr);
       });
@@ -584,13 +463,31 @@
         }
 
         const tr = document.createElement('tr');
-        const mappingJson = JSON.stringify(v.pav_mapping || []);
+        const mappingJson = JSON.stringify((v.pav_mapping || []).map(m => ({
+          attribute_id: m.attribute_id,
+          value: m.value
+        })));
+
+        let signature = v.variant_signature || '';
+        if (!signature && v.pav_mapping) {
+          const formattedMapping = v.pav_mapping.map(m => ({
+            attrId: m.attribute_id,
+            attrName: m.attribute_name || '',
+            value: m.value
+          }));
+          signature = generateSignature(formattedMapping);
+        }
 
         tr.innerHTML = `
         <td>
           ${v.variant_name}
           <input type="hidden" name="variants[${idx}][label]" value="${escapeHtml(v.variant_name)}">
+          <input type="hidden" name="variants[${idx}][variant_signature]" value="${escapeHtml(signature)}">
           <input type="hidden" name="variants[${idx}][variant_id]" value="${v.variant_id}">
+        </td>
+        <td>
+          <input type="text" name="variants[${idx}][variant_sku]" class="form-control form-control-sm"
+            value="${escapeHtml(v.variant_sku || '')}" readonly placeholder="Auto-generated">
         </td>
         <td>
           <input type="number" step="0.01" name="variants[${idx}][price]" class="form-control form-control-sm"
@@ -643,6 +540,90 @@
           "'": '&#039;'
         })[m];
       });
+    }
+
+    function toSlug(str) {
+      if (!str) return '';
+      return str
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s_-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    }
+
+    function generateSignature(combo) {
+      const sorted = [...combo].sort((a, b) => a.attrId.localeCompare(b.attrId));
+      return sorted
+        .map(item => toSlug(item.attrName) + ':' + toSlug(item.value))
+        .join('|');
+    }
+
+    function abbreviateValue(val) {
+      val = (val || '').trim();
+      if (!val) return '';
+      
+      const digits = val.replace(/[^0-9]/g, '');
+      if (digits !== '' && (!isNaN(val) || /^\d+(\.\d+)?$/.test(val))) {
+        return digits;
+      }
+      
+      const clean = val.replace(/[^A-Za-z0-9\s-]/g, '');
+      const words = clean.split(/[\s-]+/).filter(Boolean);
+      if (words.length > 1) {
+        return words.map(w => w[0]).join('').toUpperCase();
+      }
+      
+      const upper = clean.toUpperCase();
+      const consonants = upper.replace(/[AEIOU]/g, '');
+      if (consonants.length >= 3) {
+        return consonants.substring(0, 3);
+      }
+      return upper.substring(0, Math.min(3, upper.length));
+    }
+
+    function generateVariantSku(productSku, combo) {
+      if (!productSku) {
+        productSku = document.getElementById('product_sku').value || 'OPT-TEMP';
+      }
+      const sortedCombo = [...combo].sort((a, b) => a.attrId.localeCompare(b.attrId));
+      const abbrs = sortedCombo.map(c => abbreviateValue(c.value)).filter(Boolean);
+      if (abbrs.length > 0) {
+        return productSku + '-' + abbrs.join('-');
+      }
+      return productSku;
+    }
+
+    function updateProductSkuPreview() {
+      const productSkuInput = document.getElementById('product_sku');
+      if (!productSkuInput) return;
+      
+      const categoryId = categorySelect.value;
+      if (!categoryId) {
+        productSkuInput.value = '';
+        return;
+      }
+      
+      const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+      const categoryText = selectedOption ? selectedOption.text.trim() : '';
+      if (!categoryText || categoryText.startsWith('--')) {
+        productSkuInput.value = '';
+        return;
+      }
+      
+      let word = categoryText.split(' ')[0];
+      word = word.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (word.length > 3 && word.endsWith('S')) {
+        word = word.substring(0, word.length - 1);
+      }
+      
+      const savedSku = '<?= $product['product_sku'] ?? '' ?>';
+      const savedCategoryId = '<?= $product['category_id'] ?? '' ?>';
+      if (savedSku && categoryId === savedCategoryId) {
+        productSkuInput.value = savedSku;
+      } else {
+        productSkuInput.value = `OPT-${word}-TEMP`;
+      }
     }
 
     document.querySelectorAll('.delete-image-btn').forEach((btn) => {
@@ -714,6 +695,50 @@
     // 1. Toggle variant checkbox
     // 2. Input text berubah (untuk text type)
     // 3. Checkbox attribute berubah (untuk dropdown type)
+    if (categorySelect && attributesContainer) {
+      categorySelect.addEventListener('change', async function() {
+        const categoryId = this.value;
+        const productId = productIdInput ? productIdInput.value : '';
+        
+        updateProductSkuPreview();
+        
+        if (!categoryId) {
+          attributesContainer.innerHTML = '';
+          renderVariants();
+          return;
+        }
+
+        // Show a loading indicator
+        attributesContainer.innerHTML = `
+          <div class="col-12 text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading attributes...</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">Loading attributes...</p>
+          </div>
+        `;
+
+        try {
+          const response = await fetch('<?= site_url('products/attributes-partial') ?>?category_id=' + categoryId + '&product_id=' + productId);
+          if (!response.ok) {
+            throw new Error('Failed to fetch attributes');
+          }
+          const html = await response.text();
+          attributesContainer.innerHTML = html;
+          renderVariants();
+        } catch (error) {
+          console.error(error);
+          attributesContainer.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-danger mb-0">
+                <i class="fas fa-exclamation-circle me-2"></i> Failed to load attributes. Please try again.
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
     document.addEventListener('change', function(e) {
       if (
         e.target.matches('.variant-toggle') ||
@@ -735,6 +760,7 @@
 
     // ✅ INITIAL RENDER
     window.addEventListener('load', function() {
+      updateProductSkuPreview();
       if (existingVariants.length > 0) {
         renderExistingVariants();
         variantSection.style.display = 'block';

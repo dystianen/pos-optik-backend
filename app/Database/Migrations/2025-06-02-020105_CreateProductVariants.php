@@ -21,6 +21,16 @@ class CreateProductVariants extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'variant_sku' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+            ],
+            'variant_signature' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
             'price' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2',

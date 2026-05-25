@@ -12,6 +12,7 @@ class ProductCategoryController extends BaseController
     public function __construct()
     {
         $this->categoryModel = new ProductCategoryModel();
+        helper(['slug']);
     }
 
     public function webIndex()
@@ -65,12 +66,19 @@ class ProductCategoryController extends BaseController
         $data = [
             'category_name' => $this->request->getPost('category_name'),
             'category_description' => $this->request->getPost('category_description'),
+            'variant_mode' => $this->request->getPost('variant_mode') ?? 'off',
+            'is_prescription_supported' => $this->request->getPost('is_prescription_supported') ? 1 : 0,
         ];
 
         if ($id) {
+            $oldCategory = $this->categoryModel->find($id);
+            if (empty($oldCategory['category_slug']) || $oldCategory['category_name'] !== $data['category_name']) {
+                $data['category_slug'] = generate_unique_category_slug($data['category_name'], $id);
+            }
             $this->categoryModel->update($id, $data);
             $message = 'Transaction updated successfully!';
         } else {
+            $data['category_slug'] = generate_unique_category_slug($data['category_name']);
             $this->categoryModel->insert($data);
             $message = 'Transaction created successfully!';
         }

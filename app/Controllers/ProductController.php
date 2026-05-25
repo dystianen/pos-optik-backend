@@ -39,6 +39,7 @@ class ProductController extends BaseController
         $this->pvValueModel = new ProductVariantValueModel();
         $this->productVariantAttributeModel = new ProductVariantAttributeModel();
         $this->r2 = new R2Storage();
+        helper(['slug', 'sku']);
     }
 
     public function webIndex()
@@ -105,20 +106,6 @@ class ProductController extends BaseController
         // --- STATIC DATA ---
         $data['categories'] = $this->categoryModel->findAll();
 
-        // ✅ GET ATTRIBUTES WITH MASTER VALUES
-        $attributes = $this->attributeModel->findAll();
-
-        foreach ($attributes as &$attr) {
-            // Load master values untuk setiap attribute
-            $attr['values'] = $this->db->table('product_attribute_master_values')
-                ->where('attribute_id', $attr['attribute_id'])
-                ->where('deleted_at', null)
-                ->get()
-                ->getResultArray();
-        }
-
-        $data['attributes'] = $attributes;
-
         if (empty($id)) {
             log_message('debug', 'Mode: CREATE (no ID)');
 
@@ -128,6 +115,7 @@ class ProductController extends BaseController
             $data['selected_attributes'] = [];
             $data['selected_attribute_values'] = [];
             $data['variants'] = [];
+            $data['attributes'] = []; // Empty on create since no category is selected yet
 
             return view('products/v_form', $data);
         }
@@ -141,6 +129,23 @@ class ProductController extends BaseController
             return redirect()->to('/products')->with('failed', 'Product not found.');
         }
         $data['product'] = $product;
+
+        // ✅ GET ATTRIBUTES FOR THIS PRODUCT'S CATEGORY
+        $attributes = $this->attributeModel
+            ->where('category_id', $product['category_id'])
+            ->where('deleted_at', null)
+            ->orderBy('sort_order', 'ASC')
+            ->findAll();
+
+        foreach ($attributes as &$attr) {
+            // Load master values untuk setiap attribute
+            $attr['values'] = $this->db->table('product_attribute_master_values')
+                ->where('attribute_id', $attr['attribute_id'])
+                ->where('deleted_at', null)
+                ->get()
+                ->getResultArray();
+        }
+        $data['attributes'] = $attributes;
 
         // ------------------------------------------------------------------
         // 2. PRODUCT IMAGES
@@ -220,13 +225,19 @@ class ProductController extends BaseController
 
             // Mapping ke PAV
             $pvValues = $this->pvValueModel
-                ->select('product_attribute_values.attribute_id, product_attribute_values.value')
+                ->select('product_attribute_values.attribute_id, product_attribute_values.value, product_attributes.attribute_name')
                 ->join('product_attribute_values', 'product_attribute_values.pav_id = product_variant_values.pav_id')
+                ->join('product_attributes', 'product_attributes.attribute_id = product_attribute_values.attribute_id')
                 ->where('product_variant_values.variant_id', $variantId)
                 ->where('product_variant_values.deleted_at', null)
                 ->findAll();
 
             $v['pav_mapping'] = $pvValues;
+
+            // If signature is empty in DB, compute it on the fly
+            if (empty($v['variant_signature'])) {
+                $v['variant_signature'] = $this->generateSignature($pvValues);
+            }
 
             // Variant Image
             $variantImage = $this->variantImageModel
@@ -267,12 +278,22 @@ class ProductController extends BaseController
             return redirect()->back()->withInput()->with('failed', implode('<br>', $this->validator->getErrors()));
         }
 
+        $oldProduct = null;
+        if ($id) {
+            $oldProduct = $this->productModel->find($id);
+        }
+
         $productData = [
             'category_id'   => $post['category_id'],
             'product_name'  => $post['product_name'],
             'product_price' => $post['product_price'],
             'product_brand' => !empty($post['product_brand']) ? strtoupper($post['product_brand']) : null,
+            'description'   => $post['description'] ?? null,
         ];
+
+        if (!$id || empty($oldProduct['product_sku']) || $oldProduct['category_id'] !== $post['category_id']) {
+            $productData['product_sku'] = generate_unique_product_sku($post['category_id'], $id);
+        }
 
         try {
 
@@ -291,6 +312,8 @@ class ProductController extends BaseController
                 $this->productModel->insert($productData);
                 $productId = $this->productModel->getInsertID();
             }
+
+            $productSku = $productData['product_sku'] ?? $oldProduct['product_sku'] ?? '';
 
             log_message('debug', "Product ID: $productId");
 
@@ -346,6 +369,16 @@ class ProductController extends BaseController
 
                     $isPrimarySet = true;
                 }
+            }
+
+            // Fetch category attributes for signature generation
+            $categoryAttributes = $this->attributeModel
+                ->where('category_id', $post['category_id'])
+                ->where('deleted_at', null)
+                ->findAll();
+            $categoryAttributesMap = [];
+            foreach ($categoryAttributes as $attr) {
+                $categoryAttributesMap[$attr['attribute_id']] = $attr['attribute_name'];
             }
 
             // -------------------------------------------------
@@ -431,21 +464,52 @@ class ProductController extends BaseController
                     $variantName = $v['label'] ?? 'Variant';
                     $price       = $v['price'] ?? null;
 
+                    // Compute signature on the backend
+                    $computedSignature = '';
+                    if (!empty($v['mapping'])) {
+                        $mapping = is_string($v['mapping'])
+                            ? json_decode($v['mapping'], true)
+                            : $v['mapping'];
+                        if (is_array($mapping)) {
+                            $pvValuesForSignature = [];
+                            foreach ($mapping as $item) {
+                                if (is_array($item)) {
+                                    $attrId = $item['attribute_id'] ?? null;
+                                    $val = $item['value'] ?? null;
+                                    $attrName = $categoryAttributesMap[$attrId] ?? null;
+                                    if ($attrId && $val && $attrName) {
+                                        $pvValuesForSignature[] = [
+                                            'attribute_id' => $attrId,
+                                            'attribute_name' => $attrName,
+                                            'value' => $val
+                                        ];
+                                    }
+                                }
+                            }
+                            $computedSignature = $this->generateSignature($pvValuesForSignature);
+                        }
+                    }
+
+                    $variantSku = generate_variant_sku($productSku, $pvValuesForSignature ?? []);
+
                     // ----------------------------
                     // INSERT / UPDATE VARIANT
                     // ----------------------------
                     if ($variantId) {
-
                         $this->variantModel->update($variantId, [
                             'variant_name' => $variantName,
-                            'price'        => $price
+                            'price'        => $price,
+                            'variant_signature' => $computedSignature,
+                            'variant_sku' => $variantSku
                         ]);
                     } else {
                         $insert = $this->variantModel->insert([
                             'variant_id'   => $variantId,
                             'product_id'   => $productId,
                             'variant_name' => $variantName,
-                            'price'        => $price
+                            'price'        => $price,
+                            'variant_signature' => $computedSignature,
+                            'variant_sku' => $variantSku
                         ]);
 
                         $variantId = $this->variantModel->getInsertID();
@@ -611,6 +675,7 @@ class ProductController extends BaseController
             // =================================================
             $db->transCommit();
             session()->setFlashdata('success', 'Product saved successfully');
+            log_message('debug', '========== SAVE PRODUCT END ==========');
             return redirect()->to('/products');
         } catch (\Throwable $e) {
             $db->transRollback();
@@ -618,14 +683,12 @@ class ProductController extends BaseController
             log_message('error', $e->getMessage());
             log_message('error', $e->getTraceAsString());
 
+            log_message('debug', '========== SAVE PRODUCT END ==========');
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('failed', $e->getMessage());
         }
-
-
-        log_message('debug', '========== SAVE PRODUCT END ==========');
     }
 
     public function deleteImage()
@@ -705,5 +768,97 @@ class ProductController extends BaseController
     {
         $this->productModel->delete($id);
         return redirect()->to('/products')->with('success', 'Product deleted successfully');
+    }
+
+    public function getAttributesPartial()
+    {
+        $categoryId = $this->request->getGet('category_id');
+        $productId = $this->request->getGet('product_id');
+
+        if (empty($categoryId)) {
+            return '';
+        }
+
+        // Fetch attributes filtered by category_id, ordered by sort_order
+        $attributes = $this->attributeModel
+            ->where('category_id', $categoryId)
+            ->where('deleted_at', null)
+            ->orderBy('sort_order', 'ASC')
+            ->findAll();
+
+        foreach ($attributes as &$attr) {
+            $attr['values'] = $this->db->table('product_attribute_master_values')
+                ->where('attribute_id', $attr['attribute_id'])
+                ->where('deleted_at', null)
+                ->get()
+                ->getResultArray();
+        }
+
+        // Prefilled values if editing
+        $pavValues = [];
+        $selectedAttributeValues = [];
+        $selectedAttributes = [];
+
+        if (!empty($productId)) {
+            $pav = $this->pavModel
+                ->where('product_id', $productId)
+                ->where('deleted_at', null)
+                ->findAll();
+
+            foreach ($pav as $row) {
+                $attrId = $row['attribute_id'];
+                if (!isset($pavValues[$attrId])) {
+                    $pavValues[$attrId] = [
+                        'pav_ids' => [],
+                        'values' => []
+                    ];
+                }
+                $pavValues[$attrId]['pav_ids'][] = $row['pav_id'];
+                $pavValues[$attrId]['values'][] = $row['value'];
+
+                if (!isset($selectedAttributeValues[$attrId])) {
+                    $selectedAttributeValues[$attrId] = [];
+                }
+                $selectedAttributeValues[$attrId][] = $row['value'];
+            }
+
+            $variantAttrs = $this->productVariantAttributeModel
+                ->where('product_id', $productId)
+                ->findAll();
+            $selectedAttributes = array_column($variantAttrs, 'attribute_id');
+        }
+
+        return view('products/partials/v_attributes_partial', [
+            'attributes' => $attributes,
+            'pav_values' => $pavValues,
+            'selected_attribute_values' => $selectedAttributeValues,
+            'selected_attributes' => $selectedAttributes,
+        ]);
+    }
+
+    private function toSlug($str)
+    {
+        $str = strtolower(trim($str));
+        $str = preg_replace('/[^a-z0-9\s_-]/', '', $str);
+        $str = preg_replace('/\s+/', '-', $str);
+        $str = preg_replace('/-+/', '-', $str);
+        return $str;
+    }
+
+    private function generateSignature(array $pvValues)
+    {
+        // Sort by attribute_id ASC (since UUIDs are strings, we sort alphabetically)
+        usort($pvValues, function ($a, $b) {
+            return strcmp($a['attribute_id'], $b['attribute_id']);
+        });
+
+        $parts = [];
+        foreach ($pvValues as $item) {
+            $attrSlug = $this->toSlug($item['attribute_name']);
+            $valSlug = $this->toSlug($item['value']);
+            $parts[] = "{$attrSlug}:{$valSlug}";
+        }
+
+        return implode('|', $parts);
     }
 }

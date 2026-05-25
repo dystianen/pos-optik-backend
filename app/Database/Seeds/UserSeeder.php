@@ -25,34 +25,22 @@ class UserSeeder extends Seeder
         // Pastikan role_name sesuai dengan RoleSeeder
         $data = [
             [
-                'user_name'  => 'Admin Super',
-                'user_email' => 'admin@gmail.com',
+                'user_name'  => 'Owner',
+                'user_email' => 'owner@gmail.com',
                 'password'   => password_hash('123', PASSWORD_DEFAULT),
-                'role_id'    => $roleMap['admin'],
+                'role_id'    => $roleMap['owner'],
             ],
             [
-                'user_name'  => 'Dr. Mata',
-                'user_email' => 'optometrist@gmail.com',
-                'password'   => password_hash('123', PASSWORD_DEFAULT),
-                'role_id'    => $roleMap['optometrist'],
-            ],
-            [
-                'user_name'  => 'Kasir Toko',
+                'user_name'  => 'Cashier',
                 'user_email' => 'cashier@gmail.com',
                 'password'   => password_hash('123', PASSWORD_DEFAULT),
                 'role_id'    => $roleMap['cashier'],
             ],
             [
-                'user_name'  => 'Petugas Gudang',
-                'user_email' => 'inventory@gmail.com',
+                'user_name'  => 'Admin',
+                'user_email' => 'admin@gmail.com',
                 'password'   => password_hash('123', PASSWORD_DEFAULT),
-                'role_id'    => $roleMap['inventory'],
-            ],
-            [
-                'user_name'  => 'Customer',
-                'user_email' => 'customer@gmail.com',
-                'password'   => password_hash('123', PASSWORD_DEFAULT),
-                'role_id'    => $roleMap['customer'],
+                'role_id'    => $roleMap['admin'],
             ],
         ];
 

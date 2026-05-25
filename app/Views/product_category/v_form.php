@@ -41,6 +41,20 @@
         <small class="form-text text-muted d-block mt-1">Enter category name (max 50 characters)</small>
       </div>
 
+      <!-- Category Slug -->
+      <div class="mb-3">
+        <label for="category_slug" class="form-label">Category Slug</label>
+        <input
+          type="text"
+          name="category_slug"
+          id="category_slug"
+          class="form-control"
+          placeholder="Auto-generated slug"
+          value="<?= old('category_slug', isset($category) ? htmlspecialchars($category['category_slug'] ?? '') : '') ?>"
+          readonly>
+        <small class="form-text text-muted d-block mt-1">This slug is auto-generated based on the Category Name.</small>
+      </div>
+
       <!-- Description -->
       <div class="mb-3">
         <label for="category_description" class="form-label">Description</label>
@@ -51,6 +65,37 @@
           rows="4"
           placeholder="Describe this product category..."><?= old('category_description', isset($category) ? htmlspecialchars($category['category_description']) : '') ?></textarea>
         <small class="form-text text-muted d-block mt-1">Optional: Description of the category (max 500 characters)</small>
+      </div>
+
+      <!-- Variant Mode -->
+      <div class="mb-3">
+        <label for="variant_mode" class="form-label">Variant Mode</label>
+        <select name="variant_mode" id="variant_mode" class="form-select">
+          <option value="off" <?= old('variant_mode', isset($category) ? $category['variant_mode'] : 'off') === 'off' ? 'selected' : '' ?>>
+            Off (No Variants)
+          </option>
+          <option value="combination" <?= old('variant_mode', isset($category) ? $category['variant_mode'] : 'off') === 'combination' ? 'selected' : '' ?>>
+            Combination (Multiple Variants)
+          </option>
+        </select>
+        <small class="form-text text-muted d-block mt-1">Choose whether products in this category support variants (e.g., size, color).</small>
+      </div>
+
+      <!-- Is Prescription Supported -->
+      <div class="mb-3">
+        <div class="form-check">
+          <input
+            type="checkbox"
+            name="is_prescription_supported"
+            id="is_prescription_supported"
+            class="form-check-input"
+            value="1"
+            <?= old('is_prescription_supported', isset($category) && $category['is_prescription_supported'] ? '1' : '0') === '1' ? 'checked' : '' ?>>
+          <label class="form-check-label" for="is_prescription_supported">
+            <strong>Support Prescription Orders</strong>
+          </label>
+          <small class="form-text text-muted d-block mt-1">Enable this if products in this category support prescription-based ordering (e.g., eyeglasses with lens prescription).</small>
+        </div>
       </div>
 
       <div class="mt-4">

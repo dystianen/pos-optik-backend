@@ -17,9 +17,23 @@ class CreateProductCategoriesTable extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 50
             ],
+            'category_slug' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+            ],
             'category_description' => [
                 'type' => 'TEXT',
                 'null' => true
+            ],
+            'variant_mode' => [
+                'type' => 'ENUM',
+                'constraint' => ['off', 'combination'],
+                'default' => 'off',
+            ],
+            'is_prescription_supported' => [
+                'type' => 'BOOLEAN',
+                'default' => false,
             ],
             'created_at' => [
                 'type' => 'DATETIME',

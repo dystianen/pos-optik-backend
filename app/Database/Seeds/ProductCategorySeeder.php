@@ -13,20 +13,22 @@ class ProductCategorySeeder extends Seeder
 
         $data = [
             [
-                'category_name' => 'Kacamata',
-                'category_description' => 'Berbagai macam kacamata pria dan wanita'
+                'category_name' => 'Sunglasses',
+                'category_description' => 'Various kinds of sunglasses for men and women'
             ],
             [
-                'category_name' => 'Softlens',
-                'category_description' => 'Lensa kontak sehari-hari dan khusus'
+                'category_name' => 'Contact Lens',
+                'category_description' => 'Various kinds of contact lenses for daily and special'
             ],
             [
-                'category_name' => 'Aksesoris',
-                'category_description' => 'Tali kacamata, case, cleaner, dll'
+                'category_name' => 'Accessories',
+                'category_description' => 'Eyewear accessories such as eyeglass straps, cases, cleaners, etc.'
             ]
         ];
 
+        helper(['slug']);
         foreach ($data as $row) {
+            $row['category_slug'] = generate_unique_category_slug($row['category_name']);
             $categoryModel->insert($row);
         }
     }

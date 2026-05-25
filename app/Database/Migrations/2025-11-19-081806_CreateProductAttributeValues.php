@@ -17,6 +17,11 @@ class ProductAttributeValues extends Migration
                 'type'       => 'CHAR',
                 'constraint' => 36,
             ],
+            'variant_id' => [
+                'type' => 'CHAR',
+                'constraint' => 36,
+                'null' => true,
+            ],
             'attribute_id' => [
                 'type'       => 'CHAR',
                 'constraint' => 36,
@@ -40,6 +45,27 @@ class ProductAttributeValues extends Migration
         ]);
 
         $this->forge->addKey('pav_id', true);
+        $this->forge->addForeignKey(
+            'product_id',
+            'products',
+            'product_id',
+            'CASCADE',
+            'CASCADE'
+        );
+        $this->forge->addForeignKey(
+            'variant_id',
+            'product_variants',
+            'variant_id',
+            'CASCADE',
+            'CASCADE'
+        );
+        $this->forge->addForeignKey(
+            'attribute_id',
+            'product_attributes',
+            'attribute_id',
+            'CASCADE',
+            'CASCADE'
+        );
         $this->forge->createTable('product_attribute_values');
     }
 

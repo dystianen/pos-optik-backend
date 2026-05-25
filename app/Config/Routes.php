@@ -152,6 +152,7 @@ $routes->group('products', ['filter' => 'authGuard'], function ($routes) {
   $routes->post('save', 'ProductController::save');
   $routes->post('delete/(:any)', 'ProductController::webDelete/$1');
   $routes->post('delete-image', 'ProductController::deleteImage');
+  $routes->get('attributes-partial', 'ProductController::getAttributesPartial');
 });
 
 $routes->group('product-category', ['filter' => 'authGuard'], function ($routes) {

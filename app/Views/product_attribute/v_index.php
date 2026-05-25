@@ -14,7 +14,11 @@
             <th class="text-center">No</th>
             <th>Name</th>
             <th>Type</th>
-            <th>Values</th>
+            <th>Category</th>
+            <th class="text-center">Variantable</th>
+            <th class="text-center">Required</th>
+            <th class="text-center">Filterable</th>
+            <th class="text-center">Master Values</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -23,15 +27,41 @@
 
           <?php if (empty($attributes)): ?>
             <tr>
-              <td colspan="4" class="text-center text-muted">No attribute data available.</td>
+              <td colspan="9" class="text-center text-muted">No attribute data available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($attributes as $attribute): ?>
               <tr>
                 <td class="text-center"><?= $startIndex++ ?></td>
                 <td><?= $attribute['attribute_name'] ?></td>
-                <td><?= $attribute['attribute_type'] ?></td>
-                <td><?= !empty($attribute['master_values']) ? esc($attribute['master_values']) : '-' ?></td>
+                <td>
+                  <span class="badge bg-info"><?= ucfirst($attribute['attribute_type']) ?></span>
+                </td>
+                <td><?= htmlspecialchars($attribute['category_name']) ?></td>
+                <td class="text-center">
+                  <?= $attribute['is_variantable'] ?
+                    '<span class="badge bg-success"><i class="fas fa-check"></i></span>' :
+                    '<span class="badge bg-secondary"><i class="fas fa-times"></i></span>'
+                  ?>
+                </td>
+                <td class="text-center">
+                  <?= $attribute['is_required'] ?
+                    '<span class="badge bg-success"><i class="fas fa-check"></i></span>' :
+                    '<span class="badge bg-secondary"><i class="fas fa-times"></i></span>'
+                  ?>
+                </td>
+                <td class="text-center">
+                  <?= $attribute['is_filterable'] ?
+                    '<span class="badge bg-success"><i class="fas fa-check"></i></span>' :
+                    '<span class="badge bg-secondary"><i class="fas fa-times"></i></span>'
+                  ?>
+                </td>
+                <td class="text-center">
+                  <?= $attribute['use_master_values'] ?
+                    '<span class="badge bg-success"><i class="fas fa-check"></i></span>' :
+                    '<span class="badge bg-secondary"><i class="fas fa-times"></i></span>'
+                  ?>
+                </td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/product-attribute/form?id=' . $attribute['attribute_id']) ?>" class="btn btn-sm btn-warning">
                     <i class="fa-solid fa-pen-to-square"></i>
@@ -65,7 +95,7 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>product-category?page=${pageNumber}`);
+    window.location.replace(`<?php echo base_url(); ?>product-attribute?page=${pageNumber}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

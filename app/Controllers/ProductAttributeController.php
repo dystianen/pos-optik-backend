@@ -36,10 +36,19 @@ class ProductAttributeController extends BaseController
             $groupedValues[$row['attribute_id']][] = $row['value'];
         }
 
-        // Gabungkan value pakai koma
+        // Get all categories for lookup
+        $categoryModel = new \App\Models\ProductCategoryModel();
+        $categories = $categoryModel->findAll();
+        $categoryMap = [];
+        foreach ($categories as $cat) {
+            $categoryMap[$cat['category_id']] = $cat['category_name'];
+        }
+
+        // Gabungkan value pakai koma dan add category name
         foreach ($attributes as &$attr) {
             $values = $groupedValues[$attr['attribute_id']] ?? [];
             $attr['master_values'] = implode(', ', $values);
+            $attr['category_name'] = $categoryMap[$attr['category_id']] ?? 'All';
         }
         unset($attr);
 
@@ -60,6 +69,10 @@ class ProductAttributeController extends BaseController
         $id = $this->request->getVar('id');
         $data = [];
 
+        // Fetch all categories for dropdown
+        $categoryModel = new \App\Models\ProductCategoryModel();
+        $data['categories'] = $categoryModel->findAll();
+
         if ($id) {
             $attribute = $this->attributeModel->find($id);
 
@@ -73,7 +86,7 @@ class ProductAttributeController extends BaseController
                 ->findAll();
 
             $data['attribute'] = $attribute;
-            $data['options'] = $options; // ← tambahan
+            $data['options'] = $options;
         }
 
         return view('product_attribute/v_form', $data);
@@ -94,6 +107,12 @@ class ProductAttributeController extends BaseController
         $data = [
             'attribute_name' => $this->request->getPost('attribute_name'),
             'attribute_type' => $this->request->getPost('attribute_type'),
+            'category_id' => $this->request->getPost('category_id') ?: null,
+            'is_variantable' => $this->request->getPost('is_variantable') ? 1 : 0,
+            'is_required' => $this->request->getPost('is_required') ? 1 : 0,
+            'is_filterable' => $this->request->getPost('is_filterable') ? 1 : 0,
+            'use_master_values' => $this->request->getPost('use_master_values') ? 1 : 0,
+            'sort_order' => (int)$this->request->getPost('sort_order') ?? 0,
         ];
 
         if ($id) {
@@ -156,6 +175,12 @@ class ProductAttributeController extends BaseController
         $this->attributeModel->insert([
             'attribute_name' => $data['attribute_name'],
             'attribute_type' => $data['attribute_type'],
+            'category_id' => $data['category_id'],
+            'is_variantable' => $data['is_variantable'],
+            'is_required' => $data['is_required'],
+            'is_filterable' => $data['is_filterable'],
+            'use_master_values' => $data['use_master_values'],
+            'sort_order' => $data['sort_order'],
         ]);
         $attributeId = $this->attributeModel->getInsertID();
 

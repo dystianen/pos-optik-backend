@@ -64,7 +64,9 @@ class ProductSeeder extends Seeder
             ]
         ];
 
+        helper(['sku']);
         foreach ($data as $row) {
+            $row['product_sku'] = generate_unique_product_sku($row['category_id']);
             $productModel->insert($row);
         }
     }

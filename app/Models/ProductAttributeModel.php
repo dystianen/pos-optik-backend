@@ -23,6 +23,12 @@ class ProductAttributeModel extends Model
         'attribute_id',
         'attribute_name',
         'attribute_type',
+        'category_id',
+        'is_variantable',
+        'is_required',
+        'is_filterable',
+        'use_master_values',
+        'sort_order',
     ];
 
     protected $validationRules = [
@@ -49,7 +55,10 @@ class ProductAttributeModel extends Model
 
     protected function generateUuid(array $data)
     {
-        $data['data']['attribute_id'] = service('uuid')->uuid4()->toString();
+        if (empty($data['data']['attribute_id'] ?? null)) {
+            $data['data']['attribute_id'] = service('uuid')->uuid4()->toString();
+        }
+
         return $data;
     }
 

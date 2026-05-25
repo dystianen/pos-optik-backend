@@ -23,6 +23,8 @@ class ProductVariantModel extends Model
         'variant_id',
         'product_id',
         'variant_name',
+        'variant_sku',
+        'variant_signature',
         'price',
         'stock',
         'created_at',

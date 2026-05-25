@@ -21,6 +21,12 @@ class CreateProductsTable extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 100
             ],
+            'product_sku' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+                'after' => 'product_name',
+            ],
             'product_price' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2'
@@ -34,6 +40,15 @@ class CreateProductsTable extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 50,
                 'null' => true
+            ],
+
+            'description' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+            'is_active' => [
+                'type' => 'BOOLEAN',
+                'default' => true,
             ],
             'created_at' => [
                 'type'    => 'DATETIME',
