@@ -17,6 +17,7 @@ class CreateProductVariantImages extends Migration
                 'type' => 'CHAR',
                 'constraint' => 36,
                 'null' => false,
+                'unique' => true,
             ],
             'product_image_id' => [
                 'type' => 'CHAR',

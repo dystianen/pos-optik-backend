@@ -821,8 +821,19 @@ class ProductApiController extends BaseApiController
          * ======================
          */
         $product = $this->productModel
-            ->join('product_categories pc', 'pc.category_id = products.category_id')
-            ->find($id);
+            ->select('
+                products.product_id,
+                products.category_id,
+                products.product_name,
+                products.description,
+                products.product_price,
+                products.product_stock,
+                pc.is_prescription_supported,
+                pc.category_name
+            ')
+            ->join('product_categories pc', 'pc.category_id = products.category_id', 'left')
+            ->where('products.product_id', $id)
+            ->first();
 
         if (!$product) {
             return $this->errorResponse('Product not found');
@@ -834,70 +845,70 @@ class ProductApiController extends BaseApiController
          * ======================
          */
         $galleryImages = $this->productImageModel
-            ->select('product_image_id, url, alt_text, is_primary')
-            ->where('product_id', $id)
-            ->where('type', 'gallery')
+            ->select('product_image_id, product_id, url, alt_text, is_primary')
+            ->where([
+                'product_id' => $id,
+                'type'       => 'gallery'
+            ])
             ->orderBy('is_primary', 'DESC')
             ->findAll();
 
         /**
          * ======================
-         * VARIANTS
+         * VARIANTS + IMAGE
          * ======================
          */
         $variants = $this->variantModel
-            ->select('variant_id, variant_name, price, stock')
-            ->where('product_id', $id)
+            ->select('
+            product_variants.variant_id,
+            product_variants.product_id,
+            product_variants.variant_name,
+            product_variants.price,
+            product_variants.stock,
+
+            pi.product_image_id,
+            pi.url,
+            pi.alt_text
+        ')
+            ->join(
+                'product_variant_images pvi',
+                'pvi.variant_id = product_variants.variant_id',
+                'left'
+            )
+            ->join(
+                'product_images pi',
+                'pi.product_image_id = pvi.product_image_id',
+                'left'
+            )
+            ->where('product_variants.product_id', $id)
             ->findAll();
 
         /**
          * ======================
-         * VARIANT IMAGE (1 VARIANT = 1 IMAGE)
+         * FORMAT IMAGE
          * ======================
          */
-        $variantImageMap = [];
-        $variantIds = array_column($variants, 'variant_id');
-
-        if (!empty($variantIds)) {
-            $variantImages = $this->db->table('product_variant_images pvi')
-                ->select('
-                pvi.variant_id,
-                pi.product_image_id,
-                pi.url,
-                pi.alt_text
-            ')
-                ->join(
-                    'product_images pi',
-                    'pi.product_image_id = pvi.product_image_id'
-                )
-                ->whereIn('pvi.variant_id', $variantIds)
-                ->get()
-                ->getResultArray();
-
-            // Mapping SINGLE image → variant
-            foreach ($variantImages as $img) {
-                $variantImageMap[$img['variant_id']] = [
-                    'product_image_id' => $img['product_image_id'],
-                    'url'              => $img['url'],
-                    'alt_text'         => $img['alt_text'],
-                ];
-            }
-        }
-
-        // Inject image ke variant (bukan array)
         foreach ($variants as &$variant) {
-            $variant['image'] = $variantImageMap[$variant['variant_id']] ?? null;
-        }
-        unset($variant);
 
-        /**
-         * ======================
-         * RESPONSE
-         * ======================
-         */
+            $variant['image'] = $variant['product_image_id']
+                ? [
+                    'product_image_id' => $variant['product_image_id'],
+                    'url'              => $variant['url'],
+                    'alt_text'         => $variant['alt_text'],
+                ]
+                : null;
+
+            unset(
+                $variant['product_image_id'],
+                $variant['url'],
+                $variant['alt_text']
+            );
+        }
+
         $product['gallery']  = $galleryImages;
         $product['variants'] = $variants;
-        $product['is_prescription_supported'] = (bool) $product['is_prescription_supported'];
+        $product['is_prescription_supported'] =
+            (bool) $product['is_prescription_supported'];
 
         return $this->successResponse($product);
     }
