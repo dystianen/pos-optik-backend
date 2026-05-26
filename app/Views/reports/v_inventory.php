@@ -196,13 +196,13 @@
                     <?php endif; ?>
                   </td>
                   <td>
-                    <div class="text-muted small"><?= esc($transaction['reference_id'] ?? '-') ?></div>
+                    <div class="text-muted small"><?= esc($transaction['reference_id'] != '' ? $transaction['reference_id'] : '-') ?></div>
                   </td>
                   <td><?= esc($transaction['product_name'] ?? '-') ?></td>
                   <td><?= esc($transaction['variant_name'] ?? '-') ?></td>
                   <td><?= esc($transaction['user_name'] ?? 'System') ?></td>
                   <td class="text-center font-weight-bold"><?= esc($transaction['quantity']) ?></td>
-                  <td><?= esc($transaction['description'] ?? '-') ?></td>
+                  <td><?= esc($transaction['description'] != '' ? $transaction['description'] : '-') ?></td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>
