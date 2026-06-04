@@ -41,7 +41,7 @@ class ProductModel extends Model
         'product_price' => 'required|decimal|greater_than[0]',
         'product_stock' => 'permit_empty|is_natural',
         'product_brand' => 'permit_empty|string|max_length[50]',
-        'description'   => 'permit_empty|max_length[1000]',
+        'description'   => 'permit_empty|max_length[65535]',
     ];
 
     protected $validationMessages = [
@@ -66,7 +66,7 @@ class ProductModel extends Model
             'max_length' => 'Product brand must not exceed 50 characters.',
         ],
         'description' => [
-            'max_length' => 'Description must not exceed 1000 characters.',
+            'max_length' => 'Description must not exceed 65535 characters.',
         ],
     ];
     protected $skipValidation = false;

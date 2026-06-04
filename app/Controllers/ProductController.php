@@ -306,10 +306,16 @@ class ProductController extends BaseController
             // SAVE PRODUCT
             // -------------------------------------------------
             if ($id) {
-                $this->productModel->update($id, $productData);
+                if ($this->productModel->update($id, $productData) === false) {
+                    $errors = implode('<br>', $this->productModel->errors());
+                    throw new \Exception('Failed to update product: ' . $errors);
+                }
                 $productId = $id;
             } else {
-                $this->productModel->insert($productData);
+                if ($this->productModel->insert($productData) === false) {
+                    $errors = implode('<br>', $this->productModel->errors());
+                    throw new \Exception('Failed to insert product: ' . $errors);
+                }
                 $productId = $this->productModel->getInsertID();
             }
 
