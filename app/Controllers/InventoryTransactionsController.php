@@ -30,22 +30,23 @@ class InventoryTransactionsController extends BaseController
 
         $builder = $this->InventoryTransactionModel
             ->select('
-            inventory_transactions.*,
-            p1.product_name,
-            p1.product_stock,
-            v1.variant_id,
-            v1.variant_name,
-            v1.stock AS variant_stock,
-            p2.category_name,
-            CASE 
-                WHEN v1.variant_id IS NOT NULL THEN v1.variant_name
-                ELSE "No Variant"
-            END AS display_variant,
-            CASE 
-                WHEN v1.variant_id IS NOT NULL THEN v1.stock
-                ELSE p1.product_stock
-            END AS current_stock
-        ', false)
+                inventory_transactions.*,
+                p1.product_name,
+                p1.product_stock,
+                p1.product_sku,
+                v1.variant_id,
+                v1.variant_name,
+                v1.stock AS variant_stock,
+                p2.category_name,
+                CASE 
+                    WHEN v1.variant_id IS NOT NULL THEN v1.variant_name
+                    ELSE "No Variant"
+                END AS display_variant,
+                CASE 
+                    WHEN v1.variant_id IS NOT NULL THEN v1.stock
+                    ELSE p1.product_stock
+                END AS current_stock
+            ', false)
             ->join('products p1', 'inventory_transactions.product_id = p1.product_id')
             ->join('product_variants v1', 'inventory_transactions.variant_id = v1.variant_id', 'left') // ✅ LEFT JOIN
             ->join('product_categories p2', 'p1.category_id = p2.category_id', 'left')
@@ -54,6 +55,7 @@ class InventoryTransactionsController extends BaseController
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('p1.product_name', $search)
+                ->orLike('p1.product_sku', $search)
                 ->orLike('v1.variant_name', $search)
                 ->orLike('p2.category_name', $search)
                 ->orLike('inventory_transactions.transaction_type', $search)

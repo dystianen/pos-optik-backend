@@ -71,6 +71,7 @@ class ProductController extends BaseController
         if (!empty($search)) {
             $builder->groupStart()
                 ->like('products.product_name', $search)
+                ->orLike('products.product_sku', $search)
                 ->orLike('products.product_brand', $search)
                 ->orLike('product_categories.category_name', $search)
                 ->groupEnd();

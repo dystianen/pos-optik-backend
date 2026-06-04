@@ -39,6 +39,7 @@ $referenceBadges = [
         <thead>
           <tr>
             <th class="text-center">No</th>
+            <th>Product SKU</th>
             <th>Product</th>
             <th>Variant</th>
             <th>Transaction Type</th>
@@ -61,8 +62,9 @@ $referenceBadges = [
             <?php foreach ($inventory_transactions as $inventory_transaction): ?>
               <tr>
                 <td class="text-center"><?= $startIndex++ ?></td>
+                <td><?= esc($inventory_transaction['product_sku']) ?></td>
                 <td><?= esc($inventory_transaction['product_name']) ?></td>
-                <td><?= esc($inventory_transaction['variant_name']) ?></td>
+                <td><?= esc($inventory_transaction['variant_name'] ?: '-') ?></td>
                 <td>
                   <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
                     <span class="badge bg-success">IN</span>
@@ -83,7 +85,7 @@ $referenceBadges = [
                   <?= esc($inventory_transaction['reference_id'] ?: '-') ?>
                 </td>
                 <td><?= $inventory_transaction['quantity'] ?></td>
-                <td><?= esc($inventory_transaction['description']) ?></td>
+                <td><?= esc($inventory_transaction['description'] ?: '-') ?></td>
                 <td><?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?></td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/inventory/form?id=' . $inventory_transaction['inventory_transaction_id']) ?>"
