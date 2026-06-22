@@ -275,8 +275,10 @@ class ProductController extends BaseController
             'category_id'   => 'required',
         ];
 
+        $redirectUrl = 'products/form' . ($id ? '?id=' . $id : '');
+
         if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('failed', implode('<br>', $this->validator->getErrors()));
+            return redirect()->to(site_url($redirectUrl))->withInput()->with('failed', implode('<br>', $this->validator->getErrors()));
         }
 
         $oldProduct = null;
@@ -692,7 +694,7 @@ class ProductController extends BaseController
 
             log_message('debug', '========== SAVE PRODUCT END ==========');
             return redirect()
-                ->back()
+                ->to(site_url($redirectUrl))
                 ->withInput()
                 ->with('failed', $e->getMessage());
         }

@@ -64,6 +64,13 @@ class Format extends BaseConfig
     ];
 
     /**
+     * The maximum depth to use when encoding arrays/objects to JSON.
+     *
+     * @var int
+     */
+    public int $jsonEncodeDepth = 512;
+
+    /**
      * A Factory method to return the appropriate formatter for the given mime type.
      *
      * @return FormatterInterface

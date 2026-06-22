@@ -94,7 +94,7 @@ abstract class BaseController extends Controller
 
     public function decodedToken()
     {
-        $key = getenv('JWT_SECRET');
+        $key = getenv('JWT_SECRET_KEY');
         $header = $this->request->getHeaderLine("Authorization");
         $token = null;
 
