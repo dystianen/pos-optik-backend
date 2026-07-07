@@ -22,9 +22,7 @@ class DashboardController extends BaseController
 
     public function index()
     {
-        $stats = cache()->remember('dashboard_stats', 300, function () {
-            return $this->getStats();
-        });
+        $stats = $this->getStats();
 
         return view('v_dashboard', array_merge($stats, [
             'pusherKey' => env('pusher.key')
@@ -36,9 +34,7 @@ class DashboardController extends BaseController
      */
     public function apiStats()
     {
-        $stats = cache()->remember('dashboard_stats', 300, function () {
-            return $this->getStats();
-        });
+        $stats = $this->getStats();
 
         return $this->response->setJSON($stats);
     }
@@ -247,7 +243,7 @@ class DashboardController extends BaseController
          * SAVE CACHE
          * =========================
          */
-        cache()->save($cacheKey, $data, 60);
+        cache()->save($cacheKey, $data, 300);
 
         return $data;
     }
