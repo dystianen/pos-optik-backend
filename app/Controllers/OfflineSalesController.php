@@ -20,6 +20,7 @@ class OfflineSalesController extends BaseController
     protected $notificationModel;
     protected $statusModel;
     protected $db;
+    protected $r2;
 
     public function __construct()
     {
@@ -34,6 +35,7 @@ class OfflineSalesController extends BaseController
         $this->notificationModel    = new \App\Models\NotificationModel();
         $this->statusModel          = new \App\Models\OrderStatusModel();
         $this->db                   = \Config\Database::connect();
+        $this->r2                   = new \App\Libraries\R2Storage();
     }
 
     public function index()
@@ -290,7 +292,7 @@ class OfflineSalesController extends BaseController
             foreach ($items as $item) {
 
                 $productId = $item['product_id'];
-                $variantId = $item['variant_id'] ?? null;
+                $variantId = !empty($item['variant_id']) ? $item['variant_id'] : null;
                 $qty       = (int) $item['qty'];
 
                 if ($variantId) {
@@ -327,12 +329,13 @@ class OfflineSalesController extends BaseController
             // INSERT ORDER
             // ======================
             $this->orderModel->insert([
-                'customer_id'     => $customerId,
-                'status_id'       => $this->statusModel->getIdByCode(OrderStatus::PROCESSING),
-                'shipping_cost'   => 0,
-                'coupon_discount' => 0,
-                'grand_total'     => $grandTotal,
-                'order_type'      => 'offline'
+                'customer_id'        => $customerId,
+                'status_id'          => $this->statusModel->getIdByCode(OrderStatus::PROCESSING),
+                'shipping_method_id' => null,
+                'shipping_cost'      => 0,
+                'coupon_discount'    => 0,
+                'grand_total'        => $grandTotal,
+                'order_type'         => 'offline'
             ]);
 
             $orderId = $this->orderModel->getInsertID();
@@ -343,7 +346,7 @@ class OfflineSalesController extends BaseController
             foreach ($items as $item) {
 
                 $productId = $item['product_id'];
-                $variantId = $item['variant_id'] ?: null;
+                $variantId = !empty($item['variant_id']) ? $item['variant_id'] : null;
                 $qty       = (int) $item['qty'];
                 $price     = (float) $item['price'];
 
@@ -447,14 +450,17 @@ class OfflineSalesController extends BaseController
             // INSERT PAYMENT
             // ======================
             if ($paymentMethod['method_type'] !== 'cash') {
-                $paymentDir = PUBLICPATH . 'uploads/payments/' . $orderId . '/';
-                if (!is_dir($paymentDir)) {
-                    mkdir($paymentDir, 0755, true);
-                }
-
                 $proofName = $paymentProof->getRandomName();
-                $paymentProof->move($paymentDir, $proofName);
-                $paymentProofUrl = base_url('uploads/payments/' . $orderId . '/' . $proofName);
+                $objectKey = 'payments/' . $orderId . '/' . $proofName;
+
+                $paymentProofUrl = $this->r2->uploadFile(
+                    $paymentProof->getTempName(),
+                    $objectKey
+                );
+
+                if (!$paymentProofUrl) {
+                    throw new \Exception('Failed upload payment proof');
+                }
             }
 
             $this->paymentModel->insert([

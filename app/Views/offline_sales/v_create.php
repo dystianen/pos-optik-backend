@@ -38,8 +38,9 @@
             <tr>
               <th>Produk</th>
               <th>Variant</th>
+              <th style="width:120px;">Stok</th>
               <th style="min-width:120px;">Harga</th>
-              <th style="width:200px;">Qty</th>
+              <th style="width:120px;">Qty</th>
               <th style="min-width:120px;">Subtotal</th>
               <th style="min-width:180px;">Prescription</th>
               <th style="min-width:50px;"></th>
@@ -56,7 +57,8 @@
                   <option value="">-- Pilih Produk --</option>
                   <?php foreach ($products as $p): ?>
                     <option value="<?= $p['product_id'] ?>"
-                      data-price="<?= $p['product_price'] ?>">
+                      data-price="<?= $p['product_price'] ?>"
+                      data-stock="<?= $p['product_stock'] ?>">
                       <?= $p['product_name'] ?>
                     </option>
                   <?php endforeach ?>
@@ -70,6 +72,11 @@
                   disabled>
                   <option value="">-- Pilih Variant --</option>
                 </select>
+              </td>
+
+              <!-- STOK -->
+              <td>
+                <input type="text" class="form-control stock-display" readonly value="-">
               </td>
 
               <!-- PRICE -->
@@ -198,11 +205,22 @@
   function loadVariants(productId, row) {
     const variantSelect = row.querySelector('.variant-select');
     const priceInput = row.querySelector('.price');
+    const stockInput = row.querySelector('.stock-display');
+    const qtyInput = row.querySelector('.qty');
 
-    const productPrice =
-      row.querySelector('.product-select')
-      .selectedOptions[0]
-      ?.dataset.price || 0;
+    if (!productId) {
+      variantSelect.innerHTML = '<option value="">-- Pilih Variant --</option>';
+      variantSelect.disabled = true;
+      priceInput.value = '';
+      stockInput.value = '-';
+      qtyInput.max = '';
+      updateSubtotal(row);
+      return;
+    }
+
+    const selectedProductOpt = row.querySelector('.product-select').selectedOptions[0];
+    const productPrice = selectedProductOpt?.dataset.price || 0;
+    const productStock = selectedProductOpt?.dataset.stock || 0;
 
     fetch('<?= base_url('api/variants?productId=') ?>' + productId)
       .then(res => res.json())
@@ -216,6 +234,8 @@
         if (!data || data.length === 0) {
           variantSelect.disabled = true;
           priceInput.value = productPrice;
+          stockInput.value = productStock;
+          qtyInput.max = productStock;
           updateSubtotal(row);
           return;
         }
@@ -224,15 +244,18 @@
         data.forEach(v => {
           const opt = document.createElement('option');
           opt.value = v.variant_id;
-          opt.textContent = v.variant_name;
+          opt.textContent = `${v.variant_name} (Stok: ${v.stock})`;
           opt.dataset.price = v.price;
+          opt.dataset.stock = v.stock;
           variantSelect.appendChild(opt);
         });
 
         variantSelect.disabled = false;
 
-        // ⬅️ DEFAULT KEMBALI KE PRODUCT PRICE
+        // Default set to empty/placeholder until variant is chosen
         priceInput.value = productPrice;
+        stockInput.value = '-';
+        qtyInput.max = '';
         updateSubtotal(row);
       });
   }
@@ -241,23 +264,27 @@
     if (e.target.classList.contains('variant-select')) {
       const row = e.target.closest('tr');
       const priceInput = row.querySelector('.price');
+      const stockInput = row.querySelector('.stock-display');
+      const qtyInput = row.querySelector('.qty');
 
-      const productPrice =
-        row.querySelector('.product-select')
-        .selectedOptions[0]
-        ?.dataset.price || 0;
+      const selectedProductOpt = row.querySelector('.product-select').selectedOptions[0];
+      const productPrice = selectedProductOpt?.dataset.price || 0;
 
       const selectedOption = e.target.selectedOptions[0];
 
       // ⬅️ JIKA variant dikosongkan
       if (!selectedOption || !selectedOption.value) {
         priceInput.value = productPrice;
+        stockInput.value = '-';
+        qtyInput.max = '';
         updateSubtotal(row);
         return;
       }
 
       // ⬅️ JIKA variant dipilih
       priceInput.value = selectedOption.dataset.price || productPrice;
+      stockInput.value = selectedOption.dataset.stock || 0;
+      qtyInput.max = selectedOption.dataset.stock || 0;
       updateSubtotal(row);
     }
   });
@@ -316,7 +343,8 @@
 
     // PRODUCT CHANGE
     if (e.target.classList.contains('product-select')) {
-      const price = e.target.selectedOptions[0]?.dataset.price || 0;
+      const selectedProductOpt = e.target.selectedOptions[0];
+      const price = selectedProductOpt?.dataset.price || 0;
       row.querySelector('.price').value = price;
       row.querySelector('.qty').value = 1;
       loadVariants(e.target.value, row);
@@ -356,6 +384,10 @@
 
       // ⛔ JANGAN reset SELECT
     });
+
+    // Reset stock and helper UI for the new row
+    newRow.querySelector('.stock-display').value = '-';
+    newRow.querySelector('.qty').max = '';
 
     // default tetap none
     const rxType = newRow.querySelector('.rx-type');
