@@ -15,6 +15,7 @@ $routes->post('signin/store', 'AuthController::signinStore');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authGuard']);
 $routes->get('/dashboard/api-stats', 'DashboardController::apiStats', ['filter' => 'authGuard']);
+$routes->get('/dashboard/recommendation-debug', 'DashboardController::recommendationDebug', ['filter' => 'authGuard']);
 
 /** ================================= 
  *             ENDPOINT
@@ -40,6 +41,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('best-seller', 'Api\ProductApiController::apiListBestSeller');
     $routes->get('categories', 'Api\ProductCategoryApiController::apiListProductCategory');
     $routes->get('my-recommendations', 'Api\ProductApiController::apiMyRecommendations', ['filter' => 'authApi']);
+    $routes->get('recommendations/(:segment)/compare', 'Api\ProductApiController::apiCompareRecommendations/$1');
     $routes->get('recommendations/(:segment)', 'Api\ProductApiController::apiProductRecommendations/$1');
     $routes->get('search', 'Api\ProductApiController::apiSearchProduct');
     $routes->get('(:segment)', 'Api\ProductApiController::apiProductDetail/$1');

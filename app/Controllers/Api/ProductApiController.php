@@ -367,210 +367,56 @@ class ProductApiController extends BaseApiController
     // ===================================================================
     public function apiProductRecommendations($productId)
     {
-        $limit  = (int) ($this->request->getVar('limit') ?? 10);
-        $search = $this->request->getVar('search');
-
         if (!$productId) {
             return $this->errorResponse('productId is required');
         }
 
-        // ──────────────────────────────────────────────
-        // STEP 1 · Input data pengguna (opsional)
-        // Baca JWT customer untuk personalisasi
-        // ──────────────────────────────────────────────
-        $jwtUser    = getJWTUser(false);
-        $customerId = $jwtUser->user_id ?? null;
+        $limit  = (int) ($this->request->getVar('limit') ?? 10);
+        $search = $this->request->getVar('search');
+        $debug  = (int) $this->request->getVar('debug') === 1;
+        $customerId = $this->request->getVar('customer_id');
 
-        // ──────────────────────────────────────────────
-        // STEP 2 · Ekstraksi fitur produk dasar
-        // ──────────────────────────────────────────────
-        $baseAttrRows = $this->db->table('product_attribute_values pav')
-            ->select('pav.attribute_id, pav.value')
-            ->where('pav.product_id', $productId)
-            ->where('pav.deleted_at', null)
-            ->get()
-            ->getResultArray();
-
-        if (empty($baseAttrRows)) {
-            return $this->successResponse();
+        // Extract customer ID from JWT if not explicitly provided in debug mode
+        if (!$customerId) {
+            $jwtUser = getJWTUser(false);
+            $customerId = $jwtUser->user_id ?? null;
         }
 
-        // Bangun one-hot vector untuk produk dasar
-        $baseVector = [];
-        foreach ($baseAttrRows as $row) {
-            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
-            $baseVector[$key] = 1;
+        $recommendationService = new \App\Services\RecommendationService();
+        $result = $recommendationService->getRecommendations($productId, $customerId, $limit, $search, $debug);
+
+        if ($debug) {
+            return $this->response->setJSON($result);
         }
 
-        // ──────────────────────────────────────────────
-        // STEP 3 · Profil pengguna dari histori POS
-        // ──────────────────────────────────────────────
-        $purchasedIds   = [];
-        $userVector     = [];
-        $hasPosData     = false;
-        $posVector      = [];
+        return $this->successResponse($result);
+    }
 
-        if ($customerId) {
-            $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
-
-            // Ambil semua order completed customer
-            $purchaseRows = $this->db->table('order_items oi')
-                ->select('oi.product_id, o.order_type')
-                ->join('orders o', 'o.order_id = oi.order_id')
-                ->where('o.customer_id', $customerId)
-                ->where('o.status_id', $completedStatusId)
-                ->where('o.deleted_at', null)
-                ->get()
-                ->getResultArray();
-
-            $purchasedIds = array_unique(array_column($purchaseRows, 'product_id'));
-
-            // Cek apakah ada transaksi offline (data POS)
-            $hasPosData = !empty(array_filter($purchaseRows, fn($r) => $r['order_type'] === 'offline'));
-
-            // Ambil atribut semua produk yang pernah dibeli → bangun user profile vector
-            if (!empty($purchasedIds)) {
-                $userAttrRows = $this->db->table('product_attribute_values pav')
-                    ->select('pav.attribute_id, pav.value, o.order_type')
-                    ->join('order_items oi', 'oi.product_id = pav.product_id')
-                    ->join('orders o', 'o.order_id = oi.order_id')
-                    ->whereIn('pav.product_id', $purchasedIds)
-                    ->where('o.customer_id', $customerId)
-                    ->where('o.status_id', $completedStatusId)
-                    ->where('pav.deleted_at', null)
-                    ->get()
-                    ->getResultArray();
-
-                foreach ($userAttrRows as $row) {
-                    $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
-                    // User vector: frekuensi (TF sederhana)
-                    $userVector[$key] = ($userVector[$key] ?? 0) + 1;
-
-                    // POS vector: hanya dari transaksi offline
-                    if ($row['order_type'] === 'offline') {
-                        $posVector[$key] = ($posVector[$key] ?? 0) + 1;
-                    }
-                }
-            }
+    // ===================================================================
+    // GET /api/products/recommendations/{productId}/compare
+    // Compare recommendations scores between two customers
+    // ===================================================================
+    public function apiCompareRecommendations($productId)
+    {
+        if (!$productId) {
+            return $this->errorResponse('productId is required');
         }
 
-        // ──────────────────────────────────────────────
-        // STEP 4 · Kandidat produk
-        // ──────────────────────────────────────────────
-        $builder = $this->db->table('products p')
-            ->select('
-                p.product_id,
-                p.product_name,
-                p.product_brand,
-                p.product_price,
-                p.product_stock,
-                pi.url AS product_image_url
-            ')
-            ->join(
-                'product_images pi',
-                'pi.product_id = p.product_id
-                    AND pi.type = "gallery"
-                    AND pi.is_primary = 1',
-                'left'
-            )
-            ->where('p.deleted_at', null)
-            ->where('p.product_id !=', $productId);
+        $customerAId = $this->request->getVar('customer_a');
+        $customerBId = $this->request->getVar('customer_b');
 
-        if (!empty($search)) {
-            $builder->groupStart()
-                ->like('p.product_name', $search)
-                ->orLike('p.product_brand', $search)
-                ->groupEnd();
+        if (!$customerAId || !$customerBId) {
+            return $this->errorResponse('Both customer_a and customer_b parameters are required');
         }
 
-        $products = $builder->limit($limit * 5)->get()->getResultArray();
+        $recommendationService = new \App\Services\RecommendationService();
+        $result = $recommendationService->compareCustomers($productId, $customerAId, $customerBId);
 
-        if (empty($products)) {
-            return $this->successResponse();
+        if (isset($result['error'])) {
+            return $this->errorResponse($result['error']);
         }
 
-        // ──────────────────────────────────────────────
-        // STEP 5 · Atribut semua kandidat
-        // ──────────────────────────────────────────────
-        $candidateIds = array_column($products, 'product_id');
-
-        $allAttrRows = $this->db->table('product_attribute_values pav')
-            ->select('pav.product_id, pav.attribute_id, pav.value')
-            ->whereIn('pav.product_id', $candidateIds)
-            ->where('pav.deleted_at', null)
-            ->get()
-            ->getResultArray();
-
-        // Bangun vector per kandidat produk (one-hot)
-        $vectorByProduct = [];
-        foreach ($allAttrRows as $row) {
-            $key = $row['attribute_id'] . '::' . strtolower(trim($row['value']));
-            $vectorByProduct[$row['product_id']][$key] = 1;
-        }
-
-        // ──────────────────────────────────────────────
-        // STEP 6 · Representasi Vektor + Cosine Similarity
-        // sim(u, p) = (u · p) / (|u| × |p|)
-        // ──────────────────────────────────────────────
-        $recommendations = [];
-
-        // Bobot: 40% produk-dasar CBF + 40% user profile + 20% POS (jika ada)
-        $wBase = 0.40;
-        $wUser = $hasPosData ? 0.40 : 0.60;
-        $wPos  = $hasPosData ? 0.20 : 0.00;
-
-        foreach ($products as $product) {
-            $pid = $product['product_id'];
-
-            if (!isset($vectorByProduct[$pid])) {
-                continue;
-            }
-
-            $candidateVec = $vectorByProduct[$pid];
-
-            // Cosine similarity: produk dasar vs kandidat
-            $cbfScore = $this->cosineSimilarity($baseVector, $candidateVec);
-
-            if ($cbfScore <= 0 && empty($userVector)) {
-                continue;
-            }
-
-            // Cosine similarity: user profile vs kandidat
-            $userScore = empty($userVector) ? 0.0 : $this->cosineSimilarity($userVector, $candidateVec);
-
-            // STEP 6a · Ada data POS? → Bobot POS (Gabung Skor)
-            $posScore = $hasPosData ? $this->cosineSimilarity($posVector, $candidateVec) : 0.0;
-
-            $finalScore = ($wBase * $cbfScore) + ($wUser * $userScore) + ($wPos * $posScore);
-
-            if ($finalScore > 0) {
-                $product['score']     = round($finalScore, 6);
-                $product['cbf_score'] = round($cbfScore, 6);
-                $recommendations[]    = $product;
-            }
-        }
-
-        // ──────────────────────────────────────────────
-        // STEP 7 · Urutkan Skor Similarity
-        // ──────────────────────────────────────────────
-        usort($recommendations, fn($a, $b) => $b['score'] <=> $a['score']);
-
-        // ──────────────────────────────────────────────
-        // STEP 8 · Filter produk yang sudah dibeli
-        // ──────────────────────────────────────────────
-        if (!empty($purchasedIds)) {
-            $recommendations = array_values(array_filter(
-                $recommendations,
-                fn($p) => !in_array($p['product_id'], $purchasedIds)
-            ));
-        }
-
-        // ──────────────────────────────────────────────
-        // STEP 9 · Ambil Top-N Rekomendasi
-        // ──────────────────────────────────────────────
-        $recommendations = array_slice($recommendations, 0, $limit);
-
-        return $this->successResponse($recommendations);
+        return $this->successResponse($result);
     }
 
     // ===================================================================

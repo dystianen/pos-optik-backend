@@ -280,6 +280,15 @@
               <span class="nav-link-text ms-1">Roles</span>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'dashboard/recommendation-debug' ? 'active' : '' ?>" href="/dashboard/recommendation-debug">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-square-poll-vertical"></i>
+              </div>
+              <span class="nav-link-text ms-1">Recs Debugger</span>
+            </a>
+          </li>
         <?php endif; ?>
       </ul>
     </div>

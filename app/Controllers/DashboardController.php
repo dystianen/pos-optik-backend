@@ -251,4 +251,24 @@ class DashboardController extends BaseController
 
         return $data;
     }
+
+    public function recommendationDebug()
+    {
+        $products = $this->productModel
+            ->select('product_id, product_name, product_brand')
+            ->where('deleted_at', null)
+            ->orderBy('product_name', 'ASC')
+            ->findAll();
+
+        $customers = $this->customerModel
+            ->select('customer_id, customer_name')
+            ->where('deleted_at', null)
+            ->orderBy('customer_name', 'ASC')
+            ->findAll();
+
+        return view('v_recommendation_debug', [
+            'products' => $products,
+            'customers' => $customers
+        ]);
+    }
 }
