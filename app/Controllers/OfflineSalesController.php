@@ -330,7 +330,7 @@ class OfflineSalesController extends BaseController
             // ======================
             $this->orderModel->insert([
                 'customer_id'        => $customerId,
-                'status_id'          => $this->statusModel->getIdByCode(OrderStatus::PROCESSING),
+                'status_id'          => $this->statusModel->getIdByCode(OrderStatus::COMPLETED),
                 'shipping_method_id' => null,
                 'shipping_cost'      => 0,
                 'coupon_discount'    => 0,
