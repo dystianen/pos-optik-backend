@@ -22,7 +22,21 @@ class ProductAttributeController extends BaseController
         $page = $this->request->getVar('page') ?? 1;
         $perPage = 10;
 
-        $attributes = $this->attributeModel
+        $search = $this->request->getVar('search');
+        $categoryId = $this->request->getVar('category_id');
+
+        $builder = $this->attributeModel;
+
+        if (!empty($search)) {
+            $builder->like('attribute_name', $search);
+        }
+
+        if (!empty($categoryId)) {
+            $builder->where('category_id', $categoryId);
+        }
+
+        $attributes = $builder
+            ->orderBy('sort_order', 'ASC')
             ->paginate($perPage, 'default', $page);
 
         // Ambil semua master values
@@ -60,6 +74,9 @@ class ProductAttributeController extends BaseController
 
         return view('product_attribute/v_index', [
             'attributes' => $attributes,
+            'categories' => $categories,
+            'search' => $search,
+            'selectedCategoryId' => $categoryId,
             'pager' => $pager
         ]);
     }
@@ -114,6 +131,11 @@ class ProductAttributeController extends BaseController
             'use_master_values' => $this->request->getPost('use_master_values') ? 1 : 0,
             'sort_order' => (int)$this->request->getPost('sort_order') ?? 0,
         ];
+
+        // Paksa use_master_values = 1 jika tipe atribut adalah dropdown
+        if ($data['attribute_type'] === 'dropdown') {
+            $data['use_master_values'] = 1;
+        }
 
         if ($id) {
 

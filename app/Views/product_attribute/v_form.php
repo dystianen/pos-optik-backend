@@ -160,7 +160,30 @@
 <script>
   function refreshDropdownVisibility() {
     const type = document.getElementById("attribute_type").value;
-    document.getElementById("dropdown-values").style.display = (type === "dropdown") ? "block" : "none";
+    const isDropdown = (type === "dropdown");
+    document.getElementById("dropdown-values").style.display = isDropdown ? "block" : "none";
+
+    const useMasterCheckbox = document.getElementById("use_master_values");
+    if (isDropdown) {
+      useMasterCheckbox.checked = true;
+      useMasterCheckbox.disabled = true;
+      
+      // Inject hidden input to ensure it is submitted when form is posted
+      if (!document.getElementById("use_master_values_hidden")) {
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "use_master_values";
+        hiddenInput.value = "1";
+        hiddenInput.id = "use_master_values_hidden";
+        useMasterCheckbox.parentNode.appendChild(hiddenInput);
+      }
+    } else {
+      useMasterCheckbox.disabled = false;
+      const hidden = document.getElementById("use_master_values_hidden");
+      if (hidden) {
+        hidden.remove();
+      }
+    }
   }
 
   document.getElementById("attribute_type").addEventListener("change", refreshDropdownVisibility);
