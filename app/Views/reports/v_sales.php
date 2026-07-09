@@ -200,14 +200,14 @@
                 </td>
               </tr>
             <?php else: ?>
-              <?php $no = 1;
+              <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1;
               foreach ($orders as $order): ?>
                 <tr>
-                  <td class="text-center font-weight-bold"><?= $no++ ?></td>
-                  <td class=font-weight-bold text-dark">
+                  <td class="text-center font-weight-bold"><?= $startIndex++ ?></td>
+                  <td class="font-weight-bold text-dark">
                     <strong>#<?= $order['order_id'] ?></strong>
                   </td>
-                  <td class=text-muted">
+                  <td class="text-muted">
                     <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
                   </td>
                   <td>
@@ -255,8 +255,43 @@
           </tbody>
         </table>
       </div>
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination mb-0" id="realtime-pagination"></ul>
+      </nav>
     </div>
   </div>
 </div>
+
+<?= $this->section('scripts') ?>
+<script type="text/javascript">
+  // PAGINATION
+  function handlePagination(page) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', page);
+    window.location.replace(`<?php echo base_url(); ?>reports/sales?${params.toString()}`);
+  }
+
+  const paginationContainer = document.getElementById('realtime-pagination');
+  const totalPages = <?= (int) $pager['totalPages'] ?>;
+  const currentPage = <?= (int) $pager['currentPage'] ?>;
+
+  if (totalPages > 1) {
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = 'page-item' + (i === currentPage ? ' active' : '');
+
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = 'javascript:void(0)';
+      a.innerText = i;
+
+      a.onclick = () => handlePagination(i);
+
+      li.appendChild(a);
+      paginationContainer.appendChild(li);
+    }
+  }
+</script>
+<?= $this->endSection() ?>
 
 <?= $this->endSection() ?>

@@ -26,8 +26,16 @@ class ReportController extends BaseController
         $startDate = $this->request->getVar('start_date') ?? date('Y-m-01');
         $endDate   = $this->request->getVar('end_date') ?? date('Y-m-d');
 
-        $orders  = $this->getFilteredOrders($category, $startDate, $endDate);
-        $summary = $this->calculateSummary($orders, $category);
+        $allOrders = $this->getFilteredOrders($category, $startDate, $endDate);
+        $summary = $this->calculateSummary($allOrders, $category);
+
+        $currentPage = $this->request->getVar('page') ? max(1, (int)$this->request->getVar('page')) : 1;
+        $limit = 10;
+        $offset = ($currentPage - 1) * $limit;
+        $totalRows = count($allOrders);
+        $totalPages = (int) ceil($totalRows / $limit);
+
+        $orders = array_slice($allOrders, $offset, $limit);
 
         return view('reports/v_sales', [
             'orders'    => $orders,
@@ -35,6 +43,11 @@ class ReportController extends BaseController
             'startDate' => $startDate,
             'endDate'   => $endDate,
             'summary'   => $summary,
+            'pager' => [
+                'totalPages'  => $totalPages,
+                'currentPage' => $currentPage,
+                'limit'       => $limit,
+            ],
         ]);
     }
 
@@ -64,8 +77,16 @@ class ReportController extends BaseController
         $startDate       = $this->request->getVar('start_date') ?? date('Y-m-01');
         $endDate         = $this->request->getVar('end_date') ?? date('Y-m-d');
 
-        $transactions = $this->getFilteredInventory($transactionType, $startDate, $endDate);
-        $summary      = $this->calculateInventorySummary($transactions);
+        $allTransactions = $this->getFilteredInventory($transactionType, $startDate, $endDate);
+        $summary      = $this->calculateInventorySummary($allTransactions);
+
+        $currentPage = $this->request->getVar('page') ? max(1, (int)$this->request->getVar('page')) : 1;
+        $limit = 10;
+        $offset = ($currentPage - 1) * $limit;
+        $totalRows = count($allTransactions);
+        $totalPages = (int) ceil($totalRows / $limit);
+
+        $transactions = array_slice($allTransactions, $offset, $limit);
 
         return view('reports/v_inventory', [
             'transactions'    => $transactions,
@@ -73,6 +94,11 @@ class ReportController extends BaseController
             'startDate'       => $startDate,
             'endDate'         => $endDate,
             'summary'         => $summary,
+            'pager' => [
+                'totalPages'  => $totalPages,
+                'currentPage' => $currentPage,
+                'limit'       => $limit,
+            ],
         ]);
     }
 
