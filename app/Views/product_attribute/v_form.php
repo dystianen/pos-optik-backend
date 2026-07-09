@@ -62,6 +62,8 @@
           <option value="text" <?= isset($attribute) && $attribute['attribute_type'] === 'text' ? 'selected' : '' ?>>Text (e.g., description)</option>
           <option value="number" <?= isset($attribute) && $attribute['attribute_type'] === 'number' ? 'selected' : '' ?>>Number (e.g., quantity)</option>
           <option value="dropdown" <?= isset($attribute) && $attribute['attribute_type'] === 'dropdown' ? 'selected' : '' ?>>Dropdown (predefined options)</option>
+          <option value="multiselect" <?= isset($attribute) && $attribute['attribute_type'] === 'multiselect' ? 'selected' : '' ?>>Checkbox (Multiple Options)</option>
+          <option value="checkbox" <?= isset($attribute) && $attribute['attribute_type'] === 'checkbox' ? 'selected' : '' ?>>Single Checkbox (Yes / No)</option>
         </select>
         <small class="form-text text-muted d-block mt-1">Select the type of attribute data</small>
       </div>
@@ -160,11 +162,11 @@
 <script>
   function refreshDropdownVisibility() {
     const type = document.getElementById("attribute_type").value;
-    const isDropdown = (type === "dropdown");
-    document.getElementById("dropdown-values").style.display = isDropdown ? "block" : "none";
+    const isDropdownOrMultiselect = (type === "dropdown" || type === "multiselect");
+    document.getElementById("dropdown-values").style.display = isDropdownOrMultiselect ? "block" : "none";
 
     const useMasterCheckbox = document.getElementById("use_master_values");
-    if (isDropdown) {
+    if (isDropdownOrMultiselect) {
       useMasterCheckbox.checked = true;
       useMasterCheckbox.disabled = true;
       

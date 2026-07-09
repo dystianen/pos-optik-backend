@@ -132,8 +132,8 @@ class ProductAttributeController extends BaseController
             'sort_order' => (int)$this->request->getPost('sort_order') ?? 0,
         ];
 
-        // Paksa use_master_values = 1 jika tipe atribut adalah dropdown
-        if ($data['attribute_type'] === 'dropdown') {
+        // Paksa use_master_values = 1 jika tipe atribut adalah dropdown atau multiselect
+        if ($data['attribute_type'] === 'dropdown' || $data['attribute_type'] === 'multiselect') {
             $data['use_master_values'] = 1;
         }
 
@@ -141,7 +141,7 @@ class ProductAttributeController extends BaseController
 
             $this->attributeModel->update($id, $data);
 
-            if ($data['attribute_type'] === 'dropdown') {
+            if ($data['attribute_type'] === 'dropdown' || $data['attribute_type'] === 'multiselect') {
 
                 $valueIds = $this->request->getPost('value_ids'); // array id lama / kosong
                 $values   = $this->request->getPost('values');    // array value
@@ -206,8 +206,8 @@ class ProductAttributeController extends BaseController
         ]);
         $attributeId = $this->attributeModel->getInsertID();
 
-        // insert dropdown values
-        if ($data['attribute_type'] === 'dropdown') {
+        // insert dropdown/multiselect values
+        if ($data['attribute_type'] === 'dropdown' || $data['attribute_type'] === 'multiselect') {
             $values = $this->request->getPost('values');
 
             if (!empty($values)) {
