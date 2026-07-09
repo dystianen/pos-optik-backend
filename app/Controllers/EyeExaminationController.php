@@ -22,10 +22,14 @@ class EyeExaminationController extends BaseController
         $currentPage = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
-        $search = $this->request->getVar('search');
+        
+        $search    = $this->request->getVar('search');
+        $startDate = $this->request->getVar('start_date');
+        $endDate   = $this->request->getVar('end_date');
 
         // Base query
         $builder = $this->eyeExaminationModel
+            ->select('eye_examinations.*, customers.customer_name')
             ->join('customers', 'customers.customer_id = eye_examinations.customer_id')
             ->orderBy('eye_examinations.created_at', 'DESC');
 
@@ -36,6 +40,14 @@ class EyeExaminationController extends BaseController
                 ->orLike('eye_examinations.symptoms', $search)
                 ->orLike('eye_examinations.diagnosis', $search)
                 ->groupEnd();
+        }
+
+        if (!empty($startDate)) {
+            $builder->where('DATE(eye_examinations.created_at) >=', $startDate);
+        }
+
+        if (!empty($endDate)) {
+            $builder->where('DATE(eye_examinations.created_at) <=', $endDate);
         }
 
         // Clone builder untuk total rows
@@ -55,6 +67,8 @@ class EyeExaminationController extends BaseController
                 "limit" => $totalLimit,
             ],
             "search" => $search,
+            "startDate" => $startDate,
+            "endDate" => $endDate,
         ]);
     }
 

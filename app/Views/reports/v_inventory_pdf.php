@@ -193,10 +193,18 @@
     <tbody>
       <?php if (empty($transactions)): ?>
         <tr>
-          <td colspan="10" class="text-center" style="padding: 20px; font-weight: bold; color: #666;">No inventory transaction data found.</td>
+          <td colspan="9" class="text-center" style="padding: 20px; font-weight: bold; color: #666;">No inventory transaction data found.</td>
         </tr>
       <?php else: ?>
-        <?php $no = 1;
+        <?php 
+        $refLabels = [
+          'order'      => 'Order',
+          'adjustment' => 'Adjustment',
+          'return'     => 'Return',
+          'transfer'   => 'Transfer',
+          'initial'    => 'Initial Stock',
+        ];
+        $no = 1;
         foreach ($transactions as $transaction): ?>
           <tr>
             <td class="text-center"><?= $no++ ?></td>
@@ -206,11 +214,19 @@
                 <?= esc(strtoupper($transaction['transaction_type'])) ?>
               </span>
             </td>
-            <td><?= esc(strtoupper($transaction['reference_type'] ?? '-')) ?> / <?= esc($transaction['reference_id'] ?? '-') ?></td>
+            <td>
+              <?php
+              $refType  = strtolower($transaction['reference_type'] ?? '');
+              $refLabel = $refLabels[$refType] ?? strtoupper($refType ?: 'N/A');
+              ?>
+              <?= esc($refLabel) ?> <?= !empty($transaction['reference_id']) ? '/ #' . esc($transaction['reference_id']) : '' ?>
+            </td>
             <td><?= esc($transaction['product_name'] ?? '-') ?></td>
             <td><?= esc($transaction['variant_name'] ?? '-') ?></td>
             <td><?= esc($transaction['user_name'] ?? 'System') ?></td>
-            <td><?= esc($transaction['quantity']) ?></td>
+            <td class="text-center" style="font-weight: bold; color: <?= strtolower($transaction['transaction_type']) === 'in' ? '#2dce89' : '#dc3545' ?>;">
+              <?= strtolower($transaction['transaction_type']) === 'in' ? '+' : '-' ?><?= esc($transaction['quantity']) ?>
+            </td>
             <td><?= esc($transaction['description'] ?? '-') ?></td>
           </tr>
         <?php endforeach; ?>

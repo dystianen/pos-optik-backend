@@ -19,42 +19,57 @@ function orderStatusBadge($status)
 
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-    <h4>Online Sales</h4>
+    <h4>Online Sales List</h4>
+  </div>
 
-    <div class="d-flex flex-wrap align-items-center gap-2">
-      <form action="<?= base_url('/online-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+  <div class="card-body pt-0 pb-2">
+    <!-- Filter Form -->
+    <form action="<?= base_url('/online-sales') ?>" method="get" class="row g-2 mb-4 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label text-xs font-weight-bold">Search Order</label>
         <input
           type="text"
           name="q"
           class="form-control form-control-sm"
-          placeholder="Search..."
-          value="<?= esc($search ?? '') ?>"
-          style="min-width: 150px; width: auto;">
+          placeholder="Search Order ID, customer..."
+          value="<?= esc($search ?? '') ?>">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label text-xs font-weight-bold">Status</label>
+        <select name="status_id" class="form-select form-select-sm">
+          <option value="">All Statuses</option>
+          <?php foreach ($statuses as $st): ?>
+            <option value="<?= $st['status_id'] ?>" <?= ($selectedStatusId ?? '') == $st['status_id'] ? 'selected' : '' ?>>
+              <?= esc(strtoupper($st['status_name'])) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">Start Date</label>
         <input
           type="date"
           name="start_date"
           class="form-control form-control-sm"
-          placeholder="Start Date"
-          value="<?= esc($startDate ?? '') ?>"
-          style="width: auto;">
+          value="<?= esc($startDate ?? '') ?>">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">End Date</label>
         <input
           type="date"
           name="end_date"
           class="form-control form-control-sm"
-          placeholder="End Date"
-          value="<?= esc($endDate ?? '') ?>"
-          style="width: auto;">
-        <button type="submit" class="btn btn-sm btn-secondary mb-0">
-          <i class="fa-solid fa-magnifying-glass"></i> Filter
+          value="<?= esc($endDate ?? '') ?>">
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+          <i class="fa-solid fa-filter"></i> <span>Filter</span>
         </button>
-        <?php if (!empty($search) || !empty($startDate) || !empty($endDate)): ?>
-          <a href="<?= base_url('/online-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
-        <?php endif; ?>
-      </form>
-    </div>
-  </div>
-
-  <div class="card-body pt-0 pb-2">
+        <a href="<?= base_url('/online-sales') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
+          <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
+        </a>
+      </div>
+    </form>
     <div class="table-responsive">
       <table class="table align-items-center mb-0 table-bordered">
         <thead class="thead-light">
@@ -132,8 +147,9 @@ function orderStatusBadge($status)
 
   // PAGINATION
   function handlePagination(page) {
-    window.location.href =
-      `<?= base_url('/online-sales') ?>?page=${page}&q=<?= esc($search) ?>&start_date=<?= esc($startDate) ?>&end_date=<?= esc($endDate) ?>`;
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', page);
+    window.location.replace(`<?php echo base_url(); ?>online-sales?${params.toString()}`);
   }
 
   const paginationContainer = document.getElementById('realtime-pagination');

@@ -9,31 +9,80 @@ $referenceBadges = [
   'transfer'   => 'secondary',
   'initial'    => 'dark',
 ];
+
+$refLabels = [
+  'order'      => 'Order',
+  'adjustment' => 'Adjustment',
+  'return'     => 'Return',
+  'transfer'   => 'Transfer',
+  'initial'    => 'Initial Stock',
+];
 ?>
 
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex align-items-center justify-content-between">
     <h4>Inventory Transactions List</h4>
 
-    <div class="d-flex align-items-center gap-2">
-      <form action="<?= base_url('/inventory') ?>" method="get" class="d-flex align-items-center">
-        <input
-          type="text"
-          name="search"
-          class="form-control form-control-sm me-2"
-          placeholder="Search..."
-          value="<?= esc($search ?? '') ?>"
-          style="min-width: 200px;">
-        <button type="submit" class="btn btn-sm btn-secondary">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-      </form>
-
-      <a href="<?= base_url('/inventory/form') ?>" class="btn btn-sm btn-primary"> <i class="fas fa-plus"></i> Add Inventory</a>
-    </div>
+    <a href="<?= base_url('/inventory/form') ?>" class="btn btn-sm btn-primary"> <i class="fas fa-plus"></i> Add Transaction</a>
   </div>
 
   <div class="card-body pt-0 pb-2">
+    <!-- Filter Form -->
+    <form action="<?= base_url('/inventory') ?>" method="get" class="row g-2 mb-4 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">Search Product / SKU</label>
+        <input
+          type="text"
+          name="search"
+          class="form-control form-control-sm"
+          placeholder="Search SKU, product name..."
+          value="<?= esc($search ?? '') ?>">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">Transaction Type</label>
+        <select name="transaction_type" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option value="in" <?= ($transactionType ?? '') === 'in' ? 'selected' : '' ?>>IN</option>
+          <option value="out" <?= ($transactionType ?? '') === 'out' ? 'selected' : '' ?>>OUT</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">Reference Type</label>
+        <select name="reference_type" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option value="order" <?= ($referenceType ?? '') === 'order' ? 'selected' : '' ?>>Order</option>
+          <option value="adjustment" <?= ($referenceType ?? '') === 'adjustment' ? 'selected' : '' ?>>Adjustment</option>
+          <option value="return" <?= ($referenceType ?? '') === 'return' ? 'selected' : '' ?>>Return</option>
+          <option value="transfer" <?= ($referenceType ?? '') === 'transfer' ? 'selected' : '' ?>>Transfer</option>
+          <option value="initial" <?= ($referenceType ?? '') === 'initial' ? 'selected' : '' ?>>Initial Stock</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">Start Date</label>
+        <input
+          type="date"
+          name="start_date"
+          class="form-control form-control-sm"
+          value="<?= esc($startDate ?? '') ?>">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-xs font-weight-bold">End Date</label>
+        <input
+          type="date"
+          name="end_date"
+          class="form-control form-control-sm"
+          value="<?= esc($endDate ?? '') ?>">
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+          <i class="fa-solid fa-filter"></i> <span>Filter</span>
+        </button>
+        <a href="<?= base_url('/inventory') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
+          <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
+        </a>
+      </div>
+    </form>
+
     <div class="table-responsive">
       <table class="table align-items-center mb-0 table-bordered">
         <thead>
@@ -42,12 +91,12 @@ $referenceBadges = [
             <th>Product SKU</th>
             <th>Product</th>
             <th>Variant</th>
-            <th>Transaction Type</th>
-            <th>Reference Type</th>
-            <th>Reference Id</th>
+            <th>Type</th>
+            <th>Reference</th>
             <th>Quantity</th>
+            <th>User</th>
             <th>Description</th>
-            <th>Transaction Date</th>
+            <th>Date</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -56,7 +105,7 @@ $referenceBadges = [
 
           <?php if (empty($inventory_transactions)): ?>
             <tr>
-              <td colspan="8" class="text-center text-muted">No inventory transactions available.</td>
+              <td colspan="11" class="text-center text-muted">No inventory transactions available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($inventory_transactions as $inventory_transaction): ?>
@@ -76,15 +125,23 @@ $referenceBadges = [
                   <?php
                   $refType  = strtolower($inventory_transaction['reference_type'] ?? '');
                   $badgeCls = $referenceBadges[$refType] ?? 'light';
+                  $refLabel = $refLabels[$refType] ?? strtoupper($refType ?: 'N/A');
                   ?>
                   <span class="badge bg-<?= $badgeCls ?>">
-                    <?= strtoupper(esc($refType ?: 'N/A')) ?>
+                    <?= esc($refLabel) ?>
                   </span>
+                  <?php if (!empty($inventory_transaction['reference_id'])): ?>
+                    <div class="text-xs text-muted mt-1">#<?= esc($inventory_transaction['reference_id']) ?></div>
+                  <?php endif; ?>
                 </td>
                 <td>
-                  <?= esc($inventory_transaction['reference_id'] ?: '-') ?>
+                  <?php if (strtolower($inventory_transaction['transaction_type']) === 'in') : ?>
+                    <span class="text-success font-weight-bold">+<?= $inventory_transaction['quantity'] ?></span>
+                  <?php else : ?>
+                    <span class="text-danger font-weight-bold">-<?= $inventory_transaction['quantity'] ?></span>
+                  <?php endif; ?>
                 </td>
-                <td><?= $inventory_transaction['quantity'] ?></td>
+                <td><?= esc($inventory_transaction['user_name'] ?? 'System') ?></td>
                 <td><?= esc($inventory_transaction['description'] ?: '-') ?></td>
                 <td><?= date('d/m/Y H:i', strtotime($inventory_transaction['transaction_date'])) ?></td>
                 <td class="sticky-action text-center">

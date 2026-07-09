@@ -62,6 +62,7 @@ class OnlineSalesController extends BaseController
         $search    = trim($this->request->getVar('q') ?? '');
         $startDate = $this->request->getVar('start_date');
         $endDate   = $this->request->getVar('end_date');
+        $statusId  = $this->request->getVar('status_id');
 
         $limit  = 10;
         $offset = ($currentPage - 1) * $limit;
@@ -118,6 +119,15 @@ class OnlineSalesController extends BaseController
                 ->orLike('customers.customer_email', $search)
                 ->orLike('order_statuses.status_name', $search)
                 ->groupEnd();
+        }
+
+        /**
+         * =========================
+         * STATUS FILTER
+         * =========================
+         */
+        if (!empty($statusId)) {
+            $builder->where('orders.status_id', $statusId);
         }
 
         /**
@@ -180,6 +190,10 @@ class OnlineSalesController extends BaseController
                 ->groupEnd();
         }
 
+        if (!empty($statusId)) {
+            $countBuilder->where('orders.status_id', $statusId);
+        }
+
         if (!empty($startDate)) {
             $countBuilder->where(
                 'orders.created_at >=',
@@ -199,14 +213,15 @@ class OnlineSalesController extends BaseController
 
         $totalPages = (int) ceil($totalRows / $limit);
 
+        $statuses = $this->db->table('order_statuses')->get()->getResultArray();
+
         return view('online_sales/v_index', [
             'orders' => $orders,
-
             'search' => $search,
-
             'startDate' => $startDate,
             'endDate'   => $endDate,
-
+            'statuses'  => $statuses,
+            'selectedStatusId' => $statusId,
             'pager' => [
                 'totalPages'  => $totalPages,
                 'currentPage' => $currentPage,

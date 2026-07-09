@@ -7,6 +7,34 @@
   </div>
 
   <div class="card-body pt-0 pb-2">
+    <!-- Filter Form -->
+    <form action="<?= base_url('/customers') ?>" method="get" class="row g-2 mb-4 align-items-end">
+      <div class="col-md-7">
+        <label class="form-label text-xs font-weight-bold">Search Customer</label>
+        <input
+          type="text"
+          name="search"
+          class="form-control form-control-sm"
+          placeholder="Search name, email, phone..."
+          value="<?= esc($search ?? '') ?>">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label text-xs font-weight-bold">Gender</label>
+        <select name="gender" class="form-select form-select-sm">
+          <option value="">All Genders</option>
+          <option value="L" <?= ($gender ?? '') === 'L' ? 'selected' : '' ?>>Male</option>
+          <option value="P" <?= ($gender ?? '') === 'P' ? 'selected' : '' ?>>Female</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+          <i class="fa-solid fa-filter"></i> <span>Filter</span>
+        </button>
+        <a href="<?= base_url('/customers') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
+          <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
+        </a>
+      </div>
+    </form>
     <div class="table-responsive">
       <table class="table align-items-center mb-0 table-bordered">
         <thead>
@@ -75,7 +103,9 @@
 
   // PAGINATION
   function handlePagination(pageNumber) {
-    window.location.replace(`<?php echo base_url(); ?>customers?page=${pageNumber}`);
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', pageNumber);
+    window.location.replace(`<?php echo base_url(); ?>customers?${params.toString()}`);
   }
 
   var paginationContainer = document.getElementById('pagination');

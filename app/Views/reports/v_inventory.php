@@ -35,7 +35,7 @@
 
     <div class="card-body">
       <form action="<?= base_url('/reports/inventory') ?>" method="get" class="row g-3 align-items-end">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label font-weight-bold text-xs text-uppercase">Transaction Type</label>
           <select name="transaction_type" class="form-select form-select-sm" style="border-radius: 8px;">
             <option value="all" <?= $transactionType === 'all' ? 'selected' : '' ?>>All Transactions</option>
@@ -51,12 +51,12 @@
           <label class="form-label font-weight-bold text-xs text-uppercase">To Date</label>
           <input type="date" name="end_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($endDate) ?>">
         </div>
-        <div class="col-md-3 d-flex gap-2">
-          <button type="submit" class="btn btn-sm btn-secondary mb-0 w-100" style="border-radius: 8px; height: 38px;">
-            <i class="fa-solid fa-magnifying-glass me-1"></i> Filter
+        <div class="col-md-2 d-flex gap-2">
+          <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Filter">
+            <i class="fa-solid fa-filter"></i> <span>Filter</span>
           </button>
-          <a href="<?= base_url('/reports/inventory') ?>" class="btn btn-sm btn-outline-secondary mb-0 w-100 d-flex align-items-center justify-content-center" style="border-radius: 8px; height: 38px;">
-            Reset
+          <a href="<?= base_url('/reports/inventory') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Reset">
+            <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
           </a>
         </div>
       </form>
@@ -160,11 +160,20 @@
     </div>
 
     <div class="card-body pt-3">
+      <?php
+      $refLabels = [
+        'order'      => 'Order',
+        'adjustment' => 'Adjustment',
+        'return'     => 'Return',
+        'transfer'   => 'Transfer',
+        'initial'    => 'Initial Stock',
+      ];
+      ?>
       <div class="table-responsive">
         <table class="table align-items-center mb-0 table-hover table-bordered">
           <thead class="bg-light">
             <tr>
-              <th>No</th>
+              <th class="text-center">No</th>
               <th>Date</th>
               <th>Type</th>
               <th>Reference</th>
@@ -178,7 +187,7 @@
           <tbody>
             <?php if (empty($transactions)): ?>
               <tr>
-                <td colspan="10" class="text-center py-4 text-muted font-weight-bold">
+                <td colspan="9" class="text-center py-4 text-muted font-weight-bold">
                   No inventory transaction data found for this period.
                 </td>
               </tr>
@@ -196,12 +205,25 @@
                     <?php endif; ?>
                   </td>
                   <td>
-                    <div class="text-muted small"><?= esc($transaction['reference_id'] != '' ? $transaction['reference_id'] : '-') ?></div>
+                    <?php
+                    $refType  = strtolower($transaction['reference_type'] ?? '');
+                    $refLabel = $refLabels[$refType] ?? strtoupper($refType ?: 'N/A');
+                    ?>
+                    <div><?= esc($refLabel) ?></div>
+                    <?php if (!empty($transaction['reference_id'])): ?>
+                      <div class="text-muted small">#<?= esc($transaction['reference_id']) ?></div>
+                    <?php endif; ?>
                   </td>
                   <td><?= esc($transaction['product_name'] ?? '-') ?></td>
                   <td><?= esc($transaction['variant_name'] ?? '-') ?></td>
                   <td><?= esc($transaction['user_name'] ?? 'System') ?></td>
-                  <td class="text-center font-weight-bold"><?= esc($transaction['quantity']) ?></td>
+                  <td class="text-center">
+                    <?php if (strtolower($transaction['transaction_type']) === 'in'): ?>
+                      <span class="text-success font-weight-bold">+<?= esc($transaction['quantity']) ?></span>
+                    <?php else: ?>
+                      <span class="text-danger font-weight-bold">-<?= esc($transaction['quantity']) ?></span>
+                    <?php endif; ?>
+                  </td>
                   <td><?= esc($transaction['description'] != '' ? $transaction['description'] : '-') ?></td>
                 </tr>
               <?php endforeach; ?>

@@ -50,7 +50,9 @@ class ProductController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $search = $this->request->getGet('search');
+        $search     = $this->request->getGet('search');
+        $categoryId = $this->request->getGet('category_id');
+        $brand      = $this->request->getGet('brand');
 
         $builder = $this->productModel
             ->select('
@@ -77,12 +79,28 @@ class ProductController extends BaseController
                 ->groupEnd();
         }
 
+        if (!empty($categoryId)) {
+            $builder->where('products.category_id', $categoryId);
+        }
+
+        if (!empty($brand)) {
+            $builder->where('products.product_brand', $brand);
+        }
+
         // Clone builder untuk count
         $countBuilder = clone $builder;
 
         $products = $builder->findAll($totalLimit, $offset);
         $totalRows = $countBuilder->countAllResults(false);
-        $totalPages = ceil($totalRows / $totalLimit);
+        $totalPages = (int) ceil($totalRows / $totalLimit);
+
+        $categories = $this->categoryModel->findAll();
+        $distinctBrands = $this->productModel
+            ->select('product_brand')
+            ->distinct()
+            ->where('product_brand !=', '')
+            ->where('deleted_at IS NULL')
+            ->findAll();
 
         $data = [
             "attributes" => $attributes,
@@ -93,6 +111,10 @@ class ProductController extends BaseController
                 "limit" => $totalLimit,
             ],
             "search" => $search, // lempar ke view agar input tetap terisi
+            "categories" => $categories,
+            "brands" => array_column($distinctBrands, 'product_brand'),
+            "selectedCategoryId" => $categoryId,
+            "selectedBrand" => $brand,
         ];
 
         return view('products/v_index', $data);

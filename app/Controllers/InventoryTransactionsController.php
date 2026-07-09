@@ -24,7 +24,12 @@ class InventoryTransactionsController extends BaseController
             ? (int) $this->request->getVar('page')
             : 1;
 
-        $search = $this->request->getVar('search');
+        $search          = $this->request->getVar('search');
+        $transactionType = $this->request->getVar('transaction_type');
+        $referenceType   = $this->request->getVar('reference_type');
+        $startDate       = $this->request->getVar('start_date');
+        $endDate         = $this->request->getVar('end_date');
+
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
@@ -38,6 +43,7 @@ class InventoryTransactionsController extends BaseController
                 v1.variant_name,
                 v1.stock AS variant_stock,
                 p2.category_name,
+                u.user_name,
                 CASE 
                     WHEN v1.variant_id IS NOT NULL THEN v1.variant_name
                     ELSE "No Variant"
@@ -50,6 +56,7 @@ class InventoryTransactionsController extends BaseController
             ->join('products p1', 'inventory_transactions.product_id = p1.product_id')
             ->join('product_variants v1', 'inventory_transactions.variant_id = v1.variant_id', 'left') // ✅ LEFT JOIN
             ->join('product_categories p2', 'p1.category_id = p2.category_id', 'left')
+            ->join('users u', 'inventory_transactions.user_id = u.user_id', 'left') // ✅ LEFT JOIN
             ->orderBy('inventory_transactions.transaction_date', 'DESC');
 
         if (!empty($search)) {
@@ -60,6 +67,22 @@ class InventoryTransactionsController extends BaseController
                 ->orLike('p2.category_name', $search)
                 ->orLike('inventory_transactions.transaction_type', $search)
                 ->groupEnd();
+        }
+
+        if ($transactionType === 'in' || $transactionType === 'out') {
+            $builder->where('inventory_transactions.transaction_type', $transactionType);
+        }
+
+        if (!empty($referenceType)) {
+            $builder->where('inventory_transactions.reference_type', $referenceType);
+        }
+
+        if (!empty($startDate)) {
+            $builder->where('DATE(inventory_transactions.transaction_date) >=', $startDate);
+        }
+
+        if (!empty($endDate)) {
+            $builder->where('DATE(inventory_transactions.transaction_date) <=', $endDate);
         }
 
         // clone builder untuk total data
@@ -77,7 +100,11 @@ class InventoryTransactionsController extends BaseController
                 'currentPage' => $currentPage,
                 'limit'       => $totalLimit,
             ],
-            'search' => $search,
+            'search'          => $search,
+            'transactionType' => $transactionType,
+            'referenceType'   => $referenceType,
+            'startDate'       => $startDate,
+            'endDate'         => $endDate,
         ];
 
         return view('inventory_transactions/v_index', $data);

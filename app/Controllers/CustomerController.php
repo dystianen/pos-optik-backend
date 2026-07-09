@@ -19,13 +19,29 @@ class CustomerController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $customers = $this->customerModel
-            ->findAll($totalLimit, $offset);
+        $search = $this->request->getVar('search');
+        $gender = $this->request->getVar('gender');
 
-        $totalRows = $this->customerModel
-            ->countAllResults();
+        $builder = $this->customerModel;
 
-        $totalPages = ceil($totalRows / $totalLimit);
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('customer_name', $search)
+                ->orLike('customer_email', $search)
+                ->orLike('customer_phone', $search)
+                ->groupEnd();
+        }
+
+        if (!empty($gender)) {
+            $builder->where('customer_gender', $gender);
+        }
+
+        // Clone builder for counting
+        $countBuilder = clone $builder;
+
+        $customers = $builder->orderBy('created_at', 'DESC')->findAll($totalLimit, $offset);
+        $totalRows = $countBuilder->countAllResults(false);
+        $totalPages = (int) ceil($totalRows / $totalLimit);
 
         $data = [
             "customers" => $customers,
@@ -34,6 +50,8 @@ class CustomerController extends BaseController
                 "currentPage" => $currentPage,
                 "limit" => $totalLimit,
             ],
+            "search" => $search,
+            "gender" => $gender,
         ];
 
         return view('customers/v_index', $data);

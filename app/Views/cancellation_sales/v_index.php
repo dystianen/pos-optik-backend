@@ -15,25 +15,46 @@ function cancellationStatusBadge($status)
 
 <div class="container-fluid card">
   <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-    <h4>Cancellation Sales</h4>
-
-    <div class="d-flex flex-wrap align-items-center gap-2">
-      <form action="<?= base_url('/cancellation-sales') ?>" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-0">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..."
-          value="<?= esc($search ?? '') ?>" style="min-width: 150px; width: auto;">
-        <input type="date" name="start_date" class="form-control form-control-sm" placeholder="Start Date"
-          value="<?= esc($startDate ?? '') ?>" style="width: auto;">
-        <input type="date" name="end_date" class="form-control form-control-sm" placeholder="End Date"
-          value="<?= esc($endDate ?? '') ?>" style="width: auto;">
-        <button type="submit" class="btn btn-sm btn-secondary mb-0"><i class="fa-solid fa-magnifying-glass"></i> Filter</button>
-        <?php if (!empty($search) || !empty($startDate) || !empty($endDate)): ?>
-          <a href="<?= base_url('/cancellation-sales') ?>" class="btn btn-sm btn-outline-danger mb-0">Clear</a>
-        <?php endif; ?>
-      </form>
-    </div>
+    <h4>Cancellation Sales List</h4>
   </div>
 
   <div class="card-body pt-0 pb-2">
+    <!-- Filter Form -->
+    <form action="<?= base_url('/cancellation-sales') ?>" method="get" class="row g-2 mb-4 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label text-xs font-weight-bold">Search Order</label>
+        <input
+          type="text"
+          name="q"
+          class="form-control form-control-sm"
+          placeholder="Search Order ID, customer..."
+          value="<?= esc($search ?? '') ?>">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label text-xs font-weight-bold">Start Date</label>
+        <input
+          type="date"
+          name="start_date"
+          class="form-control form-control-sm"
+          value="<?= esc($startDate ?? '') ?>">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label text-xs font-weight-bold">End Date</label>
+        <input
+          type="date"
+          name="end_date"
+          class="form-control form-control-sm"
+          value="<?= esc($endDate ?? '') ?>">
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+          <i class="fa-solid fa-filter"></i> <span>Filter</span>
+        </button>
+        <a href="<?= base_url('/cancellation-sales') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
+          <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
+        </a>
+      </div>
+    </form>
     <div class="table-responsive">
       <table class="table align-items-center mb-0 table-bordered">
         <thead class="thead-light">

@@ -232,19 +232,34 @@ class ReportController extends BaseController
         $headers = ['No', 'Transaction ID', 'Date', 'Transaction Type', 'Reference Type', 'Reference ID', 'Product', 'Variant', 'User', 'Quantity', 'Description'];
         $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
 
+        $refLabels = [
+            'order'      => 'ORDER',
+            'adjustment' => 'ADJUSTMENT',
+            'return'     => 'RETURN',
+            'transfer'   => 'TRANSFER',
+            'initial'    => 'INITIAL STOCK',
+        ];
+
         $no = 1;
         foreach ($transactions as $transaction) {
+            $refType  = strtolower($transaction['reference_type'] ?? '');
+            $refLabel = $refLabels[$refType] ?? strtoupper($refType ?: 'N/A');
+            $qty = (int) $transaction['quantity'];
+            if (strtolower($transaction['transaction_type']) !== 'in') {
+                $qty = -$qty;
+            }
+
             $rowData = [
                 $no++,
                 '#' . $transaction['inventory_transaction_id'],
                 date('d M Y H:i', strtotime($transaction['transaction_date'])),
-                strtoupper($transaction['transaction_type']),
-                strtoupper($transaction['reference_type']),
+                strtolower($transaction['transaction_type']) === 'in' ? 'IN' : 'OUT',
+                $refLabel,
                 $transaction['reference_id'] ?? '-',
                 $transaction['product_name'] ?? '-',
                 $transaction['variant_name'] ?? '-',
                 $transaction['user_name'] ?? 'System',
-                (int) $transaction['quantity'],
+                $qty,
                 $transaction['description'] ?? '-',
             ];
             $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
