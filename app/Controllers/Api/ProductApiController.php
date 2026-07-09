@@ -143,9 +143,18 @@ class ProductApiController extends BaseApiController
         }
 
         if ($search) {
+            $escapedSearch = $this->db->escape($search); // includes quotes, safe for = comparison
+            $escapedSearchLike = $this->db->escapeLikeString($search);
             $builder->groupStart()
                 ->like('products.product_name', $search)
                 ->orLike('products.product_brand', $search)
+                ->orWhere("EXISTS (
+                    SELECT 1
+                    FROM product_attribute_values pav
+                    WHERE pav.product_id = products.product_id
+                      AND pav.deleted_at IS NULL
+                      AND pav.value = {$escapedSearch}
+                )", null, false)
                 ->groupEnd();
         }
 
