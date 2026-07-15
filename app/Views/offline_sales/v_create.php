@@ -56,7 +56,7 @@
   <?php endif; ?>
 
   <div class="card-body">
-    <form action="<?= site_url('offline-sales/store') ?>" method="post" enctype="multipart/form-data">
+    <form id="transactionForm" action="<?= site_url('offline-sales/store') ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
 
       <!-- CUSTOMER -->
@@ -84,8 +84,8 @@
         <table class="table table-bordered align-middle" id="itemsTable" style="min-width: 1400px;">
           <thead>
             <tr>
-              <th>Produk</th>
-              <th>Variant</th>
+              <th style="width:320px;">Produk</th>
+              <th style="width:320px;">Variant</th>
               <th style="width:120px;">Stok</th>
               <th style="min-width:120px;">Harga</th>
               <th style="width:120px;">Qty</th>
@@ -106,8 +106,9 @@
                   <?php foreach ($products as $p): ?>
                     <option value="<?= $p['product_id'] ?>"
                       data-price="<?= $p['product_price'] ?>"
-                      data-stock="<?= $p['product_stock'] ?>">
-                      <?= $p['product_name'] ?>
+                      data-stock="<?= $p['product_stock'] ?>"
+                      <?= ((int)$p['product_stock'] <= 0) ? 'disabled' : '' ?>>
+                      <?= $p['product_name'] ?> <?= ((int)$p['product_stock'] <= 0) ? '(Stok Habis)' : '(Stok: ' . $p['product_stock'] . ')' ?>
                     </option>
                   <?php endforeach ?>
                 </select>
@@ -227,7 +228,7 @@
       </div>
 
       <button type="button" class="btn btn-secondary btn-sm" id="addRow">
-        + Tambah Produk
+        + Add Product
       </button>
 
       <!-- TOTAL -->
@@ -237,10 +238,10 @@
 
       <div class="mt-4">
         <button type="submit" class="btn btn-primary">
-          Simpan Transaksi
+          Save
         </button>
         <a href="<?= site_url('offline_sales/v_index') ?>" class="btn btn-secondary">
-          Batal
+          Cancel
         </a>
       </div>
     </form>
@@ -256,6 +257,92 @@
       theme: 'bootstrap-5',
       placeholder: '-- Pilih Customer --',
       width: '100%'
+    });
+
+    // Initialize Select2 on product dropdowns
+    $('.product-select').select2({
+      theme: 'bootstrap-5',
+      placeholder: '-- Pilih Produk --',
+      width: '100%'
+    });
+
+    // Handle form submission via AJAX
+    $('#transactionForm').on('submit', function(e) {
+      e.preventDefault();
+
+      const form = this;
+      
+      // Basic HTML5 validation check
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+
+      const btnSubmit = $(form).find('button[type="submit"]');
+      const originalText = btnSubmit.html();
+      
+      // Disable submit button and show loading spinner
+      btnSubmit.prop('disabled', true);
+      btnSubmit.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status) {
+          // Show Swal prompt to print receipt or not
+          Swal.fire({
+            title: 'Success',
+            text: 'Transaction saved successfully. Would you like to print the transaction receipt?',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#7048E8',
+            cancelButtonColor: '#8392ab',
+            confirmButtonText: '🖨️ Yes, Print Receipt',
+            cancelButtonText: 'No',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Open print window in a new tab
+              window.open('<?= site_url('offline-sales/print/') ?>' + data.order_id, '_blank');
+            }
+            // Redirect to offline sales index page
+            window.location.href = '<?= site_url('offline-sales') ?>';
+          });
+        } else {
+          // Re-enable submit button
+          btnSubmit.prop('disabled', false);
+          btnSubmit.html(originalText);
+
+          // Show error alert
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to Save Transaction',
+            text: data.message || 'An error occurred while saving the transaction.',
+            confirmButtonColor: '#f5365c'
+          });
+        }
+      })
+      .catch(err => {
+        // Re-enable submit button
+        btnSubmit.prop('disabled', false);
+        btnSubmit.html(originalText);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'System error occurred: ' + err.message,
+          confirmButtonColor: '#f5365c'
+        });
+      });
     });
   });
 
@@ -304,6 +391,10 @@
           opt.textContent = `${v.variant_name} (Stok: ${v.stock})`;
           opt.dataset.price = v.price;
           opt.dataset.stock = v.stock;
+          if (Number(v.stock) <= 0) {
+            opt.disabled = true;
+            opt.textContent = `${v.variant_name} (Stok Habis)`;
+          }
           variantSelect.appendChild(opt);
         });
 
@@ -317,33 +408,31 @@
       });
   }
 
-  document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('variant-select')) {
-      const row = e.target.closest('tr');
-      const priceInput = row.querySelector('.price');
-      const stockInput = row.querySelector('.stock-display');
-      const qtyInput = row.querySelector('.qty');
+  $(document).on('change', '.variant-select', function() {
+    const row = this.closest('tr');
+    const priceInput = row.querySelector('.price');
+    const stockInput = row.querySelector('.stock-display');
+    const qtyInput = row.querySelector('.qty');
 
-      const selectedProductOpt = row.querySelector('.product-select').selectedOptions[0];
-      const productPrice = selectedProductOpt?.dataset.price || 0;
+    const selectedProductOpt = row.querySelector('.product-select').options[row.querySelector('.product-select').selectedIndex];
+    const productPrice = selectedProductOpt?.dataset.price || 0;
 
-      const selectedOption = e.target.selectedOptions[0];
+    const selectedOption = this.options[this.selectedIndex];
 
-      // ⬅️ JIKA variant dikosongkan
-      if (!selectedOption || !selectedOption.value) {
-        priceInput.value = productPrice;
-        stockInput.value = '-';
-        qtyInput.max = '';
-        updateSubtotal(row);
-        return;
-      }
-
-      // ⬅️ JIKA variant dipilih
-      priceInput.value = selectedOption.dataset.price || productPrice;
-      stockInput.value = selectedOption.dataset.stock || 0;
-      qtyInput.max = selectedOption.dataset.stock || 0;
+    // ⬅️ JIKA variant dikosongkan
+    if (!selectedOption || !selectedOption.value) {
+      priceInput.value = productPrice;
+      stockInput.value = '-';
+      qtyInput.max = '';
       updateSubtotal(row);
+      return;
     }
+
+    // ⬅️ JIKA variant dipilih
+    priceInput.value = selectedOption.dataset.price || productPrice;
+    stockInput.value = selectedOption.dataset.stock || 0;
+    qtyInput.max = selectedOption.dataset.stock || 0;
+    updateSubtotal(row);
   });
 
   function formatCurrency(value) {
@@ -395,23 +484,19 @@
   }
 
   /* EVENT HANDLER */
-  document.addEventListener('change', function(e) {
-    const row = e.target.closest('tr');
+  $(document).on('change', '.product-select', function() {
+    const row = this.closest('tr');
+    const selectedProductOpt = this.options[this.selectedIndex];
+    const price = selectedProductOpt?.dataset.price || 0;
+    row.querySelector('.price').value = price;
+    row.querySelector('.qty').value = 1;
+    loadVariants(this.value, row);
+    updateSubtotal(row);
+  });
 
-    // PRODUCT CHANGE
-    if (e.target.classList.contains('product-select')) {
-      const selectedProductOpt = e.target.selectedOptions[0];
-      const price = selectedProductOpt?.dataset.price || 0;
-      row.querySelector('.price').value = price;
-      row.querySelector('.qty').value = 1;
-      loadVariants(e.target.value, row);
-      updateSubtotal(row);
-    }
-
-    // QTY CHANGE
-    if (e.target.classList.contains('qty')) {
-      updateSubtotal(row);
-    }
+  $(document).on('change', '.qty', function() {
+    const row = this.closest('tr');
+    updateSubtotal(row);
   });
 
   document.getElementById('paymentMethod').addEventListener('change', function() {
@@ -427,7 +512,21 @@
   /* ADD ROW */
   document.getElementById('addRow').addEventListener('click', function() {
     const tbody = document.querySelector('#itemsTable tbody');
+
+    // Temporarily destroy select2 on first row product-select before cloning
+    const firstSelect = $(tbody.rows[0]).find('.product-select');
+    if (firstSelect.data('select2')) {
+      firstSelect.select2('destroy');
+    }
+
     const newRow = tbody.rows[0].cloneNode(true);
+
+    // Re-initialize select2 on first row
+    firstSelect.select2({
+      theme: 'bootstrap-5',
+      placeholder: '-- Pilih Produk --',
+      width: '100%'
+    });
 
     newRow.querySelectorAll('input, select').forEach(el => {
       if (el.name) {
@@ -456,6 +555,14 @@
     newRow.querySelector('.variant-select').disabled = true;
 
     tbody.appendChild(newRow);
+
+    // Initialize select2 on the new row product select
+    $(newRow).find('.product-select').select2({
+      theme: 'bootstrap-5',
+      placeholder: '-- Pilih Produk --',
+      width: '100%'
+    });
+
     index++;
   });
 

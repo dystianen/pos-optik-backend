@@ -35,7 +35,7 @@
 
     <div class="card-body">
       <form action="<?= base_url('/reports/inventory') ?>" method="get" class="row g-3 align-items-end">
-        <div class="col-md-4">
+        <div class="col-lg-3 col-md-6 col-12">
           <label class="form-label font-weight-bold text-xs text-uppercase">Transaction Type</label>
           <select name="transaction_type" class="form-select form-select-sm" style="border-radius: 8px;">
             <option value="all" <?= $transactionType === 'all' ? 'selected' : '' ?>>All Transactions</option>
@@ -43,19 +43,19 @@
             <option value="out" <?= $transactionType === 'out' ? 'selected' : '' ?>>OUT</option>
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6 col-6">
           <label class="form-label font-weight-bold text-xs text-uppercase">From Date</label>
           <input type="date" name="start_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($startDate) ?>">
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6 col-6">
           <label class="form-label font-weight-bold text-xs text-uppercase">To Date</label>
           <input type="date" name="end_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($endDate) ?>">
         </div>
-        <div class="col-md-2 d-flex gap-2">
-          <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Filter">
+        <div class="col-lg-3 col-md-12 col-12 d-flex gap-2 mt-lg-0 mt-3">
+          <button type="submit" class="btn btn-sm btn-primary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Filter">
             <i class="fa-solid fa-filter"></i> <span>Filter</span>
           </button>
-          <a href="<?= base_url('/reports/inventory') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Reset">
+          <a href="<?= base_url('/reports/inventory') ?>" class="btn btn-sm btn-outline-secondary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px; border-radius: 8px;" title="Reset">
             <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
           </a>
         </div>

@@ -25,7 +25,7 @@ function orderStatusBadge($status)
   <div class="card-body pt-0 pb-2">
     <!-- Filter Form -->
     <form action="<?= base_url('/online-sales') ?>" method="get" class="row g-2 mb-4 align-items-end">
-      <div class="col-md-3">
+      <div class="col-lg-3 col-md-6 col-12">
         <label class="form-label text-xs font-weight-bold">Search Order</label>
         <input
           type="text"
@@ -34,7 +34,7 @@ function orderStatusBadge($status)
           placeholder="Search Order ID, customer..."
           value="<?= esc($search ?? '') ?>">
       </div>
-      <div class="col-md-3">
+      <div class="col-lg-2 col-md-6 col-12">
         <label class="form-label text-xs font-weight-bold">Status</label>
         <select name="status_id" class="form-select form-select-sm">
           <option value="">All Statuses</option>
@@ -45,7 +45,7 @@ function orderStatusBadge($status)
           <?php endforeach; ?>
         </select>
       </div>
-      <div class="col-md-2">
+      <div class="col-lg-2 col-md-4 col-6">
         <label class="form-label text-xs font-weight-bold">Start Date</label>
         <input
           type="date"
@@ -53,7 +53,7 @@ function orderStatusBadge($status)
           class="form-control form-control-sm"
           value="<?= esc($startDate ?? '') ?>">
       </div>
-      <div class="col-md-2">
+      <div class="col-lg-2 col-md-4 col-6">
         <label class="form-label text-xs font-weight-bold">End Date</label>
         <input
           type="date"
@@ -61,11 +61,11 @@ function orderStatusBadge($status)
           class="form-control form-control-sm"
           value="<?= esc($endDate ?? '') ?>">
       </div>
-      <div class="col-md-2 d-flex gap-2">
-        <button type="submit" class="btn btn-sm btn-primary w-100 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+      <div class="col-lg-3 col-md-12 col-12 d-flex gap-2 mt-lg-0 mt-3">
+        <button type="submit" class="btn btn-sm btn-primary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
           <i class="fa-solid fa-filter"></i> <span>Filter</span>
         </button>
-        <a href="<?= base_url('/online-sales') ?>" class="btn btn-sm btn-outline-secondary w-100 mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
+        <a href="<?= base_url('/online-sales') ?>" class="btn btn-sm btn-outline-secondary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
           <i class="fa-solid fa-arrows-rotate"></i> <span>Reset</span>
         </a>
       </div>

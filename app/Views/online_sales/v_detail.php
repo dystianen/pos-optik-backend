@@ -199,11 +199,13 @@ function badgeStatus($status)
           <div class="mb-4">
             <p class="mb-2 fw-semibold">Pending Payment Actions</p>
             <p class="text-muted small">Customer has not uploaded payment proof yet. If they exceed the payment deadline, you can mark this order as Expired to release/restore the inventory stock.</p>
-            <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/expire') ?>">
+            <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/expire') ?>" class="confirm-action">
               <?= csrf_field() ?>
               <button type="submit"
                 class="btn btn-warning text-white"
-                onclick="return confirm('Apakah Anda yakin ingin membatalkan order ini karena waktu pembayaran kadaluwarsa (Expired)? Tindakan ini akan mengembalikan stok barang.')">
+                data-confirm="Are you sure you want to cancel this order because the payment period has expired? This will release and restore the inventory stock."
+                data-confirm-btn="Yes, Expire Order"
+                data-confirm-type="warning">
                 <i class="fa fa-clock-o me-2"></i>Mark as Expired (Restore Stock)
               </button>
             </form>
@@ -215,20 +217,24 @@ function badgeStatus($status)
           <div class="mb-4">
             <p class="mb-2 fw-semibold">Payment Verification</p>
             <div class="d-flex gap-2 flex-wrap">
-              <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/approve') ?>">
+              <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/approve') ?>" class="confirm-action">
                 <?= csrf_field() ?>
                 <button type="submit"
                   class="btn btn-success"
-                  onclick="return confirm('Approve payment for this order?')">
+                  data-confirm="Approve payment for this order?"
+                  data-confirm-btn="Yes, Approve"
+                  data-confirm-type="success">
                   Approve Payment
                 </button>
               </form>
 
-              <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/reject') ?>">
+              <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/reject') ?>" class="confirm-action">
                 <?= csrf_field() ?>
                 <button type="submit"
                   class="btn btn-danger"
-                  onclick="return confirm('Reject payment for this order?')">
+                  data-confirm="Reject payment for this order?"
+                  data-confirm-btn="Yes, Reject"
+                  data-confirm-type="danger">
                   Reject Payment
                 </button>
               </form>
@@ -268,7 +274,9 @@ function badgeStatus($status)
 
                   <div class="col-md-auto align-self-end">
                     <button class="btn btn-primary"
-                      onclick="return confirm('Confirm shipment & save tracking number?')">
+                      data-confirm="Confirm shipment & save tracking number?"
+                      data-confirm-btn="Yes, Confirm"
+                      data-confirm-type="question">
                       Submit Shipment
                     </button>
                   </div>
@@ -297,4 +305,32 @@ function badgeStatus($status)
   </div>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+  $(document).on('submit', 'form.confirm-action', function(e) {
+    e.preventDefault();
+    const form = this;
+    const btn = $(form).find('button[type="submit"], button:not([type="button"])');
+    const message = btn.attr('data-confirm') || 'Apakah Anda yakin?';
+    const confirmText = btn.attr('data-confirm-btn') || 'Ya';
+    const type = btn.attr('data-confirm-type') || 'warning';
+
+    Swal.fire({
+      title: 'Confirmation',
+      text: message,
+      icon: type,
+      showCancelButton: true,
+      confirmButtonColor: type === 'danger' ? '#f5365c' : (type === 'success' ? '#2dce89' : '#fb6340'),
+      cancelButtonColor: '#8392ab',
+      confirmButtonText: confirmText,
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }
+    });
+  });
+</script>
 <?= $this->endSection() ?>

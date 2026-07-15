@@ -134,17 +134,28 @@ function notifTypeBadge($type)
   }
 
   function markAllRead() {
-    if (!confirm('Mark all notifications as read?')) return;
-
-    fetch('/notifications/read-all', {
-        method: 'POST'
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status) {
-          location.reload();
-        }
-      });
+    Swal.fire({
+      title: 'Mark All as Read?',
+      text: 'Are you sure you want to mark all notifications as read?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#7048E8',
+      cancelButtonColor: '#8392ab',
+      confirmButtonText: 'Yes, Mark Read',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/notifications/read-all', {
+          method: 'POST'
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status) {
+            location.reload();
+          }
+        });
+      }
+    });
   }
 </script>
 <?= $this->endSection() ?>

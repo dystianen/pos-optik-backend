@@ -34,9 +34,9 @@
                 <td><?= $user['role_name'] ?></td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/users/form?id=' . $user['user_id']) ?>" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                  <form action="<?= base_url('/users/delete/' . $user['user_id']) ?>" method="post" style="display:inline-block;">
+                  <form action="<?= base_url('/users/delete/' . $user['user_id']) ?>" method="post" style="display:inline-block;" class="confirm-delete">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa-solid fa-trash"></i></button>
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
                   </form>
                 </td>
               </tr>

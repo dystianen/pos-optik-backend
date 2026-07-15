@@ -853,13 +853,27 @@
         })
         .catch(err => console.error('Refresh table error:', err));
     }
+  <script>
+    // Global SweetAlert delete confirm handler
+    $(document).on('submit', 'form.confirm-delete', function(e) {
+      e.preventDefault();
+      const form = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "This action cannot be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f5365c',
+        cancelButtonColor: '#8392ab',
+        confirmButtonText: 'Yes, Delete!',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
   </script>
-
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="<?= base_url('assets'); ?>/js/argon-dashboard.min.js?v=2.1.0"></script>
 
   <?= $this->renderSection('scripts') ?>
 </body>

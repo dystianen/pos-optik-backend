@@ -476,13 +476,28 @@ class OfflineSalesController extends BaseController
             // 🔥 TRIGGER REAL-TIME UPDATE
             \App\Libraries\Realtime::triggerUpdate('order-new');
 
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'status' => true,
+                    'message' => 'Transaction saved successfully',
+                    'order_id' => $orderId
+                ]);
+            }
+
             return redirect()
                 ->to(site_url('offline-sales/success/' . $orderId))
-                ->with('success', 'Transaksi berhasil disimpan');
+                ->with('success', 'Transaction saved successfully');
         } catch (\Throwable $e) {
             $db->transRollback();
 
             log_message('error', $e->getMessage());
+
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ]);
+            }
 
             return redirect()
                 ->back()

@@ -183,35 +183,70 @@ function badgeStatus($status)
     return res.json();
   }
 
-  document.getElementById('btnApprove')?.addEventListener('click', async () => {
-    if (!confirm('Approve this cancellation? This will cancel the order.')) return;
-    const url = `<?= base_url('/api/admin/cancel/') ?>${cancellationId}/approve`;
-    const resp = await postJson(url, {});
-    
-    if (resp.status !== 200 && resp.status !== 201 && !resp.success) { // Handle CI4 API response wrapper variation if any
-          alert(resp.message || 'Error occurred');
-    } else {
-        alert(resp.message || 'Approved successfully');
-        location.reload();
-    }
+  document.getElementById('btnApprove')?.addEventListener('click', () => {
+    Swal.fire({
+      title: 'Approve Cancellation?',
+      text: 'This will cancel the order and cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2dce89',
+      cancelButtonColor: '#8392ab',
+      confirmButtonText: 'Yes, Approve',
+      cancelButtonText: 'Cancel'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const url = `<?= base_url('/api/admin/cancel/') ?>${cancellationId}/approve`;
+        try {
+          const resp = await postJson(url, {});
+          if (resp.status !== 200 && resp.status !== 201 && !resp.success) {
+            Swal.fire('Error', resp.message || 'Error occurred', 'error');
+          } else {
+            Swal.fire('Success', resp.message || 'Approved successfully', 'success').then(() => {
+              location.reload();
+            });
+          }
+        } catch (err) {
+          Swal.fire('Error', 'System error occurred: ' + err.message, 'error');
+        }
+      }
+    });
   });
 
-  document.getElementById('btnReject')?.addEventListener('click', async () => {
-    if (!confirm('Reject this cancellation?')) return;
+  document.getElementById('btnReject')?.addEventListener('click', () => {
     const note = document.getElementById('reject_note').value || '';
-    if (!note) return alert('Admin note is required for rejection');
-    
-    const url = `<?= base_url('/api/admin/cancel/') ?>${cancellationId}/reject`;
-    const resp = await postJson(url, {
-      admin_note: note
-    });
-    
-     if (resp.status !== 200 && resp.status !== 201 && !resp.success) {
-          alert(resp.message || 'Error occurred');
-    } else {
-        alert(resp.message || 'Rejected successfully');
-        location.reload();
+    if (!note) {
+      Swal.fire('Warning', 'Admin note is required for rejection', 'warning');
+      return;
     }
+
+    Swal.fire({
+      title: 'Reject Cancellation?',
+      text: 'Are you sure you want to reject this cancellation request?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f5365c',
+      cancelButtonColor: '#8392ab',
+      confirmButtonText: 'Yes, Reject',
+      cancelButtonText: 'Cancel'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const url = `<?= base_url('/api/admin/cancel/') ?>${cancellationId}/reject`;
+        try {
+          const resp = await postJson(url, {
+            admin_note: note
+          });
+          if (resp.status !== 200 && resp.status !== 201 && !resp.success) {
+            Swal.fire('Error', resp.message || 'Error occurred', 'error');
+          } else {
+            Swal.fire('Success', resp.message || 'Rejected successfully', 'success').then(() => {
+              location.reload();
+            });
+          }
+        } catch (err) {
+          Swal.fire('Error', 'System error occurred: ' + err.message, 'error');
+        }
+      }
+    });
   });
 </script>
 <?= $this->endSection() ?>

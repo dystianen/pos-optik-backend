@@ -32,9 +32,9 @@
                 <td><?= $role['role_description'] ?></td>
                 <td class="sticky-action text-center">
                   <a href="<?= base_url('/roles/form?id=' . $role['role_id']) ?>" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                  <form action="<?= base_url('/roles/delete/' . $role['role_id']) ?>" method="post" style="display:inline-block;">
+                  <form action="<?= base_url('/roles/delete/' . $role['role_id']) ?>" method="post" style="display:inline-block;" class="confirm-delete">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="fa-solid fa-trash"></i></button>
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
                   </form>
                 </td>
               </tr>
