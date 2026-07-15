@@ -38,6 +38,7 @@
           placeholder="e.g., Administrator, Manager, Cashier"
           value="<?= old('role_name', isset($role) ? htmlspecialchars($role['role_name']) : '') ?>"
           required>
+        <div class="invalid-feedback">Please enter the role name.</div>
         <small class="form-text text-muted d-block mt-1">Enter role name (max 100 characters)</small>
       </div>
 

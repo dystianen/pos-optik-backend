@@ -38,6 +38,7 @@
           placeholder="e.g., Eyeglasses, Sunglasses, Contact Lenses"
           value="<?= old('category_name', isset($category) ? htmlspecialchars($category['category_name']) : '') ?>"
           required>
+        <div class="invalid-feedback">Please enter the category name.</div>
         <small class="form-text text-muted d-block mt-1">Enter category name (max 50 characters)</small>
       </div>
 

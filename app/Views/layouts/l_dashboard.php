@@ -853,8 +853,7 @@
         })
         .catch(err => console.error('Refresh table error:', err));
     }
-  <script>
-    // Global SweetAlert delete confirm handler
+
     $(document).on('submit', 'form.confirm-delete', function(e) {
       e.preventDefault();
       const form = this;
@@ -874,6 +873,8 @@
       });
     });
   </script>
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script src="<?= base_url('assets'); ?>/js/argon-dashboard.min.js?v=2.1.0"></script>
 
   <?= $this->renderSection('scripts') ?>
 </body>

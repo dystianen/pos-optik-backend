@@ -34,6 +34,7 @@ trait ValidationHelperTrait
             'product_stock'            => 'Stock',
             'product_id'               => 'Product',
             'category_id'              => 'Category',
+            'images'                   => 'Product images',
 
             // Variant
             'variant_id'               => 'Product variant',

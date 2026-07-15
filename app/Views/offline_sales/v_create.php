@@ -56,21 +56,24 @@
   <?php endif; ?>
 
   <div class="card-body">
-    <form id="transactionForm" action="<?= site_url('offline-sales/store') ?>" method="post" enctype="multipart/form-data">
+    <form id="transactionForm" action="<?= site_url('offline-sales/store') ?>" method="post" enctype="multipart/form-data" novalidate>
       <?= csrf_field() ?>
 
       <!-- CUSTOMER -->
       <div class="mb-3">
-        <label class="form-label">Customer</label>
-        <div class="group">
-          <select name="customer_id" id="customerSelect" class="form-select" required>
-            <option value="">-- Pilih Customer --</option>
-            <?php foreach ($customers as $customer): ?>
-              <option value="<?= $customer['customer_id'] ?>">
-                <?= $customer['customer_name'] ?>
-              </option>
-            <?php endforeach ?>
-          </select>
+        <label class="form-label">Customer <span class="text-danger">*</span></label>
+        <div class="d-flex gap-2">
+          <div class="flex-grow-1">
+            <select name="customer_id" id="customerSelect" class="form-select" required>
+              <option value="">-- Pilih Customer --</option>
+              <?php foreach ($customers as $customer): ?>
+                <option value="<?= $customer['customer_id'] ?>">
+                  <?= $customer['customer_name'] ?>
+                </option>
+              <?php endforeach ?>
+            </select>
+            <div class="invalid-feedback">Pilih customer terlebih dahulu.</div>
+          </div>
           <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
             <i class="fa fa-plus"></i> Tambah
           </a>
@@ -112,6 +115,7 @@
                     </option>
                   <?php endforeach ?>
                 </select>
+                <div class="invalid-feedback">Pilih produk.</div>
               </td>
 
               <!-- VARIANT -->
@@ -190,7 +194,7 @@
           <h5>Pembayaran</h5>
           <div class="row g-3 mt-2">
             <div class="col-md-4">
-              <label class="form-label">Metode Pembayaran</label>
+              <label class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
               <select id="paymentMethod" name="payment_method_id" class="form-select" required>
                 <option value="">-- Pilih Metode Pembayaran --</option>
                 <?php foreach ($paymentMethods as $method): ?>
@@ -200,6 +204,7 @@
                   </option>
                 <?php endforeach ?>
               </select>
+              <div class="invalid-feedback">Pilih metode pembayaran.</div>
             </div>
 
             <div class="col-md-4 cash-only d-none">
@@ -237,12 +242,12 @@
       </div>
 
       <div class="mt-4">
+        <a href="<?= site_url('offline-sales') ?>" class="btn btn-secondary">
+          Cancel
+        </a>
         <button type="submit" class="btn btn-primary">
           Save
         </button>
-        <a href="<?= site_url('offline_sales/v_index') ?>" class="btn btn-secondary">
-          Cancel
-        </a>
       </div>
     </form>
   </div>

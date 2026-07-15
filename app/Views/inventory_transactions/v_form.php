@@ -52,6 +52,7 @@
               </option>
             <?php endforeach; ?>
           </select>
+          <div class="invalid-feedback">Please select a product.</div>
           <small class="form-text text-muted d-block mt-1">Select the product for this transaction</small>
         </div>
 
@@ -76,6 +77,7 @@
             <option value="in" <?= isset($transaction) && $transaction['transaction_type'] === 'in' ? 'selected' : '' ?>>IN (Stock In)</option>
             <option value="out" <?= isset($transaction) && $transaction['transaction_type'] === 'out' ? 'selected' : '' ?>>OUT (Stock Out)</option>
           </select>
+          <div class="invalid-feedback">Please select a transaction type.</div>
           <small class="form-text text-muted d-block mt-1">Indicate whether this is a stock increase (IN) or decrease (OUT)</small>
         </div>
 
@@ -128,6 +130,7 @@
               id="transaction_date"
               value="<?= old('transaction_date', date('Y-m-d')) ?>"
               required>
+            <div class="invalid-feedback">Please select a valid transaction date.</div>
             <small class="form-text text-muted d-block mt-1">Date when the transaction occurs (format: YYYY-MM-DD)</small>
           </div>
         <?php endif; ?>
@@ -137,6 +140,7 @@
           <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
           <input class="form-control" type="number" placeholder="0" name="quantity" id="quantity" required min="1"
             value="<?= old('quantity', isset($transaction) ? $transaction['quantity'] : '') ?>">
+          <div class="invalid-feedback">Please enter a valid quantity (minimum 1).</div>
           <small class="form-text text-muted d-block mt-1">Enter the quantity to be added or removed (must be greater than 0)</small>
         </div>
 
@@ -220,6 +224,18 @@
         loadVariants(this.value, null);
       });
     <?php endif; ?>
+
+    // Form client-side validation
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+    }
   });
 </script>
 

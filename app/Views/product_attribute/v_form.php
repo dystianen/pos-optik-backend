@@ -36,6 +36,7 @@
         <input type="text" name="attribute_name" class="form-control"
           placeholder="e.g., Color, Size, Frame Type"
           value="<?= htmlspecialchars($attribute['attribute_name'] ?? '') ?>" required>
+        <div class="invalid-feedback">Please enter the attribute name.</div>
         <small class="form-text text-muted d-block mt-1">Enter attribute name (max 50 characters)</small>
       </div>
 
@@ -65,6 +66,7 @@
           <option value="multiselect" <?= isset($attribute) && $attribute['attribute_type'] === 'multiselect' ? 'selected' : '' ?>>Checkbox (Multiple Options)</option>
           <option value="checkbox" <?= isset($attribute) && $attribute['attribute_type'] === 'checkbox' ? 'selected' : '' ?>>Single Checkbox (Yes / No)</option>
         </select>
+        <div class="invalid-feedback">Please select an attribute type.</div>
         <small class="form-text text-muted d-block mt-1">Select the type of attribute data</small>
       </div>
 

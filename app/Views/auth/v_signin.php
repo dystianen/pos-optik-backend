@@ -11,16 +11,18 @@
           Log in with your admin account
         </p>
 
-        <form action="<?= base_url('signin/store') ?>" method="post">
+        <form action="<?= base_url('signin/store') ?>" method="post" novalidate>
 
           <div class="form-group mb-3">
             <label>Email</label>
             <input name="email" type="email" class="form-control form-control-lg" placeholder="Email" required>
+            <div class="invalid-feedback">Please enter a valid email address.</div>
           </div>
 
           <div class="form-group mb-4">
             <label>Password</label>
             <input name="password" type="password" class="form-control form-control-lg" placeholder="Password" required>
+            <div class="invalid-feedback">Please enter your password.</div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-lg w-100 shadow">
@@ -33,5 +35,20 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+    }
+  });
+</script>
 
 <?= $this->endSection() ?>

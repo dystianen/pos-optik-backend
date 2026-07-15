@@ -679,6 +679,7 @@ class OnlineSalesApiController extends BaseApiController
 
                 ->join('payment_methods pm', 'pm.payment_method_id = p.payment_method_id', 'left')
                 ->where('orders.customer_id', $customerId)
+                ->where('orders.order_type', 'online')
                 ->where('orders.deleted_at', null);
 
             // Date filtering (single date or from-to range)

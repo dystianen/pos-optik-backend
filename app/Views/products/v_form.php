@@ -43,6 +43,7 @@
               </option>
             <?php endforeach; ?>
           </select>
+          <div class="invalid-feedback">Please select a category.</div>
           <small class="form-text text-muted d-block mt-1">Select the product category</small>
         </div>
 
@@ -52,7 +53,7 @@
           <input type="text" name="product_name" class="form-control"
             placeholder="e.g., Blue Light Glasses"
             value="<?= old('product_name', $product['product_name'] ?? '') ?>" required>
-          <small class="form-text text-muted d-block mt-1">Enter product name (max 100 characters)</small>
+          <div class="invalid-feedback">Please enter the product name.</div>
         </div>
 
         <!-- Price (base) -->
@@ -63,6 +64,7 @@
             <input type="number" step="0.01" name="product_price" class="form-control"
               placeholder="0.00"
               value="<?= old('product_price', $product['product_price'] ?? '') ?>" required>
+            <div class="invalid-feedback">Please enter a valid base price.</div>
           </div>
           <small class="text-muted d-block mt-1">Default price used if variant price not provided</small>
         </div>
@@ -77,20 +79,19 @@
 
         <!-- Brand -->
         <div class="col-12 col-md-6 mb-3">
-          <label class="form-label">Brand</label>
+          <label class="form-label">Brand <span class="text-danger">*</span></label>
           <input type="text" name="product_brand" class="form-control"
             placeholder="e.g., Ray-Ban"
-            value="<?= old('product_brand', $product['product_brand'] ?? '') ?>">
-          <small class="form-text text-muted d-block mt-1">Optional: Product brand (max 50 characters)</small>
+            value="<?= old('product_brand', $product['product_brand'] ?? '') ?>" required>
+          <div class="invalid-feedback">Please enter the brand.</div>
         </div>
 
         <!-- SKU -->
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label">Product SKU</label>
-          <input type="text" id="product_sku" name="product_sku" class="form-control"
+          <input disabled type="text" id="product_sku" name="product_sku" class="form-control"
             placeholder="Auto-generated SKU"
             value="<?= old('product_sku', $product['product_sku'] ?? '') ?>" readonly>
-          <small class="text-muted d-block mt-1">This SKU is auto-generated based on the Category and a sequence number.</small>
         </div>
 
         <!-- Description -->
@@ -103,8 +104,9 @@
 
         <!-- MULTIPLE IMAGES -->
         <div class="col-12 mb-3">
-          <label class="form-label">Product Images</label>
-          <input type="file" name="images[]" class="form-control" multiple accept=".jpg,.jpeg,.png">
+          <label class="form-label">Product Images <?= !isset($product) || empty($product_images) ? '<span class="text-danger">*</span>' : '' ?></label>
+          <input type="file" name="images[]" class="form-control" multiple accept=".jpg,.jpeg,.png" <?= !isset($product) || empty($product_images) ? 'required' : '' ?>>
+          <div class="invalid-feedback">Please upload at least one product image.</div>
           <small class="text-muted d-block mt-1">Upload multiple images (JPG, JPEG, or PNG). Used as product images and fallback for variants.</small>
 
           <?php if (!empty($product_images)): ?>
@@ -135,7 +137,7 @@
         </div>
 
         <!-- DYNAMIC ATTRIBUTES -->
-        <div class="col-12 mt-4">
+        <div class="col-12 mt-4" id="attributesSection" <?= empty($attributes) ? 'style="display:none;"' : '' ?>>
           <h5>Product Attributes</h5>
           <p class="text-muted">Fill in the attributes and select which one you want to make a variant.</p>
 
@@ -695,6 +697,8 @@
     // 1. Toggle variant checkbox
     // 2. Input text berubah (untuk text type)
     // 3. Checkbox attribute berubah (untuk dropdown type)
+    const attributesSection = document.getElementById('attributesSection');
+
     if (categorySelect && attributesContainer) {
       categorySelect.addEventListener('change', async function() {
         const categoryId = this.value;
@@ -704,11 +708,13 @@
         
         if (!categoryId) {
           attributesContainer.innerHTML = '';
+          if (attributesSection) attributesSection.style.display = 'none';
           renderVariants();
           return;
         }
 
-        // Show a loading indicator
+        // Show a loading indicator (also show the section while loading)
+        if (attributesSection) attributesSection.style.display = 'block';
         attributesContainer.innerHTML = `
           <div class="col-12 text-center py-4">
             <div class="spinner-border text-primary" role="status">
@@ -725,9 +731,14 @@
           }
           const html = await response.text();
           attributesContainer.innerHTML = html;
+          // Hide section if partial returned no attribute cards
+          if (attributesSection) {
+            attributesSection.style.display = html.trim() === '' ? 'none' : 'block';
+          }
           renderVariants();
         } catch (error) {
           console.error(error);
+          if (attributesSection) attributesSection.style.display = 'block';
           attributesContainer.innerHTML = `
             <div class="col-12">
               <div class="alert alert-danger mb-0">
@@ -770,6 +781,16 @@
       renderVariants();
     });
 
+    // ✅ Form client-side validation
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+    }
 
   })();
 </script>

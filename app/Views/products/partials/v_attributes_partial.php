@@ -59,6 +59,9 @@
           placeholder="Enter <?= esc(strtolower($attrName)) ?> (comma separated for variants)"
           value="<?= esc($existingTextValue) ?>"
           <?= $isRequired ? 'required' : '' ?>>
+        <?php if ($isRequired): ?>
+          <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+        <?php endif; ?>
 
       <?php elseif ($attrType === 'textarea'): ?>
         <textarea
@@ -68,6 +71,9 @@
           placeholder="Enter <?= esc(strtolower($attrName)) ?>..."
           rows="3"
           <?= $isRequired ? 'required' : '' ?>><?= esc($existingTextValue) ?></textarea>
+        <?php if ($isRequired): ?>
+          <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+        <?php endif; ?>
 
       <?php elseif ($attrType === 'number'): ?>
         <input
@@ -78,6 +84,9 @@
           placeholder="Enter <?= esc(strtolower($attrName)) ?>"
           value="<?= esc($existingTextValue) ?>"
           <?= $isRequired ? 'required' : '' ?>>
+        <?php if ($isRequired): ?>
+          <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+        <?php endif; ?>
 
       <?php elseif ($attrType === 'dropdown'): ?>
         <?php if ($useMasterValues && !empty($attr['values'])): ?>
@@ -93,6 +102,9 @@
               </option>
             <?php endforeach; ?>
           </select>
+          <?php if ($isRequired): ?>
+            <div class="invalid-feedback">Please select <?= esc(strtolower($attrName)) ?>.</div>
+          <?php endif; ?>
         <?php else: ?>
           <input
             type="text"
@@ -102,6 +114,9 @@
             placeholder="Enter <?= esc(strtolower($attrName)) ?>"
             value="<?= esc($existingTextValue) ?>"
             <?= $isRequired ? 'required' : '' ?>>
+          <?php if ($isRequired): ?>
+            <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+          <?php endif; ?>
         <?php endif; ?>
 
       <?php elseif ($attrType === 'multiselect'): ?>
@@ -133,6 +148,9 @@
             placeholder="Enter <?= esc(strtolower($attrName)) ?> (comma separated)"
             value="<?= esc($existingTextValue) ?>"
             <?= $isRequired ? 'required' : '' ?>>
+          <?php if ($isRequired): ?>
+            <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+          <?php endif; ?>
         <?php endif; ?>
 
       <?php elseif ($attrType === 'checkbox'): ?>
@@ -171,6 +189,11 @@
                 </label>
               </div>
             <?php endforeach; ?>
+            <?php if ($isRequired): ?>
+              <div class="invalid-feedback d-block" style="display:none !important;" id="radio_err_<?= $attrId ?>">
+                Please select <?= esc(strtolower($attrName)) ?>.
+              </div>
+            <?php endif; ?>
           </div>
         <?php else: ?>
           <input
@@ -181,6 +204,9 @@
             placeholder="Enter <?= esc(strtolower($attrName)) ?>"
             value="<?= esc($existingTextValue) ?>"
             <?= $isRequired ? 'required' : '' ?>>
+          <?php if ($isRequired): ?>
+            <div class="invalid-feedback">Please enter <?= esc(strtolower($attrName)) ?>.</div>
+          <?php endif; ?>
         <?php endif; ?>
 
       <?php endif; ?>

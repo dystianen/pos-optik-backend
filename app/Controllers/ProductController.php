@@ -294,8 +294,25 @@ class ProductController extends BaseController
         $rules = [
             'product_name'  => 'required|min_length[3]',
             'product_price' => 'required|numeric',
+            'product_brand' => 'required',
             'category_id'   => 'required',
         ];
+
+        // Check if there are existing gallery images
+        $hasExistingImages = false;
+        if ($id) {
+            $existingImagesCount = $this->productImageModel
+                ->where('product_id', $id)
+                ->where('type', 'gallery')
+                ->countAllResults();
+            if ($existingImagesCount > 0) {
+                $hasExistingImages = true;
+            }
+        }
+
+        if (!$hasExistingImages) {
+            $rules['images'] = 'uploaded[images]';
+        }
 
         $redirectUrl = 'products/form' . ($id ? '?id=' . $id : '');
 

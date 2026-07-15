@@ -24,6 +24,49 @@
       </div>
     <?php endif; ?>
 
+<!-- Select2 CSS & Theme -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+  /* Styling to integrate Select2 with Argon Dashboard & Bootstrap 5 nicely */
+  .select2-container--bootstrap-5 {
+    z-index: 1050;
+  }
+  .select2-container--bootstrap-5 .select2-selection {
+    border-color: #d2d6da !important;
+    font-size: 0.875rem !important;
+    border-radius: 0.5rem !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection--single {
+    padding: 0.5rem 0.75rem !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__rendered {
+    color: #495057 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__placeholder {
+    color: #adb5bd !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__arrow {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: 10px !important;
+  }
+  .group {
+    display: flex;
+    flex-wrap: nowrap !important;
+    gap: .5rem !important;
+  }
+</style>
+
     <form action="<?= site_url('eye-examinations/save') ?>" method="post" novalidate>
       <?= csrf_field() ?>
       <input type="hidden" name="id" value="<?= isset($eyeExamination) ? htmlspecialchars($eyeExamination['eye_examination_id']) : '' ?>">
@@ -31,17 +74,24 @@
       <div class="row">
         <!-- Customer Selection -->
         <div class="col-12 mb-3">
-          <label for="customer_id" class="form-label">Customer <span class="text-danger">*</span></label>
-          <select class="form-control" name="customer_id" id="customer_id" required>
-            <option value="" disabled <?= !isset($eyeExamination) ? 'selected' : '' ?>>-- Select a customer --</option>
-            <?php foreach ($customers as $customer): ?>
-              <option value="<?= htmlspecialchars($customer['customer_id']); ?>"
-                <?= (old('customer_id', $eyeExamination['customer_id'] ?? '') == $customer['customer_id']) ? 'selected' : '' ?>>
-                <?= htmlspecialchars($customer['customer_name']); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-          <small class="form-text text-muted d-block mt-1">Select the customer for this eye examination</small>
+          <label for="customerSelect" class="form-label">Customer <span class="text-danger">*</span></label>
+          <div class="d-flex gap-2">
+            <div class="flex-grow-1">
+              <select class="form-select" name="customer_id" id="customerSelect" required>
+                <option value="" disabled <?= !isset($eyeExamination) ? 'selected' : '' ?>>-- Select a customer --</option>
+                <?php foreach ($customers as $customer): ?>
+                  <option value="<?= htmlspecialchars($customer['customer_id']); ?>"
+                    <?= (old('customer_id', $eyeExamination['customer_id'] ?? '') == $customer['customer_id']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($customer['customer_name']); ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <div class="invalid-feedback">Please select a customer.</div>
+            </div>
+            <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 40px;">
+              <i class="fa fa-plus"></i> Tambah
+            </a>
+          </div>
         </div>
 
         <!-- Left Eye Section -->
@@ -129,7 +179,14 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  $(document).ready(function() {
+    // Initialize Select2 on customer dropdown
+    $('#customerSelect').select2({
+      theme: 'bootstrap-5',
+      placeholder: '-- Select a customer --',
+      width: '100%'
+    });
+
     const form = document.querySelector('form');
     form.addEventListener('submit', function(e) {
       if (!form.checkValidity()) {

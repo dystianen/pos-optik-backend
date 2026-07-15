@@ -3,7 +3,7 @@
 <div class="container-fluid card">
     <div class="card-header mb-4 pb-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
     <h4>Eye Examinations List</h4>
-    <a href="<?= base_url('/eye-examinations/create') ?>"
+    <a href="<?= base_url('/eye-examinations/form') ?>"
       class="btn btn-primary btn-sm mb-0">
       <i class="fas fa-plus"></i> Add Examination
     </a>

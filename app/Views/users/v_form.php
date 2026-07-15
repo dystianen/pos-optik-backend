@@ -38,6 +38,7 @@
           placeholder="e.g., John Doe"
           value="<?= old('user_name', isset($user) ? esc($user['user_name']) : '') ?>"
           required>
+        <div class="invalid-feedback">Please enter the full name.</div>
         <small class="form-text text-muted d-block mt-1">Enter the user's full name (max 100 characters)</small>
       </div>
 
@@ -52,6 +53,7 @@
           placeholder="user@example.com"
           value="<?= old('user_email', isset($user) ? esc($user['user_email']) : '') ?>"
           required>
+        <div class="invalid-feedback">Please enter a valid email address.</div>
         <small class="form-text text-muted d-block mt-1">Use a valid email address for user account</small>
       </div>
 
@@ -65,6 +67,7 @@
           class="form-control"
           placeholder="<?= isset($user) ? 'Leave blank to keep current password' : 'Enter a strong password' ?>"
           <?= !isset($user) ? 'required' : '' ?>>
+        <div class="invalid-feedback">Please enter a password.</div>
         <small class="form-text text-muted d-block mt-1">
           <?= isset($user) ? 'Leave blank to keep the current password' : 'Password is required for new accounts' ?>
         </small>
@@ -82,6 +85,7 @@
             </option>
           <?php endforeach; ?>
         </select>
+        <div class="invalid-feedback">Please select a role.</div>
         <small class="form-text text-muted d-block mt-1">Select the user's role/permission level</small>
       </div>
 
