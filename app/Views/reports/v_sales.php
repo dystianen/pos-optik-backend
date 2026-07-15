@@ -39,7 +39,7 @@
     <div class="card-body">
       <!-- Form Filters -->
       <form action="<?= base_url('/reports/sales') ?>" method="get" class="row g-3 align-items-end">
-        <div class="col-lg-2 col-md-4 col-12">
+        <div class="col-lg-3 col-md-4 col-12">
           <label class="form-label font-weight-bold text-xs text-uppercase">Sales Category</label>
           <select name="category" class="form-select form-select-sm" style="border-radius: 8px;">
             <option value="all" <?= $category === 'all' ? 'selected' : '' ?>>All Sales</option>
@@ -55,11 +55,11 @@
             <!-- Will be populated dynamically via JavaScript -->
           </select>
         </div>
-        <div class="col-lg-3 col-md-4 col-6">
+        <div class="col-lg-2 col-md-4 col-6">
           <label class="form-label font-weight-bold text-xs text-uppercase">From Date</label>
           <input type="date" name="start_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($startDate) ?>">
         </div>
-        <div class="col-lg-3 col-md-6 col-6">
+        <div class="col-lg-2 col-md-4 col-6">
           <label class="form-label font-weight-bold text-xs text-uppercase">To Date</label>
           <input type="date" name="end_date" class="form-control form-control-sm" style="border-radius: 8px;" value="<?= esc($endDate) ?>">
         </div>
@@ -84,7 +84,7 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Net Income (Completed)</p>
+                <p class="text-xs mb-0 text-uppercase font-weight-bold text-muted">Net Income</p>
                 <h4 class="font-weight-bolder mb-0 mt-1 text-success" style="font-size: 18px;">
                   Rp <?= number_format($summary['completed_revenue'], 0, ',', '.') ?>
                 </h4>
