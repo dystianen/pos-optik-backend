@@ -1,6 +1,49 @@
 <?= $this->extend('layouts/l_dashboard') ?>
 <?= $this->section('content') ?>
 
+<!-- Select2 CSS & Theme -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+  /* Styling to integrate Select2 with Argon Dashboard & Bootstrap 5 nicely */
+  .select2-container--bootstrap-5 {
+    z-index: 1050;
+  }
+  .select2-container--bootstrap-5 .select2-selection {
+    border-color: #d2d6da !important;
+    font-size: 0.875rem !important;
+    border-radius: 0.5rem !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection--single {
+    padding: 0.5rem 0.75rem !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__rendered {
+    color: #495057 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__placeholder {
+    color: #adb5bd !important;
+  }
+  .select2-container--bootstrap-5 .select2-selection__arrow {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: 10px !important;
+  }
+  .group {
+    display: flex;
+    flex-wrap: nowrap !important;
+    gap: .5rem !important;
+  }
+</style>
+
 <div class="container-fluid card">
   <div class="card-header pb-0">
     <h4>Offline Sales</h4>
@@ -19,14 +62,19 @@
       <!-- CUSTOMER -->
       <div class="mb-3">
         <label class="form-label">Customer</label>
-        <select name="customer_id" class="form-select" required>
-          <option value="">-- Pilih Customer --</option>
-          <?php foreach ($customers as $customer): ?>
-            <option value="<?= $customer['customer_id'] ?>">
-              <?= $customer['customer_name'] ?>
-            </option>
-          <?php endforeach ?>
-        </select>
+        <div class="group">
+          <select name="customer_id" id="customerSelect" class="form-select" required>
+            <option value="">-- Pilih Customer --</option>
+            <?php foreach ($customers as $customer): ?>
+              <option value="<?= $customer['customer_id'] ?>">
+                <?= $customer['customer_name'] ?>
+              </option>
+            <?php endforeach ?>
+          </select>
+          <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <i class="fa fa-plus"></i> Tambah
+          </a>
+        </div>
       </div>
 
       <!-- ITEMS -->
@@ -201,6 +249,15 @@
 
 <script>
   let index = 1;
+
+  $(document).ready(function() {
+    // Initialize Select2 on customer dropdown
+    $('#customerSelect').select2({
+      theme: 'bootstrap-5',
+      placeholder: '-- Pilih Customer --',
+      width: '100%'
+    });
+  });
 
   function loadVariants(productId, row) {
     const variantSelect = row.querySelector('.variant-select');
