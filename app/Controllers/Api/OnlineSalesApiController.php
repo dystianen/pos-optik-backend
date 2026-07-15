@@ -277,7 +277,9 @@ class OnlineSalesApiController extends BaseApiController
             log_message('debug', 'SUMMARY: ' . json_encode($summary));
 
             // ======================
-            // VALIDASI & KURANGI STOK (PREVENT OVERSELLING)
+            // VALIDASI STOK (PREVENT OVERSELLING)
+            // Stok hanya divalidasi di sini, TIDAK dipotong.
+            // Pemotongan stok dilakukan 1x saja saat payment approved.
             // ======================
             foreach ($summary['items'] as $item) {
                 $productId = $item['product_id'];
@@ -293,23 +295,6 @@ class OnlineSalesApiController extends BaseApiController
                     if (!$variant || (int)$variant['stock'] < $qty) {
                         throw new \Exception('Stok produk tidak mencukupi');
                     }
-
-                    // Potong stok variant
-                    $this->productVariantModel
-                        ->where('variant_id', $variantId)
-                        ->set('stock', 'stock - ' . $qty, false)
-                        ->update();
-
-                    // Sinkronisasi ke total stok produk
-                    $db->query("
-                        UPDATE products p
-                        SET p.product_stock = (
-                            SELECT COALESCE(SUM(pv.stock), 0)
-                            FROM product_variants pv
-                            WHERE pv.product_id = p.product_id
-                        )
-                        WHERE p.product_id = ?
-                    ", [$productId]);
                 } else {
                     $product = $db->query(
                         "SELECT product_stock FROM products WHERE product_id = ? FOR UPDATE",
@@ -319,12 +304,6 @@ class OnlineSalesApiController extends BaseApiController
                     if (!$product || (int)$product['product_stock'] < $qty) {
                         throw new \Exception('Stok produk tidak mencukupi');
                     }
-
-                    // Potong stok produk
-                    $this->productModel
-                        ->where('product_id', $productId)
-                        ->set('product_stock', 'product_stock - ' . $qty, false)
-                        ->update();
                 }
             }
 
@@ -1178,9 +1157,9 @@ class OnlineSalesApiController extends BaseApiController
                     ", [$item['product_id']]);
 
                     // ✅ Cek stok variant, buat notifikasi jika kurang dari 5
-                    $product = $this->productVariantModel->find($item['product_id']);
+                    $product = $this->productModel->find($item['product_id']); // Ambil dari productModel bukan productVariantModel
                     $variant = $this->productVariantModel->find($item['variant_id']);
-                    if ($variant['stock'] < 5) {
+                    if ($variant && (int)$variant['stock'] < 5) {
                         $this->notificationModel->addNotification(
                             'low_stock',
                             "Stok barang '{$product['product_name']} ({$variant['variant_name']})' tinggal {$variant['stock']}",

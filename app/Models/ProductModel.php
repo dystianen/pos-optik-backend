@@ -27,6 +27,7 @@ class ProductModel extends Model
         'product_sku',
         'product_price',
         'product_stock',
+        'has_variants',
         'product_brand',
         'description',
         'created_at',

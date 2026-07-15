@@ -60,6 +60,19 @@ class CartApiController extends BaseApiController
                 return $this->notFoundResponse('Product not found');
             }
 
+            // Check if product requires variant selection
+            $hasVariants = isset($product['has_variants']) ? (int)$product['has_variants'] : 0;
+            if ($hasVariants === 1 && !$variantId) {
+                return $this->validationErrorResponse([
+                    'variant_id' => 'Please select a variant for this product'
+                ]);
+            }
+            if ($hasVariants === 0 && $variantId) {
+                return $this->validationErrorResponse([
+                    'variant_id' => 'This product does not have variants'
+                ]);
+            }
+
             // 🧮 Price & stock
             if ($variantId) {
                 $variant = $db->table('product_variants')

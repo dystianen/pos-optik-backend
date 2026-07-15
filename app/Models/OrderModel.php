@@ -63,10 +63,11 @@ class OrderModel extends Model
     {
         return $this->db->table('order_items')
             ->select('
-            products.product_name,
-            order_items.quantity AS qty,
-            order_items.price
-        ')
+                products.product_sku,
+                products.product_name,
+                order_items.quantity AS qty,
+                order_items.price
+            ')
             ->join('products', 'products.product_id = order_items.product_id')
             ->where('order_items.order_id', $orderId)
             ->get()
@@ -87,7 +88,7 @@ class OrderModel extends Model
     /**
      * Restore order items stock back to products and product_variants
      */
-    public function restoreStock(string $orderId, string $reason, string $userId = null)
+    public function restoreStock(string $orderId, string $reason, ?string $userId = null)
     {
         $items = $this->db->table('order_items')
             ->where('order_id', $orderId)

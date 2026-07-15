@@ -19,6 +19,7 @@ class OfflineSalesController extends BaseController
     protected $paymentMethodModel;
     protected $notificationModel;
     protected $statusModel;
+    protected $inventoryTransactionModel;
     protected $db;
     protected $r2;
 
@@ -34,6 +35,7 @@ class OfflineSalesController extends BaseController
         $this->paymentMethodModel   = new PaymentMethodModel();
         $this->notificationModel    = new \App\Models\NotificationModel();
         $this->statusModel          = new \App\Models\OrderStatusModel();
+        $this->inventoryTransactionModel = new \App\Models\InventoryTransactionModel();
         $this->db                   = \Config\Database::connect();
         $this->r2                   = new \App\Libraries\R2Storage();
     }
@@ -295,6 +297,25 @@ class OfflineSalesController extends BaseController
                 $variantId = !empty($item['variant_id']) ? $item['variant_id'] : null;
                 $qty       = (int) $item['qty'];
 
+                // Load product record for has_variants check
+                $productRecord = $db->table('products')
+                    ->select('has_variants, product_name')
+                    ->where('product_id', $productId)
+                    ->get()
+                    ->getRowArray();
+
+                if (!$productRecord) {
+                    throw new \Exception('Produk tidak ditemukan');
+                }
+
+                $hasVariants = (int)($productRecord['has_variants'] ?? 0);
+                if ($hasVariants === 1 && !$variantId) {
+                    throw new \Exception('Produk "' . $productRecord['product_name'] . '" bervariant, wajib memilih variant');
+                }
+                if ($hasVariants === 0 && $variantId) {
+                    throw new \Exception('Produk "' . $productRecord['product_name'] . '" tidak memiliki variant');
+                }
+
                 if ($variantId) {
                     $variant = $db->query(
                         'SELECT stock FROM product_variants WHERE variant_id = ? FOR UPDATE',
@@ -314,10 +335,6 @@ class OfflineSalesController extends BaseController
                         'SELECT product_stock FROM products WHERE product_id = ? FOR UPDATE',
                         [$productId]
                     )->getRowArray();
-
-                    if (!$product) {
-                        throw new \Exception('Produk tidak ditemukan');
-                    }
 
                     if ($product['product_stock'] < $qty) {
                         throw new \Exception('Stok produk tidak mencukupi');
@@ -364,26 +381,44 @@ class OfflineSalesController extends BaseController
                 $orderItemId = $this->orderItemModel->getInsertID();
 
                 // ======================
-                // KURANGI STOK
+                // KURANGI STOK (gunakan $db langsung supaya satu transaksi)
                 // ======================
                 if ($variantId) {
-                    $this->productVariantModel
+                    $db->table('product_variants')
                         ->where('variant_id', $variantId)
                         ->set('stock', 'stock - ' . $qty, false)
                         ->update();
 
+                    // Sync aggregate product_stock
                     $db->query("
                         UPDATE products p
                         SET p.product_stock = (
                             SELECT COALESCE(SUM(pv.stock), 0)
                             FROM product_variants pv
                             WHERE pv.product_id = p.product_id
+                              AND pv.deleted_at IS NULL
                         )
                         WHERE p.product_id = ?
                     ", [$productId]);
 
+                    // 📦 LOG INVENTORY TRANSACTION (OUT)
+                    $db->table('inventory_transactions')->insert([
+                        'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                        'product_id'       => $productId,
+                        'variant_id'       => $variantId,
+                        'transaction_type' => 'out',
+                        'reference_type'   => 'order',
+                        'reference_id'     => $orderId,
+                        'quantity'         => $qty,
+                        'transaction_date' => date('Y-m-d H:i:s'),
+                        'description'      => 'Offline sale — order #' . $orderId,
+                        'user_id'          => session()->get('id'),
+                        'created_at'       => date('Y-m-d H:i:s'),
+                        'updated_at'       => date('Y-m-d H:i:s'),
+                    ]);
+
                     // 🔍 CEK STOK TERBARU
-                    $updatedVariant = $this->productVariantModel
+                    $updatedVariant = $db->table('product_variants')
                         ->select('stock, variant_name')
                         ->where('variant_id', $variantId)
                         ->get()
@@ -398,13 +433,29 @@ class OfflineSalesController extends BaseController
                         );
                     }
                 } else {
-                    $this->productModel
+                    $db->table('products')
                         ->where('product_id', $productId)
                         ->set('product_stock', 'product_stock - ' . $qty, false)
                         ->update();
 
+                    // 📦 LOG INVENTORY TRANSACTION (OUT)
+                    $db->table('inventory_transactions')->insert([
+                        'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                        'product_id'       => $productId,
+                        'variant_id'       => null,
+                        'transaction_type' => 'out',
+                        'reference_type'   => 'order',
+                        'reference_id'     => $orderId,
+                        'quantity'         => $qty,
+                        'transaction_date' => date('Y-m-d H:i:s'),
+                        'description'      => 'Offline sale — order #' . $orderId,
+                        'user_id'          => session()->get('id'),
+                        'created_at'       => date('Y-m-d H:i:s'),
+                        'updated_at'       => date('Y-m-d H:i:s'),
+                    ]);
+
                     // 🔍 CEK STOK TERBARU
-                    $updatedProduct = $this->productModel
+                    $updatedProduct = $db->table('products')
                         ->select('product_stock, product_name')
                         ->where('product_id', $productId)
                         ->get()
@@ -419,6 +470,7 @@ class OfflineSalesController extends BaseController
                         );
                     }
                 }
+
 
                 // ======================
                 // PRESCRIPTION PER ITEM (FIX)

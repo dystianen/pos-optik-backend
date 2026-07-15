@@ -113,6 +113,7 @@ function badgeStatus($status)
         <thead class="thead-light">
           <tr>
             <th>#</th>
+            <th>SKU</th>
             <th>Product</th>
             <th class="text-center">Qty</th>
             <th class="text-end">Price</th>
@@ -124,6 +125,7 @@ function badgeStatus($status)
           foreach ($items as $item): ?>
             <tr>
               <td><?= $no++ ?></td>
+              <td><?= esc($item['product_sku']) ?></td>
               <td><?= esc($item['product_name']) ?></td>
               <td class="text-center"><?= $item['qty'] ?></td>
               <td class="text-end">Rp <?= number_format($item['price']) ?></td>

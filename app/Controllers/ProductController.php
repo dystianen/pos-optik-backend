@@ -718,6 +718,18 @@ class ProductController extends BaseController
                 }
             }
 
+            // -------------------------------------------------
+            // SYNC has_variants FLAG
+            // -------------------------------------------------
+            $activeVariantCount = $this->variantModel
+                ->where('product_id', $productId)
+                ->where('deleted_at', null)
+                ->countAllResults();
+
+            $this->productModel->update($productId, [
+                'has_variants' => $activeVariantCount > 0 ? 1 : 0,
+            ]);
+
             // =================================================
             // COMMIT
             // =================================================

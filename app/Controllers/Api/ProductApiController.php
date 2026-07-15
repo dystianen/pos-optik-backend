@@ -69,6 +69,27 @@ class ProductApiController extends BaseApiController
 
         $rows = $builder->get()->getResultArray();
 
+        // Ambil range harga & sold untuk semua produk hasil pencarian
+        $productIds = array_column($rows, 'product_id');
+        if (!empty($productIds)) {
+            // Kita compile dummy array matching $rows structure untuk reuse helper
+            $dummyProducts = array_map(fn($r) => [
+                'product_id' => $r['product_id'],
+                'product_price' => $r['product_price'],
+                'has_variants' => $this->productModel->find($r['product_id'])['has_variants'] ?? 0 // fallback fetch
+            ], $rows);
+            $this->addPriceRangesAndSold($dummyProducts, $productIds);
+            
+            // Map kembali ke $rows
+            foreach ($rows as $index => &$row) {
+                $row['has_variants'] = $dummyProducts[$index]['has_variants'];
+                $row['min_price'] = $dummyProducts[$index]['min_price'];
+                $row['max_price'] = $dummyProducts[$index]['max_price'];
+                $row['total_sold'] = $dummyProducts[$index]['total_sold'];
+            }
+            unset($row);
+        }
+
         // Grouping hasil per category
         $grouped = [];
 
@@ -88,7 +109,11 @@ class ProductApiController extends BaseApiController
                 'product_name'      => $row['product_name'],
                 'product_price'     => $row['product_price'],
                 'product_brand'     => $row['product_brand'],
-                'product_image_url' => $row['product_image_url']
+                'product_image_url' => $row['product_image_url'],
+                'has_variants'      => $row['has_variants'],
+                'min_price'         => $row['min_price'],
+                'max_price'         => $row['max_price'],
+                'total_sold'        => $row['total_sold']
             ];
         }
 
@@ -166,27 +191,8 @@ class ProductApiController extends BaseApiController
             return $this->errorResponse('No products found');
         }
 
-        // Ambil ID produk yang ditarik untuk query aggregate total_sold yang lebih efisien
         $productIds = array_column($products, 'product_id');
-
-        $soldQuery = $this->db->table('order_items oi')
-            ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
-            ->join('orders o', 'o.order_id = oi.order_id')
-            ->whereIn('oi.product_id', $productIds)
-            ->where('o.status_id', $this->statusModel->getIdByCode(OrderStatus::COMPLETED))
-            ->groupBy('oi.product_id')
-            ->get()
-            ->getResultArray();
-
-        $soldMap = [];
-        foreach ($soldQuery as $row) {
-            $soldMap[$row['product_id']] = (int) $row['total_sold'];
-        }
-
-        foreach ($products as &$product) {
-            $product['total_sold'] = $soldMap[$product['product_id']] ?? 0;
-        }
-        unset($product);
+        $this->addPriceRangesAndSold($products, $productIds);
 
         return $this->successResponse($products);
     }
@@ -206,6 +212,7 @@ class ProductApiController extends BaseApiController
             p.product_name,
             p.product_price,
             p.product_stock,
+            p.has_variants,
             p.product_brand,
             pi.url AS product_image_url,
             IF(w.wishlist_id IS NULL, 0, 1) AS is_wishlist
@@ -250,27 +257,8 @@ class ProductApiController extends BaseApiController
             return $this->successResponse($products);
         }
 
-        // Ambil ID produk yang ditarik untuk query aggregate total_sold yang lebih efisien
         $productIds = array_column($products, 'product_id');
-
-        $soldQuery = $this->db->table('order_items oi')
-            ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
-            ->join('orders o', 'o.order_id = oi.order_id')
-            ->whereIn('oi.product_id', $productIds)
-            ->where('o.status_id', $this->statusModel->getIdByCode(OrderStatus::COMPLETED))
-            ->groupBy('oi.product_id')
-            ->get()
-            ->getResultArray();
-
-        $soldMap = [];
-        foreach ($soldQuery as $row) {
-            $soldMap[$row['product_id']] = (int) $row['total_sold'];
-        }
-
-        foreach ($products as &$product) {
-            $product['total_sold'] = $soldMap[$product['product_id']] ?? 0;
-        }
-        unset($product);
+        $this->addPriceRangesAndSold($products, $productIds);
 
         return $this->successResponse($products);
     }
@@ -320,6 +308,7 @@ class ProductApiController extends BaseApiController
             p.product_name,
             p.product_price,
             p.product_stock,
+            p.has_variants,
             p.product_brand,
             pi.url AS product_image_url,
             IF(w.wishlist_id IS NULL, 0, 1) AS is_wishlist
@@ -347,24 +336,28 @@ class ProductApiController extends BaseApiController
             );
         }
 
-        $pBuilder->whereIn('p.product_id', $productIds);
-        $productsData = $pBuilder->get()->getResultArray();
+        if (!empty($productIds)) {
+            $pBuilder->whereIn('p.product_id', $productIds);
+            $productsData = $pBuilder->get()->getResultArray();
 
-        // Index the fetched products by product_id
-        $productsById = [];
-        foreach ($productsData as $pd) {
-            $productsById[$pd['product_id']] = $pd;
-        }
+            $this->addPriceRangesAndSold($productsData, $productIds);
 
-        // Map data keeping the correct DESC numerical sort order
-        $bestSeller = [];
-        foreach ($bestSellersRaw as $bs) {
-            $pid = $bs['product_id'];
-            if (isset($productsById[$pid])) {
-                $item = $productsById[$pid];
-                $item['total_sold'] = $totalsMap[$pid];
-                $bestSeller[] = $item;
+            // Index the fetched products by product_id
+            $productsById = [];
+            foreach ($productsData as $pd) {
+                $productsById[$pd['product_id']] = $pd;
             }
+
+            // Map data keeping the correct DESC numerical sort order
+            $bestSeller = [];
+            foreach ($bestSellersRaw as $bs) {
+                $pid = $bs['product_id'];
+                if (isset($productsById[$pid])) {
+                    $bestSeller[] = $productsById[$pid];
+                }
+            }
+        } else {
+            $bestSeller = [];
         }
 
         return $this->successResponse($bestSeller);
@@ -637,6 +630,7 @@ class ProductApiController extends BaseApiController
                 p.product_brand,
                 p.product_price,
                 p.product_stock,
+                p.has_variants,
                 pi.url AS product_image_url
             ')
             ->join(
@@ -648,6 +642,8 @@ class ProductApiController extends BaseApiController
             ->get()
             ->getResultArray();
 
+        $this->addPriceRangesAndSold($products, $bsIds);
+
         $byId = [];
         foreach ($products as $p) {
             $byId[$p['product_id']] = $p;
@@ -658,7 +654,6 @@ class ProductApiController extends BaseApiController
             $pid = $bs['product_id'];
             if (isset($byId[$pid])) {
                 $item               = $byId[$pid];
-                $item['total_sold'] = (int) $bsTotals[$pid];
                 $item['score']      = 0;
                 $result[]           = $item;
             }
@@ -683,6 +678,7 @@ class ProductApiController extends BaseApiController
                 products.description,
                 products.product_price,
                 products.product_stock,
+                products.has_variants,
                 pc.is_prescription_supported,
                 pc.category_name
             ')
@@ -693,6 +689,32 @@ class ProductApiController extends BaseApiController
         if (!$product) {
             return $this->errorResponse('Product not found');
         }
+
+        $product['has_variants'] = (int)$product['has_variants'];
+        if ($product['has_variants'] === 1) {
+            $prices = $this->db->table('product_variants')
+                ->select('MIN(price) as min_price, MAX(price) as max_price')
+                ->where('product_id', $product['product_id'])
+                ->where('deleted_at', null)
+                ->get()
+                ->getRowArray();
+            $product['min_price'] = $prices['min_price'] !== null ? (float)$prices['min_price'] : (float)$product['product_price'];
+            $product['max_price'] = $prices['max_price'] !== null ? (float)$prices['max_price'] : (float)$product['product_price'];
+        } else {
+            $product['min_price'] = (float)$product['product_price'];
+            $product['max_price'] = (float)$product['product_price'];
+        }
+        
+        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+        $totalSold = $this->db->table('order_items oi')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->where('oi.product_id', $product['product_id'])
+            ->where('o.status_id', $completedStatusId)
+            ->selectSum('oi.quantity', 'total')
+            ->get()
+            ->getRowArray()['total'] ?? 0;
+            
+        $product['total_sold'] = (int)$totalSold;
 
         /**
          * ======================
@@ -807,5 +829,66 @@ class ProductApiController extends BaseApiController
         }
 
         return $this->successResponse(array_values($attributes));
+    }
+
+    private function addPriceRangesAndSold(array &$products, array $productIds)
+    {
+        if (empty($products) || empty($productIds)) {
+            return;
+        }
+
+        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+        $soldQuery = $this->db->table('order_items oi')
+            ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
+            ->join('orders o', 'o.order_id = oi.order_id')
+            ->whereIn('oi.product_id', $productIds)
+            ->where('o.status_id', $completedStatusId)
+            ->groupBy('oi.product_id')
+            ->get()
+            ->getResultArray();
+
+        $soldMap = [];
+        foreach ($soldQuery as $row) {
+            $soldMap[$row['product_id']] = (int) $row['total_sold'];
+        }
+
+        $priceRanges = [];
+        $variableProductIds = [];
+        foreach ($products as $p) {
+            if (isset($p['has_variants']) && (int)$p['has_variants'] === 1) {
+                $variableProductIds[] = $p['product_id'];
+            }
+        }
+
+        if (!empty($variableProductIds)) {
+            $rangeQuery = $this->db->table('product_variants')
+                ->select('product_id, MIN(price) as min_price, MAX(price) as max_price')
+                ->whereIn('product_id', $variableProductIds)
+                ->where('deleted_at', null)
+                ->groupBy('product_id')
+                ->get()
+                ->getResultArray();
+
+            foreach ($rangeQuery as $row) {
+                $priceRanges[$row['product_id']] = [
+                    'min_price' => (float)$row['min_price'],
+                    'max_price' => (float)$row['max_price']
+                ];
+            }
+        }
+
+        foreach ($products as &$product) {
+            $pid = $product['product_id'];
+            $product['total_sold'] = $soldMap[$pid] ?? 0;
+            $product['has_variants'] = isset($product['has_variants']) ? (int)$product['has_variants'] : 0;
+            
+            if (isset($priceRanges[$pid])) {
+                $product['min_price'] = $priceRanges[$pid]['min_price'];
+                $product['max_price'] = $priceRanges[$pid]['max_price'];
+            } else {
+                $product['min_price'] = (float)$product['product_price'];
+                $product['max_price'] = (float)$product['product_price'];
+            }
+        }
     }
 }
