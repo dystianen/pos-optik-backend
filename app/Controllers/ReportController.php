@@ -23,10 +23,11 @@ class ReportController extends BaseController
     public function index()
     {
         $category  = $this->request->getVar('category') ?? 'all';
+        $status    = $this->request->getVar('status') ?? 'all';
         $startDate = $this->request->getVar('start_date') ?? date('Y-m-01');
         $endDate   = $this->request->getVar('end_date') ?? date('Y-m-d');
 
-        $allOrders = $this->getFilteredOrders($category, $startDate, $endDate);
+        $allOrders = $this->getFilteredOrders($category, $startDate, $endDate, $status);
         $summary = $this->calculateSummary($allOrders, $category);
 
         $currentPage = $this->request->getVar('page') ? max(1, (int)$this->request->getVar('page')) : 1;
@@ -40,6 +41,7 @@ class ReportController extends BaseController
         return view('reports/v_sales', [
             'orders'    => $orders,
             'category'  => $category,
+            'status'    => $status,
             'startDate' => $startDate,
             'endDate'   => $endDate,
             'summary'   => $summary,
@@ -54,11 +56,12 @@ class ReportController extends BaseController
     public function export()
     {
         $category  = $this->request->getVar('category') ?? 'all';
+        $status    = $this->request->getVar('status') ?? 'all';
         $startDate = $this->request->getVar('start_date') ?? date('Y-m-01');
         $endDate   = $this->request->getVar('end_date') ?? date('Y-m-d');
         $format    = $this->request->getVar('format') ?? 'excel';
 
-        $orders  = $this->getFilteredOrders($category, $startDate, $endDate);
+        $orders  = $this->getFilteredOrders($category, $startDate, $endDate, $status);
         $summary = $this->calculateSummary($orders, $category);
 
         $categoryText = $this->getCategoryText($category);
@@ -307,7 +310,7 @@ class ReportController extends BaseController
         };
     }
 
-    private function getFilteredOrders($category, $startDate, $endDate)
+    private function getFilteredOrders($category, $startDate, $endDate, $status = 'all')
     {
         if ($category === 'refund') {
             $refundModel = new \App\Models\OrderRefundModel();
@@ -320,6 +323,7 @@ class ReportController extends BaseController
                     customers.customer_name,
                     customers.customer_email,
                     order_refunds.status as status_name,
+                    order_refunds.status as status_code,
                     COUNT(order_items.order_item_id) as total_items
                 ')
                 ->join('orders', 'orders.order_id = order_refunds.order_id', 'left')
@@ -327,6 +331,10 @@ class ReportController extends BaseController
                 ->join('order_items', 'order_items.order_id = orders.order_id', 'left')
                 ->groupBy('order_refunds.order_refund_id')
                 ->orderBy('order_refunds.created_at', 'DESC');
+
+            if ($status !== 'all') {
+                $builder->where('order_refunds.status', $status);
+            }
         } elseif ($category === 'cancellation') {
             $cancelModel = new \App\Models\OrderCancellationModel();
             $builder = $cancelModel
@@ -338,6 +346,7 @@ class ReportController extends BaseController
                     customers.customer_name,
                     customers.customer_email,
                     order_cancellations.status as status_name,
+                    order_cancellations.status as status_code,
                     COUNT(order_items.order_item_id) as total_items
                 ')
                 ->join('orders', 'orders.order_id = order_cancellations.order_id', 'left')
@@ -345,6 +354,10 @@ class ReportController extends BaseController
                 ->join('order_items', 'order_items.order_id = orders.order_id', 'left')
                 ->groupBy('order_cancellations.order_cancellation_id')
                 ->orderBy('order_cancellations.created_at', 'DESC');
+
+            if ($status !== 'all') {
+                $builder->where('order_cancellations.status', $status);
+            }
         } else {
             $builder = $this->orderModel
                 ->select('
@@ -355,6 +368,7 @@ class ReportController extends BaseController
                     customers.customer_name,
                     customers.customer_email,
                     order_statuses.status_name,
+                    order_statuses.status_code,
                     COUNT(order_items.order_item_id) as total_items
                 ')
                 ->join('customers', 'customers.customer_id = orders.customer_id', 'left')
@@ -367,6 +381,10 @@ class ReportController extends BaseController
                 $builder->where('orders.order_type', 'online');
             } elseif ($category === 'offline') {
                 $builder->where('orders.order_type', 'offline');
+            }
+
+            if ($status !== 'all') {
+                $builder->where('order_statuses.status_code', $status);
             }
         }
 
@@ -399,9 +417,53 @@ class ReportController extends BaseController
         $totalRevenue      = 0;
         $totalItems        = 0;
 
+        $completedRevenue = 0;
+        $completedCount   = 0;
+        $completedItems   = 0;
+
+        $cancelledRevenue = 0;
+        $cancelledCount   = 0;
+        $cancelledItems   = 0;
+
+        $refundedRevenue  = 0;
+        $refundedCount    = 0;
+        $refundedItems    = 0;
+
+        $pendingRevenue   = 0;
+        $pendingCount     = 0;
+        $pendingItems     = 0;
+
         foreach ($orders as $order) {
-            $totalRevenue += (float) $order['grand_total'];
-            $totalItems   += (int) $order['total_items'];
+            $grandTotal = (float) $order['grand_total'];
+            $itemsCount = (int) $order['total_items'];
+            $statusCode = strtolower($order['status_code'] ?? '');
+            $orderType  = strtolower($order['order_type'] ?? '');
+
+            if ($category === 'cancellation' || $orderType === 'cancellation' || $statusCode === 'cancelled') {
+                $cancelledRevenue += $grandTotal;
+                $cancelledCount++;
+                $cancelledItems += $itemsCount;
+            } elseif ($category === 'refund' || $orderType === 'refund' || $statusCode === 'refunded' || $statusCode === 'partially_refunded' || $statusCode === 'approved') {
+                $refundedRevenue += $grandTotal;
+                $refundedCount++;
+                $refundedItems += $itemsCount;
+            } elseif (in_array($statusCode, ['completed', 'processing', 'shipped'])) {
+                $completedRevenue += $grandTotal;
+                $completedCount++;
+                $completedItems += $itemsCount;
+            } elseif (in_array($statusCode, ['pending', 'waiting_confirmation', 'requested', 'return_approved', 'return_shipped', 'return_received'])) {
+                $pendingRevenue += $grandTotal;
+                $pendingCount++;
+                $pendingItems += $itemsCount;
+            } else {
+                // treat expired or rejected as cancelled/void
+                $cancelledRevenue += $grandTotal;
+                $cancelledCount++;
+                $cancelledItems += $itemsCount;
+            }
+
+            $totalRevenue += $grandTotal;
+            $totalItems   += $itemsCount;
         }
 
         $averageOrderValue = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
@@ -411,6 +473,22 @@ class ReportController extends BaseController
             'total_revenue'      => $totalRevenue,
             'total_items'        => $totalItems,
             'average_value'      => $averageOrderValue,
+
+            'completed_revenue'  => $completedRevenue,
+            'completed_count'    => $completedCount,
+            'completed_items'    => $completedItems,
+
+            'cancelled_revenue'  => $cancelledRevenue,
+            'cancelled_count'    => $cancelledCount,
+            'cancelled_items'    => $cancelledItems,
+
+            'refunded_revenue'   => $refundedRevenue,
+            'refunded_count'     => $refundedCount,
+            'refunded_items'     => $refundedItems,
+
+            'pending_revenue'    => $pendingRevenue,
+            'pending_count'      => $pendingCount,
+            'pending_items'      => $pendingItems,
         ];
     }
 
@@ -482,9 +560,13 @@ class ReportController extends BaseController
         $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
 
         $writer->addRow(WriterEntityFactory::createRowFromArray(['Summary Metrics', 'Value'], $subHeaderStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Returns' : ($category === 'cancellation' ? 'Total Cancellations' : 'Total Transactions'), number_format($summary['total_transactions'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Refund Amount' : ($category === 'cancellation' ? 'Total Cancelled Amount' : 'Total Revenue'), 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray([$category === 'refund' ? 'Total Refunded Items' : ($category === 'cancellation' ? 'Total Cancelled Items' : 'Total Items Sold'), number_format($summary['total_items'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Net Income (Completed Sales)', 'Rp ' . number_format($summary['completed_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Cancelled Sales', 'Rp ' . number_format($summary['cancelled_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Refunded Sales', 'Rp ' . number_format($summary['refunded_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Pending/Unpaid Sales', 'Rp ' . number_format($summary['pending_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Gross Sales Revenue', 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Transactions Volume', number_format($summary['total_transactions'], 0, ',', '.')]));
+        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Items Sold (Gross)', number_format($summary['total_items'], 0, ',', '.')]));
         $writer->addRow(WriterEntityFactory::createRowFromArray(['Average Transaction Value', 'Rp ' . number_format($summary['average_value'], 0, ',', '.')]));
 
         // 2. TRANSACTION DETAILS SHEET

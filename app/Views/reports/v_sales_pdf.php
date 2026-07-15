@@ -10,11 +10,11 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <title>Laporan Penjualan Optikers</title>
+  <title>Optikers Sales Report</title>
   <style>
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -62,7 +62,7 @@
       background-color: #f8f9fa;
       border: 1px solid #dee2e6;
       border-radius: 6px;
-      padding: 10px;
+      padding: 8px 10px;
       text-align: center;
       width: 23%;
     }
@@ -71,12 +71,12 @@
       font-size: 9px;
       text-transform: uppercase;
       color: #6c757d;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       font-weight: bold;
     }
 
     .summary-card .value {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
       color: #212529;
     }
@@ -177,23 +177,35 @@
   <table style="width: 100%; margin-bottom: 20px;">
     <tr>
       <td class="summary-card">
-        <div class="title"><?= $category === 'refund' ? 'Total Refund' : ($category === 'cancellation' ? 'Total Cancelled' : 'Total Revenue') ?></div>
-        <div class="value" style="color: #2FB8AA;">Rp <?= number_format($summary['total_revenue'], 0, ',', '.') ?></div>
+        <div class="title" style="color: #2dce89;">Net Income (Completed)</div>
+        <div class="value">Rp <?= number_format($summary['completed_revenue'], 0, ',', '.') ?></div>
+        <div style="font-size: 8px; color: #666; margin-top: 3px;">
+          <?= number_format($summary['completed_count'], 0, ',', '.') ?> orders (<?= number_format($summary['completed_items'], 0, ',', '.') ?> items)
+        </div>
       </td>
       <td style="width: 2%;"></td>
       <td class="summary-card">
-        <div class="title"><?= $category === 'refund' ? 'Total Returns' : ($category === 'cancellation' ? 'Total Cancellations' : 'Total Transactions') ?></div>
-        <div class="value" style="color: #2dce89;"><?= number_format($summary['total_transactions'], 0, ',', '.') ?></div>
+        <div class="title" style="color: #f5365c;">Cancelled Sales</div>
+        <div class="value">Rp <?= number_format($summary['cancelled_revenue'], 0, ',', '.') ?></div>
+        <div style="font-size: 8px; color: #666; margin-top: 3px;">
+          <?= number_format($summary['cancelled_count'], 0, ',', '.') ?> orders (<?= number_format($summary['cancelled_items'], 0, ',', '.') ?> items)
+        </div>
       </td>
       <td style="width: 2%;"></td>
       <td class="summary-card">
-        <div class="title"><?= $category === 'refund' ? 'Refunded Items' : ($category === 'cancellation' ? 'Cancelled Items' : 'Items Sold') ?></div>
-        <div class="value" style="color: #11cdef;"><?= number_format($summary['total_items'], 0, ',', '.') ?></div>
+        <div class="title" style="color: #fb6340;">Refunded Sales</div>
+        <div class="value">Rp <?= number_format($summary['refunded_revenue'], 0, ',', '.') ?></div>
+        <div style="font-size: 8px; color: #666; margin-top: 3px;">
+          <?= number_format($summary['refunded_count'], 0, ',', '.') ?> orders (<?= number_format($summary['refunded_items'], 0, ',', '.') ?> items)
+        </div>
       </td>
       <td style="width: 2%;"></td>
       <td class="summary-card">
-        <div class="title">Average Transaction</div>
-        <div class="value" style="color: #fb6340;">Rp <?= number_format($summary['average_value'], 0, ',', '.') ?></div>
+        <div class="title" style="color: #11cdef;">Gross Revenue (Total)</div>
+        <div class="value">Rp <?= number_format($summary['total_revenue'], 0, ',', '.') ?></div>
+        <div style="font-size: 8px; color: #666; margin-top: 3px;">
+          <?= number_format($summary['total_transactions'], 0, ',', '.') ?> orders (<?= number_format($summary['total_items'], 0, ',', '.') ?> items)
+        </div>
       </td>
     </tr>
   </table>
