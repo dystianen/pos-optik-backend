@@ -15,7 +15,7 @@ function badgeStatus($status)
 }
 ?>
 
-<div class="container-fluid card py-3">
+<div class="container-fluid card py-3" id="realtime-detail-container">
   <div class="card mb-4">
     <div class="card-body d-flex justify-content-between align-items-center">
       <div>

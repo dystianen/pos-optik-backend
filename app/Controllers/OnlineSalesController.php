@@ -341,12 +341,31 @@ class OnlineSalesController extends BaseController
             ->get()
             ->getRowArray();
 
+        /**
+         * =========================
+         * ACTIVE REQUESTS CHECK
+         * =========================
+         */
+        $activeCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->get()
+            ->getRowArray();
+
+        $activeRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->get()
+            ->getRowArray();
+
         return view('online_sales/v_detail', [
-            'order'           => $order,
-            'items'           => $items,
-            'payment'         => $payment,
-            'shippingAddress' => $shippingAddress,
-            'refundAccount'   => $refundAccount,
+            'order'              => $order,
+            'items'              => $items,
+            'payment'            => $payment,
+            'shippingAddress'    => $shippingAddress,
+            'refundAccount'      => $refundAccount,
+            'activeCancellation' => $activeCancellation,
+            'activeRefund'       => $activeRefund,
         ]);
     }
 }

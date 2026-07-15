@@ -17,7 +17,27 @@ function badgeStatus($status)
 ?>
 
 
-<div class="container-fluid card py-3">
+<div class="container-fluid card py-3" id="realtime-detail-container">
+  <?php if (!empty($activeCancellation)): ?>
+    <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center mb-4 text-white" role="alert">
+      <i class="fa fa-exclamation-triangle me-3 fs-4"></i>
+      <div>
+        <h6 class="alert-heading mb-1 text-white fw-bold">Active Cancellation Request!</h6>
+        <p class="mb-0 small">The customer has requested to cancel this order. Reason: <strong><?= esc($activeCancellation['reason']) ?></strong>. Please review and process this request in the <a href="<?= base_url('/cancellation-sales/' . $activeCancellation['order_cancellation_id']) ?>" class="text-white fw-bold text-decoration-underline">Cancellation Module</a> first.</p>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (!empty($activeRefund)): ?>
+    <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-4 text-dark" role="alert">
+      <i class="fa fa-exclamation-circle me-3 fs-4"></i>
+      <div>
+        <h6 class="alert-heading mb-1 text-dark fw-bold">Active Refund Request (Status: <?= esc(strtoupper($activeRefund['status'])) ?>)!</h6>
+        <p class="mb-0 small">The customer has requested a refund. Reason: <strong><?= esc($activeRefund['reason']) ?></strong>. Please review and process this request in the <a href="<?= base_url('/refund-sales/' . $activeRefund['order_refund_id']) ?>" class="text-dark fw-bold text-decoration-underline">Refund Module</a> first.</p>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <div class="card mb-4">
     <div class="card-body d-flex justify-content-between align-items-center">
       <div>
@@ -206,13 +226,19 @@ function badgeStatus($status)
           <div class="mb-4">
             <p class="mb-2 fw-semibold">Pending Payment Actions</p>
             <p class="text-muted small">Customer has not uploaded payment proof yet. If they exceed the payment deadline, you can mark this order as Expired to release/restore the inventory stock.</p>
+            <?php if (!empty($activeCancellation) || !empty($activeRefund)): ?>
+              <div class="alert alert-light text-danger mb-2 py-1 px-2 small border-0">
+                <i class="fa fa-lock me-1"></i> Actions locked due to active cancellation/refund request.
+              </div>
+            <?php endif; ?>
             <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/expire') ?>" class="confirm-action">
               <?= csrf_field() ?>
               <button type="submit"
                 class="btn btn-warning text-white"
                 data-confirm="Are you sure you want to cancel this order because the payment period has expired? This will release and restore the inventory stock."
                 data-confirm-btn="Yes, Expire Order"
-                data-confirm-type="warning">
+                data-confirm-type="warning"
+                <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                 <i class="fa fa-clock-o me-2"></i>Mark as Expired (Restore Stock)
               </button>
             </form>
@@ -223,6 +249,11 @@ function badgeStatus($status)
         <?php if (in_array($order['status_code'], ['waiting_confirmation'])): ?>
           <div class="mb-4">
             <p class="mb-2 fw-semibold">Payment Verification</p>
+            <?php if (!empty($activeCancellation) || !empty($activeRefund)): ?>
+              <div class="alert alert-light text-danger mb-2 py-1 px-2 small border-0">
+                <i class="fa fa-lock me-1"></i> Actions locked due to active cancellation/refund request.
+              </div>
+            <?php endif; ?>
             <div class="d-flex gap-2 flex-wrap">
               <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/approve') ?>" class="confirm-action">
                 <?= csrf_field() ?>
@@ -230,7 +261,8 @@ function badgeStatus($status)
                   class="btn btn-success"
                   data-confirm="Approve payment for this order?"
                   data-confirm-btn="Yes, Approve"
-                  data-confirm-type="success">
+                  data-confirm-type="success"
+                  <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                   Approve Payment
                 </button>
               </form>
@@ -241,7 +273,8 @@ function badgeStatus($status)
                   class="btn btn-danger"
                   data-confirm="Reject payment for this order?"
                   data-confirm-btn="Yes, Reject"
-                  data-confirm-type="danger">
+                  data-confirm-type="danger"
+                  <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                   Reject Payment
                 </button>
               </form>
@@ -253,6 +286,11 @@ function badgeStatus($status)
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="mb-3">Shipping Information</h5>
+              <?php if (!empty($activeCancellation) || !empty($activeRefund)): ?>
+                <div class="alert alert-light text-danger mb-2 py-1 px-2 small border-0">
+                  <i class="fa fa-lock me-1"></i> Actions locked due to active cancellation/refund request.
+                </div>
+              <?php endif; ?>
 
               <form method="post" action="<?= base_url('/api/online-sales/' . $order['order_id'] . '/ship') ?>">
                 <?= csrf_field() ?>
@@ -260,7 +298,7 @@ function badgeStatus($status)
                 <div class="row g-3">
                   <div class="col-md-4">
                     <label class="form-label">Courier</label>
-                    <select name="courier" class="form-select" required>
+                    <select name="courier" class="form-select" required <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                       <option value="">-- Select Courier --</option>
                       <option value="JNE">JNE</option>
                       <option value="J&T">J&T</option>
@@ -276,14 +314,16 @@ function badgeStatus($status)
                       name="tracking_number"
                       class="form-control"
                       placeholder="Input resi pengiriman"
-                      required>
+                      required
+                      <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                   </div>
 
                   <div class="col-md-auto align-self-end">
                     <button class="btn btn-primary"
                       data-confirm="Confirm shipment & save tracking number?"
                       data-confirm-btn="Yes, Confirm"
-                      data-confirm-type="question">
+                      data-confirm-type="question"
+                      <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                       Submit Shipment
                     </button>
                   </div>

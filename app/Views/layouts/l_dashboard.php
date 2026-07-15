@@ -735,6 +735,9 @@
 
           // Trigger global table refresh for list views
           refreshRealtimeTable();
+
+          // Trigger global detail refresh for detail views (without full reload!)
+          refreshRealtimeDetail();
         }
       });
 
@@ -771,22 +774,33 @@
           if (oldPagination && newPagination) {
             oldPagination.innerHTML = newPagination.innerHTML;
           }
-
-          // // Optional: Show toast
-          // const Toast = Swal.mixin({
-          //   toast: true,
-          //   position: 'top-end',
-          //   showConfirmButton: false,
-          //   timer: 2000,
-          //   timerProgressBar: true
-          // });
-
-          // Toast.fire({
-          //   icon: 'info',
-          //   title: 'Data updated'
-          // });
         })
         .catch(err => console.error('Refresh table error:', err));
+    }
+
+    /**
+     * Re-fetches the current page via AJAX and replaces the detail container content
+     * This updates warning alerts, locked buttons, and details without full page reload.
+     */
+    function refreshRealtimeDetail() {
+      const container = document.getElementById('realtime-detail-container');
+      if (!container) return;
+
+      console.log('Refreshing detail content...');
+      const currentUrl = window.location.href;
+
+      fetch(currentUrl)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          const newContainer = doc.getElementById('realtime-detail-container');
+          if (newContainer) {
+            container.innerHTML = newContainer.innerHTML;
+          }
+        })
+        .catch(err => console.error('Refresh detail error:', err));
     }
 
     $(document).on('submit', 'form.confirm-delete', function (e) {

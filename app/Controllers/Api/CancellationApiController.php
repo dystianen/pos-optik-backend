@@ -140,6 +140,10 @@ class CancellationApiController extends BaseApiController
             ];
             $this->cancellationModel->insert($data);
 
+            if (class_exists('\App\Libraries\Realtime')) {
+                \App\Libraries\Realtime::triggerUpdate('order-cancelled');
+            }
+
             return $this->messageResponse('Order has been cancelled successfully');
         }
 
@@ -159,6 +163,10 @@ class CancellationApiController extends BaseApiController
 
         // Kirim notifikasi ke admin untuk review
         $this->notificationModel->addNotification('cancel_order', "New cancellation request from {$customerName}", $cancellationId);
+
+        if (class_exists('\App\Libraries\Realtime')) {
+            \App\Libraries\Realtime::triggerUpdate('cancellation-requested');
+        }
 
         $response = [
             'order_id' => $orderId,
@@ -278,6 +286,10 @@ class CancellationApiController extends BaseApiController
             }
         }
 
+        if (class_exists('\App\Libraries\Realtime')) {
+            \App\Libraries\Realtime::triggerUpdate('cancellation-approved');
+        }
+
         return $this->successResponse(['cancellation_id' => $cancellationId, 'status' => 'approved'], 'Cancellation approved');
     }
 
@@ -318,6 +330,10 @@ class CancellationApiController extends BaseApiController
             'processed_by' => $adminId,
             'processed_at' => date('Y-m-d H:i:s'),
         ]);
+
+        if (class_exists('\App\Libraries\Realtime')) {
+            \App\Libraries\Realtime::triggerUpdate('cancellation-rejected');
+        }
 
         return $this->successResponse(['cancellation_id' => $cancellationId, 'status' => 'rejected'], 'Cancellation rejected');
     }

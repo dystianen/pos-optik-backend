@@ -1098,6 +1098,20 @@ class OnlineSalesApiController extends BaseApiController
     // POST /api/online-sales/{id}/approve
     public function approvePayment($orderId)
     {
+        $hasActiveCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->countAllResults() > 0;
+
+        $hasActiveRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->countAllResults() > 0;
+
+        if ($hasActiveCancellation || $hasActiveRefund) {
+            return redirect()->back()->with('error', 'Action blocked: Order has an active cancellation or refund request.');
+        }
+
         $this->db->transBegin();
         $session = session();
 
@@ -1106,7 +1120,7 @@ class OnlineSalesApiController extends BaseApiController
             $order = $this->orderModel->find($orderId);
 
             if (!$order) {
-                $this->errorResponse('Order tidak ditemukan');
+                return redirect()->back()->with('error', 'Order tidak ditemukan');
             }
 
             if ($order['status_id'] === $this->statusModel->getIdByCode(OrderStatus::PROCESSING)) {
@@ -1199,6 +1213,20 @@ class OnlineSalesApiController extends BaseApiController
     // POST /api/online-sales/{id}/reject
     public function rejectPayment($orderId)
     {
+        $hasActiveCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->countAllResults() > 0;
+
+        $hasActiveRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->countAllResults() > 0;
+
+        if ($hasActiveCancellation || $hasActiveRefund) {
+            return redirect()->back()->with('error', 'Action blocked: Order has an active cancellation or refund request.');
+        }
+
         $this->orderModel->update($orderId, [
             'status_id' => $this->statusModel->getIdByCode(OrderStatus::REJECTED)
         ]);
@@ -1212,6 +1240,20 @@ class OnlineSalesApiController extends BaseApiController
     // POST /api/online-sales/{id}/expire
     public function expirePayment($orderId)
     {
+        $hasActiveCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->countAllResults() > 0;
+
+        $hasActiveRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->countAllResults() > 0;
+
+        if ($hasActiveCancellation || $hasActiveRefund) {
+            return redirect()->back()->with('error', 'Action blocked: Order has an active cancellation or refund request.');
+        }
+
         $this->db->transBegin();
         $session = session();
         $adminId = $session->get('id') ?? $session->get('admin_id') ?? 'system';
@@ -1245,6 +1287,20 @@ class OnlineSalesApiController extends BaseApiController
     // POST /api/online-sales/{id}/ship
     public function shipOrder($orderId)
     {
+        $hasActiveCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->countAllResults() > 0;
+
+        $hasActiveRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->countAllResults() > 0;
+
+        if ($hasActiveCancellation || $hasActiveRefund) {
+            return redirect()->back()->with('error', 'Action blocked: Order has an active cancellation or refund request.');
+        }
+
         $data = [
             'status_id'        => $this->statusModel->getIdByCode(OrderStatus::SHIPPED), // SHIPPED ID STATUS
             'courier'          => $this->request->getVar('courier'),
@@ -1264,6 +1320,20 @@ class OnlineSalesApiController extends BaseApiController
     // POST /api/online-sales/{id}/status
     public function updateStatus($orderId)
     {
+        $hasActiveCancellation = $this->db->table('order_cancellations')
+            ->where('order_id', $orderId)
+            ->where('status', 'requested')
+            ->countAllResults() > 0;
+
+        $hasActiveRefund = $this->db->table('order_refunds')
+            ->where('order_id', $orderId)
+            ->whereIn('status', ['requested', 'return_approved', 'return_shipped', 'return_received', 'approved'])
+            ->countAllResults() > 0;
+
+        if ($hasActiveCancellation || $hasActiveRefund) {
+            return $this->errorResponse('Action blocked: Order has an active cancellation or refund request.');
+        }
+
         $statusId = $this->request->getVar('status_id');
 
         if (!$statusId) {
