@@ -19,7 +19,7 @@
   <!-- <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"> -->
   <!-- CSS Files -->
   <link id="pagestyle" href="<?= base_url('assets'); ?>/css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
-  <link id="pagestyle" href="<?= base_url('assets'); ?>/css/custom.css?v=2.1.0" rel="stylesheet" />
+  <link id="pagestyle" href="<?= base_url('assets'); ?>/css/custom.css?v=2.1.3" rel="stylesheet" />
   <!-- JQUERY -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
     integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -823,7 +823,7 @@
     });
   </script>
   <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <script src="<?= base_url('assets'); ?>/js/argon-dashboard.min.js?v=2.1.0"></script>
+  <script src="<?= base_url('assets'); ?>/js/argon-dashboard.js?v=2.1.3"></script>
 
   <?= $this->renderSection('scripts') ?>
 </body>

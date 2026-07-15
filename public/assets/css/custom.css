@@ -61,3 +61,24 @@ table.table tbody tr:hover {
 .text-right {
   text-align: right !important;
 }
+
+/* Sidebar/Aside height and scroll fix */
+.sidenav {
+  display: flex !important;
+  align-items: start !important;
+  flex-direction: column;
+  height: calc(100vh - 2rem) !important;
+  max-height: calc(100vh - 2rem) !important;
+  overflow: hidden !important;
+}
+
+.sidenav > .ps__rail-y,
+.sidenav > .ps__rail-x {
+  display: none !important;
+}
+
+#sidenav-collapse-main {
+  flex: 1;
+  height: auto !important;
+  width: 100% !important;
+}
