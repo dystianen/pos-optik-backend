@@ -1140,7 +1140,7 @@ class OnlineSalesApiController extends BaseApiController
 
                 // 5️⃣ Reduce stock
                 if ($item['variant_id']) {
-                    $this->productVariantModel
+                    $this->db->table('product_variants')
                         ->where('variant_id', $item['variant_id'])
                         ->set('stock', 'stock - ' . (int)$item['quantity'], false)
                         ->update();
@@ -1167,7 +1167,7 @@ class OnlineSalesApiController extends BaseApiController
                         );
                     }
                 } else {
-                    $this->productModel
+                    $this->db->table('products')
                         ->where('product_id', $item['product_id'])
                         ->set('product_stock', 'product_stock - ' . (int)$item['quantity'], false)
                         ->update();
