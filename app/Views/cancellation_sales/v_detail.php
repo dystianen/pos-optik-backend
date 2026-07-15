@@ -97,6 +97,76 @@ function badgeStatus($status)
     </div>
   </div>
 
+  <div class="row mb-4">
+    <?php if ($payment): ?>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header fw-bold text-dark">
+            Payment Info
+          </div>
+          <div class="card-body">
+            <div class="text-center mb-3">
+              <img
+                src="<?= esc($payment['proof']) ?>"
+                class="img-thumbnail"
+                style="max-height:120px; cursor: pointer; transition: transform 0.2s;"
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'"
+                alt="payment proof"
+                data-bs-toggle="modal"
+                data-bs-target="#imageZoomModal"
+                onclick="document.getElementById('zoomedImage').src = this.src">
+            </div>
+
+            <dl class="row mb-0 small text-dark">
+              <dt class="col-5 text-muted">Amount</dt>
+              <dd class="col-7 fw-semibold text-end">
+                Rp <?= number_format($payment['amount']) ?>
+              </dd>
+
+              <dt class="col-5 text-muted">Method</dt>
+              <dd class="col-7 text-end"><?= $payment['method_name'] ?></dd>
+
+              <dt class="col-5 text-muted">Paid At</dt>
+              <dd class="col-7 text-end"><?= $payment['paid_at'] ?></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    <?php endif ?>
+
+    <div class="col-md-<?= $payment ? '6' : '12' ?>">
+      <div class="card h-100">
+        <div class="card-header fw-bold text-dark">
+          Refund Account Info
+        </div>
+        <div class="card-body">
+          <?php if ($refundAccount): ?>
+            <dl class="row mb-0 small text-dark">
+              <dt class="col-5 text-muted">Account Name</dt>
+              <dd class="col-7 fw-semibold text-end"><?= esc($refundAccount['account_name'] ?? '-') ?></dd>
+
+              <dt class="col-5 text-muted">Bank</dt>
+              <dd class="col-7 text-end"><?= esc($refundAccount['bank_name'] ?? '-') ?></dd>
+
+              <dt class="col-5 text-muted">Account No</dt>
+              <dd class="col-7 text-end d-flex justify-content-end align-items-center gap-2">
+                <span><?= esc($refundAccount['account_number'] ?? '-') ?></span>
+                <?php if (!empty($refundAccount['account_number'])): ?>
+                  <button class="btn btn-sm btn-link p-0 mb-0 text-primary" onclick="copyToClipboard('<?= esc($refundAccount['account_number']) ?>', this)">
+                    <i class="fa fa-copy"></i>
+                  </button>
+                <?php endif ?>
+              </dd>
+            </dl>
+          <?php else: ?>
+            <p class="text-muted mb-0">No refund account configured by user</p>
+          <?php endif ?>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card-body">
     <h5 class="mb-3">Cancellation Details & Admin Actions</h5>
 
@@ -166,10 +236,54 @@ function badgeStatus($status)
     <?php endif ?>
   </div>
 </div>
+
+<!-- Image Zoom Modal -->
+<div class="modal fade" id="imageZoomModal" tabindex="-1" aria-labelledby="imageZoomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0" style="border-radius: 16px;">
+      <div class="modal-header bg-light d-flex justify-content-between align-items-center" style="border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 12px 20px;">
+        <h6 class="modal-title font-weight-bold mb-0" id="imageZoomModalLabel">Image Preview</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: none; border: none; font-size: 1.25rem; color: #888;">&times;</button>
+      </div>
+      <div class="modal-body text-center p-3 bg-white" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+        <img id="zoomedImage" src="" class="img-fluid rounded shadow-sm" style="max-height: 70vh; object-fit: contain; background: #f8f9fa; padding: 10px; width: 100%;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(function() {
+      const icon = btn.querySelector('i');
+      const originalClass = icon.className;
+      icon.className = 'fa fa-check text-success';
+      
+      if (typeof Swal !== 'undefined') {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+        Toast.fire({
+          icon: 'success',
+          title: 'Account number copied!'
+        });
+      }
+      
+      setTimeout(function() {
+        icon.className = originalClass;
+      }, 1500);
+    }).catch(function(err) {
+      console.error('Failed to copy: ', err);
+    });
+  }
+
   const cancellationId = '<?= esc($cancellation['order_cancellation_id']) ?>';
 
   async function postJson(url, body) {

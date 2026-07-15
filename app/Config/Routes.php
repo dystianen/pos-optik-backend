@@ -58,6 +58,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('', 'Api\CartApiController::listCart');
     $routes->post('add', 'Api\CartApiController::addToCart');
     $routes->get('count', 'Api\CartApiController::getTotalCart');
+    $routes->put('update/(:any)', 'Api\CartApiController::updateCartItemQuantity/$1');
     $routes->delete('delete/(:any)', 'Api\CartApiController::deleteCartItem/$1');
   });
 

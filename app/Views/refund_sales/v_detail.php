@@ -186,7 +186,14 @@ function badgeStatus($status)
               <dd class="col-7 text-right"><?= esc($refund['bank_name'] ?? '-') ?></dd>
 
               <dt class="col-5 text-muted">Account No</dt>
-              <dd class="col-7 text-right"><?= esc($refund['account_number'] ?? '-') ?></dd>
+              <dd class="col-7 text-right d-flex justify-content-end align-items-center gap-2">
+                <span><?= esc($refund['account_number'] ?? '-') ?></span>
+                <?php if (!empty($refund['account_number'])): ?>
+                  <button class="btn btn-sm btn-link p-0 mb-0 text-primary" onclick="copyToClipboard('<?= esc($refund['account_number']) ?>', this)">
+                    <i class="fa fa-copy"></i>
+                  </button>
+                <?php endif ?>
+              </dd>
             </dl>
           <?php else: ?>
             <p class="text-muted mb-0">No refund account</p>
@@ -393,6 +400,34 @@ function badgeStatus($status)
 </div>
 
 <script>
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(function() {
+      const icon = btn.querySelector('i');
+      const originalClass = icon.className;
+      icon.className = 'fa fa-check text-success';
+      
+      if (typeof Swal !== 'undefined') {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+        Toast.fire({
+          icon: 'success',
+          title: 'Account number copied!'
+        });
+      }
+      
+      setTimeout(function() {
+        icon.className = originalClass;
+      }, 1500);
+    }).catch(function(err) {
+      console.error('Failed to copy: ', err);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const refundId = '<?= esc($refund['order_refund_id']) ?>';
     console.log('Refund Detail Loaded. ID:', refundId);

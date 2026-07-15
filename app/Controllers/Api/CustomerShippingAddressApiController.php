@@ -85,7 +85,8 @@ class CustomerShippingAddressApiController extends BaseApiController
                     );
                 }
 
-                return $this->messageResponse(
+                return $this->successResponse(
+                    ['csa_id' => $id],
                     'Shipping address updated successfully'
                 );
             }
@@ -96,7 +97,9 @@ class CustomerShippingAddressApiController extends BaseApiController
                 );
             }
 
-            return $this->messageResponse(
+            $newId = $this->csaModel->getInsertID();
+            return $this->successResponse(
+                ['csa_id' => $newId],
                 'Shipping address created successfully'
             );
         } catch (\Throwable $e) {

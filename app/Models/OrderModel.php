@@ -142,8 +142,11 @@ class OrderModel extends Model
         }
     }
 
+    // Payment expiration deadline in hours
+    public const DEADLINE_HOURS = 1;
+
     /**
-     * Bulk check and expire any pending orders that have exceeded the 12-hour deadline.
+     * Bulk check and expire any pending orders that have exceeded the deadline.
      */
     public function bulkCheckAndExpirePendingOrders()
     {
@@ -151,10 +154,11 @@ class OrderModel extends Model
         $pendingStatusId = $statusModel->getIdByCode(\Config\OrderStatus::PENDING);
         $expiredStatusId = $statusModel->getIdByCode(\Config\OrderStatus::EXPIRED);
 
-        // Find all pending orders older than 12 hours
-        $twelveHoursAgo = date('Y-m-d H:i:s', time() - (12 * 3600));
+        // Find all pending orders older than the deadline
+        $deadlineSeconds = (int) (self::DEADLINE_HOURS * 3600);
+        $expiredLimitTime = date('Y-m-d H:i:s', time() - $deadlineSeconds);
         $expiredOrders = $this->where('status_id', $pendingStatusId)
-            ->where('created_at <', $twelveHoursAgo)
+            ->where('created_at <', $expiredLimitTime)
             ->findAll();
 
         foreach ($expiredOrders as $order) {
@@ -180,7 +184,8 @@ class OrderModel extends Model
 
         if ($order['status_id'] === $pendingStatusId) {
             $createdAt = strtotime($order['created_at']);
-            $deadline = $createdAt + (12 * 3600); // 12 hours deadline
+            $deadlineSeconds = (int) (self::DEADLINE_HOURS * 3600);
+            $deadline = $createdAt + $deadlineSeconds;
 
             if (time() >= $deadline) {
                 $expiredStatusId = $statusModel->getIdByCode(\Config\OrderStatus::EXPIRED);

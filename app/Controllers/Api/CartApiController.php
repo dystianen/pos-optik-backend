@@ -351,4 +351,106 @@ class CartApiController extends BaseApiController
             return $this->serverErrorResponse($e->getMessage());
         }
     }
+
+    // =======================
+    // PUT /api/cart/update/{id}
+    // =======================
+    public function updateCartItemQuantity($cartItemId)
+    {
+        $db = db_connect();
+        $db->transStart();
+
+        try {
+            $customerId = $this->getAuthenticatedCustomerId();
+            $payload = $this->getRequestBody(true);
+            $qty = (int) ($payload['quantity'] ?? 0);
+
+            if ($qty <= 0) {
+                return $this->validationErrorResponse([
+                    'quantity' => 'Quantity must be greater than 0',
+                ]);
+            }
+
+            // 🛒 Cart
+            $cart = $this->cartModel
+                ->where('customer_id', $customerId)
+                ->where('deleted_at', null)
+                ->first();
+
+            if (!$cart) {
+                return $this->notFoundResponse('Cart not found');
+            }
+
+            // 🧾 Cart Item
+            $cartItem = $this->cartItemModel
+                ->where('cart_item_id', $cartItemId)
+                ->where('cart_id', $cart['cart_id'])
+                ->where('deleted_at', null)
+                ->first();
+
+            if (!$cartItem) {
+                return $this->notFoundResponse('Cart item not found');
+            }
+
+            $productId = $cartItem['product_id'];
+            $variantId = $cartItem['variant_id'];
+
+            // 🔎 Product
+            $product = $db->table('products')
+                ->where('product_id', $productId)
+                ->where('deleted_at', null)
+                ->get()
+                ->getRowArray();
+
+            if (!$product) {
+                return $this->notFoundResponse('Product not found');
+            }
+
+            // Check stock
+            if ($variantId) {
+                $variant = $db->table('product_variants')
+                    ->where('variant_id', $variantId)
+                    ->where('product_id', $productId)
+                    ->get()
+                    ->getRowArray();
+
+                if (!$variant) {
+                    return $this->notFoundResponse('Invalid variant');
+                }
+
+                if ($variant['stock'] < $qty) {
+                    return $this->conflictResponse('Insufficient variant stock');
+                }
+            } else {
+                if ($product['product_stock'] < $qty) {
+                    return $this->conflictResponse('Insufficient product stock');
+                }
+            }
+
+            // Update quantity
+            $this->cartItemModel->update($cartItemId, [
+                'quantity' => $qty,
+            ]);
+
+            // Get updated summary
+            $summary = $this->cartItemModel
+                ->select('SUM(quantity) AS total_qty, SUM(quantity * price) AS total_price')
+                ->where('cart_id', $cart['cart_id'])
+                ->where('deleted_at', null)
+                ->get()
+                ->getRow();
+
+            $db->transComplete();
+
+            return $this->successResponse([
+                'summary' => [
+                    'total_qty' => (int) ($summary->total_qty ?? 0),
+                    'total_price' => (int) ($summary->total_price ?? 0),
+                ],
+            ], 'Cart item quantity updated');
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            return $this->serverErrorResponse($e->getMessage());
+        }
+    }
 }

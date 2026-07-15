@@ -7,6 +7,7 @@ use App\Models\OrderCancellationModel;
 use App\Models\OrderModel;
 use App\Models\OrderShippingAddressModel;
 use App\Models\PaymentModel;
+use App\Models\UserRefundAccountModel;
 
 class CancellationSalesController extends BaseController
 {
@@ -75,7 +76,7 @@ class CancellationSalesController extends BaseController
         $orderId = $cancellation['order_id'];
 
         $order = $this->orderModel
-            ->select('orders.order_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.status_id, orders.tracking_number, orders.courier, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code, shipping_methods.name AS shipping_method, shipping_methods.estimated_days')
+            ->select('orders.order_id, orders.customer_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.status_id, orders.tracking_number, orders.courier, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code, shipping_methods.name AS shipping_method, shipping_methods.estimated_days')
             ->join('customers', 'customers.customer_id = orders.customer_id', 'left')
             ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
             ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
@@ -95,12 +96,19 @@ class CancellationSalesController extends BaseController
 
         $shippingAddress = $this->orderModel->getShippingAddress($orderId);
 
+        $userRefundAccountModel = new UserRefundAccountModel();
+        $refundAccount = $userRefundAccountModel
+            ->where('customer_id', $order['customer_id'])
+            ->orderBy('is_default', 'DESC')
+            ->first();
+
         $data = [
             'order' => $order,
             'items' => $items,
             'payment' => $payment,
             'shippingAddress' => $shippingAddress,
             'cancellation' => $cancellation,
+            'refundAccount' => $refundAccount,
         ];
 
         return view('cancellation_sales/v_detail', $data);

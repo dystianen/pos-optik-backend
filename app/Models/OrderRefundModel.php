@@ -87,7 +87,7 @@ class OrderRefundModel extends Model
         return $this->select('order_refunds.*,
                      orders.order_id, orders.created_at as order_date, orders.grand_total as order_amount,
                      customers.customer_name, customers.customer_email,
-                     user_refund_accounts.account_name, user_refund_accounts.account_number,
+                     user_refund_accounts.account_name, user_refund_accounts.account_number, user_refund_accounts.bank_name,
                      users.user_name as admin_name, users.user_email as admin_email')
             ->join('orders', 'orders.order_id = order_refunds.order_id', 'left')
             ->join('customers', 'customers.customer_id = orders.customer_id', 'left')

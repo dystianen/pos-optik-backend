@@ -6,6 +6,8 @@ use App\Models\NotificationModel;
 use App\Models\OrderCancellationModel;
 use App\Models\OrderModel;
 use App\Models\OrderStatusModel;
+use App\Models\OrderRefundModel;
+use App\Models\UserRefundAccountModel;
 use Config\OrderStatus;
 
 class CancellationApiController extends BaseApiController
@@ -220,6 +222,11 @@ class CancellationApiController extends BaseApiController
             return $this->notFoundResponse('Cancellation not found');
         }
 
+        $order = $this->orderModel->find($cancellation['order_id']);
+        if (!$order) {
+            return $this->notFoundResponse('Order not found');
+        }
+
         $this->cancellationModel->update($cancellationId, [
             'status' => 'approved',
             'processed_by' => $adminId,
@@ -234,6 +241,42 @@ class CancellationApiController extends BaseApiController
 
         // Restore Stock
         $this->orderModel->restoreStock($cancellation['order_id'], 'Order cancellation approved by Admin', $adminId);
+
+        // Create auto refund if payment exists (cancellation request status was requested)
+        if ($cancellation['status'] === 'requested') {
+            $userRefundAccountModel = new UserRefundAccountModel();
+            $refundAccount = $userRefundAccountModel
+                ->where('customer_id', $order['customer_id'])
+                ->orderBy('is_default', 'DESC')
+                ->first();
+
+            $orderRefundModel = new OrderRefundModel();
+            $existingRefund = $orderRefundModel->where('order_id', $cancellation['order_id'])->first();
+
+            if (!$existingRefund) {
+                $refundData = [
+                    'order_id' => $cancellation['order_id'],
+                    'user_refund_account_id' => $refundAccount ? $refundAccount['user_refund_account_id'] : null,
+                    'refund_amount' => $order['grand_total'],
+                    'reason' => 'Cancellation: ' . $cancellation['reason'],
+                    'additional_note' => $cancellation['additional_note'],
+                    'status' => OrderRefundModel::STATUS_APPROVED,
+                    'refund_type' => 'full',
+                    'evidence_url' => 'cancellation',
+                    'processed_by' => $adminId,
+                ];
+
+                if ($orderRefundModel->insert($refundData)) {
+                    $refundId = $orderRefundModel->getInsertID();
+                    $this->notificationModel->addNotification('refund_order', "Refund approved for Order #{$order['order_id']} (Cancellation)", $refundId);
+                    
+                    // Trigger real-time update
+                    if (class_exists('\App\Libraries\Realtime')) {
+                        \App\Libraries\Realtime::triggerUpdate('refund-approved');
+                    }
+                }
+            }
+        }
 
         return $this->successResponse(['cancellation_id' => $cancellationId, 'status' => 'approved'], 'Cancellation approved');
     }
