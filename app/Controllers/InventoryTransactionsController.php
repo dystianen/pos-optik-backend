@@ -202,11 +202,12 @@ class InventoryTransactionsController extends BaseController
         $session = session();
 
         $productId = $this->request->getVar('product_id');
-        $variantId = $this->request->getVar('variant_id'); // ✅ Bisa NULL
+        $variantId = $this->request->getVar('variant_id') ?: null; // ✅ Bisa NULL
         $type      = $this->request->getVar('transaction_type');
         $reference_type = $this->request->getVar('reference_type');
         $reference_id   = $this->request->getVar('reference_id');
         $qty       = (int) $this->request->getVar('quantity');
+        $transactionDate = $this->request->getVar('transaction_date');
 
         // ✅ Validasi: product harus ada
         $product = $this->productModel->find($productId);
@@ -222,52 +223,50 @@ class InventoryTransactionsController extends BaseController
             }
         }
 
-        $data = [
-            'product_id' => $productId,
-            'variant_id' => $variantId, // ✅ Bisa NULL untuk product tanpa variant
-            'transaction_type' => $type,
-            'reference_type' => $reference_type,
-            'reference_id' => $reference_id,
-            'quantity' => $qty,
-            'description' => $this->request->getVar('description'),
-            'user_id' => $session->get('id'),
-            'transaction_date' => date('Y-m-d H:i:s'),
-        ];
-
         $this->db->transBegin();
 
         try {
-
-            /** =========================
-             * UPDATE TRANSACTION
-             * ========================= */
+            $old = null;
             if ($id) {
                 // 1️⃣ Ambil transaksi lama
                 $old = $this->InventoryTransactionModel->find($id);
                 if (!$old) {
                     throw new \Exception('Old transaction not found');
                 }
+            }
 
-                // 2️⃣ Hitung selisih qty
-                $oldQty = (int) $old['quantity'];
-                $qtyDiff = $qty - $oldQty;
+            $data = [
+                'product_id' => $productId,
+                'variant_id' => $variantId, // ✅ Bisa NULL untuk product tanpa variant
+                'transaction_type' => $type,
+                'reference_type' => $reference_type,
+                'reference_id' => $reference_id,
+                'quantity' => $qty,
+                'description' => $this->request->getVar('description'),
+                'user_id' => $session->get('id'),
+                'transaction_date' => $old ? $old['transaction_date'] : ($transactionDate ? $transactionDate . ' ' . date('H:i:s') : date('Y-m-d H:i:s')),
+            ];
 
-                // 3️⃣ Adjust stock berdasarkan selisih dan type
-                if ($qtyDiff != 0) {
-                    if ($type === 'in') {
-                        // ✅ Update variant atau product stock
-                        if ($variantId) {
-                            $this->adjustVariantStock($variantId, $qtyDiff);
-                        } else {
-                            $this->adjustProductStock($productId, $qtyDiff);
-                        }
+            /** =========================
+             * UPDATE TRANSACTION
+             * ========================= */
+            if ($id) {
+                // 2️⃣ Hitung penyesuaian stok bersih (net adjustment)
+                // Kembalikan efek transaksi lama, kemudian terapkan efek transaksi baru
+                $oldType = $old['transaction_type'];
+                $oldQty  = (int) $old['quantity'];
+
+                $reverseQty = ($oldType === 'in') ? -$oldQty : $oldQty;
+                $applyQty   = ($type === 'in') ? $qty : -$qty;
+
+                $netAdjustment = $reverseQty + $applyQty;
+
+                // 3️⃣ Adjust stock jika ada perubahan bersih
+                if ($netAdjustment != 0) {
+                    if ($variantId) {
+                        $this->adjustVariantStock($variantId, $netAdjustment);
                     } else {
-                        // ✅ Update variant atau product stock
-                        if ($variantId) {
-                            $this->adjustVariantStock($variantId, -$qtyDiff);
-                        } else {
-                            $this->adjustProductStock($productId, -$qtyDiff);
-                        }
+                        $this->adjustProductStock($productId, $netAdjustment);
                     }
                 }
 
