@@ -767,6 +767,7 @@ class ProductApiController extends BaseApiController
                 products.product_name,
                 products.description,
                 products.product_price,
+                products.product_brand,
                 products.product_stock,
                 products.has_variants,
                 pc.is_prescription_supported,

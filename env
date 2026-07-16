@@ -42,7 +42,7 @@ R2_PUBLIC_URL="https://cdn.adefoodwaste.biz.id"
 # DATABASE
 #--------------------------------------------------------------------
 
-database.default.hostname = localhost
+database.default.hostname = 127.0.0.1
 database.default.database = pos_optik
 database.default.username = root
 database.default.password = 
