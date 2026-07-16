@@ -16,12 +16,10 @@
 
 
 -- Dumping database structure for pos_optik
-DROP DATABASE IF EXISTS `pos_optik`;
 CREATE DATABASE IF NOT EXISTS `pos_optik` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `pos_optik`;
 
 -- Dumping structure for table pos_optik.carts
-DROP TABLE IF EXISTS `carts`;
 CREATE TABLE IF NOT EXISTS `carts` (
   `cart_id` char(36) NOT NULL,
   `customer_id` char(36) DEFAULT NULL,
@@ -33,12 +31,12 @@ CREATE TABLE IF NOT EXISTS `carts` (
   CONSTRAINT `carts_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.carts: ~0 rows (approximately)
+-- Dumping data for table pos_optik.carts: ~2 rows (approximately)
 INSERT INTO `carts` (`cart_id`, `customer_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('b759b2f3-b484-462b-b41b-4ff791589bb3', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '2026-05-25 13:58:37', '2026-05-25 13:58:37', NULL);
+	('b759b2f3-b484-462b-b41b-4ff791589bb3', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '2026-05-25 13:58:37', '2026-05-25 13:58:37', NULL),
+	('bd3690dd-58c6-4376-b391-c64780fdf849', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '2026-07-15 10:40:44', '2026-07-15 10:40:44', NULL);
 
 -- Dumping structure for table pos_optik.cart_items
-DROP TABLE IF EXISTS `cart_items`;
 CREATE TABLE IF NOT EXISTS `cart_items` (
   `cart_item_id` char(36) NOT NULL,
   `cart_id` char(36) NOT NULL,
@@ -58,14 +56,30 @@ CREATE TABLE IF NOT EXISTS `cart_items` (
   CONSTRAINT `cart_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.cart_items: ~2 rows (approximately)
+-- Dumping data for table pos_optik.cart_items: ~20 rows (approximately)
 INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0978cce3-8d1b-482e-8e68-e9d1adce0d1a', 'bd3690dd-58c6-4376-b391-c64780fdf849', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 3, 3500000.00, '2026-07-15 11:47:42', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
+	('0ec3270b-5849-4a9b-a8b1-b69f3f7d6576', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 5, 1350000.00, '2026-07-15 15:51:42', '2026-07-15 15:52:00', '2026-07-15 15:52:00'),
+	('24891e4a-7051-43de-935e-609f310fa018', 'bd3690dd-58c6-4376-b391-c64780fdf849', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-07-15 11:34:18', '2026-07-15 11:47:32', '2026-07-15 11:47:32'),
+	('2d05eb64-fb62-4e85-8ed7-e738e7b5e5ff', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '303431f3-db77-4f28-a571-fda989e0d268', 3, 1200000.00, '2026-07-15 14:20:02', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
+	('43ee7004-1e18-40ae-8061-e8aa13d88511', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 4, 570000.00, '2026-07-15 16:01:31', '2026-07-15 16:01:36', '2026-07-15 16:01:36'),
+	('4e8489a4-c005-46f3-bd88-a6c01cc615fe', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 1, 7850000.00, '2026-07-07 13:09:16', '2026-07-07 13:09:35', '2026-07-07 13:09:35'),
 	('4e8843ca-1095-4820-99d5-3a7953215a83', 'b759b2f3-b484-462b-b41b-4ff791589bb3', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', '07c245de-6af9-463c-becc-90f50917edc5', 1, 1000000.00, '2026-05-25 13:58:37', '2026-05-25 13:59:58', '2026-05-25 13:59:58'),
+	('54727b02-1610-473c-8f11-bfdb636b5dff', 'bd3690dd-58c6-4376-b391-c64780fdf849', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-07-15 11:34:32', '2026-07-15 11:44:02', '2026-07-15 11:44:02'),
+	('59e5a63e-e921-473d-9b03-450e9dce70b8', 'bd3690dd-58c6-4376-b391-c64780fdf849', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 1, 2300000.00, '2026-07-15 15:36:31', '2026-07-15 15:39:54', '2026-07-15 15:39:54'),
 	('68dd7068-b683-4a14-89c2-85d70c4b10f4', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-05-25 13:58:53', '2026-05-25 13:59:58', '2026-05-25 13:59:58'),
-	('8d4e5940-de14-4695-b3f9-54a3eafd3724', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 1, 9676000.00, '2026-06-04 13:31:38', '2026-06-04 13:31:38', NULL);
+	('84ef85a6-1bba-4024-a3dd-eda6a8e4c89a', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 1, 570000.00, '2026-07-15 15:56:21', '2026-07-15 15:56:40', '2026-07-15 15:56:40'),
+	('88e4efdd-4c89-4f3c-b97e-15acb1d36bbf', 'bd3690dd-58c6-4376-b391-c64780fdf849', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '92504955-32b6-4016-887d-8a278f0a3a56', 2, 1100000.00, '2026-07-15 14:23:26', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
+	('8d4e5940-de14-4695-b3f9-54a3eafd3724', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 1, 9676000.00, '2026-06-04 13:31:38', '2026-07-07 13:09:35', '2026-07-07 13:09:35'),
+	('92be53b7-f67a-43d7-859d-3eb01b1a06d8', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 3, 1350000.00, '2026-07-15 15:51:47', '2026-07-15 15:51:52', '2026-07-15 15:51:52'),
+	('9c7efe9b-f74f-4b00-bc1e-cf5581013f90', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 1, 824500.00, '2026-07-16 09:19:16', '2026-07-16 09:19:28', '2026-07-16 09:19:28'),
+	('cabc27ce-8fce-4aca-bcb9-875987761327', 'bd3690dd-58c6-4376-b391-c64780fdf849', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135.00, '2026-07-15 10:40:44', '2026-07-15 10:41:19', '2026-07-15 10:41:19'),
+	('cd7d7bc3-59b3-4dc7-8ada-75726b48db0a', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 1, 1000000.00, '2026-07-15 15:21:14', '2026-07-15 15:21:22', '2026-07-15 15:21:22'),
+	('e837e3de-c20b-4dd4-95bd-89f740805103', 'bd3690dd-58c6-4376-b391-c64780fdf849', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 1, 3500000.00, '2026-07-15 15:11:26', '2026-07-15 15:15:37', '2026-07-15 15:15:37'),
+	('f94481bb-3e95-4347-bf54-ff382e95c07b', 'bd3690dd-58c6-4376-b391-c64780fdf849', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:41:25', '2026-07-15 10:41:47', '2026-07-15 10:41:47'),
+	('ffadb20b-65c3-440a-9024-e9a3b6b0f2ac', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'b3a23692-1b3d-4afa-a525-91aba79456da', 1, 1100000.00, '2026-07-07 16:05:13', '2026-07-07 16:05:22', '2026-07-07 16:05:22');
 
 -- Dumping structure for table pos_optik.cart_item_prescriptions
-DROP TABLE IF EXISTS `cart_item_prescriptions`;
 CREATE TABLE IF NOT EXISTS `cart_item_prescriptions` (
   `prescription_id` char(36) NOT NULL,
   `cart_item_id` char(36) NOT NULL,
@@ -90,7 +104,6 @@ CREATE TABLE IF NOT EXISTS `cart_item_prescriptions` (
 -- Dumping data for table pos_optik.cart_item_prescriptions: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.coupons
-DROP TABLE IF EXISTS `coupons`;
 CREATE TABLE IF NOT EXISTS `coupons` (
   `coupon_id` char(36) NOT NULL,
   `code` varchar(50) NOT NULL,
@@ -114,7 +127,6 @@ CREATE TABLE IF NOT EXISTS `coupons` (
 -- Dumping data for table pos_optik.coupons: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.customers
-DROP TABLE IF EXISTS `customers`;
 CREATE TABLE IF NOT EXISTS `customers` (
   `customer_id` char(36) NOT NULL,
   `customer_name` varchar(100) NOT NULL,
@@ -154,7 +166,6 @@ INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `cust
 	('f18c2ed4-e362-4e39-a362-b94a30cea851', 'Kuncara Pranowo M.TI.', 'mandasari.kezia@yahoo.com', '$2y$10$PIyuFQS3E7UiS76Uid7Gb..vcLd1eADAj8ZoE0lIbjv2oXZgoavgG', '0791 1787 8446', '1994-10-11', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL);
 
 -- Dumping structure for table pos_optik.customer_shipping_addresses
-DROP TABLE IF EXISTS `customer_shipping_addresses`;
 CREATE TABLE IF NOT EXISTS `customer_shipping_addresses` (
   `csa_id` char(36) NOT NULL,
   `customer_id` char(36) NOT NULL,
@@ -172,12 +183,12 @@ CREATE TABLE IF NOT EXISTS `customer_shipping_addresses` (
   CONSTRAINT `customer_shipping_addresses_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.customer_shipping_addresses: ~0 rows (approximately)
+-- Dumping data for table pos_optik.customer_shipping_addresses: ~2 rows (approximately)
 INSERT INTO `customer_shipping_addresses` (`csa_id`, `customer_id`, `recipient_name`, `phone`, `address`, `city`, `province`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('3224081e-d0fb-4dde-8fc6-bbaf34c2b945', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:43', '2026-05-25 13:59:43', NULL);
+	('3224081e-d0fb-4dde-8fc6-bbaf34c2b945', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:43', '2026-05-25 13:59:43', NULL),
+	('b12b6db4-e3dc-48a6-a059-1c2bf12203b7', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 10:41:41', '2026-07-15 10:41:41', NULL);
 
 -- Dumping structure for table pos_optik.eye_examinations
-DROP TABLE IF EXISTS `eye_examinations`;
 CREATE TABLE IF NOT EXISTS `eye_examinations` (
   `eye_examination_id` char(36) NOT NULL,
   `customer_id` char(36) NOT NULL,
@@ -197,10 +208,11 @@ CREATE TABLE IF NOT EXISTS `eye_examinations` (
   CONSTRAINT `eye_examinations_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.eye_examinations: ~0 rows (approximately)
+-- Dumping data for table pos_optik.eye_examinations: ~1 rows (approximately)
+INSERT INTO `eye_examinations` (`eye_examination_id`, `customer_id`, `left_eye_sphere`, `left_eye_cylinder`, `left_eye_axis`, `right_eye_sphere`, `right_eye_cylinder`, `right_eye_axis`, `symptoms`, `diagnosis`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('c8f46854-978f-4ffb-b17a-a3837ad64447', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 0.79, 0.2, 1, 0.2, 0.2, 2, 'Red Eyes', 'Myopia', '2026-07-15 10:07:41', '2026-07-15 10:08:13', '2026-07-15 10:08:13');
 
 -- Dumping structure for table pos_optik.inventory_transactions
-DROP TABLE IF EXISTS `inventory_transactions`;
 CREATE TABLE IF NOT EXISTS `inventory_transactions` (
   `inventory_transaction_id` char(36) NOT NULL,
   `user_id` char(36) DEFAULT NULL,
@@ -224,16 +236,99 @@ CREATE TABLE IF NOT EXISTS `inventory_transactions` (
   CONSTRAINT `inventory_transactions_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.inventory_transactions: ~3 rows (approximately)
+-- Dumping data for table pos_optik.inventory_transactions: ~86 rows (approximately)
 INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `variant_id`, `product_id`, `transaction_type`, `reference_type`, `reference_id`, `quantity`, `transaction_date`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('018ae11a-a7ae-4daa-9726-bc5fb6e9b579', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'in', 'initial', '', 110, '2026-07-16 10:48:37', '', '2026-07-16 10:48:37', '2026-07-16 11:29:47', NULL),
+	('04212621-6431-4a4f-8750-dd40c8f35375', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'in', 'initial', '', 100, '2026-07-15 10:39:43', '', '2026-07-15 10:39:43', '2026-07-15 11:30:26', '2026-07-15 11:30:26'),
+	('06b9a156-4103-4fa0-89a0-04525a860005', NULL, '92504955-32b6-4016-887d-8a278f0a3a56', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'in', '', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 2, '2026-07-15 15:15:31', 'Order cancelled by customer (Pending Payment)', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
+	('0d5f4208-67d0-46a1-9ce8-ccbedbb8cc34', NULL, '68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:17:50', 'Order cancellation approved by Admin', '2026-07-15 15:17:50', '2026-07-15 15:17:50', NULL),
+	('0eef0f9a-d668-4968-89a3-37ac7b38da97', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '6d6612ad-663d-4ba1-b803-4789769aebf8', 'in', 'initial', '', 2000, '2026-07-16 13:49:58', '', '2026-07-16 13:49:58', '2026-07-16 13:49:58', NULL),
+	('131f76db-9236-4bdd-a883-970acdababcf', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'out', 'order', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:56', 'Order payment approved', '2026-07-15 15:15:56', '2026-07-15 15:15:56', NULL),
+	('1740fa91-d2be-453b-a969-764171e3e639', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '47dc0b31-8710-4654-869d-246e2e265221', 'in', 'initial', '', 60, '2026-07-16 13:20:55', '', '2026-07-16 13:20:55', '2026-07-16 13:20:55', NULL),
+	('18d5d460-e7f9-4b86-9108-0787e921b56d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '92504955-32b6-4016-887d-8a278f0a3a56', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'in', '', '', 25, '2026-07-07 16:01:21', 'Masuk', '2026-07-07 16:01:21', '2026-07-15 10:08:47', '2026-07-15 10:08:47'),
+	('1b9a5db7-dad6-4aea-a45a-38de6377bd63', NULL, NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'in', '', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 15:51:20', 'Order cancellation approved by Admin', '2026-07-15 15:51:20', '2026-07-15 15:51:20', NULL),
+	('1f9b4db7-efcf-413f-8651-bc17856e2820', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '0e923360-e9df-4285-9b46-a0242ebe656f', 'in', 'initial', '', 1000, '2026-07-16 13:49:40', '', '2026-07-16 13:49:40', '2026-07-16 13:49:40', NULL),
+	('20e093bb-10d1-430c-8b09-5b4706c1d1f5', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '303431f3-db77-4f28-a571-fda989e0d268', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'in', '', '', 100, '2026-07-08 09:25:18', '', '2026-07-08 09:25:18', '2026-07-08 09:25:18', NULL),
+	('20f35b13-0ff6-4fa6-88ad-ef5754dc90c6', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5373faf8-da09-4440-a505-ffea8f4275fb', 'in', 'initial', '', 35, '2026-07-16 10:48:16', '', '2026-07-16 10:48:16', '2026-07-16 10:48:16', NULL),
+	('244645cc-1c28-4040-aea7-7f59c04c5af1', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', 'in', 'initial', '', 100, '2026-07-16 09:47:45', '', '2026-07-16 09:47:45', '2026-07-16 09:47:45', NULL),
+	('2648f791-973c-4e99-abc3-21969c82b656', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', 'in', 'initial', '', 100, '2026-07-16 09:47:59', '', '2026-07-16 09:47:59', '2026-07-16 09:47:59', NULL),
+	('2c12469f-aa3c-42ad-818a-94769d8d5977', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5d67be61-e193-4668-8539-4dd70d78b675', 'in', 'initial', '', 70, '2026-07-16 11:24:09', '', '2026-07-16 11:24:09', '2026-07-16 11:24:09', NULL),
+	('2cf72f9a-7cd6-4d95-bff7-2bcda7c75272', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'out', 'order', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:58', 'Order payment approved', '2026-07-15 15:56:58', '2026-07-15 15:56:58', NULL),
+	('2d083e74-017c-484a-9438-0cc7ad9c1fc3', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'in', 'initial', '', 58, '2026-07-16 13:20:08', '', '2026-07-16 13:20:08', '2026-07-16 13:20:08', NULL),
+	('2fe295c4-1e33-4435-b60e-a9dbc32128e3', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'in', 'initial', '', 1000, '2026-07-16 13:53:33', '', '2026-07-16 13:53:33', '2026-07-16 13:53:33', NULL),
+	('346b5408-8539-4db1-9881-6b1248ff5a54', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '75362d09-1920-4f54-aee3-818c3d4030d7', 'in', 'initial', '', 132, '2026-07-16 11:25:20', '', '2026-07-16 11:25:20', '2026-07-16 11:25:20', NULL),
+	('36671f07-a9a9-47c1-a9bf-6f9687a96193', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'in', 'initial', '', 40, '2026-07-16 10:48:00', '', '2026-07-16 10:48:00', '2026-07-16 10:48:00', NULL),
+	('37fb1915-b418-4903-b699-0c2c23ecbcc6', NULL, NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'in', '', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 5, '2026-07-15 16:23:00', 'Order cancellation approved by Admin', '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL),
 	('3811e21d-626e-4ba4-b6e5-ea11541b89ad', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '07c245de-6af9-463c-becc-90f50917edc5', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'out', 'order', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 14:00:49', 'Order payment approved', '2026-05-25 14:00:49', '2026-05-25 14:00:49', NULL),
+	('3d485e4c-e343-4377-a923-27b88d9a3694', NULL, '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:40:59', 'Order cancellation approved by Admin', '2026-07-15 15:40:59', '2026-07-15 15:40:59', NULL),
+	('41183ebf-23e1-47c9-bed1-c01de892bacf', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'in', 'initial', '', 100, '2026-07-16 15:40:00', '', '2026-07-16 15:40:00', '2026-07-16 15:40:00', NULL),
+	('420a4f63-8c43-44fa-8c7b-29099c226890', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'out', 'order', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:45:05', 'Order payment approved', '2026-07-15 10:45:05', '2026-07-15 11:30:24', '2026-07-15 11:30:24'),
+	('4c021432-d066-43f2-bab2-a92cd055bb97', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'out', 'order', '5e15cb5c-bf24-41cf-b259-e20f289b604c', 3, '2026-07-15 11:33:23', 'Offline sale — order #5e15cb5c-bf24-41cf-b259-e20f289b604c', '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
+	('5128fa60-91c2-4125-b380-83589accd222', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', 'in', 'initial', '', 2000, '2026-07-16 13:50:20', '', '2026-07-16 13:50:20', '2026-07-16 13:50:20', NULL),
+	('5867076e-2ea0-481c-948f-f654274372e7', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '645237e3-5257-4f7f-b025-3c80fd7fc37a', 'in', 'initial', '', 100, '2026-07-16 10:46:07', '', '2026-07-16 10:46:07', '2026-07-16 10:46:07', NULL),
 	('5afc6b9d-e9e8-4321-996d-055593edd056', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '4c2448bb-58cf-46cb-b421-fd20e35feb7f', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'in', 'initial', '', 1000, '2026-05-25 13:33:57', '', '2026-05-25 13:33:57', '2026-05-25 13:33:57', NULL),
-	('6ee95cb0-2105-41ae-bd9f-72d38914f853', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'out', 'order', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 14:00:49', 'Order payment approved', '2026-05-25 14:00:49', '2026-05-25 14:00:49', NULL),
+	('5b05d95c-e844-456d-89f4-2560849f68b1', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '54bb678a-de56-4f58-8ddf-5c95e92f254f', 'in', 'initial', '', 100, '2026-07-16 10:05:01', '', '2026-07-16 10:05:01', '2026-07-16 10:05:01', NULL),
+	('5b1230f1-4bc8-4684-832d-2108dc900abc', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', 'in', 'initial', '', 10, '2026-07-16 11:25:57', '', '2026-07-16 11:25:57', '2026-07-16 11:25:57', NULL),
+	('5c9acae2-99fa-46bc-b656-0104cb224e62', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', 'in', 'initial', '', 100, '2026-07-16 10:07:50', '', '2026-07-16 10:07:50', '2026-07-16 10:07:50', NULL),
+	('5dd46435-35de-4501-abde-3c3676332455', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'dde78075-5a62-47d5-8669-026c43d893b2', 'in', 'initial', '', 2000, '2026-07-16 13:50:35', '', '2026-07-16 13:50:35', '2026-07-16 13:50:35', NULL),
+	('5dd93165-d5da-4918-a1df-e79b48bee280', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed6f3004-bb65-4893-bda2-22a352061215', 'in', 'initial', '', 201, '2026-07-16 11:24:41', '', '2026-07-16 11:24:41', '2026-07-16 11:24:41', NULL),
+	('60cde26f-d810-42c8-83ff-44a9aa679f9e', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'in', 'initial', '', 200, '2026-07-16 13:36:51', '', '2026-07-16 13:36:51', '2026-07-16 13:36:51', NULL),
+	('60ee62b8-d808-4dfa-9398-79b7f87f3e34', NULL, '68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 3, '2026-07-15 15:15:31', 'Order cancelled by customer (Pending Payment)', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
+	('63d1cc4f-b297-4501-bb72-fe0db38864ed', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b90f2056-ace6-41ed-801f-98f463b21280', 'in', 'initial', '', 20, '2026-07-16 13:49:18', '', '2026-07-16 13:49:18', '2026-07-16 13:49:18', NULL),
+	('68d70654-d2aa-4079-a813-df51aabf6784', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', 'b3a23692-1b3d-4afa-a525-91aba79456da', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'out', 'order', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:45', 'Order payment approved', '2026-07-07 16:05:45', '2026-07-07 16:05:45', NULL),
+	('69bfc93a-2cdb-422d-b608-30bd0beeb6b7', NULL, '303431f3-db77-4f28-a571-fda989e0d268', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'in', '', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 3, '2026-07-15 15:15:31', 'Order cancelled by customer (Pending Payment)', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
+	('6e30750c-c6ee-4f73-b544-31594533f806', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '', 100, '2026-07-08 09:24:35', '', '2026-07-08 09:24:35', '2026-07-08 09:24:35', NULL),
+	('6f3dbb6d-18ad-4d23-b555-860ace4da868', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b7fae052-d79b-42f0-8498-1972f01fe37c', 'in', 'initial', '', 100, '2026-07-16 10:12:38', '', '2026-07-16 10:12:38', '2026-07-16 10:12:38', NULL),
 	('70557ad7-4bc7-4855-8f04-daf720cbaab6', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'in', 'initial', '', 200, '2026-05-25 13:35:57', '', '2026-05-25 13:35:57', '2026-05-25 13:35:57', NULL),
-	('7c687fa8-dece-49ca-9a18-5f1ffa83c893', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'in', 'initial', '', 100, '2026-06-04 13:21:52', '', '2026-06-04 13:21:52', '2026-06-04 13:21:52', NULL);
+	('74b58276-88c3-41bd-833d-b375eb2d5b33', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'out', '', 'accd9090-090b-410b-9245-86e9230f52dc', 2, '2026-07-15 11:15:07', 'Offline sale — order #accd9090-090b-410b-9245-86e9230f52dc', '2026-07-15 11:15:07', '2026-07-15 11:30:19', '2026-07-15 11:30:19'),
+	('7abd0391-2a92-45cd-8318-c3dd42e71d5d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '1125572a-4b30-4135-bb27-a8e360be0ad4', 'in', 'initial', '', 100, '2026-07-16 10:46:25', '', '2026-07-16 10:46:25', '2026-07-16 10:46:25', NULL),
+	('7baabf93-8b3a-4e04-bf84-c953d3510c6b', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '', 100, '2026-07-08 09:24:45', '', '2026-07-08 09:24:45', '2026-07-08 09:24:45', NULL),
+	('7c687fa8-dece-49ca-9a18-5f1ffa83c893', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'in', 'initial', '', 100, '2026-06-04 13:21:52', '', '2026-06-04 13:21:52', '2026-06-04 13:21:52', NULL),
+	('7f47f994-f6d4-4441-b114-913480b6883d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '9eb2532e-4efc-44b7-8c54-73381914de19', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '', 100, '2026-07-08 09:25:08', '', '2026-07-08 09:25:08', '2026-07-08 09:25:08', NULL),
+	('82261943-e316-4b33-a2ce-a66cae09a105', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'in', 'initial', '', 50, '2026-07-16 10:47:13', '', '2026-07-16 10:47:13', '2026-07-16 10:47:13', NULL),
+	('89fdca63-0104-4087-aee0-b76676af8436', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b90f2056-ace6-41ed-801f-98f463b21280', 'in', 'initial', '', 1000, '2026-07-16 13:36:39', '', '2026-07-16 13:36:39', '2026-07-16 13:36:39', NULL),
+	('8ba3e1cb-1178-4117-ac10-1b2328078482', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '29ba69de-73da-47af-a34c-b4daaf98380d', 'in', 'initial', '', 2000, '2026-07-16 13:53:48', '', '2026-07-16 13:53:48', '2026-07-16 13:53:48', NULL),
+	('8bda8e77-eb8c-4dad-993d-b6f9add1b0b0', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'out', '', 'c48753e7-0691-4004-8178-6837eb5db258', 2, '2026-07-15 11:06:10', 'Offline sale — order #c48753e7-0691-4004-8178-6837eb5db258', '2026-07-15 11:06:10', '2026-07-15 11:30:22', '2026-07-15 11:30:22'),
+	('8c204129-f0fc-4990-a687-952bfa223fdb', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'out', 'order', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 1, '2026-07-16 09:20:10', 'Order payment approved', '2026-07-16 09:20:10', '2026-07-16 09:20:10', NULL),
+	('91c7aa6e-482a-4984-85c4-241f2666a977', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', 'b3a23692-1b3d-4afa-a525-91aba79456da', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'in', '', '', 25, '2026-07-07 16:01:36', 'Masuk', '2026-07-07 16:01:36', '2026-07-07 16:01:36', NULL),
+	('9270db89-b0ee-4cab-a15d-ea92ea1ef0d0', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'out', 'order', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:59', 'Order payment approved', '2026-07-07 13:09:59', '2026-07-07 13:09:59', NULL),
+	('927a58c9-d1b2-4739-a296-bbf593253e5f', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'in', 'initial', '', 40, '2026-07-16 13:21:29', '', '2026-07-16 13:21:29', '2026-07-16 13:21:29', NULL),
+	('9c7504cb-cc03-4c19-b80f-4d290956e473', NULL, NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'in', '', '54d1ad24-4d35-43fd-bae0-538a38270497', 4, '2026-07-15 16:14:21', 'Order cancellation approved by Admin', '2026-07-15 16:14:21', '2026-07-15 16:14:21', NULL),
+	('9f4a5f89-3907-41f7-9679-0cdd9a310d62', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '4f4cbdd6-36d3-4f8b-8e90-0425e9cf3ed6', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'in', '', '', 100, '2026-07-08 09:25:27', '', '2026-07-08 09:25:27', '2026-07-08 09:25:27', NULL),
+	('a3949158-2193-47f0-8e92-40dde3821db1', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c7079913-6f26-4812-84a9-5fd705da671e', 'in', 'initial', '', 100, '2026-07-16 11:28:05', '', '2026-07-16 11:28:05', '2026-07-16 11:28:05', NULL),
+	('a4de5ac4-3494-48f9-8a83-75930c01d5cb', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '837621aa-3a2a-4674-bc7d-11fd026e893d', 'in', 'initial', '', 120, '2026-07-16 15:40:16', '', '2026-07-16 15:40:16', '2026-07-16 15:40:16', NULL),
+	('a60cfeb7-fde7-4195-a3d3-14a0b2cc77ac', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'in', '', '', 50, '2026-07-07 16:56:46', 'Masuk', '2026-07-07 16:56:46', '2026-07-07 16:56:46', NULL),
+	('a725ba0c-3e03-49f8-a0c9-7f948414503a', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '', 100, '2026-07-08 09:24:58', '', '2026-07-08 09:24:58', '2026-07-08 09:24:58', NULL),
+	('a76d7156-a955-4fee-b43a-9f0fb84e8f9d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'in', 'initial', '', 100, '2026-07-07 13:08:43', 'Masuk', '2026-07-07 13:08:43', '2026-07-07 13:08:43', NULL),
+	('a869a211-92df-4bba-80a3-9efcca87281f', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'in', 'initial', '', 100, '2026-07-16 10:45:46', '', '2026-07-16 10:45:46', '2026-07-16 10:45:46', NULL),
+	('a8aee837-f158-4f58-9544-61b435f4db9e', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'in', 'initial', '', 100, '2026-07-16 10:08:07', '', '2026-07-16 10:08:07', '2026-07-16 10:08:07', NULL),
+	('b1e0c0b6-d867-4e28-8de1-e3212c00dbb6', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'in', 'initial', '', 110, '2026-07-16 11:25:40', '', '2026-07-16 11:25:40', '2026-07-16 11:25:40', NULL),
+	('b21f8e83-4973-4112-b194-f04faeafb219', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '09527411-ce22-4480-918c-d6a4ce65cffe', 'in', 'initial', '', 120, '2026-07-16 11:26:35', '', '2026-07-16 11:26:35', '2026-07-16 11:26:35', NULL),
+	('b34f41d3-b60f-4fd0-8e9e-6d6cab7ce1cd', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'out', 'order', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', 3, '2026-07-15 11:30:57', 'Offline sale — order #503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
+	('b5f717f7-2bff-433e-a828-2a1c371eb1ca', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'out', 'order', '54d1ad24-4d35-43fd-bae0-538a38270497', 4, '2026-07-15 16:01:49', 'Order payment approved', '2026-07-15 16:01:49', '2026-07-15 16:01:49', NULL),
+	('c02ebdf9-e6da-42a1-bbf2-ff4a8946a247', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '3606197c-68a5-4658-964b-8bc60df55063', 'in', 'initial', '', 100, '2026-07-16 10:07:32', '', '2026-07-16 10:07:32', '2026-07-16 10:07:32', NULL),
+	('c2ae576d-93b5-42b0-8544-c1a79fda2714', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'in', 'initial', '', 30, '2026-07-16 13:21:12', '', '2026-07-16 13:21:12', '2026-07-16 13:21:12', NULL),
+	('c369c30c-40f3-4d4a-84b7-cd3a2f5d258b', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'in', 'initial', '', 39, '2026-07-16 13:19:51', '', '2026-07-16 13:19:51', '2026-07-16 13:19:51', NULL),
+	('c4db3923-71b6-4f89-a928-e2a20daa01f3', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', 'in', 'initial', '', 80, '2026-07-16 10:47:28', '', '2026-07-16 10:47:28', '2026-07-16 10:47:28', NULL),
+	('c6c0fa0d-c08d-48d7-a892-1cd088c16dd9', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'out', 'order', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 5, '2026-07-15 15:52:17', 'Order payment approved', '2026-07-15 15:52:17', '2026-07-15 15:52:17', NULL),
+	('c930b8e5-4e92-480e-9f7f-451409636c0e', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'out', 'order', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:40:10', 'Order payment approved', '2026-07-15 15:40:10', '2026-07-15 15:40:10', NULL),
+	('cb3015a6-46cb-4e09-8229-ae3b3b72d9b3', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'out', 'order', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:50', 'Order payment approved', '2026-07-15 15:21:50', '2026-07-15 15:21:50', NULL),
+	('d12341ca-f65c-4579-a5b6-a0538f350c6c', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '6c72d88e-f8f0-4249-8b25-7885564eaa06', 'in', 'initial', '', 100, '2026-07-16 15:12:35', '', '2026-07-16 15:12:35', '2026-07-16 15:12:35', NULL),
+	('d349dedc-246d-4023-baee-31672c84f0d7', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'in', 'initial', '', 200, '2026-07-15 11:14:41', '', '2026-07-15 11:14:41', '2026-07-15 11:14:41', NULL),
+	('d3681046-5249-458b-9b67-14196bbbe6d4', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'in', 'initial', '', 80, '2026-07-16 11:24:25', '', '2026-07-16 11:24:25', '2026-07-16 11:24:25', NULL),
+	('d4938a0d-a4af-4e44-a484-aeda513d5e1d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'out', 'order', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:59', 'Order payment approved', '2026-07-07 13:09:59', '2026-07-07 13:09:59', NULL),
+	('dd268b74-f78b-46d0-a272-fc3e7b2ad83d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'in', 'initial', '', 10, '2026-07-16 13:31:39', '', '2026-07-16 13:31:39', '2026-07-16 13:31:39', NULL),
+	('ddfcfcc2-20f0-447f-b7f9-f343ec6b9c97', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'in', 'initial', '', 100, '2026-07-16 09:48:48', '', '2026-07-16 09:48:48', '2026-07-16 09:48:48', NULL),
+	('e2856465-a0fd-4d26-b735-071f7c956961', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'in', 'initial', '', 100, '2026-07-16 09:05:46', '', '2026-07-16 09:05:46', '2026-07-16 09:05:46', NULL),
+	('e36d36b8-130b-4f83-8ebe-87bade0a3d01', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '0064425e-436b-4dd4-90bb-49d5e296876c', 'in', 'initial', '', 120, '2026-07-16 11:25:02', '', '2026-07-16 11:25:02', '2026-07-16 11:25:02', NULL),
+	('e9b2a464-47e2-4d42-a10e-1eb700570d92', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', 'in', 'initial', '', 150, '2026-07-16 10:46:45', '', '2026-07-16 10:46:45', '2026-07-16 10:46:45', NULL),
+	('f0a37b90-244b-44ec-b61f-5e01674f12a4', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c5905480-3ac1-4ff8-a56b-88119487bd92', 'in', 'initial', '', 100, '2026-07-16 09:49:09', '', '2026-07-16 09:49:09', '2026-07-16 09:49:09', NULL),
+	('f214c6b9-c8cf-4e19-98dd-af3b1bc9295b', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5a47f29d-b8e7-40dc-b29d-6da624e820d0', 'in', 'initial', '', 121, '2026-07-16 11:26:49', '', '2026-07-16 11:26:49', '2026-07-16 11:29:40', NULL),
+	('f4ee9bcb-7b55-46cd-9a08-7ff16ae08958', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c98820e9-c613-4bde-91fb-deb1e4667a2e', 'in', 'initial', '', 20, '2026-07-16 10:47:43', '', '2026-07-16 10:47:43', '2026-07-16 10:47:43', NULL),
+	('f5805312-c9ed-4150-9520-b803b263a741', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'in', 'initial', '', 100, '2026-07-16 15:39:44', '', '2026-07-16 15:39:44', '2026-07-16 15:39:44', NULL),
+	('ff0d946c-efeb-4d6f-90cd-ec16d0868adf', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', 'in', 'initial', '', 20, '2026-07-16 13:31:54', '', '2026-07-16 13:31:54', '2026-07-16 13:31:54', NULL);
 
 -- Dumping structure for table pos_optik.migrations
-DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE IF NOT EXISTS `migrations` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `version` varchar(255) NOT NULL,
@@ -243,9 +338,9 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `time` int NOT NULL,
   `batch` int unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.migrations: ~40 rows (approximately)
+-- Dumping data for table pos_optik.migrations: ~43 rows (approximately)
 INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`, `batch`) VALUES
 	(121, '2025-06-02-019900', 'App\\Database\\Migrations\\CreateRolesTable', 'default', 'App', 1779684359, 1),
 	(122, '2025-06-02-020018', 'App\\Database\\Migrations\\CreateCustomersTable', 'default', 'App', 1779684359, 1),
@@ -286,10 +381,12 @@ INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`
 	(157, '2026-01-21-064052', 'App\\Database\\Migrations\\CreateOrderRefundsTable', 'default', 'App', 1779684360, 1),
 	(158, '2026-01-30-000001', 'App\\Database\\Migrations\\CreateOrderRefundItemsTable', 'default', 'App', 1779684361, 1),
 	(159, '2026-02-03-102700', 'App\\Database\\Migrations\\CreateOrderCancellationsTable', 'default', 'App', 1779684361, 1),
-	(160, '2026-03-06-000000', 'App\\Database\\Migrations\\CreateReviewMediaTable', 'default', 'App', 1779684361, 1);
+	(160, '2026-03-06-000000', 'App\\Database\\Migrations\\CreateReviewMediaTable', 'default', 'App', 1779684361, 1),
+	(161, '2026-07-07-101000', 'App\\Database\\Migrations\\MakeShippingMethodIdNullableInOrders', 'default', 'App', 1783419012, 2),
+	(162, '2026-07-15-110000', 'App\\Database\\Migrations\\AddHasVariantsToProducts', 'default', 'App', 1784089368, 3),
+	(163, '2026-07-15-153000', 'App\\Database\\Migrations\\AddReturnShippingToRefunds', 'default', 'App', 1784104166, 4);
 
 -- Dumping structure for table pos_optik.notifications
-DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE IF NOT EXISTS `notifications` (
   `notification_id` char(36) NOT NULL,
   `type` varchar(50) NOT NULL COMMENT 'Jenis notifikasi: low_stock, new_order, etc',
@@ -302,19 +399,62 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.notifications: ~2 rows (approximately)
+-- Dumping data for table pos_optik.notifications: ~47 rows (approximately)
 INSERT INTO `notifications` (`notification_id`, `type`, `message`, `related_id`, `is_read`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0769f703-3f4d-4971-a41d-13e69557b4cc', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:40', '2026-07-15 16:15:13', NULL),
+	('0bcef56a-3945-4a3c-896b-4249ee57885b', 'new_order', 'New online order from Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:35', '2026-07-15 16:15:13', NULL),
+	('0c1f7327-c1b8-49b0-81fa-7ed25a508671', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '346bda17-d275-421e-80c9-066e11609051', 1, '2026-07-15 15:40:19', '2026-07-15 16:15:13', NULL),
+	('28009d27-0e85-4f87-a86e-841a3d8f797a', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:44:57', '2026-07-15 16:15:13', NULL),
+	('2bcacf2a-21df-4965-ad63-97a48003a867', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:37', '2026-07-15 16:15:13', NULL),
+	('2d0cbd34-c858-4024-b01a-13741e805704', 'new_order', 'Pesanan baru dari Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:35', '2026-07-15 16:15:13', NULL),
+	('2fab8f6d-548d-4cf5-b432-4510e100315f', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:41:47', '2026-07-15 10:45:01', NULL),
+	('353dd832-8e14-4e6c-b2c4-638afee97161', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:44', '2026-07-15 16:15:13', NULL),
+	('391382ed-7b3c-42cc-8452-4e78b9c830b4', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:36', '2026-07-15 16:15:13', NULL),
+	('3cf789e3-90ec-4db4-a12b-6e37392fc59d', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:40', '2026-07-15 16:15:13', NULL),
+	('40cfa63d-b532-414a-b770-342387b578cf', 'refund_order', 'Refund approved for Order #54d1ad24-4d35-43fd-bae0-538a38270497 (Cancellation)', 'dfa1a240-565c-4642-ab46-53a7d1740c67', 1, '2026-07-15 16:14:21', '2026-07-15 16:15:13', NULL),
+	('41bf15a6-7110-4e28-bd07-2bd4a82beaa1', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:22', '2026-07-15 16:15:13', NULL),
+	('46acee33-4789-4940-abd1-2157ccf07419', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:54', '2026-07-15 16:15:13', NULL),
+	('48c2a2fd-f94c-427e-b509-00882aef1f31', 'refund_order', 'Refund approved for Order #a7698eb9-fc91-4b8b-bcfa-a0b2a772af96 (Cancellation)', '3ea8052b-4d20-4770-a3e7-4e8552518e71', 1, '2026-07-15 15:51:20', '2026-07-15 16:15:13', NULL),
+	('4c0f6bf7-127a-46b0-b34a-a331dc82e50c', 'new_order', 'Pembayaran baru dari Tina Usamah', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:29', '2026-07-07 16:05:42', NULL),
+	('4c7da7d5-e45a-4d7f-b6c4-1e3e4d69ce98', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '8e1ed674-5823-49e8-9b1b-17aa2b067ab8', 1, '2026-07-15 15:51:12', '2026-07-15 16:15:13', NULL),
+	('6237a1c8-89fc-44b5-8a5c-9dfac9382a70', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 1, '2026-07-15 14:25:23', '2026-07-15 15:15:47', NULL),
+	('64885505-d3a6-476e-bc96-417ffdb3a1dd', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:36', '2026-07-15 16:15:13', NULL),
 	('6aef05da-aa5c-4814-a27c-259ea081a247', 'new_order', 'Pembayaran baru dari Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 14:00:23', '2026-05-26 09:06:59', NULL),
-	('9b38926d-eab2-4834-bb63-56b9fbbb8c3e', 'new_order', 'Pesanan baru dari Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 0, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
-	('f8181391-6def-41ad-a1f7-f3235c8890e5', 'new_order', 'New online order from Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 0, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL);
+	('6b208791-325d-471c-88f0-c01b7c4f437e', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:59', '2026-07-15 16:15:13', NULL),
+	('744d2cd4-28b5-4a7d-9b45-00c982c7e985', 'new_order', 'Pembayaran baru dari Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:49', '2026-07-07 16:05:36', NULL),
+	('756a4c9f-2ed8-447b-8529-206c4e773449', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 0, '2026-07-16 09:19:35', '2026-07-16 09:19:35', NULL),
+	('831667c6-e9b8-4099-a91c-6d0606e003be', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:54', '2026-07-15 16:15:13', NULL),
+	('856579cd-afc7-4a96-b77c-148f51d9ebbe', 'refund_order', 'Refund approved for Order #52672a09-1262-4164-8331-fbbf1374d393 (Cancellation)', '537191fd-d803-4a86-be01-e124a5d1f949', 1, '2026-07-15 15:40:59', '2026-07-15 16:15:13', NULL),
+	('9562318c-109c-4178-8598-bcce3a736afd', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:41:47', '2026-07-15 16:15:13', NULL),
+	('9a869b94-dc04-4117-94f0-8d3b9825ce59', 'refund_order', 'New refund request from Jagaraga Mustofa M.Kom.', 'd280894c-390e-4025-a1a8-f152c7b88035', 1, '2026-07-15 15:22:32', '2026-07-15 16:15:13', NULL),
+	('9b38926d-eab2-4834-bb63-56b9fbbb8c3e', 'new_order', 'Pesanan baru dari Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 13:59:58', '2026-07-15 16:15:13', NULL),
+	('a9bca8f6-e90c-49f8-8657-e8d72f01fd5c', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', 'beb9f65e-9f56-4cd2-858e-8ce6d95dbeb3', 1, '2026-07-15 16:02:03', '2026-07-15 16:15:13', NULL),
+	('b1bcccde-c848-487f-ad8e-0d142c98389d', 'new_order', 'Pesanan baru dari Tina Usamah', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:22', '2026-07-15 09:58:21', NULL),
+	('b31e47a7-6ffc-4741-8517-88602a30e04d', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 1, '2026-07-15 15:52:06', '2026-07-15 15:52:14', NULL),
+	('b48f58d8-e0b9-47a8-9791-054c5b0c7471', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:23', '2026-07-15 16:15:13', NULL),
+	('b62a9c79-0301-4339-9bf6-0533321bf0e1', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 1, '2026-07-15 15:52:01', '2026-07-15 16:15:13', NULL),
+	('b72e0130-9e9e-46bd-8369-fffc19bcc2e9', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 0, '2026-07-16 09:19:28', '2026-07-16 09:19:28', NULL),
+	('c564c8a4-e30d-48af-8786-2d5279d102ab', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:42:02', '2026-07-15 10:44:38', NULL),
+	('d5364c0d-d93e-476f-9753-7d074faf42ec', 'refund_order', 'New refund request from Jagaraga Mustofa M.Kom.', '7a43bdd8-2744-4ac9-abb5-487a6e6a3d95', 1, '2026-07-15 15:59:32', '2026-07-15 16:15:13', NULL),
+	('dcc5f78f-f3d3-496a-ba22-ac834bacc9da', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:37', '2026-07-15 16:15:13', NULL),
+	('df70484a-1db7-4026-b0ac-ffdab314453c', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:40', '2026-07-15 16:15:13', NULL),
+	('dfd2d3ab-77db-40a9-827b-5d5983789194', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:29', '2026-07-15 15:21:45', NULL),
+	('e58b215d-39f6-4959-9229-4cd805474aaf', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '0997d88b-4be7-46f8-a994-02ebf477232c', 0, '2026-07-15 16:22:44', '2026-07-15 16:22:44', NULL),
+	('e652ae11-066f-4d02-856c-d8313399c793', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 1, '2026-07-15 15:52:00', '2026-07-15 16:15:13', NULL),
+	('e805ea66-8e3f-4a65-95be-6cded6587491', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:44', '2026-07-15 15:15:53', NULL),
+	('e85c994d-4918-4d4c-a87c-94f9763ae06a', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 1, '2026-07-15 14:25:23', '2026-07-15 16:15:13', NULL),
+	('eecd59bd-e51f-4dd7-a50b-a49d3f1f497d', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', 'dc0e4286-23ef-4dbb-b460-3064796e8d71', 1, '2026-07-15 15:16:15', '2026-07-15 15:16:57', NULL),
+	('f8181391-6def-41ad-a1f7-f3235c8890e5', 'new_order', 'New online order from Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 13:59:58', '2026-07-15 16:15:13', NULL),
+	('f93bbd38-bc4b-4cee-8e47-317e26623206', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 0, '2026-07-16 09:19:28', '2026-07-16 09:19:28', NULL),
+	('fecd42cd-dfcc-46d4-b7e8-0c1d18c2658f', 'refund_order', 'Refund approved for Order #63e78cb8-c662-4aba-a4b7-9aed7ccc0618 (Cancellation)', 'e889f5ba-7ff9-4c57-870d-a9469ffd5e12', 0, '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL),
+	('ff875b7d-0f5c-4dae-b16a-e75c05f00c10', 'new_order', 'New online order from Tina Usamah', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:22', '2026-07-15 16:15:13', NULL);
 
 -- Dumping structure for table pos_optik.orders
-DROP TABLE IF EXISTS `orders`;
 CREATE TABLE IF NOT EXISTS `orders` (
   `order_id` char(36) NOT NULL,
   `customer_id` char(36) NOT NULL,
   `status_id` char(36) NOT NULL,
-  `shipping_method_id` char(36) NOT NULL,
+  `shipping_method_id` char(36) DEFAULT NULL,
   `shipping_cost` decimal(10,2) DEFAULT NULL,
   `tracking_number` varchar(100) DEFAULT NULL,
   `courier` varchar(50) DEFAULT NULL,
@@ -327,22 +467,45 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `orders_customer_id_foreign` (`customer_id`),
-  KEY `orders_shipping_method_id_foreign` (`shipping_method_id`),
   KEY `idx_orders_created_at` (`created_at`),
   KEY `idx_orders_status_id` (`status_id`),
   KEY `idx_orders_type_status` (`order_type`,`status_id`),
   KEY `idx_orders_created_status` (`created_at`,`status_id`),
+  KEY `orders_shipping_method_id_foreign` (`shipping_method_id`),
   CONSTRAINT `orders_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `orders_shipping_method_id_foreign` FOREIGN KEY (`shipping_method_id`) REFERENCES `shipping_methods` (`shipping_method_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `orders_status_id_foreign` FOREIGN KEY (`status_id`) REFERENCES `order_statuses` (`status_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.orders: ~1 rows (approximately)
+-- Dumping data for table pos_optik.orders: ~25 rows (approximately)
 INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_id`, `shipping_cost`, `tracking_number`, `courier`, `shipped_at`, `coupon_discount`, `grand_total`, `order_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0e5f09ef-3187-433d-b4d2-40acdb2697c3', '29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '135000', 'offline', '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
+	('143d5c4a-8523-4ee9-8f7d-c21e37847973', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '16320000', 'online', '2026-07-15 14:25:23', '2026-07-15 15:15:31', NULL),
+	('159fda19-5e23-4b56-ad97-3db7f266a9a7', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'ae12a448-98b3-4dc1-9c71-87468abc7bb5', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, 'aA1221212', 'SiCepat', NULL, 0.00, '1020000', 'online', '2026-07-15 15:21:22', '2026-07-15 15:31:31', NULL),
+	('22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '570000', 'offline', '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
+	('30154f79-8290-4374-9dae-3ea47f20ce7e', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '3520000', 'online', '2026-07-15 15:15:37', '2026-07-15 15:17:50', NULL),
+	('4da557ef-f65a-4cdd-9d63-d96356e84dee', '29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '29028000', 'offline', '2026-07-09 14:49:49', '2026-07-09 14:49:49', NULL),
+	('503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '3b1435da-afab-49b4-a27f-8f6885763ce1', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '4050000', 'offline', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
+	('52672a09-1262-4164-8331-fbbf1374d393', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '2320000', 'online', '2026-07-15 15:39:54', '2026-07-15 15:40:59', NULL),
+	('54d1ad24-4d35-43fd-bae0-538a38270497', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '2300000', 'online', '2026-07-15 16:01:36', '2026-07-15 16:14:21', NULL),
+	('5e15cb5c-bf24-41cf-b259-e20f289b604c', '3b1435da-afab-49b4-a27f-8f6885763ce1', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '6900000', 'offline', '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
+	('63e78cb8-c662-4aba-a4b7-9aed7ccc0618', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '6770000', 'online', '2026-07-15 15:52:00', '2026-07-15 16:23:00', NULL),
+	('71de3fdc-8905-4eff-97e6-90ad87686b99', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '2300000', 'offline', '2026-07-15 09:24:22', '2026-07-15 09:24:22', NULL),
+	('7f6042b4-3f58-4e87-a366-b3f3f0c41187', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'ae12a448-98b3-4dc1-9c71-87468abc7bb5', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '323232423312121', 'J&T', NULL, 0.00, '590000', 'online', '2026-07-15 15:56:40', '2026-07-15 16:00:07', NULL),
+	('83b85cec-c469-4652-8f3e-63fbcbcbfb65', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '827u4u484728239384', 'JNE', NULL, 0.00, '17546000', 'online', '2026-07-07 13:09:35', '2026-07-07 13:10:26', NULL),
+	('8e756651-3f5a-4578-ad08-0a6bdfdc8da4', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '9676000', 'offline', '2026-07-15 09:26:59', '2026-07-15 09:26:59', NULL),
+	('9e700049-24e0-4d68-8c07-9914401517f0', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '19352000', 'offline', '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
+	('a6734433-cdae-4ec3-ac77-6ece69aeb338', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '4600000', 'offline', '2026-07-15 09:59:44', '2026-07-15 09:59:44', NULL),
+	('a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '155000', 'online', '2026-07-15 10:41:47', '2026-07-15 15:51:20', NULL),
+	('accd9090-090b-410b-9245-86e9230f52dc', '30022d14-9388-4351-8709-2f8c89ae9002', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '2700000', 'offline', '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL),
+	('bba1861d-d341-4dd7-aaf1-188e1f193f8f', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'cc46d2a8-436c-42fc-96a1-ffb537dbabed', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '844500', 'online', '2026-07-16 09:19:28', '2026-07-16 09:20:10', NULL),
+	('c322e59d-5b1f-46c3-92dc-74236e7bc23b', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '10000000', 'offline', '2026-07-09 14:49:06', '2026-07-09 14:49:06', NULL),
+	('c48753e7-0691-4004-8178-6837eb5db258', '30022d14-9388-4351-8709-2f8c89ae9002', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '270000', 'offline', '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
+	('d6709d13-aec5-4eab-b1a0-508e53aeb56f', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '19352000', 'offline', '2026-07-08 08:58:53', '2026-07-08 08:58:53', NULL),
+	('db162bb3-38c4-4b58-9ce6-e8b51b9376e7', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '4d609622-8392-469b-acd1-c7859424633a', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '827u4u484728239384', 'JNE', NULL, 0.00, '1120000', 'online', '2026-07-07 16:05:22', '2026-07-07 16:05:55', NULL),
 	('f0872a80-855d-453b-a466-f61259fb8d51', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '323232423312121', 'JNE', NULL, 0.00, '2020000', 'online', '2026-05-25 13:59:57', '2026-05-25 14:08:38', NULL);
 
 -- Dumping structure for table pos_optik.order_cancellations
-DROP TABLE IF EXISTS `order_cancellations`;
 CREATE TABLE IF NOT EXISTS `order_cancellations` (
   `order_cancellation_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -363,10 +526,16 @@ CREATE TABLE IF NOT EXISTS `order_cancellations` (
   CONSTRAINT `order_cancellations_processed_by_foreign` FOREIGN KEY (`processed_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_cancellations: ~0 rows (approximately)
+-- Dumping data for table pos_optik.order_cancellations: ~6 rows (approximately)
+INSERT INTO `order_cancellations` (`order_cancellation_id`, `order_id`, `reason`, `additional_note`, `status`, `processed_by`, `processed_at`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0997d88b-4be7-46f8-a994-02ebf477232c', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'Pricing issue', '', 'approved', NULL, '2026-07-15 16:23:00', '2026-07-15 16:22:44', '2026-07-15 16:23:00', NULL),
+	('346bda17-d275-421e-80c9-066e11609051', '52672a09-1262-4164-8331-fbbf1374d393', 'Changed my mind', 'gfgfgfg', 'approved', NULL, '2026-07-15 15:40:59', '2026-07-15 15:40:19', '2026-07-15 15:40:59', NULL),
+	('5d638e53-7366-43c5-a007-d2d027c14e4f', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'Cancelled to start a new checkout flow', '', 'approved', NULL, '2026-07-15 15:15:31', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
+	('8e1ed674-5823-49e8-9b1b-17aa2b067ab8', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'Wrong order', 'ddsds', 'approved', NULL, '2026-07-15 15:51:20', '2026-07-15 15:51:12', '2026-07-15 15:51:20', NULL),
+	('beb9f65e-9f56-4cd2-858e-8ce6d95dbeb3', '54d1ad24-4d35-43fd-bae0-538a38270497', 'Wrong order', 'sasasas', 'approved', NULL, '2026-07-15 16:14:21', '2026-07-15 16:02:03', '2026-07-15 16:14:21', NULL),
+	('dc0e4286-23ef-4dbb-b460-3064796e8d71', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'Changed my mind', 'sasasa', 'approved', NULL, '2026-07-15 15:17:50', '2026-07-15 15:16:15', '2026-07-15 15:17:50', NULL);
 
 -- Dumping structure for table pos_optik.order_coupons
-DROP TABLE IF EXISTS `order_coupons`;
 CREATE TABLE IF NOT EXISTS `order_coupons` (
   `order_coupon_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -384,7 +553,6 @@ CREATE TABLE IF NOT EXISTS `order_coupons` (
 -- Dumping data for table pos_optik.order_coupons: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.order_items
-DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE IF NOT EXISTS `order_items` (
   `order_item_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -404,13 +572,39 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   CONSTRAINT `order_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_items: ~2 rows (approximately)
+-- Dumping data for table pos_optik.order_items: ~29 rows (approximately)
 INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0b64f3b6-b047-47db-8f9f-3bea29295706', '9e700049-24e0-4d68-8c07-9914401517f0', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 2, 9676000.00, '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
+	('0f40acda-8b6c-4970-96a0-a6140b1ce755', '143d5c4a-8523-4ee9-8f7d-c21e37847973', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '92504955-32b6-4016-887d-8a278f0a3a56', 2, 1100000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
+	('12b3a54c-be79-41d9-8bc6-3c7e191e2435', '30154f79-8290-4374-9dae-3ea47f20ce7e', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 1, 3500000.00, '2026-07-15 15:15:37', '2026-07-15 15:15:37', NULL),
+	('1ab6c659-4429-430b-ab6e-d7c4d3fe2fbb', 'c48753e7-0691-4004-8178-6837eb5db258', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 2, 135000.00, '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
+	('20b72565-5bd1-4683-be2e-f042061eb368', '71de3fdc-8905-4eff-97e6-90ad87686b99', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 1, 2300000.00, '2026-07-15 09:24:23', '2026-07-15 09:24:23', NULL),
+	('31dd4428-acec-4a9f-94fc-cdffda9940b0', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 1, 7850000.00, '2026-07-07 13:09:35', '2026-07-07 13:09:35', NULL),
+	('36721243-f740-438f-a81d-8bfe20555081', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:41:47', '2026-07-15 10:41:47', NULL),
+	('46c04009-9c87-4add-afe9-a39976be2743', '52672a09-1262-4164-8331-fbbf1374d393', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 1, 2300000.00, '2026-07-15 15:39:54', '2026-07-15 15:39:54', NULL),
+	('490fd9fd-c318-4af7-b1ff-454bb5cfa877', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 3, 1350000.00, '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
+	('5317fe7d-5b6e-4bf5-bb7c-2dcbfa146673', '22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 1, 570000.00, '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
+	('60400e7d-15ec-4866-812c-58c8ce1cf35b', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 1, 570000.00, '2026-07-15 15:56:40', '2026-07-15 15:56:40', NULL),
+	('70544496-5cd7-4a84-9de2-4e7b7216df30', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 1, 1000000.00, '2026-07-15 15:21:22', '2026-07-15 15:21:22', NULL),
+	('72dc9262-35f6-436e-aa6e-f1a417a68361', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'b3a23692-1b3d-4afa-a525-91aba79456da', 1, 1100000.00, '2026-07-07 16:05:22', '2026-07-07 16:05:22', NULL),
+	('7c7ad204-500e-4cef-80f1-a167c02fc388', '0e5f09ef-3187-433d-b4d2-40acdb2697c3', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
+	('7d28347f-956e-4843-a9e4-7216ae574f98', 'c322e59d-5b1f-46c3-92dc-74236e7bc23b', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 10, 1000000.00, '2026-07-09 14:49:08', '2026-07-09 14:49:08', NULL),
+	('7fa604f1-9fbd-4fa0-b15c-9673aa903536', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 1, 824500.00, '2026-07-16 09:19:28', '2026-07-16 09:19:28', NULL),
+	('8ce5a5de-aea5-4fec-9cd3-de9efa2f1522', '8e756651-3f5a-4578-ad08-0a6bdfdc8da4', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 1, 9676000.00, '2026-07-15 09:26:59', '2026-07-15 09:26:59', NULL),
+	('8fae03c0-fffa-4263-b65f-68059fdbcd66', 'a6734433-cdae-4ec3-ac77-6ece69aeb338', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 2, 2300000.00, '2026-07-15 09:59:44', '2026-07-15 09:59:44', NULL),
+	('95e33436-0db5-44db-9628-26532ad8383b', 'd6709d13-aec5-4eab-b1a0-508e53aeb56f', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 2, 9676000.00, '2026-07-08 08:58:53', '2026-07-08 08:58:53', NULL),
+	('a0c62f8f-0af2-4538-8412-a8a56496bae8', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 1, 9676000.00, '2026-07-07 13:09:35', '2026-07-07 13:09:35', NULL),
+	('a9bfa079-6ed1-4d0a-9da9-24c654bb0e66', '143d5c4a-8523-4ee9-8f7d-c21e37847973', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 3, 3500000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
+	('aace3d9e-9c98-4f90-90c3-b1d35c425bcd', '4da557ef-f65a-4cdd-9d63-d96356e84dee', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 3, 9676000.00, '2026-07-09 14:49:49', '2026-07-09 14:49:49', NULL),
 	('acde7c85-7402-4583-94fe-1c41a19b8102', 'f0872a80-855d-453b-a466-f61259fb8d51', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', '07c245de-6af9-463c-becc-90f50917edc5', 1, 1000000.00, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
-	('bd217fcc-147a-45f7-abd6-244cafcb36f5', 'f0872a80-855d-453b-a466-f61259fb8d51', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL);
+	('bd217fcc-147a-45f7-abd6-244cafcb36f5', 'f0872a80-855d-453b-a466-f61259fb8d51', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
+	('c5590bab-d3f2-47f0-9db1-ab437ca2ffa5', '54d1ad24-4d35-43fd-bae0-538a38270497', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 4, 570000.00, '2026-07-15 16:01:36', '2026-07-15 16:01:36', NULL),
+	('cc6bc271-fecc-455d-9255-6ca952dace4d', 'accd9090-090b-410b-9245-86e9230f52dc', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 2, 1350000.00, '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL),
+	('e060be8a-8b6c-4c9c-a19d-a9bd410e9b6e', '5e15cb5c-bf24-41cf-b259-e20f289b604c', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 3, 2300000.00, '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
+	('e79ed1b3-15fd-42fc-9bb3-e16cc68f9367', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 5, 1350000.00, '2026-07-15 15:52:00', '2026-07-15 15:52:00', NULL),
+	('e8c8bd71-7f33-4008-8ed1-8a62fced1a48', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '303431f3-db77-4f28-a571-fda989e0d268', 3, 1200000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL);
 
 -- Dumping structure for table pos_optik.order_item_prescriptions
-DROP TABLE IF EXISTS `order_item_prescriptions`;
 CREATE TABLE IF NOT EXISTS `order_item_prescriptions` (
   `order_item_prescription_id` char(36) NOT NULL,
   `order_item_id` char(36) NOT NULL,
@@ -436,7 +630,6 @@ CREATE TABLE IF NOT EXISTS `order_item_prescriptions` (
 -- Dumping data for table pos_optik.order_item_prescriptions: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.order_refunds
-DROP TABLE IF EXISTS `order_refunds`;
 CREATE TABLE IF NOT EXISTS `order_refunds` (
   `order_refund_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -448,6 +641,9 @@ CREATE TABLE IF NOT EXISTS `order_refunds` (
   `refund_type` enum('full','partial') DEFAULT NULL COMMENT 'Full refund atau partial (per-item)',
   `admin_note` text,
   `evidence_url` varchar(1024) NOT NULL,
+  `return_courier` varchar(50) DEFAULT NULL COMMENT 'Courier used for return shipping',
+  `return_tracking_number` varchar(100) DEFAULT NULL COMMENT 'Tracking number for return shipping',
+  `return_shipped_at` datetime DEFAULT NULL COMMENT 'Timestamp when return was shipped',
   `processed_by` char(36) DEFAULT NULL COMMENT 'Admin ID yang memproses refund',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -465,10 +661,16 @@ CREATE TABLE IF NOT EXISTS `order_refunds` (
   CONSTRAINT `order_refunds_user_refund_account_id_foreign` FOREIGN KEY (`user_refund_account_id`) REFERENCES `user_refund_accounts` (`user_refund_account_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_refunds: ~0 rows (approximately)
+-- Dumping data for table pos_optik.order_refunds: ~6 rows (approximately)
+INSERT INTO `order_refunds` (`order_refund_id`, `order_id`, `user_refund_account_id`, `refund_amount`, `reason`, `additional_note`, `status`, `refund_type`, `admin_note`, `evidence_url`, `return_courier`, `return_tracking_number`, `return_shipped_at`, `processed_by`, `created_at`, `updated_at`, `completed_at`, `deleted_at`) VALUES
+	('3ea8052b-4d20-4770-a3e7-4e8552518e71', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 155000.00, 'Cancellation: Wrong order', 'ddsds', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 15:51:20', '2026-07-15 15:51:20', NULL, NULL),
+	('537191fd-d803-4a86-be01-e124a5d1f949', '52672a09-1262-4164-8331-fbbf1374d393', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 2320000.00, 'Cancellation: Changed my mind', 'gfgfgfg', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 15:40:59', '2026-07-15 15:40:59', NULL, NULL),
+	('7a43bdd8-2744-4ac9-abb5-487a6e6a3d95', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 590000.00, 'Wrong product received', 'sasasasasasasasas', 'refunded', 'full', NULL, 'https://cdn.adefoodwaste.biz.id/1784105971_c9d3aebb7c7968cae825.png', 'JNE', 'sassasasasas', '2026-07-15 15:59:54', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '2026-07-15 15:59:32', '2026-07-15 16:00:07', '2026-07-15 16:00:04', NULL),
+	('d280894c-390e-4025-a1a8-f152c7b88035', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 1020000.00, 'Defective product', 'SASASASWEEWE', 'refunded', 'full', 'SASASAS', 'https://cdn.adefoodwaste.biz.id/1784103751_e27b6148aec9ca054fa2.png', 'JNE', '090943KJDSJKJSDSJD', '2026-07-15 15:30:38', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '2026-07-15 15:22:32', '2026-07-15 15:31:31', '2026-07-15 15:31:19', NULL),
+	('dfa1a240-565c-4642-ab46-53a7d1740c67', '54d1ad24-4d35-43fd-bae0-538a38270497', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 2300000.00, 'Cancellation: Wrong order', 'sasasas', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 16:14:21', '2026-07-15 16:14:21', NULL, NULL),
+	('e889f5ba-7ff9-4c57-870d-a9469ffd5e12', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 6770000.00, 'Cancellation: Pricing issue', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL, NULL);
 
 -- Dumping structure for table pos_optik.order_refund_items
-DROP TABLE IF EXISTS `order_refund_items`;
 CREATE TABLE IF NOT EXISTS `order_refund_items` (
   `order_refund_item_id` char(36) NOT NULL,
   `order_refund_id` char(36) NOT NULL,
@@ -488,7 +690,6 @@ CREATE TABLE IF NOT EXISTS `order_refund_items` (
 -- Dumping data for table pos_optik.order_refund_items: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.order_shipping_addresses
-DROP TABLE IF EXISTS `order_shipping_addresses`;
 CREATE TABLE IF NOT EXISTS `order_shipping_addresses` (
   `osa_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -506,12 +707,22 @@ CREATE TABLE IF NOT EXISTS `order_shipping_addresses` (
   CONSTRAINT `order_shipping_addresses_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_shipping_addresses: ~0 rows (approximately)
+-- Dumping data for table pos_optik.order_shipping_addresses: ~12 rows (approximately)
 INSERT INTO `order_shipping_addresses` (`osa_id`, `order_id`, `recipient_name`, `phone`, `address`, `city`, `province`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('2eadc7c0-a840-4c6b-ac87-b78368fb332f', 'f0872a80-855d-453b-a466-f61259fb8d51', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL);
+	('01f7902b-dc85-47b2-be40-f8c7a10286da', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:15:37', '2026-07-15 15:15:37', NULL),
+	('03d3621e-18b3-4e9d-828a-7596dab40b17', '52672a09-1262-4164-8331-fbbf1374d393', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:39:54', '2026-07-15 15:39:54', NULL),
+	('11e68326-e258-4da1-a311-33e47bb4743e', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-07 16:05:22', '2026-07-07 16:05:22', NULL),
+	('15ffe8a5-82bd-4ce8-be61-46400e834811', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:52:00', '2026-07-15 15:52:00', NULL),
+	('2eadc7c0-a840-4c6b-ac87-b78368fb332f', 'f0872a80-855d-453b-a466-f61259fb8d51', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
+	('47d70436-b291-4750-b7b4-7d008913085d', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-07 13:09:35', '2026-07-07 13:09:35', NULL),
+	('53167c93-613c-40ec-bc4f-fcc95ab9c984', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:56:40', '2026-07-15 15:56:40', NULL),
+	('58314d96-059a-4479-aa09-2aed48628016', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
+	('91683294-e842-4dcb-91c4-7a325c8ebb59', '54d1ad24-4d35-43fd-bae0-538a38270497', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 16:01:36', '2026-07-15 16:01:36', NULL),
+	('bed56fbe-31ac-4e2e-8da1-b7bad6ebe2d3', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 10:41:47', '2026-07-15 10:41:47', NULL),
+	('f06062b0-f6ad-4fc0-a0af-30c96166efe6', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-16 09:19:28', '2026-07-16 09:19:28', NULL),
+	('f4c5342e-36cb-40a0-b25d-9ad5f8b57cd9', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:21:22', '2026-07-15 15:21:22', NULL);
 
 -- Dumping structure for table pos_optik.order_statuses
-DROP TABLE IF EXISTS `order_statuses`;
 CREATE TABLE IF NOT EXISTS `order_statuses` (
   `status_id` char(36) NOT NULL,
   `status_code` varchar(20) NOT NULL,
@@ -522,7 +733,7 @@ CREATE TABLE IF NOT EXISTS `order_statuses` (
   PRIMARY KEY (`status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_statuses: ~9 rows (approximately)
+-- Dumping data for table pos_optik.order_statuses: ~10 rows (approximately)
 INSERT INTO `order_statuses` (`status_id`, `status_code`, `status_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('09137a62-99b7-48ba-bf27-8c4177ddc185', 'partially_refunded', 'Partially Refunded', '2026-05-25 14:06:37', '2026-05-25 14:06:39', NULL),
 	('0ab780fe-49da-4a95-ad73-56c3c74f2416', 'cancelled', 'Order Cancelled', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
@@ -536,7 +747,6 @@ INSERT INTO `order_statuses` (`status_id`, `status_code`, `status_name`, `create
 	('f1a3c2b4-9e77-4e8d-9b12-2c5a7e8f91ab', 'rejected', 'Payment Rejected', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL);
 
 -- Dumping structure for table pos_optik.payments
-DROP TABLE IF EXISTS `payments`;
 CREATE TABLE IF NOT EXISTS `payments` (
   `payment_id` char(36) NOT NULL,
   `order_id` char(36) NOT NULL,
@@ -554,12 +764,35 @@ CREATE TABLE IF NOT EXISTS `payments` (
   CONSTRAINT `payments_payment_method_id_foreign` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.payments: ~0 rows (approximately)
+-- Dumping data for table pos_optik.payments: ~25 rows (approximately)
 INSERT INTO `payments` (`payment_id`, `order_id`, `payment_method_id`, `amount`, `proof`, `paid_at`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('4bd7719f-0242-49f7-9f6f-b3210715ecbb', 'f0872a80-855d-453b-a466-f61259fb8d51', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2020000.00, 'https://cdn.adefoodwaste.biz.id/payments/f0872a80-855d-453b-a466-f61259fb8d51/1779692422_bcc1141911a8c4ddc74f.png', '2026-05-25 14:00:23', '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL);
+	('113daf06-14af-4be8-8709-b555e0053caa', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'e2914263-7e0f-4e3c-9425-0958c9581215', 155000.00, 'https://cdn.adefoodwaste.biz.id/payments/a7698eb9-fc91-4b8b-bcfa-a0b2a772af96/1784087096_365f721e4a283a26b11b.png', '2026-07-15 10:44:57', '2026-07-15 10:44:57', '2026-07-15 10:44:57', NULL),
+	('285bfebe-ccb8-47f8-983d-573a45efb679', 'a6734433-cdae-4ec3-ac77-6ece69aeb338', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 5000000.00, NULL, '2026-07-15 09:59:44', '2026-07-15 09:59:44', '2026-07-15 09:59:44', NULL),
+	('2df21910-fc97-4848-9452-08edf6a36cca', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1020000.00, 'https://cdn.adefoodwaste.biz.id/payments/159fda19-5e23-4b56-ad97-3db7f266a9a7/1784103689_5faa34368b2dbe1013d3.png', '2026-07-15 15:21:29', '2026-07-15 15:21:29', '2026-07-15 15:21:29', NULL),
+	('3fc6a260-d7d1-44d1-a862-e7feef370b59', 'c322e59d-5b1f-46c3-92dc-74236e7bc23b', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 10000000.00, NULL, '2026-07-09 14:49:08', '2026-07-09 14:49:08', '2026-07-09 14:49:08', NULL),
+	('4205b99d-b6f1-4c56-987a-41ecaa1ff4f0', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 'e2914263-7e0f-4e3c-9425-0958c9581215', 17546000.00, 'https://cdn.adefoodwaste.biz.id/payments/83b85cec-c469-4652-8f3e-63fbcbcbfb65/1783404587_697aafd6d591fa908cae.png', '2026-07-07 13:09:49', '2026-07-07 13:09:49', '2026-07-07 13:09:49', NULL),
+	('4594a3f1-f31c-40a2-9089-31f16d0396af', '22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', '7aeb3cfe-7ab5-4adf-a1ae-66f1d583ae56', 570000.00, 'https://cdn.adefoodwaste.biz.id/payments/22b3f4eb-f8ae-4ce8-bc5d-2f967d959167/1783419091_1d0278dfd636d8070bbf.png', '2026-07-07 17:11:31', '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
+	('4aded865-33fd-4f63-824f-b266efba885c', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'e2914263-7e0f-4e3c-9425-0958c9581215', 6770000.00, 'https://cdn.adefoodwaste.biz.id/payments/63e78cb8-c662-4aba-a4b7-9aed7ccc0618/1784105525_187624ed6dcaa3eb04ae.png', '2026-07-15 15:52:06', '2026-07-15 15:52:06', '2026-07-15 15:52:06', NULL),
+	('4bd7719f-0242-49f7-9f6f-b3210715ecbb', 'f0872a80-855d-453b-a466-f61259fb8d51', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2020000.00, 'https://cdn.adefoodwaste.biz.id/payments/f0872a80-855d-453b-a466-f61259fb8d51/1779692422_bcc1141911a8c4ddc74f.png', '2026-05-25 14:00:23', '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL),
+	('687d9602-7dcc-42b7-b755-1b700f55f383', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'e2914263-7e0f-4e3c-9425-0958c9581215', 155000.00, 'https://cdn.adefoodwaste.biz.id/payments/a7698eb9-fc91-4b8b-bcfa-a0b2a772af96/1784086922_8fcf537b5825e22354a0.png', '2026-07-15 10:42:02', '2026-07-15 10:42:02', '2026-07-15 10:42:02', NULL),
+	('6e283d24-ed7a-4eb5-85ec-23a1be2161a2', '54d1ad24-4d35-43fd-bae0-538a38270497', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2300000.00, 'https://cdn.adefoodwaste.biz.id/payments/54d1ad24-4d35-43fd-bae0-538a38270497/1784106100_791b5b00db274e211a34.png', '2026-07-15 16:01:40', '2026-07-15 16:01:40', '2026-07-15 16:01:40', NULL),
+	('7352a5c8-c414-41e9-a41a-770a74c7b86d', '5e15cb5c-bf24-41cf-b259-e20f289b604c', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 10000000.00, NULL, '2026-07-15 11:33:23', '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
+	('7477d087-a1b9-43cb-b159-5ba00255a22b', '8e756651-3f5a-4578-ad08-0a6bdfdc8da4', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 10000000.00, NULL, '2026-07-15 09:26:59', '2026-07-15 09:26:59', '2026-07-15 09:26:59', NULL),
+	('7729cf2e-1855-4a11-8609-1de82d7dac19', '4da557ef-f65a-4cdd-9d63-d96356e84dee', '7aeb3cfe-7ab5-4adf-a1ae-66f1d583ae56', 29028000.00, 'https://cdn.adefoodwaste.biz.id/payments/4da557ef-f65a-4cdd-9d63-d96356e84dee/1783583389_646653a6155e75aa33a8.jpg', '2026-07-09 14:49:51', '2026-07-09 14:49:51', '2026-07-09 14:49:51', NULL),
+	('7bf1d051-34f0-40df-b73e-bf545f48358b', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'e2914263-7e0f-4e3c-9425-0958c9581215', 590000.00, 'https://cdn.adefoodwaste.biz.id/payments/7f6042b4-3f58-4e87-a366-b3f3f0c41187/1784105804_fb618c915c043828b63f.png', '2026-07-15 15:56:44', '2026-07-15 15:56:44', '2026-07-15 15:56:44', NULL),
+	('83746214-5846-4203-99c9-33af7d2a5973', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'e2914263-7e0f-4e3c-9425-0958c9581215', 3520000.00, 'https://cdn.adefoodwaste.biz.id/payments/30154f79-8290-4374-9dae-3ea47f20ce7e/1784103343_8da776eb366f5044f11a.png', '2026-07-15 15:15:44', '2026-07-15 15:15:44', '2026-07-15 15:15:44', NULL),
+	('86edf88c-ea8a-4ec9-8ab5-72552e91d6cd', '0e5f09ef-3187-433d-b4d2-40acdb2697c3', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 1500000.00, NULL, '2026-07-15 10:49:45', '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
+	('95b7571d-60ec-4778-9fc6-9fa4ec9373ed', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1120000.00, 'https://cdn.adefoodwaste.biz.id/payments/db162bb3-38c4-4b58-9ce6-e8b51b9376e7/1783415128_e5dc4d2d17d1a0eb6b7c.png', '2026-07-07 16:05:29', '2026-07-07 16:05:29', '2026-07-07 16:05:29', NULL),
+	('abe5e8cc-e077-40f0-8250-186d0bd7ee88', '9e700049-24e0-4d68-8c07-9914401517f0', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 20000000.00, NULL, '2026-07-15 09:58:55', '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
+	('b7ae4789-e145-4f90-bbff-d1040a160263', '71de3fdc-8905-4eff-97e6-90ad87686b99', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 2500000.00, NULL, '2026-07-15 09:24:23', '2026-07-15 09:24:23', '2026-07-15 09:24:23', NULL),
+	('c10450e2-531c-4db8-9b0f-d317d499de22', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 'e2914263-7e0f-4e3c-9425-0958c9581215', 844500.00, 'https://cdn.adefoodwaste.biz.id/payments/bba1861d-d341-4dd7-aaf1-188e1f193f8f/1784168374_1ea103cdeae016e055f3.png', '2026-07-16 09:19:35', '2026-07-16 09:19:35', '2026-07-16 09:19:35', NULL),
+	('ce51d92f-ef87-46c8-a0c9-7cda1bf24d3f', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 4100000.00, NULL, '2026-07-15 11:30:57', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
+	('e1facad4-206e-4258-a94e-7e7ef74a4011', 'd6709d13-aec5-4eab-b1a0-508e53aeb56f', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 20000000.00, NULL, '2026-07-08 08:58:53', '2026-07-08 08:58:53', '2026-07-08 08:58:53', NULL),
+	('e5798b8e-1335-466c-a6a3-c832e6d6d67e', 'c48753e7-0691-4004-8178-6837eb5db258', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 300000.00, NULL, '2026-07-15 11:06:10', '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
+	('fae9ad69-eba6-4fde-8152-3a35ada4bdf3', '52672a09-1262-4164-8331-fbbf1374d393', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2320000.00, 'https://cdn.adefoodwaste.biz.id/payments/52672a09-1262-4164-8331-fbbf1374d393/1784104799_9c1c9471dd5d0bb6bd06.png', '2026-07-15 15:39:59', '2026-07-15 15:39:59', '2026-07-15 15:39:59', NULL),
+	('fc0ecfdb-cf87-4e95-9a9f-07c0b5fecb28', 'accd9090-090b-410b-9245-86e9230f52dc', '7aeb3cfe-7ab5-4adf-a1ae-66f1d583ae56', 2700000.00, 'https://cdn.adefoodwaste.biz.id/payments/accd9090-090b-410b-9245-86e9230f52dc/1784088907_7e0dbba2186174d8df23.png', '2026-07-15 11:15:07', '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL);
 
 -- Dumping structure for table pos_optik.payment_methods
-DROP TABLE IF EXISTS `payment_methods`;
 CREATE TABLE IF NOT EXISTS `payment_methods` (
   `payment_method_id` char(36) NOT NULL,
   `method_name` varchar(100) NOT NULL,
@@ -579,7 +812,6 @@ INSERT INTO `payment_methods` (`payment_method_id`, `method_name`, `method_type`
 	('e2914263-7e0f-4e3c-9425-0958c9581215', 'Manual Transfer', 'manual_transfer', 1, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL);
 
 -- Dumping structure for table pos_optik.products
-DROP TABLE IF EXISTS `products`;
 CREATE TABLE IF NOT EXISTS `products` (
   `product_id` char(36) NOT NULL,
   `category_id` char(36) NOT NULL,
@@ -587,6 +819,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `product_sku` varchar(100) DEFAULT NULL,
   `product_price` decimal(10,2) NOT NULL,
   `product_stock` int NOT NULL DEFAULT '0',
+  `has_variants` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '0=simple product, 1=variable product (stock dari variant)',
   `product_brand` varchar(50) DEFAULT NULL,
   `description` text,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
@@ -599,19 +832,77 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.products: ~8 rows (approximately)
-INSERT INTO `products` (`product_id`, `category_id`, `product_name`, `product_sku`, `product_price`, `product_stock`, `product_brand`, `description`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('087a9fc5-7472-4e66-bdca-ee0cc2a70698', 'f1d06647-5499-4881-9d29-c35170c39113', '1 DAY ACUVUE MOIST', 'OPT-CONTACT-0002', 545000.00, 0, 'MOIST', 'Menyediakan hidrasi yang lebih tinggi dengan membantu menjaga kelembapan di dalam mata dan mencegah iritasi. Dilengkapi dengan teknologi LACREON™ dengan bahan pelembab di dalamnya, menjaga kelembapan mata lebih lama. Teknologi LACREON™ adalah merek milik Johnson & Johnson Vision Care, INC. untuk teknologi yang secara permanen mengikat bahan pelembab yang mirip dengan air mata alami ke dalam material etafilicon A yang sudah teruji. Melindungi mata dari sinar UV. Lensa kontak warna bening sekali pakai harian terseida dalam kemasan 30 lensa kontak per boks. KELEMBABAN Teknologi LACREON menciptakan bantalan yang tahan lama menjaga kelembaban dari dari inti ke dalam permukaan lensa. MENCEGAH IRITASI Protein yang terdapat dalam film air mata dapat mengubah sifat dan menjadi penyebab terjadinya iritasi. Lensa ini1 membantu kestabilan salah satu protein yang paling besar dalam film air mata agar tetap dalam keadaan alami, mengurangi kemungkinan terjadinya iritasi**2 bagi mereka yang memiliki mata sensitif. INFINITY EDGE Design and soft lens material helps provide comfortable wear. MANFAAT 1-DAY ACUVUE MOIST memberikan kenyamanan yang luar biasa bagi penggunanya dan dapat mengurangi ketidaknyamanan saat menggunakannya KOREKSI PENGLIHATAN Tersedia bagi: Rabun jauh (Myopia): objek yang jauh terlihat buram. JADWAL PENGGANTIAN Untuk penggunaan sehari-hari, penggantian setiap hari Sepasang lensa kontak setiap hari agar mata sehat, dengan kenyamanan dan kemudahan yang luar biasa. Perlindungan UV3 Sebagai salah satu lensa kontak yang memiliki perlindungan UV tertinggi yang tersedia pada lensa sekali pakai Sekitar 97% UV-B dan 82% UV-A Diakui secara internasional untuk standar perlindungan UV yang tinggi BREATHABILITY Hydrogel material ( Etafilcon A) Mengirimkan 88% oksigen kepada mata WETTABILITY Teknologi LACREON secara permanen menanamkan bahan pembasah yang menjaga kelembaban, membuat lensa menjadi segar sehingga memberikan kenyaman kepada pengguna sepanjang hari. SMOOTHNESS Teknologi LACREON menghasilkan lensa kontak yang sangat halus sehingga setiap kedipan terasa seperti tidak mengenakan lensa kontak sama sekali. MUDAH DIPELIHARA DENGAN Lensa kontak ACUVUE sangatlah ringan dan memiliki warna sedikit kebiruan sehingga sangat mudah menemukannya dalam kotak lensa Anda, dan tanda unik 1-2-3. UKURAN PAKET 30 lensa/ kotak DIAMETER LENSA 14.2 mm KURVA DASAR 8.5 mm/9.0 mm KEKUATAN -0.50D to -6.00D (in 0.25 langkah) -6.50D to -12.00D (in 0.50 langkah)', 1, '2026-06-04 10:49:23', '2026-06-04 10:49:23', NULL),
-	('36f1c94d-8449-4e02-b9c2-f4de790997b3', '855be16e-1a49-4dc2-a858-8c57021245e0', 'GG1891O', 'OPT-SUNGLASSE-0002', 9676000.00, 100, 'GUCCI', '', 1, '2026-06-04 13:21:04', '2026-06-04 13:21:52', NULL),
-	('5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'f1d06647-5499-4881-9d29-c35170c39113', '1 DAY ACUVUE DEFINE', 'OPT-CONTACT-0001', 1000000.00, 400, 'ACUVUE', 'Lensa Kacamata', 1, '2026-05-25 11:47:47', '2026-06-04 10:42:13', NULL),
-	('5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '855be16e-1a49-4dc2-a858-8c57021245e0', 'GG0598S', 'OPT-SUNGLASSE-0003', 7850000.00, 0, 'GUCCI', '', 1, '2026-06-04 14:14:53', '2026-06-04 14:15:20', NULL),
-	('6c72d88e-f8f0-4249-8b25-7885564eaa06', 'f1d06647-5499-4881-9d29-c35170c39113', 'Edgy', 'OPT-CONTACT-0004', 165000.00, 0, 'EDGY', 'Edgy Tampil cantik dan memesona setiap hari dengan kontak lensa terbaru dari Edgy. Kini hadir dengan 3 pilihan warna: Sparkling Black, Dazzling Gray dan Allure Blonde tepat untuk Anda yang bergaya chic. Edgy merupakan lensa kontak buatan Korea dengan bahan kualitas terbaik sehingga nyaman digunakan seharian. Harga: Rp 165.000,- Edgy: Sparkling Black Diameter 14.2mm | Base Curve 8.6 | 1 Bulan Dazzling Gray Diameter 14.2mm | Base Curve 8.6 | 1 Bulan Allure Blonde Diameter 14.5mm | Base Curve 8.6 | 1 Bulan', 1, '2026-06-04 10:56:05', '2026-06-04 10:56:05', NULL),
-	('8ea89139-7c05-438c-b35d-6c5c74b6044f', 'f1d06647-5499-4881-9d29-c35170c39113', 'ACUVUE VITA - PACKAGE 2', 'OPT-CONTACT-0005', 1070000.00, 0, 'VITA', 'Lensa kontak bulanan ACUVUE Vita bekerja dengan teknologi HydraMax membantu memaksimalkan hidrasi dan mengurangi penguapan air di seluruh bagian lensa kontak. Selain itu, memiliki perlindungan paling tinggi terhadap sinar uv untuk mengoptimalkan kesehatan mata Anda. Memberikan kenyamanan menyeluruh sepanjang bulan. Lensa kontak warna bening yang tersedia dalam kemasan 6 lensa kontak per boks. MANFAAT Lensa kontak bulanan dengan kenyamanan ekstra yang dapat diandalkan sepanjang hari. KOREKSI PENGLIHATAN Tersedia bagi: Rabun jauh (Myopia) JADWAL PENGGANTIAN Untuk penggunaan sehari-hari, cuci lensa kontak setiap hari dengan (solutions / cairan pembersih) dan ganti kontak lens setelah 30 hari pemakaian agar mata sehat dan nyaman setiap saat. PERLINDUNGAN UV TERTINGGI* >99% UV-B dan sekitar >90% UV-A Standar perlindungan UV yang diakui secara internasional KELEMBABAN Merupakan formula baru silikon hidrogel yang tidak dilapisi dan seimbang untuk membantu hidrasi seluruh mata (konten air : 41%) PRAKTIS DAN MUDAH DIGUNAKAN Lensa kontak ACUVUE memiliki warna sedikit kebiruan sehingga mudah ditemukan dalam kotak lensa Anda, dengan tanda unik 1-2-3 untuk memudahkan pemakaian. UKURAN PAKET 6 lensa/ kotak MATERIAL senofilcon C LENSA Diameter 14 m Base curve 8.8 mm KEKUATAN -0.50 to -6.00D in 0.25D langkah -6.50 to -12.00D in 0.50D langkah', 1, '2026-06-04 13:14:46', '2026-06-04 13:14:46', NULL),
-	('a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'f1d06647-5499-4881-9d29-c35170c39113', 'ACUVUE VITA', 'OPT-CONTACT-0003', 570000.00, 0, 'VITA', 'Lensa kontak bulanan ACUVUE Vita bekerja dengan teknologi HydraMax membantu memaksimalkan hidrasi dan mengurangi penguapan air di seluruh bagian lensa kontak. Selain itu, memiliki perlindungan paling tinggi terhadap sinar uv untuk mengoptimalkan kesehatan mata Anda. Memberikan kenyamanan menyeluruh sepanjang bulan. Lensa kontak warna bening yang tersedia dalam kemasan 6 lensa kontak per boks. MANFAAT Lensa kontak bulanan dengan kenyamanan ekstra yang dapat diandalkan sepanjang hari. KOREKSI PENGLIHATAN Tersedia bagi: Rabun jauh (Myopia) JADWAL PENGGANTIAN Untuk penggunaan sehari-hari, cuci lensa kontak setiap hari dengan (solutions / cairan pembersih) dan ganti kontak lens setelah 30 hari pemakaian agar mata sehat dan nyaman setiap saat. PERLINDUNGAN UV TERTINGGI* >99% UV-B dan sekitar >90% UV-A Standar perlindungan UV yang diakui secara internasional KELEMBABAN Merupakan formula baru silikon hidrogel yang tidak dilapisi dan seimbang untuk membantu hidrasi seluruh mata (konten air : 41%) PRAKTIS DAN MUDAH DIGUNAKAN Lensa kontak ACUVUE memiliki warna sedikit kebiruan sehingga mudah ditemukan dalam kotak lensa Anda, dengan tanda unik 1-2-3 untuk memudahkan pemakaian. UKURAN PAKET 6 lensa/ kotak MATERIAL senofilcon C LENSA Diameter 14 m Base curve 8.8 mm KEKUATAN -0.50 to -6.00D in 0.25D langkah -6.50 to -12.00D in 0.50D langkah', 1, '2026-06-04 10:54:35', '2026-06-04 10:54:35', NULL),
-	('ccee1bc1-b476-4b4d-a88d-c50599c5312c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'Kacamata Agfian', 'OPT-SUNGLASSE-0001', 1000000.00, 1098, 'RAYBAN', 'Kacamata Anak Muda', 1, '2026-05-25 13:23:52', '2026-05-25 13:33:57', NULL);
+-- Dumping data for table pos_optik.products: ~67 rows (approximately)
+INSERT INTO `products` (`product_id`, `category_id`, `product_name`, `product_sku`, `product_price`, `product_stock`, `has_variants`, `product_brand`, `description`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0064425e-436b-4dd4-90bb-49d5e296876c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II SZTRZC824 C3 46', 'OPT-SUNGLASSE-0034', 250750.00, 120, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 11:14:31', '2026-07-16 11:25:02', NULL),
+	('087a9fc5-7472-4e66-bdca-ee0cc2a70698', 'f1d06647-5499-4881-9d29-c35170c39113', '1 DAY ACUVUE MOIST', 'OPT-CONTACT-0002', 545000.00, 0, 0, 'MOIST', 'Daily disposable contact lens. Fresh pair every day for maximum hygiene and convenience.', 1, '2026-06-04 10:49:23', '2026-06-04 10:49:23', NULL),
+	('09527411-ce22-4480-918c-d6a4ce65cffe', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F NJ 5035LB 440 46', 'OPT-SUNGLASSE-0030', 1394000.00, 120, 0, 'NIKE', '', 1, '2026-07-16 11:02:05', '2026-07-16 11:26:35', NULL),
+	('0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F MOL MA6031 B13 52', 'OPT-SUNGLASSE-0017', 1806250.00, 100, 0, 'MOLSION', '', 1, '2026-07-16 10:14:42', '2026-07-16 10:45:46', NULL),
+	('0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Lenscase Big Travel Kit Karakter - Tempat kotak softlens dan alat pasang soft lens', 'OPT-ACCESSORIE-0020', 35640.00, 100, 0, 'NATURALENS ', '', 1, '2026-07-16 14:01:15', '2026-07-16 15:39:44', NULL),
+	('0e923360-e9df-4285-9b46-a0242ebe656f', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Lap Microfiber/ Kain pembersih kacamata / Hp/ Kamera/ Laptop bahan halus', 'OPT-ACCESSORIE-0012', 735.00, 1000, 0, 'WANGI.IN', '', 1, '2026-07-16 13:40:11', '2026-07-16 13:49:40', NULL),
+	('100c00b9-2aa6-4ec9-af71-7f32d2d1d537', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F PUM PU0485O 009 57', 'OPT-SUNGLASSE-0042', 1853000.00, 39, 0, 'PUMA', '', 1, '2026-07-16 13:19:29', '2026-07-16 13:19:51', NULL),
+	('1125572a-4b30-4135-bb27-a8e360be0ad4', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F IR LI6343A C1 54', 'OPT-SUNGLASSE-0019', 374000.00, 100, 0, 'ILLUSTRO', '', 1, '2026-07-16 10:19:22', '2026-07-16 10:46:25', NULL),
+	('2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BY MBY5013H 001 57', 'OPT-SUNGLASSE-0009', 3727250.00, 100, 0, 'BALLY', '', 1, '2026-07-16 09:38:25', '2026-07-16 09:47:59', NULL),
+	('29ba69de-73da-47af-a34c-b4daaf98380d', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Lens Cleaner Illustro 30 ml', 'OPT-ACCESSORIE-0017', 25000.00, 2000, 0, 'ILLUSTRO', '', 1, '2026-07-16 13:53:11', '2026-07-16 13:53:48', NULL),
+	('32b2b210-2471-4973-ad75-9c4ca33f18fe', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F IP YDHA1016 C2 54', 'OPT-SUNGLASSE-0021', 556750.00, 50, 0, 'ILLUSTRO PRESTIGE', '', 1, '2026-07-16 10:26:48', '2026-07-16 10:47:13', NULL),
+	('3606197c-68a5-4658-964b-8bc60df55063', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CO VCO256I 0738 55', 'OPT-SUNGLASSE-0013', 1377000.00, 100, 0, 'CONVERSE', '', 1, '2026-07-16 09:57:42', '2026-07-16 10:07:32', NULL),
+	('36cb74ba-cd59-4bb4-8613-0871c0e0e21b', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Compact Lens Case', 'OPT-ACC-0002', 15000.00, 80, 0, '0', 'Compact Lens Case for contact lenses. Durable, leak-proof, and easy to clean.', 1, '2026-07-09 15:43:38', '2026-07-15 16:33:51', '2026-07-15 16:33:51'),
+	('36f1c94d-8449-4e02-b9c2-f4de790997b3', '855be16e-1a49-4dc2-a858-8c57021245e0', 'GG1891O', 'OPT-SUNGLASSE-0002', 9676000.00, 100, 0, 'GUCCI', 'Stylish sunglasses for Men, perfect for formal and casual wear.', 1, '2026-06-04 13:21:04', '2026-06-04 13:21:52', NULL),
+	('3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F IP PG6021 C7 53', 'OPT-SUNGLASSE-0020', 556750.00, 150, 0, 'ILLUSTRO PRESTIGE', '', 1, '2026-07-16 10:24:32', '2026-07-16 10:46:45', NULL),
+	('47dc0b31-8710-4654-869d-246e2e265221', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F SH SE50022-D 001 55', 'OPT-SUNGLASSE-0040', 1415500.00, 60, 0, 'SKECHERS', '', 1, '2026-07-16 11:52:33', '2026-07-16 13:20:55', NULL),
+	('4861d393-d692-42c3-ab4d-f0a2c78250f8', '855be16e-1a49-4dc2-a858-8c57021245e0', 'PROGEAR ; S1284 ; 4 (BLU) - 57', 'OPT-SUNGLASSE-0006', 2200000.00, 194, 1, 'PROG', '', 1, '2026-07-08 09:23:26', '2026-07-08 09:24:45', NULL),
+	('49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CA 2012T 807 52', 'OPT-SUNGLASSE-0011', 1381250.00, 100, 0, 'CARRERA', '', 1, '2026-07-16 09:46:40', '2026-07-16 09:47:45', NULL),
+	('4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Aksesoris Abd', 'OPT-ACCESSORIE-0006', 135000.00, 101, 0, 'MELAWAI', '', 1, '2026-07-15 10:38:58', '2026-07-15 11:13:01', '2026-07-15 11:13:01'),
+	('51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Cairan Pembersih Kacamata Anti Fog GECLL Lens Cleaner 60Ml P010', 'OPT-ACCESSORIE-0016', 18000.00, 1000, 0, 'SHERYACC', '', 1, '2026-07-16 13:52:11', '2026-07-16 13:53:33', NULL),
+	('5373faf8-da09-4440-a505-ffea8f4275fb', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F MY 1098 807 57', 'OPT-SUNGLASSE-0025', 2647750.00, 35, 0, 'MARC JACOBS', '', 1, '2026-07-16 10:44:06', '2026-07-16 10:48:16', NULL),
+	('543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Pembersih Lensa Multifungsi', 'OPT-ACCESSORIE-0009', 20000.00, 20, 0, 'WISELIE', '', 1, '2026-07-16 13:30:20', '2026-07-16 13:31:54', NULL),
+	('54bb678a-de56-4f58-8ddf-5c95e92f254f', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CA 203/G 807 52', 'OPT-SUNGLASSE-0012', 1330250.00, 100, 0, 'CARRERA', '', 1, '2026-07-16 09:55:43', '2026-07-16 10:05:01', NULL),
+	('573afcd0-ff09-4584-896a-cfc600c9e2aa', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Premium Lens Cleaner', 'OPT-ACC-0001', 25000.00, 100, 0, '0', 'Premium Lens Cleaner for all glasses, lenses, and screen coatings. Fast drying and streak-free.', 1, '2026-07-09 15:43:38', '2026-07-15 16:33:54', '2026-07-15 16:33:54'),
+	('5a47f29d-b8e7-40dc-b29d-6da624e820d0', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II ZOFG1380 C2 46', 'OPT-SUNGLASSE-0029', 250750.00, 1211, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 10:57:47', '2026-07-16 11:27:40', NULL),
+	('5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'f1d06647-5499-4881-9d29-c35170c39113', '1 DAY ACUVUE DEFINE', 'OPT-CONTACT-0001', 1000000.00, 400, 0, 'ACUVUE', 'Colored Lens contact lens. Enhance your natural eye color with beautiful shades.', 1, '2026-05-25 11:47:47', '2026-06-04 10:42:13', NULL),
+	('5d67be61-e193-4668-8539-4dd70d78b675', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F PX PJ0046O 006 51', 'OPT-SUNGLASSE-0037', 1151750.00, 70, 0, 'PUMA', '', 1, '2026-07-16 11:23:52', '2026-07-16 11:24:09', NULL),
+	('5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '855be16e-1a49-4dc2-a858-8c57021245e0', 'GG0598S', 'OPT-SUNGLASSE-0003', 7850000.00, 51, 1, 'GUCCI', 'Elegant sunglasses for Women, chic design with UV protection.', 1, '2026-06-04 14:14:53', '2026-07-07 16:01:36', NULL),
+	('61d300aa-6f73-4fe3-b26e-6d6a2cda2166', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F NK 7118 001 55', 'OPT-SUNGLASSE-0038', 1874250.00, 40, 0, 'NIKE', '', 1, '2026-07-16 11:47:39', '2026-07-16 13:21:29', NULL),
+	('645237e3-5257-4f7f-b025-3c80fd7fc37a', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F AA SZPS8815 C2 53', 'OPT-SUNGLASSE-0018', 301750.00, 100, 0, 'ANDREA', '', 1, '2026-07-16 10:17:47', '2026-07-16 10:46:07', NULL),
+	('6c72d88e-f8f0-4249-8b25-7885564eaa06', 'f1d06647-5499-4881-9d29-c35170c39113', 'Edgy', 'OPT-CONTACT-0004', 165000.00, 100, 0, 'EDGY', 'Yearly contact lens. High quality durable material for long term wear.', 1, '2026-06-04 10:56:05', '2026-07-16 15:12:35', NULL),
+	('6d6612ad-663d-4ba1-b803-4789769aebf8', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Kain pembersih anti-kabut dan kain pembersih lensa-love', 'OPT-ACCESSORIE-0013', 4000.00, 2000, 0, 'OLD SCHOOLMATE', '', 1, '2026-07-16 13:46:09', '2026-07-16 13:49:58', NULL),
+	('6f525b9f-cf75-48f2-a35c-f640033c1904', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Aksesoris Abd', 'OPT-ACCESSORIE-0005', 135.00, 0, 0, 'MELAWAI', '', 1, '2026-07-15 10:38:54', '2026-07-15 10:39:09', '2026-07-15 10:39:09'),
+	('75362d09-1920-4f54-aee3-818c3d4030d7', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II SZTRZC826 C1 46', 'OPT-SUNGLASSE-0033', 250750.00, 132, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 11:11:39', '2026-07-16 11:25:20', NULL),
+	('776aa20e-0ada-4f65-81cf-1e199de7dab3', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F AZ 30453A C01 53', 'OPT-SUNGLASSE-0024', 2085250.00, 40, 0, 'AZZARO', '', 1, '2026-07-16 10:42:35', '2026-07-16 10:48:00', NULL),
+	('790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Lens Cleaner', 'OPT-ACCESSORIE-0008', 45000.00, 10, 0, 'OPTIK TUNGGAL', '', 1, '2026-07-16 13:27:59', '2026-07-16 13:31:39', NULL),
+	('82261a06-c7b3-48ec-af3b-4525bc731457', '855be16e-1a49-4dc2-a858-8c57021245e0', 'WILLIAM MORRIS ; BOND (BL) ; AC1 (BLK) PZ - 51', 'OPT-SUNGLASSE-0005', 3000000.00, 203, 1, 'MORRIS', '', 1, '2026-07-08 09:20:55', '2026-07-08 09:25:08', NULL),
+	('837621aa-3a2a-4674-bc7d-11fd026e893d', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Portable contact lens case with mirror', 'OPT-ACCESSORIE-0018', 6000.00, 120, 0, 'UYAAI ', '', 1, '2026-07-16 13:57:59', '2026-07-16 15:40:16', NULL),
+	('8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F PUM PU0492O 002 55', 'OPT-SUNGLASSE-0039', 2401250.00, 30, 0, 'PUMA', '', 1, '2026-07-16 11:50:09', '2026-07-16 13:21:12', NULL),
+	('8ea89139-7c05-438c-b35d-6c5c74b6044f', 'f1d06647-5499-4881-9d29-c35170c39113', 'ACUVUE VITA - PACKAGE 2', 'OPT-CONTACT-0005', 1070000.00, 0, 0, 'VITA', 'Lensa kontak bulanan ACUVUE Vita bekerja dengan teknologi HydraMax membantu memaksimalkan hidrasi dan mengurangi penguapan air di seluruh bagian lensa kontak. Selain itu, memiliki perlindungan paling tinggi terhadap sinar uv untuk mengoptimalkan kesehatan mata Anda. Memberikan kenyamanan menyeluruh sepanjang bulan. Lensa kontak warna bening yang tersedia dalam kemasan 6 lensa kontak per boks. MANFAAT Lensa kontak bulanan dengan kenyamanan ekstra yang dapat diandalkan sepanjang hari. KOREKSI PENGLIHATAN Tersedia bagi: Rabun jauh (Myopia) JADWAL PENGGANTIAN Untuk penggunaan sehari-hari, cuci lensa kontak setiap hari dengan (solutions / cairan pembersih) dan ganti kontak lens setelah 30 hari pemakaian agar mata sehat dan nyaman setiap saat. PERLINDUNGAN UV TERTINGGI* >99% UV-B dan sekitar >90% UV-A Standar perlindungan UV yang diakui secara internasional KELEMBABAN Merupakan formula baru silikon hidrogel yang tidak dilapisi dan seimbang untuk membantu hidrasi seluruh mata (konten air : 41%) PRAKTIS DAN MUDAH DIGUNAKAN Lensa kontak ACUVUE memiliki warna sedikit kebiruan sehingga mudah ditemukan dalam kotak lensa Anda, dengan tanda unik 1-2-3 untuk memudahkan pemakaian. UKURAN PAKET 6 lensa/ kotak MATERIAL senofilcon C LENSA Diameter 14 m Base curve 8.8 mm KEKUATAN -0.50 to -6.00D in 0.25D langkah -6.50 to -12.00D in 0.50D langkah', 1, '2026-06-04 13:14:46', '2026-07-15 10:08:33', '2026-07-15 10:08:33'),
+	('9d09b7dd-1cde-4d23-8217-29eaf7c8733c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BE 1015-1 145 53', 'OPT-SUNGLASSE-0008', 824500.00, 100, 0, 'BENETTON', '', 1, '2026-07-16 09:32:14', '2026-07-16 09:48:48', NULL),
+	('a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'f1d06647-5499-4881-9d29-c35170c39113', 'ACUVUE VITA', 'OPT-CONTACT-0003', 570000.00, 49, 0, 'VITA', 'Monthly disposable contact lens. Breathable material for long-lasting comfort up to 30 days.', 1, '2026-06-04 10:54:35', '2026-07-07 16:56:46', NULL),
+	('aa4647d5-6d9c-4fd5-ad4d-14727024743c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II YD63052 C1 48', 'OPT-SUNGLASSE-0031', 250749.99, 10, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 11:05:03', '2026-07-16 11:25:57', NULL),
+	('b4118af4-f1d6-423c-a3a5-c5c9afa17b64', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F SH SE50021-D 006 54', 'OPT-SUNGLASSE-0041', 1415500.00, 58, 0, 'SKECHERS', '', 1, '2026-07-16 13:11:19', '2026-07-16 13:20:08', NULL),
+	('b7fae052-d79b-42f0-8498-1972f01fe37c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CO VCO264 700Y 51', 'OPT-SUNGLASSE-0016', 1402500.00, 100, 0, 'CONVERSE', '', 1, '2026-07-16 10:09:42', '2026-07-16 10:12:38', NULL),
+	('b90f2056-ace6-41ed-801f-98f463b21280', 'cf695022-99c8-4681-9d88-1d5541dc8078', '(1PCS) Lap Kacamata Microfaiber Halus Dan Lembut Multifungsi', 'OPT-ACCESSORIE-0011', 1500.00, 1020, 0, 'OPTIKERS', '', 1, '2026-07-16 13:36:16', '2026-07-16 13:49:18', NULL),
+	('bb8b2e07-1eca-4dc4-bf99-d455d098a86e', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II PTR81812 C7 48', 'OPT-SUNGLASSE-0036', 250750.00, 80, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 11:19:40', '2026-07-16 11:24:25', NULL),
+	('c1295fb3-81fe-40c8-90d7-0fd8f801221f', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II SPCD011 C2 46', 'OPT-SUNGLASSE-0027', 250750.00, 0, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 10:54:07', '2026-07-16 10:54:31', NULL),
+	('c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F MOL MJ5121 B10 50', 'OPT-SUNGLASSE-0022', 1462000.00, 80, 0, 'MOLSION', '', 1, '2026-07-16 10:37:05', '2026-07-16 10:47:28', NULL),
+	('c3121385-d359-49fa-ba69-26d96f642b25', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Microfiber Cleaning Cloth', 'OPT-ACC-0003', 10000.00, 200, 0, '0', 'Ultra-soft Microfiber Cleaning Cloth. Removes dust, smudges, and fingerprints without scratching.', 1, '2026-07-09 15:43:38', '2026-07-15 16:34:00', '2026-07-15 16:34:00'),
+	('c5905480-3ac1-4ff8-a56b-88119487bd92', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BY MBY5013H 008 57', 'OPT-SUNGLASSE-0010', 3727250.00, 100, 0, 'BALLY', '', 1, '2026-07-16 09:41:57', '2026-07-16 09:49:09', NULL),
+	('c6bd5977-eedc-41c5-87a4-59cee6d3acae', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CO VCO270 743M 54', 'OPT-SUNGLASSE-0015', 1402500.00, 100, 0, 'CONVERSE', '', 1, '2026-07-16 10:03:09', '2026-07-16 10:08:07', NULL),
+	('c7079913-6f26-4812-84a9-5fd705da671e', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II P263 C5 47', 'OPT-SUNGLASSE-0028', 250750.00, 100, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 10:56:15', '2026-07-16 11:28:05', NULL),
+	('c98820e9-c613-4bde-91fb-deb1e4667a2e', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BN BA6019 B50 53', 'OPT-SUNGLASSE-0023', 1721250.00, 20, 0, 'BOLON', '', 1, '2026-07-16 10:39:26', '2026-07-16 10:47:43', NULL),
+	('ccee1bc1-b476-4b4d-a88d-c50599c5312c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'GG12212F', 'OPT-SUNGLASSE-0001', 1000000.00, 1098, 0, 'RAYBAN', 'Colorful and durable sunglasses for Kids, lightweight design.', 1, '2026-05-25 13:23:52', '2026-07-09 15:48:01', NULL),
+	('dcd94de1-0282-421b-bf0c-31cf21b3d2fa', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BE 1008 252 56', 'OPT-SUNGLASSE-0007', 824500.00, 99, 0, 'BENETTON', '', 1, '2026-07-16 09:04:39', '2026-07-16 09:05:46', NULL),
+	('dde78075-5a62-47d5-8669-026c43d893b2', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 'OPT-ACCESSORIE-0015', 26000.00, 2000, 0, 'MYLOGY ', '', 1, '2026-07-16 13:48:55', '2026-07-16 13:50:35', NULL),
+	('e3ab59ad-e68a-410c-9e33-767ba6a7ee98', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Elegant Eyeglass Chain', 'OPT-ACC-0004', 35000.00, 45, 0, '0', 'Elegant Eyeglass Chain strap. Keeps your glasses secure and within reach with a touch of style.', 1, '2026-07-09 15:43:38', '2026-07-15 16:34:06', '2026-07-15 16:34:06'),
+	('e73e70a9-e057-42a4-8d90-f4e0b5f2be20', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F NJ 5035LB 001 46', 'OPT-SUNGLASSE-0032', 1394000.00, 110, 0, 'NIKE', '', 1, '2026-07-16 11:06:40', '2026-07-16 11:25:40', NULL),
+	('e7fad896-c27a-47db-afd3-97f48dcb296b', 'cf695022-99c8-4681-9d88-1d5541dc8078', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 'OPT-ACCESSORIE-0019', 10000.00, 100, 0, 'UYAAI ', '', 1, '2026-07-16 13:59:22', '2026-07-16 15:40:00', NULL),
+	('eba7feb9-0d83-4452-9b86-13a1710c8e9c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BE 1022-1 670 52', 'OPT-SUNGLASSE-0014', 824500.00, 100, 0, 'BENETTON', '', 1, '2026-07-16 09:59:39', '2026-07-16 10:07:50', NULL),
+	('ed2634ba-64cc-4a64-9f25-a7de6853538f', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Aksesoris Abd', 'OPT-ACCESSORIE-0007', 1350000.00, 200, 0, 'MELAWAI', '', 1, '2026-07-15 11:13:48', '2026-07-16 13:56:55', '2026-07-16 13:56:55'),
+	('ed6f3004-bb65-4893-bda2-22a352061215', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F PX PJ0067O 004 47', 'OPT-SUNGLASSE-0035', 1241000.00, 201, 0, 'PUMA', '', 1, '2026-07-16 11:16:55', '2026-07-16 11:24:41', NULL),
+	('ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F CAR 0054 KDX 53', 'OPT-SUNGLASSE-0026', 2307750.00, 110, 0, 'CAROLINA HERRERA', '', 1, '2026-07-16 10:45:30', '2026-07-16 10:48:37', NULL),
+	('f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'AZ Kain Lap Kacamata Nano Anti-Fog Microfiber Glasses Cleaner - K-10', 'OPT-ACCESSORIE-0010', 752.00, 200, 0, 'AZ', '', 1, '2026-07-16 13:33:59', '2026-07-16 13:36:51', NULL),
+	('fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '855be16e-1a49-4dc2-a858-8c57021245e0', 'SPYDER ; PILOT 2 ; 3S000 (BLK) PZ - 00', 'OPT-SUNGLASSE-0004', 1300000.00, 203, 1, 'RAYBAN', 'High performance sunglasses for Sports, wrap-around design for outdoor activities.', 1, '2026-07-08 09:18:38', '2026-07-08 09:25:27', NULL),
+	('fc16e77d-aa3e-4629-a0b6-f478bcda4da7', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Kain Lap Universal Untuk Kacamata Handphone Kain Kacamata Portable Kain Kacamata Microfiber', 'OPT-ACCESSORIE-0014', 2000.00, 2000, 0, 'COGLORN', '', 1, '2026-07-16 13:47:19', '2026-07-16 13:50:20', NULL);
 
 -- Dumping structure for table pos_optik.product_attributes
-DROP TABLE IF EXISTS `product_attributes`;
 CREATE TABLE IF NOT EXISTS `product_attributes` (
   `attribute_id` char(36) NOT NULL,
   `attribute_name` varchar(50) NOT NULL,
@@ -630,19 +921,26 @@ CREATE TABLE IF NOT EXISTS `product_attributes` (
   CONSTRAINT `product_attributes_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`category_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_attributes: ~8 rows (approximately)
+-- Dumping data for table pos_optik.product_attributes: ~16 rows (approximately)
 INSERT INTO `product_attributes` (`attribute_id`, `attribute_name`, `category_id`, `attribute_type`, `is_variantable`, `is_required`, `is_filterable`, `use_master_values`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('00cbc3c6-f421-4714-b509-e9770e3182d1', 'Temple Length', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 0, 0, 0, 4, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('17d811ef-8002-4db7-8cbd-6f012ad12028', 'Bridge Size', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 0, 0, 0, 5, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('331f5339-1774-4b06-9e19-bb88b603c5a2', 'Color', '855be16e-1a49-4dc2-a858-8c57021245e0', 'multiselect', 1, 1, 0, 1, 1, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Frame Material', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 6, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', 'Frame Size (Width)', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 1, 0, 0, 3, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('00cbc3c6-f421-4714-b509-e9770e3182d1', 'Temple Length', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 0, 0, 0, 4, '2026-05-25 11:46:04', '2026-07-09 13:50:59', '2026-07-09 13:50:59'),
+	('17d811ef-8002-4db7-8cbd-6f012ad12028', 'Bridge', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 0, 0, 0, 5, '2026-05-25 11:46:04', '2026-07-09 13:47:35', NULL),
+	('2d4ee0f1-16f4-4ac0-ab7d-14071c3e2057', 'Lens Type', 'f1d06647-5499-4881-9d29-c35170c39113', 'dropdown', 1, 0, 0, 1, 0, '2026-07-09 14:53:06', '2026-07-09 15:06:30', NULL),
+	('331f5339-1774-4b06-9e19-bb88b603c5a2', 'Frame Color', '855be16e-1a49-4dc2-a858-8c57021245e0', 'multiselect', 1, 1, 0, 1, 1, '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('4aeb2609-e310-4a62-9a29-474744bb49dd', 'Style', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 0, '2026-07-16 11:46:10', '2026-07-16 11:46:10', NULL),
+	('4b33dcdb-83c7-4b9e-b264-73c57bc1a6fc', 'Color', 'f1d06647-5499-4881-9d29-c35170c39113', 'dropdown', 1, 0, 0, 1, 0, '2026-07-09 14:54:20', '2026-07-09 15:06:06', NULL),
+	('5457c750-378b-4050-a7b6-dfe2d2262e44', 'Gender', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 1, 1, 1, 0, '2026-07-09 14:56:27', '2026-07-09 15:37:54', NULL),
+	('77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Material', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 6, '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
+	('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Usage Period', 'f1d06647-5499-4881-9d29-c35170c39113', 'dropdown', 0, 0, 0, 1, 3, '2026-07-09 15:57:04', '2026-07-09 15:57:04', NULL),
+	('b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Accessory Type', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'dropdown', 0, 0, 0, 1, 1, '2026-07-09 15:57:56', '2026-07-15 10:35:12', NULL),
+	('cef204f5-a047-4f4a-a843-a667437ef4b9', 'Age Group', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 1, 0, 1, 0, '2026-07-09 15:38:23', '2026-07-15 10:28:46', NULL),
+	('dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', 'Diagonal', '855be16e-1a49-4dc2-a858-8c57021245e0', 'text', 1, 1, 0, 0, 3, '2026-05-25 11:46:04', '2026-07-09 13:48:59', NULL),
 	('edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Lens Type', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 1, 1, 0, 1, 1, '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
-	('fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Lens Material', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 2, '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
-	('fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Frame Shape', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 2, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL);
+	('fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Lens Material', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 2, '2026-05-25 11:46:04', '2026-07-09 13:51:16', '2026-07-09 13:51:16'),
+	('fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Shape', '855be16e-1a49-4dc2-a858-8c57021245e0', 'dropdown', 0, 0, 0, 1, 2, '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
+	('ffd0f6f6-4f26-4ff8-9393-5351d49e9358', 'Material', 'f1d06647-5499-4881-9d29-c35170c39113', 'dropdown', 0, 0, 0, 1, 0, '2026-07-09 14:53:52', '2026-07-09 14:53:52', NULL);
 
 -- Dumping structure for table pos_optik.product_attribute_master_values
-DROP TABLE IF EXISTS `product_attribute_master_values`;
 CREATE TABLE IF NOT EXISTS `product_attribute_master_values` (
   `attribute_master_id` char(36) NOT NULL,
   `attribute_id` char(36) NOT NULL,
@@ -655,41 +953,69 @@ CREATE TABLE IF NOT EXISTS `product_attribute_master_values` (
   CONSTRAINT `product_attribute_master_values_attribute_id_foreign` FOREIGN KEY (`attribute_id`) REFERENCES `product_attributes` (`attribute_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_attribute_master_values: ~30 rows (approximately)
+-- Dumping data for table pos_optik.product_attribute_master_values: ~59 rows (approximately)
 INSERT INTO `product_attribute_master_values` (`attribute_master_id`, `attribute_id`, `value`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('02557535-6647-4fdb-bdb1-1f5da3ce1bc5', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
-	('0be00c74-c84d-4743-bda4-f8a855ac957c', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Aluminum', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('0fe97441-caff-44bf-a75b-c9b7477496fc', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Polycarbonate', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('2df1f690-10a6-47ef-a6b5-3a418751dcf1', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('30f79e62-7c25-40f3-9fcc-9ef59c561a33', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('33e9e217-a929-45e8-8bac-0bb56e5adde4', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('060db8f7-1320-456b-b02b-331e60e25425', '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-09 14:56:27', '2026-07-09 15:37:54', NULL),
+	('0bb3c2bc-52b0-4227-8ca9-ffc304eb5bba', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Metal', '2026-07-16 11:00:02', '2026-07-16 11:17:12', NULL),
+	('0be00c74-c84d-4743-bda4-f8a855ac957c', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Aluminum', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
+	('0fe97441-caff-44bf-a75b-c9b7477496fc', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Polycarbonate', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
+	('12c10eed-e0d7-4202-900b-126a25d3ee3f', '4b33dcdb-83c7-4b9e-b264-73c57bc1a6fc', 'Brown', '2026-07-09 14:54:20', '2026-07-09 15:06:06', NULL),
+	('14e58e80-2c2d-4659-8cb4-c6e21553ac99', '2d4ee0f1-16f4-4ac0-ab7d-14071c3e2057', 'Daily', '2026-07-09 14:53:06', '2026-07-09 15:06:30', NULL),
+	('21f5ef9f-6376-49a3-a0fd-4582a4ba076a', 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-09 15:38:23', '2026-07-15 10:28:46', NULL),
+	('24909d29-4d1d-41db-a996-4c43aac91c72', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-09 15:57:56', '2026-07-15 10:35:12', NULL),
+	('2c7085a2-9cbf-441b-a019-180c722ac608', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Grey', '2026-07-16 10:38:15', '2026-07-16 10:38:15', NULL),
+	('2df1f690-10a6-47ef-a6b5-3a418751dcf1', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
+	('30f79e62-7c25-40f3-9fcc-9ef59c561a33', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('33e9e217-a929-45e8-8bac-0bb56e5adde4', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
+	('395e47ad-4adb-4691-a25b-1d1d73f80a48', '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Fashion', '2026-07-16 11:46:10', '2026-07-16 11:46:10', NULL),
+	('586727a9-7a16-4aca-9623-e9b2303bf111', 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:38:23', '2026-07-15 10:28:46', NULL),
 	('5d590ad9-3604-465c-a6dd-62dbbf3deba0', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Blue Light Blocking Lens', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
-	('5fea20ec-5e17-42cb-8775-7e677405f2c1', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('5fea20ec-5e17-42cb-8775-7e677405f2c1', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('6044f857-a548-40c6-9e61-6da8c606bdba', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-09 15:57:56', '2026-07-15 10:35:12', NULL),
+	('69e83a5b-c3a8-4f59-9e00-78c722ad554b', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Silver', '2026-07-16 10:38:15', '2026-07-16 10:38:15', NULL),
 	('7213270f-500f-43b0-9536-53d351448ee6', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Trivex', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
-	('807fb509-3d54-4e64-b94f-9a559a8bb9ef', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Orange', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('80db2925-d600-4c76-b580-978df3850551', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('83096705-4285-4ab8-9fa2-37f994963b1e', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('88ea8de2-0533-419e-9349-a663d2357ab3', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('807fb509-3d54-4e64-b94f-9a559a8bb9ef', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Orange', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('80db2925-d600-4c76-b580-978df3850551', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('83096705-4285-4ab8-9fa2-37f994963b1e', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
+	('870070fe-3525-47d2-95db-636708505bdd', '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Driving', '2026-07-16 11:46:10', '2026-07-16 11:46:10', NULL),
+	('88ea8de2-0533-419e-9349-a663d2357ab3', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
 	('8f569694-9544-4017-a6fd-6524d2e8abd6', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'CR-39', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
-	('975693fc-8c18-4736-b6d8-b5ecf0e4d2fb', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('9cd881ef-ff47-4b0e-8c49-b195764aeb76', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Acetate', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('964aace6-1fa4-44cf-a8d2-b64c5714c961', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-09 15:57:56', '2026-07-15 10:35:12', NULL),
+	('971c6d39-aaad-42af-a505-217b2eff7141', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Ace', '2026-07-16 11:17:12', '2026-07-16 11:17:12', NULL),
+	('975693fc-8c18-4736-b6d8-b5ecf0e4d2fb', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
+	('9cd881ef-ff47-4b0e-8c49-b195764aeb76', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Acetate', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
+	('9daf4606-776c-467d-8d7b-02f9ece09d9f', '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 11:46:10', '2026-07-16 11:46:10', NULL),
+	('a18eb78f-4e11-440d-9d11-248522296b3a', '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-09 14:56:27', '2026-07-09 15:37:54', NULL),
+	('a25d4b2b-b0a7-42a5-a7ee-71134c6e9195', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Eyeglass Chain', '2026-07-09 15:57:56', '2026-07-15 10:35:12', NULL),
 	('a38a9507-ac45-4eef-9d95-6a1436d5e564', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Aspheric Lens', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
 	('a618f9fc-052c-4519-9c2c-6fbc23095e47', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Polycarbonate', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
 	('a872451b-88ea-47f3-8103-f4d9ca44ed78', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
-	('a99e6e0b-8235-496e-b62a-e832a2d2a799', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('a99e6e0b-8235-496e-b62a-e832a2d2a799', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-05-25 11:46:04', '2026-07-16 11:15:04', NULL),
 	('a9bc5ab3-29b6-4d1f-a07e-df2b85fc6f08', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Progressive Lens', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
-	('aa17ae39-22f4-4ebf-8ec9-4374381a8d4d', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('c8fdb4e4-6e3c-4392-8808-56d90bd6b0f0', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('cde006c3-cddb-45d5-bf55-9e55dcff8065', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('d83cbb42-dc69-41c1-a092-4ff16a474534', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('aa17ae39-22f4-4ebf-8ec9-4374381a8d4d', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
+	('ac4871eb-e55a-4289-aa7d-c996b998cc0d', '2d4ee0f1-16f4-4ac0-ab7d-14071c3e2057', 'Yearly', '2026-07-09 14:53:06', '2026-07-09 15:06:30', NULL),
+	('ae3f154f-95ca-422e-a65d-587ad65be5fa', '2d4ee0f1-16f4-4ac0-ab7d-14071c3e2057', 'Monthly', '2026-07-09 14:53:06', '2026-07-09 15:06:30', NULL),
+	('af6b3441-7f2a-4121-83d9-c75d77e88cf0', 'ffd0f6f6-4f26-4ff8-9393-5351d49e9358', 'Silicone Hydrogel', '2026-07-09 14:53:52', '2026-07-09 14:53:52', NULL),
+	('bf3b69b8-e536-4bbb-8d1f-61dee93dd841', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Green', '2026-07-16 10:37:57', '2026-07-16 10:38:15', NULL),
+	('c833ee89-5142-4809-b73a-730008c97334', '4b33dcdb-83c7-4b9e-b264-73c57bc1a6fc', 'Clear', '2026-07-09 14:54:20', '2026-07-09 15:06:06', NULL),
+	('c8fdb4e4-6e3c-4392-8808-56d90bd6b0f0', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('cbcc0da9-50a5-4b91-9e4f-2b88ebde1128', '4b33dcdb-83c7-4b9e-b264-73c57bc1a6fc', 'Gray', '2026-07-09 14:54:20', '2026-07-09 15:06:06', NULL),
+	('cde006c3-cddb-45d5-bf55-9e55dcff8065', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
+	('d8294583-4a6f-4c65-8841-fcab7bbeb64b', 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Geometric', '2026-07-16 11:15:04', '2026-07-16 11:15:04', NULL),
+	('d83cbb42-dc69-41c1-a092-4ff16a474534', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-05-25 11:46:04', '2026-07-16 11:17:12', NULL),
 	('dac3e67e-5c03-4bde-bad1-ff073ea33e6c', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Glass', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
+	('ddd197b5-318a-4e64-ad65-c2004cfb736b', '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-09 14:56:27', '2026-07-09 15:37:54', NULL),
 	('df9eec6f-7d79-4f2f-b8ad-cfcfb896680f', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'High-Index Plastic (1.61 / 1.67 / 1.74)', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
-	('e088bdbd-4f17-4638-8632-7f1fe96f3752', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('e088bdbd-4f17-4638-8632-7f1fe96f3752', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-05-25 11:46:04', '2026-07-16 10:38:15', NULL),
 	('e0acfb56-4702-465b-abbb-d85843ff05e1', 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Digital / Freeform Lens', '2026-05-25 11:46:04', '2026-06-04 10:40:07', NULL),
-	('efc44955-a486-405d-8222-10a9808254ec', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Polycarbonate Lens', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL);
+	('efc44955-a486-405d-8222-10a9808254ec', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Polycarbonate Lens', '2026-05-25 11:46:04', '2026-06-04 10:39:51', NULL),
+	('f2ef2662-fbc4-41de-b8f8-31daf50960c3', '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Pink', '2026-07-16 10:37:57', '2026-07-16 10:38:15', NULL),
+	('f6b52951-0639-45c9-92cf-71c3bba627ce', '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:27:16', '2026-07-16 11:17:12', NULL),
+	('f7defab2-7b01-43bc-8a86-cb2d0fa57ae8', 'ffd0f6f6-4f26-4ff8-9393-5351d49e9358', 'Hydrogel', '2026-07-09 14:53:52', '2026-07-09 14:53:52', NULL),
+	('fef9fcd5-32d8-4412-a964-01d1b90dde61', '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Casual', '2026-07-16 11:46:10', '2026-07-16 11:46:10', NULL);
 
 -- Dumping structure for table pos_optik.product_attribute_values
-DROP TABLE IF EXISTS `product_attribute_values`;
 CREATE TABLE IF NOT EXISTS `product_attribute_values` (
   `pav_id` char(36) NOT NULL,
   `product_id` char(36) NOT NULL,
@@ -708,37 +1034,406 @@ CREATE TABLE IF NOT EXISTS `product_attribute_values` (
   CONSTRAINT `product_attribute_values_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_attribute_values: ~26 rows (approximately)
+-- Dumping data for table pos_optik.product_attribute_values: ~396 rows (approximately)
 INSERT INTO `product_attribute_values` (`pav_id`, `product_id`, `variant_id`, `attribute_id`, `value`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('00104de3-551d-4532-997b-efa4c85e8bc3', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '47', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('012de3bf-60b7-49d6-996f-960d7a4443bd', 'dde78075-5a62-47d5-8669-026c43d893b2', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:48:56', '2026-07-16 13:48:56', NULL),
+	('016b10ad-77f3-43bd-82e3-dafc6863b860', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-07-16 11:17:26', '2026-07-16 11:17:26', NULL),
+	('01e2bbc8-edbf-4455-8d3b-dd90f7918900', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('035c1f80-4e0f-4d36-a14f-67890d6e50a4', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '54', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('05195b4e-cc01-42bb-933c-d15121c6339b', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('0543aa86-ea38-4432-a5f3-b8bc55a66798', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('056f7dcd-6b6a-4415-8e6b-d473b0e1360c', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('05a186b5-bdad-4c08-8ba8-55fc406b6096', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('05fe7a0a-6bb6-470f-9a4c-3f1cef00d208', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('06811b5b-5148-4224-83b6-4fcd12195faf', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('0693fbd6-717b-484c-9ae1-b15df25a4575', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('087153a5-b829-4868-8559-e56bc8cf14cf', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('087d67e7-7ff3-4db5-bf15-3afbbf7b23e5', 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:34:00', '2026-07-16 13:34:00', NULL),
+	('09804813-3027-4eb3-85e5-cad96cf592c0', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('0b0ae863-0e3b-49ca-a42b-e76453b4dec4', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('0b412484-8ccc-4de8-a179-ae9f57f25e3e', '3606197c-68a5-4658-964b-8bc60df55063', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '18', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('0bbcb4a6-5977-464c-a6ce-3826a0b1808d', '8ea89139-7c05-438c-b35d-6c5c74b6044f', NULL, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Monthly', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('0cb8dbee-2256-401d-b65e-809a383bbc77', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('0e0728e0-d1dc-49f0-969f-f63875881e11', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('0eae45c7-6d99-40ba-843f-e33042c35f0f', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('0f31b151-18a6-47b5-b2e2-065c3f16b055', '0e923360-e9df-4285-9b46-a0242ebe656f', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:40:13', '2026-07-16 13:40:13', NULL),
+	('0f489a26-90d9-4363-a80a-25a0c0b90fb2', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('10d1a0f8-ebac-49d0-8543-457fc05e7eca', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('13363d65-acb5-48aa-8f84-4f237f5c0a15', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('1450c1da-a70b-4150-b59c-2d2c6a9375dd', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('14d9ac6b-2d6d-4643-9f14-36d2a6506991', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('15461a85-6145-43fe-ba3c-b09bc0ea4866', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('155e027d-5ac2-453f-99ab-a03ede806e7f', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('166177dc-cc32-46e4-bd41-9ea13725039f', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('169a24dd-c0d8-463e-b2a3-6816ce3a1783', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '51', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('176476c4-d499-43b8-987a-47422bfed7bc', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Metal', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('1a2c32c9-5c13-4b64-9ec7-710ef0fe55a7', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('1a6b7f73-00c0-496b-980c-e54505eb10f8', '3606197c-68a5-4658-964b-8bc60df55063', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('1a705382-88fd-417f-a3f0-d6e276bc5eb3', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Aluminum', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('1a7fec73-1165-45f6-bb55-5bc18586c20a', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('1ab58875-57e9-4672-9768-076e3f2c7f37', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Aluminum', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('1b283025-3550-4bd0-af96-7c3336811910', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('1bad0a56-1bc3-4814-8831-4e6852d9bb0c', '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-16 14:01:15', '2026-07-16 14:01:15', NULL),
+	('1be65dcf-6a31-4f2c-90f1-2f440ee0bf30', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('1bfedc00-bc73-40c5-ad92-f98ce1a37615', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('1ca3a930-6fe7-428b-8854-ed18c1add66a', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('1ca4062d-440f-417d-ad15-3f971e300fff', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('1ce271cb-2df2-4a3b-b527-9f40ffd30ea7', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('1da711e9-0ec9-46ed-ac38-46395249296b', '3606197c-68a5-4658-964b-8bc60df55063', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('1dd09e02-b76f-4c1c-b144-426009043c04', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '150', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('1e23bf6a-bf12-4d08-8133-a303606dc7b5', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('1e336d20-48dc-48b7-8aba-96f419fc4cea', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-08 08:47:50', '2026-07-09 15:48:01', '2026-07-09 15:48:01'),
+	('1e3980f2-0d74-44f6-8cbb-e8dcb7fc924c', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('1fa1a210-2603-40a9-acdf-7c6a505ed31b', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '46', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('1fad1a5c-a88b-4863-901e-b7a484d255d9', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('200a2a41-7154-49f6-bd4f-882a7155097f', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('20546749-8320-4c0d-9c90-5efaca31ef0c', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Geometric', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('20a15688-6da7-4bed-a6aa-1debea70f8e5', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('219230a0-bd53-4a3a-8048-fc451636532b', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('21e08c46-8cac-4aa1-b7e8-edc2698a28c6', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('22317b75-0581-4043-915e-05f7714b5c2b', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
 	('2270cf24-1ffa-4245-ba0e-8f3562d04327', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('2a6aadf4-d970-4c2b-8715-d3cd43b3e090', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '124', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
-	('2b772c5b-b463-44b6-87a7-97c481fbb5f8', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '145', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
-	('4507c85d-65ee-454e-881f-09a7343c542f', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
-	('66030e90-88b4-4a0b-9e09-f9d677450119', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
+	('246202bf-993c-413f-8de4-871c587629d6', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('2542a379-c5b6-4cf0-8eba-18eb974a6e47', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '61', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('25dff06f-7387-44c3-8cdc-3ffd0d2395a0', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('260be8cd-6f3a-42f3-8812-d1d0e7f92994', '47dc0b31-8710-4654-869d-246e2e265221', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('2693a9b4-2497-4526-bae2-6ae3736a2bd5', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Metal', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('269b8683-1e79-42d9-873c-03f78aab8d9b', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('2704874c-79e4-4964-abd6-ef1e49c742ca', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('29d31bdf-26d3-4214-8b6c-e84fd39de67c', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '18', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('2a3177a8-45ba-4ddf-8d11-ee93baea1488', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '18', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('2a6aadf4-d970-4c2b-8715-d3cd43b3e090', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '124', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('2b772c5b-b463-44b6-87a7-97c481fbb5f8', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '145', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('2c0a8b3d-6ac3-412d-9192-5d1d87ad3f04', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('2ca81c42-8b14-4143-9bdf-1ec6a1de6b71', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '47', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('2d4cd746-3ac3-4667-b87f-32f0949d1548', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('2d739cbe-9b21-4b7c-80b3-eae871b26f7a', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('2e9449e3-80db-47a3-bf05-f86d8a9f5d4f', '47dc0b31-8710-4654-869d-246e2e265221', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('2ec067ba-414d-404f-bd0f-a09435ef4aae', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('2f1f1a38-2e0a-41da-b466-a486a66d03bd', '6c72d88e-f8f0-4249-8b25-7885564eaa06', NULL, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Colored', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('2f59d60e-8a2d-4b2f-bccc-67aad354f3ca', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('315251ea-c050-454f-936d-80831ea35812', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('3259d93f-4b95-45d7-87f5-9527c9ee6018', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('3289bed5-3e1b-45f2-82de-6392875c9a12', '6f525b9f-cf75-48f2-a35c-f640033c1904', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-15 10:38:58', '2026-07-15 10:38:58', NULL),
+	('32c53cbe-b985-4166-890b-6c25707cfc8d', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Glass', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('3471116b-726f-4fd2-8249-754dceb8f1b5', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('348d763b-afb4-4d6b-8214-baee4aaff1c6', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '16', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('357201bd-1c5b-4440-8e0e-1a69b8dbf920', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('3783980e-8bd4-49af-8092-4ec4e04c1b7e', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('37a9863c-7d47-4816-b5bd-d387d4b7d2cc', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('383a7408-054b-4ded-b19b-409bf189b5aa', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '145', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('385aba3a-d675-45e7-9e40-852bec0e9151', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('392c5438-3d0c-4039-aac7-18f9a142c7da', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Blue Light Blocking Lens', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('3a93e08f-ace4-4a1a-9cc6-68bb2bf5f200', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('3bede246-c5ac-4e7d-b50b-06ccbc7543ee', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('3db36753-c37f-4a45-8713-24d8c38fd15b', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '58', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('3e9c2f74-773b-45f3-9adf-2902669a6d7d', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('3f53c9f4-e502-45e7-b5ef-ae5450e1cf5f', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('403b130a-3883-474a-adab-a50e462f6228', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('405dfceb-e34f-4258-9129-698d2c8bee8b', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '47', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('407f2f8c-206b-49cd-9498-25362aae38cc', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('40b45ebd-7917-4653-8755-4ee78d1eb386', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-08 08:47:52', '2026-07-09 15:48:01', '2026-07-09 15:48:01'),
+	('410e0d9c-d1a2-4411-a930-2ae467ceabd9', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('43b16441-5f01-41ed-9fb9-4c38b3a88473', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('43ea1494-ae58-4e03-9028-f5d81ea45885', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('4507c85d-65ee-454e-881f-09a7343c542f', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('4527e720-9216-4e20-9108-717666bf02f7', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('45afb125-2ccc-49f2-b78d-63c85b98cf59', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('45afd377-b30c-4480-9ea5-700e2f1cdb36', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '16', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('4732bb9d-362f-4c71-9399-acdb869c26b9', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '58', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('476dfb38-6d3e-41f2-ad22-f513085bff1d', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '16', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('493e47d6-80c0-4e45-90fb-939315ae585b', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('4acc1ab5-b22f-4209-a541-dace7338bc03', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('4b100cf9-b80e-4c7e-b75a-3a1cbf008e6c', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('4b4d70ca-e094-4147-a190-4f1f9c4f0b68', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('4b52dc36-2c77-4aa4-abae-345eb5a0e25a', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '22', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('4b54a4dd-9492-456a-bc17-144b8634abd2', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Pink', '2026-07-16 11:14:33', '2026-07-16 11:15:19', '2026-07-16 11:15:19'),
+	('4b596586-b7fd-4b4a-9263-a8e80c5faf94', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Ace', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('4c21e685-108c-4a84-83f6-5605916dc475', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('4c7f4769-136a-4348-9d85-193b7b6ef3c3', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Green', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('4c912662-2883-4751-9529-c46d12feccbe', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('5089fb5f-132b-4225-a4d1-1115ccd97caf', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('509cc020-e0e6-40e9-92fe-3cc3f1e97476', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('50cd6d96-ff1e-40ea-93c5-8290cf20098f', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '16', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('50d23725-de77-4110-969c-21941b46b960', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('50f58301-fb3b-44b1-aba1-8a711b85058c', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('51c03a16-2749-4ed1-a02d-18575650f179', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('52ed3cc4-7ae1-4433-b3dd-1e78a8c954ca', '087a9fc5-7472-4e66-bdca-ee0cc2a70698', NULL, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Daily', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('52f46b2a-7768-4d02-b337-7797be6e876f', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('53faa9d7-36fa-4b1a-b81a-d2f660bc7374', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Progressive Lens', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('54046488-2fba-4f37-a9d9-41ae97a27624', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('54eaf136-a67b-4386-8fc9-ef95da8a2632', '29ba69de-73da-47af-a34c-b4daaf98380d', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-16 13:53:11', '2026-07-16 13:53:11', NULL),
+	('55624959-9f4d-4631-9fb1-5da1e6272a59', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('56544471-3b5f-4e32-a42c-8036ad396660', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '56', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('56fcb29a-bc07-4b66-a048-4c7d0b29aa93', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('5772f0a8-aa8c-46e5-93a9-fc7cfb920de1', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-09 15:48:01', '2026-07-09 15:48:01', NULL),
+	('5896c221-e797-4b48-bd3c-8173865b7f48', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('5a6eeb75-65b0-42f3-85be-1772c3ae7493', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('5aff1164-ac05-43c7-87cd-6fe46d85708a', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '46', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('5b4b6d52-7162-47b3-8a50-004a554dd317', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '145', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('5c7c0514-5276-4b56-bf7f-7b9206269f88', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('5cc0636e-bfa7-4550-8d54-ac56bddc2b70', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('5e9b0b51-9126-4aaf-a3b6-67705cde5cf1', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-07-16 11:16:56', '2026-07-16 11:17:26', '2026-07-16 11:17:26'),
+	('5f6930b3-2297-4c66-b272-64dad9cc9fe4', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('6003a125-270b-436c-b289-5678fda0901c', '543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-16 13:30:35', '2026-07-16 13:30:35', NULL),
+	('6413c86b-da31-4cdb-b754-ca7e0233f320', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Ace', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('6522caa8-ddfc-48ce-bda1-3f60a3de3f65', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('6559d76a-2c6d-4807-bc9d-ffdb7b8e33c4', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '20', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('66030e90-88b4-4a0b-9e09-f9d677450119', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-05-25 13:23:54', '2026-07-08 08:47:50', '2026-07-08 08:47:50'),
+	('667d5e54-2c18-4814-8a94-5239976aa082', '47dc0b31-8710-4654-869d-246e2e265221', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('669697e4-0092-44aa-a490-30036d067bac', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('67a26cd4-35a5-47b8-a560-3765fd2e1bef', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('69523c4f-a638-4f87-945c-c83a68ba5401', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '21', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('6a4c426e-4bf9-4959-af7e-97b77363acad', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '20', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('6b107957-357a-423b-91a8-862806e95030', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('6b29d19d-6cf1-49a1-a2e9-ba4597908a41', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('6ba04317-8452-4e07-a6b5-8032a639b89c', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '47', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('6c3bcc1c-d7f0-4943-bf9a-fda570111313', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('6cd86f6f-a839-433a-ac35-de1f884b9068', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('6d11fed4-d5f5-4997-a6bb-27b5a07c2c49', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-08 09:20:57', '2026-07-08 09:21:21', '2026-07-08 09:21:21'),
+	('6e00ff46-695b-4395-94df-4be15584c22d', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('6e687621-6e13-4994-8f1c-4a0d7ebbd887', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('6e7bacd2-fc1f-4b02-b2e7-1447c2452fa6', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('6ee17a74-b244-42db-a2a4-3106c9ff94f7', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '46', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('6f32742f-c387-423a-9f2d-a97a50979f3e', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('716d1de1-e894-4989-a041-aebae31c3cb2', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '54', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('729346f9-c2fc-4396-be6e-387f1a4d4b9f', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('73a5acfd-15d0-4e7f-a467-14a150020d1b', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('7424cd6a-41c4-4c55-834f-841de00beb47', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('74836577-2c6e-4a18-a9de-5292c25b06ba', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('74bfb0cb-3909-4a76-abd8-fb866751835a', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('74d89925-6014-4147-a751-460f2d83db23', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('75194c89-adad-4bab-bd88-62bf23014fd2', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('75f283f7-658f-4e0f-9119-6fec06949943', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Sports', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
 	('768f9ccf-743b-4f72-8670-13bc9f436e51', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '21', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('9e5371d1-2659-4681-a4ce-9c3cbb0eda38', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Glass', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
+	('76bedf2b-c283-4131-ad93-2087be7abc54', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('77da2e54-9e7e-4e56-ba83-625099b255b6', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('7893f5c2-7568-4515-9ff6-df0e95eec166', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('78ed3df6-848a-455d-99c1-acea4aa11a90', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('79240263-2178-4d66-a2c1-675f10ba4ebb', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Trivex', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('7a65e530-c9b4-4055-b33a-b6f063b4c142', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-09 15:48:01', '2026-07-09 15:48:01', NULL),
+	('7ac85e86-48ba-4849-bb7c-3cf9f78a5fb2', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('7b466425-c447-4d6e-a66c-c807f45556f4', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('7d10c56e-d72f-4309-86fd-2e8698179fa5', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('7e4e1008-9efb-4a65-8c33-b9cd68905eee', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('7e5d9f6c-ddb8-4c85-933b-c12fa06a2a68', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('7f6c6a54-1417-4fac-b099-b56b3af5d8e2', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '49', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('8023c4b2-965d-4aaa-8254-0c7f85e8d7ab', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('8366083e-d5d6-4fea-8aec-3572290d64e9', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '59', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('8379fd67-3759-4f91-b995-44479b994e93', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('851e4001-e788-4cad-8e2f-2e131c8ce37d', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:47:20', '2026-07-16 13:47:20', NULL),
+	('852148bb-cc53-4474-8ba8-a3186dc41262', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('863deb35-655e-4b5e-8da0-f47ab91fca38', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('8698cf8e-ccf9-4a9d-9b55-9a1d0b7a7907', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('86e9254d-dc70-4ed3-8a77-98dda873cb92', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-15 10:39:00', '2026-07-15 10:41:02', NULL),
+	('8732b60a-7cc2-41a9-b7b1-56df076782f2', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('873f7167-1d04-4e78-b0c2-212e636217f5', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('880b6c54-7126-4700-9069-abd94c28d480', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('88346c99-f296-4a52-b10b-c98b6421fb3d', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('890d4d1e-8cf6-4be4-aa1a-428851db7c26', '837621aa-3a2a-4674-bc7d-11fd026e893d', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-16 13:58:01', '2026-07-16 13:58:01', NULL),
+	('89d446bd-b3c2-4809-b844-41badd5d3341', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Progressive Lens', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('8add0c67-f930-4572-8fa3-c15d943ef658', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('8b60b44d-d4f9-477d-9e26-70b82c2ce7d9', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('8cc8cae6-8d1a-4e06-93ab-3b0ea1c2acf3', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('8ccd1175-08c1-446c-bd20-a8eb54ccc6c4', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('8e4e5c82-070e-49c4-b4cc-5ae9f24e4652', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '44', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('8e5d4172-95da-40a4-a003-f1380aa7407a', 'b90f2056-ace6-41ed-801f-98f463b21280', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:36:17', '2026-07-16 13:36:17', NULL),
+	('8ee052ce-ce7c-4b85-a796-ab48db62e736', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('8f0f742c-5513-4bd2-a8b8-2fbb64c346ce', 'e3ab59ad-e68a-410c-9e33-767ba6a7ee98', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Eyeglass Chain', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('90a6d847-63be-480f-b684-df240d7e4385', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('91ae3e39-d145-4cc6-9462-6400c09d71ae', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('9279486d-4a5b-4db5-9fcb-71adbc5e7be5', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('92c811af-8e78-40ad-8472-116c24cc41a4', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('93d8d593-85ba-4c6a-9e01-e70d1db19d50', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('95724b1f-bcb3-4d89-b1a0-47f4513b756b', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-07-08 09:21:21', '2026-07-08 09:21:21', NULL),
+	('9574e67f-3e54-4665-ae2f-7dd5835570bc', '47dc0b31-8710-4654-869d-246e2e265221', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('959442af-51cf-4602-b6b5-1077eca8d2c7', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('95b0086c-945e-4732-9f6f-d566280fee5b', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('95c31f09-ac3d-4ed0-9943-021a9ad2a4e2', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('967869ff-6bde-49a0-b555-e1b5dc99396c', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('9758bbba-f9c7-4dfd-b96c-c76e020e1dbd', 'c3121385-d359-49fa-ba69-26d96f642b25', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('9771671e-f54a-4380-a8d2-01a5020b9990', 'ed6f3004-bb65-4893-bda2-22a352061215', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '20', '2026-07-16 11:16:56', '2026-07-16 11:17:26', NULL),
+	('990cca43-f2ed-4152-861b-010193563bb0', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '52', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('99484c19-01d5-4fb8-a849-3d280151ec7b', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('99954c56-1860-4c7d-aacc-93befc2ea159', '3606197c-68a5-4658-964b-8bc60df55063', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('9a540dcf-3fd5-438a-b568-1591197d8533', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('9a587c61-b301-42b6-a2fd-6a64cb27d4f3', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('9abfce87-9a7e-4a54-b62b-1b82ef4172a9', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('9d2428c1-1536-4221-baa6-862e26cd8b40', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('9d820312-4f7b-45c6-938d-d0b78365d7e2', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('9de28d7b-3c8a-49d3-9bac-6ef19b72a898', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('9e070a57-1b24-434e-a99c-f3b415b88622', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('9e5371d1-2659-4681-a4ce-9c3cbb0eda38', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Glass', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
 	('9f50ec17-21e7-47d0-83e6-c44cfe2a9ae1', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '2', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('a53e53df-786c-416e-bd39-91d72d88c0b9', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '21', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
-	('a5a2f25d-5f0d-4487-8f64-b2a2f8a60d65', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
+	('9feac8e9-302c-4fa0-8167-69879bae78ed', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('a03b859b-959f-4268-bea3-be79b76e6b12', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('a0bd9de7-9c1e-4b7d-8a85-f2463d7bd1e4', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('a0d03d22-e357-48bd-ad3a-b2dc8ac42fb2', '51f4ab23-e66d-4818-8d3a-5963c8c7626c', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-16 13:52:12', '2026-07-16 13:52:12', NULL),
+	('a10cfcfc-0421-485f-b58b-04d30c450820', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('a12bc70d-0065-4a04-8ddf-6c87505a180e', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '26', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('a1d7ceb8-dc92-4d26-8d04-e239429c8702', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('a2ec9e5a-f0f8-4048-9b63-81f88219c32d', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-07-16 10:54:31', '2026-07-16 10:54:31', NULL),
+	('a303f29d-c2fa-4af0-848e-e1fb95306eda', '3606197c-68a5-4658-964b-8bc60df55063', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Aluminum', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('a33fa617-8b62-4bb6-be8a-f3bbb5e26d28', '573afcd0-ff09-4584-896a-cfc600c9e2aa', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('a4ca8981-744f-4b98-af61-605d33806ff9', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '57', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('a53e53df-786c-416e-bd39-91d72d88c0b9', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '21', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('a5a2f25d-5f0d-4487-8f64-b2a2f8a60d65', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-05-25 13:23:54', '2026-07-09 15:48:01', NULL),
+	('a6cd588c-524a-4fec-be1c-6ccd39e90d1f', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('a80a8eef-14c1-44f3-874a-3cc03d8718b1', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('a9984a4a-45a1-4fd7-bb34-4b07be15e7bb', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('a9ffde36-b378-48dc-9d18-496b52d1dd15', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
 	('abb5cce3-8b3e-4d16-8673-266a37235c7b', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('adb70c4e-45db-4de5-a56f-a3e718ccf793', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
-	('b694526b-5211-4c13-9051-7d68e888bebf', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
-	('ba5b46ee-7d2a-4726-a698-6c955e9098d9', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '3', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
-	('bb98e279-3cc3-4170-a40b-fa02bc5a85c2', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '10', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL),
-	('bc1d2fa2-c897-413c-87e8-604339675764', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
+	('abe63902-d422-4694-a624-179bfc41945c', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '59', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('ac0d1462-9564-4abe-9560-7dca998bf9af', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('ac4997d9-85df-4e1b-9e7c-95d65028fd62', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-07 16:00:48', '2026-07-07 16:00:48', NULL),
+	('ad213305-a3be-4999-92ad-617b004b96bb', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Daily', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('adb70c4e-45db-4de5-a56f-a3e718ccf793', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-05-25 13:23:54', '2026-07-08 08:47:50', '2026-07-08 08:47:50'),
+	('adc752c5-b968-4e91-8e01-269fa5a1ecf1', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('ae7189a9-c0f7-4c82-9b16-fce98cdac985', '3606197c-68a5-4658-964b-8bc60df55063', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '57', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('af04dbb1-d366-4a02-8970-f7e09844940d', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('afa55750-e739-4c5d-95cd-8250b7f60872', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('b1015aa2-c005-4202-85b7-8bf0f76b6eb0', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('b1be6115-d2f1-4e29-9646-2d3fc2147db1', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('b20fc02c-16b7-4056-8e44-93ae253b912d', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '53', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('b3c1f210-2940-4fae-a9cd-e22492f29777', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Ace', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('b42f825f-114d-4b23-8503-2c92cde7c22c', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '57', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('b4ff660a-12e9-4540-a2f3-5584ca375099', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('b514f48e-5a2d-40f0-9b50-521ead3e9dfa', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('b5ef7d43-7254-4da2-843d-174c1fd42baa', '47dc0b31-8710-4654-869d-246e2e265221', NULL, '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('b672a0e9-e2a8-49ef-bb86-d78217739604', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('b694526b-5211-4c13-9051-7d68e888bebf', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-05-25 13:23:54', '2026-07-09 15:48:01', NULL),
+	('b7a20450-48fd-4f54-9839-51b7714f0464', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('b7cbb2ac-0516-407b-9b53-ea384aa33eaf', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('b81bec71-1de4-4ed0-ab61-463d1a99a2ee', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-15 11:13:49', '2026-07-15 11:13:49', NULL),
+	('b8e89f00-233a-4bd1-bac0-51f0bce2f5ae', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Women', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('b91be81f-8c4a-4bbe-aac7-2d6740ba8c20', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('b937b76e-ee3e-414f-ad16-1c577195d137', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Pink', '2026-07-16 11:15:19', '2026-07-16 11:15:19', NULL),
+	('b99933e7-f33c-4b68-9a93-d5d5c4a52798', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('ba5b46ee-7d2a-4726-a698-6c955e9098d9', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '3', '2026-05-25 13:23:54', '2026-07-09 15:48:01', NULL),
+	('baadd161-9c3e-4cc9-bf94-18455e17055e', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Pink', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('baf9802e-6145-4355-8309-6acc62591fd6', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('bb98e279-3cc3-4170-a40b-fa02bc5a85c2', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '10', '2026-05-25 13:23:54', '2026-07-08 08:47:52', NULL),
+	('bc0fff30-3501-4f81-a7a6-8858c6649ef9', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Polycarbonate', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('bc1d2fa2-c897-413c-87e8-604339675764', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('bc608224-2360-46bb-bc78-0c5637e7f999', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '49', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('bca9f8ea-01a4-4131-a5cf-18bbfcb364f3', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('bdeb86a3-c77e-431c-a830-02a1113a565f', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('be99dfd9-3194-4669-bf7c-7c195f1f237b', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('bf641d75-3843-4d36-99f7-40db7aebb54c', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('c045a756-804b-4aa5-bfed-42ce6eba104d', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('c0964840-5ea6-4692-900e-bd588b23f459', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('c0baf5d8-5783-4988-81a9-c87885ad0821', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '54', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('c0e7d361-89ef-49e7-b0a7-f9cfb868aed0', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('c23a4a8b-0d1f-4bf4-88bd-d7ffdfae6273', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '124', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('c33bc59e-16bf-4c2d-9383-2244451a8aec', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 11:11:48', '2026-07-16 11:11:48', NULL),
+	('c354cbe0-a4db-4455-bf3a-b8dab6a09cfa', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '56', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('c3c621b8-39af-4d16-bb32-22be35a5fce9', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '16', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('c423d0e0-e462-4895-bed6-35bdd4f4374e', '5373faf8-da09-4440-a505-ffea8f4275fb', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '62', '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('c43c6c8c-13f3-46ef-a689-faa6627d0266', '3606197c-68a5-4658-964b-8bc60df55063', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('c49a318a-e9c4-440e-ba36-123e6edaccce', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, '00cbc3c6-f421-4714-b509-e9770e3182d1', '59', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('c4f2c3aa-9d66-44a1-9a58-3384fcc98c02', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('c60211c4-4a43-47b0-a28f-6aadab6539d3', '36cb74ba-cd59-4bb4-8613-0871c0e0e21b', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('c62ff14d-d9b6-4b93-9f5f-f9172e4f0163', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('c6a5a938-4388-4325-b9e5-96fe83962bbc', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('c775806c-55c8-4d8b-8c5d-897f9e87ec86', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Monthly', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
+	('c8bd41bb-de97-4a1d-b632-ab6a33c832aa', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '58', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
 	('ca5a9a4c-2757-4557-94ad-c407f0b76088', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Glass', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
+	('cb484c2a-cc4a-4f2d-96d1-c6ceec49d2d0', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('cc025e86-b532-48c3-9d15-97a985585d9f', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('ccb5afe7-6e52-4914-b4db-c74d99b02003', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('ce671204-0b22-49b7-83dc-4e145ded6ec0', '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Cleaner', '2026-07-16 13:28:00', '2026-07-16 13:28:00', NULL),
+	('ceb17e0d-28e3-4b94-9ffe-f6ff00abbd56', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('cf936e66-33f0-4e79-a5ed-8e2203d17d31', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Metal', '2026-07-16 11:11:48', '2026-07-16 11:11:48', NULL),
+	('cfd7f153-78b6-455e-ad2d-d147d39d4db4', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Aviator', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('d0a3eb5b-e326-4e80-a304-632c6cc13ba2', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('d0b4ef1c-ccf6-4df6-bb99-8df1ec2af492', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('d0c4ee6d-ce68-42e8-bb60-cd907b3ef769', 'e7fad896-c27a-47db-afd3-97f48dcb296b', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Lens Case', '2026-07-16 13:59:23', '2026-07-16 13:59:23', NULL),
 	('d16abe4d-f19f-4e64-9323-5d8004504af8', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '142', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('d5e4f1e5-9059-4aa4-a6b0-da87e06e1f2e', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-06-04 14:14:53', '2026-06-04 14:15:21', NULL),
+	('d2e75a57-c385-4827-9f37-925228695a2e', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('d43c480d-683b-48f6-a034-9523e3e95e71', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('d5dd2151-25ce-437d-8221-f0180453e3b2', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('d5e4f1e5-9059-4aa4-a6b0-da87e06e1f2e', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-06-04 14:14:53', '2026-07-07 16:00:48', NULL),
+	('d6442c83-299b-4236-b938-36ed107f3ca4', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('d6f17801-0341-44ee-8971-6696282d0b89', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
 	('d7076d5a-ca23-4fd3-92cd-604665e6cd59', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
+	('d710051e-f84e-480a-a441-284b13ca58ff', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('d8220de3-2901-4dcb-a9cd-df8f0d0126cd', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '19', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('d89ca82e-aded-4f51-818e-1da1601df415', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Polycarbonate', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('d937ac1a-f9ad-4526-af50-5d8bf57eb829', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
 	('d946de8b-416d-4ffc-b7a7-96f1ae0dcef1', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-06-04 14:14:53', '2026-06-04 14:15:21', '2026-06-04 14:15:21'),
-	('de350473-45c1-4cd1-8e69-2eb7d81ea67d', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-06-04 14:15:21', '2026-06-04 14:15:21', NULL),
+	('d9eb161b-0569-4303-a7dc-9457930cc359', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Green', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('da6f5b2a-0f2a-4a9b-9b8f-1e5074929d66', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('daa0a54a-59ed-404f-bea9-dd042db69234', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('dafb9ba0-1290-4890-9410-f5850ec11bd9', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('dbbaff2d-c607-4b83-8dd4-d5f53be5a475', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Plastic', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('dc0b392d-b204-40e0-a47b-d9d73d98d47b', 'c5905480-3ac1-4ff8-a56b-88119487bd92', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '59', '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('dc7bfbc9-5f8f-40d0-972e-8440e6378049', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('dcef9319-4b8c-4f9c-98f8-afd9d0fdd19e', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Pink', '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('dcfa041f-6105-4e73-a26e-ceb575542b4c', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('de350473-45c1-4cd1-8e69-2eb7d81ea67d', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-06-04 14:15:21', '2026-07-07 16:00:48', '2026-07-07 16:00:48'),
+	('de561b0a-e6e0-4b97-a184-cc519c6cc267', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'White', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('df2065cb-a40c-460d-b049-18c5b781aaef', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('e0b9d549-b29b-4dc8-9e9c-bb3056e520ae', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('e0f65330-8349-4ff6-a507-ebe32005aeec', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('e110e4b2-c684-410e-85b0-ceff22a37b24', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '20', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('e345cd6b-8e69-470f-aec4-d6105507223d', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('e38287eb-36fd-4cc3-b847-772c0a3d79b0', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Kids', '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('e530f457-d876-4d43-91ff-f7f14688d01c', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('e56136d2-5b5c-4860-8433-f6fdfae59098', '6d6612ad-663d-4ba1-b803-4789769aebf8', NULL, 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Cleaning Cloth', '2026-07-16 13:46:10', '2026-07-16 13:46:10', NULL),
+	('e59df786-1a72-4afc-ab6c-361c597e6c0f', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '15', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('e5b4f3bb-4460-48cf-ac27-3dbe149e66a0', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('e637c913-2c96-42aa-a037-b9d0501982ff', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('e7363e1b-3f33-4383-a1b0-1c3cc72aed0a', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('e77fa952-0f0c-4a43-85ae-8f5de518e476', '09527411-ce22-4480-918c-d6a4ce65cffe', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('e954e2cf-098b-4d4a-bf33-de2fc881337e', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Stainless Steel', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('ea849b9f-be8d-4196-891d-5a63e91df547', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('eb1fab80-2b06-418b-b2a6-34a6950c4da7', '645237e3-5257-4f7f-b025-3c80fd7fc37a', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Carbon Fiber', '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('eba58901-f9fd-442f-a209-4164c7c9b3e7', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 10:54:08', '2026-07-16 10:54:31', NULL),
+	('ec328963-5485-4bad-8a47-8451407a0631', 'c7079913-6f26-4812-84a9-5fd705da671e', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('ec5e9ac0-a03f-4d6f-9da6-3ab96118fe49', '54bb678a-de56-4f58-8ddf-5c95e92f254f', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '52', '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
 	('ec7f5c75-2c5e-4772-968d-6b5361baefd8', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-05-25 11:47:51', '2026-05-25 11:50:29', NULL),
+	('eca59574-dc48-46a6-97b4-8df0736eaa80', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('ed03e6ba-43a7-4666-b150-31d4a65f8c06', '3606197c-68a5-4658-964b-8bc60df55063', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('edabf345-fb48-43b3-85f7-44ccd363356f', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-09 15:57:56', '2026-07-09 15:57:56', NULL),
 	('eef3c34e-b9a1-40f8-bcca-d5e89fa6cb4f', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
+	('f13ff6a9-4d80-4c55-948a-e4d7975be94c', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:11:40', '2026-07-16 11:11:48', NULL),
+	('f15cd91a-7341-42e0-9b64-e50d13bea9bf', '75362d09-1920-4f54-aee3-818c3d4030d7', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 11:11:40', '2026-07-16 11:11:48', '2026-07-16 11:11:48'),
+	('f1b7f575-57a8-4ce8-ab89-97b69b72b44f', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Aspheric Lens', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('f1ff5b91-5bb9-4419-b96a-e6e559290e86', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Cat Eye', '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('f21dde13-1f57-45f9-9c93-404acdb3d8d2', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-07 16:00:48', '2026-07-07 16:00:48', NULL),
+	('f2ee5720-edb9-4e26-81e2-6e3e36eac9aa', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '21', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('f38e075c-35be-499f-b344-e5d52ec11abb', 'b7fae052-d79b-42f0-8498-1972f01fe37c', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('f3cf781d-df7c-4c6b-94a0-4e7373ebe69f', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Photochromic Lens', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('f52ac26f-ba5c-4304-93d1-5a88c2a8417c', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '20', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('f586dd8f-2c6f-4454-a63f-3d626c6811e6', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Red', '2026-07-16 10:54:08', '2026-07-16 10:54:31', '2026-07-16 10:54:31'),
+	('f595dccd-84b7-4e16-83f3-11e4d0b08939', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Rectangle', '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('f5d6b957-af9e-400a-bafd-d0a180b69ab9', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('f5e5060e-5535-459c-9744-9edc881b7980', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Black', '2026-07-08 09:21:21', '2026-07-08 09:21:21', NULL),
+	('f758a2e6-3491-447e-9ee6-957919bbf67f', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Gold', '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
 	('f7a18916-fa07-4464-9346-26915d1ebcf1', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 'fab9a0b6-5633-43a5-b78a-cd6523e4c406', 'Polycarbonate', '2026-05-25 11:47:51', '2026-05-25 11:50:29', NULL),
-	('fa40bce1-7f04-4959-bcab-8c4ea9265078', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '5', '2026-05-25 13:23:54', '2026-05-25 13:23:54', NULL);
+	('f83c0aab-8d95-4391-8892-4e135a66c674', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, '17d811ef-8002-4db7-8cbd-6f012ad12028', '17', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('f8f59698-5232-421e-9323-6c83dbfcc7e2', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Blue', '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('f8ffb78a-8399-4254-9b47-14942b1c52e6', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, '77e03517-d3b5-4a73-9066-0b7c21338c0a', 'Titanium', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('f93496c0-f15d-4d43-bea5-b34e686bde4b', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('f942a3a5-17d9-47e3-af2e-c4d3a973796f', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
+	('fa06c86c-8080-4879-ba5b-95e484edbb73', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-08 09:20:57', '2026-07-08 09:21:21', NULL),
+	('fa40bce1-7f04-4959-bcab-8c4ea9265078', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '5', '2026-05-25 13:23:54', '2026-07-09 15:48:01', NULL),
+	('fc2080f3-63ae-4aa7-9c94-b8182dac17c5', '776aa20e-0ada-4f65-81cf-1e199de7dab3', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('fcbf0c61-a922-4f50-85fb-f1937112e1e3', '82261a06-c7b3-48ec-af3b-4525bc731457', NULL, '331f5339-1774-4b06-9e19-bb88b603c5a2', 'Brown', '2026-07-08 09:20:57', '2026-07-08 09:21:21', '2026-07-08 09:21:21'),
+	('fd35bf38-99ee-4edb-8b57-c20651b86afe', '0064425e-436b-4dd4-90bb-49d5e296876c', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 11:14:33', '2026-07-16 11:15:19', NULL),
+	('fdc17ee2-006a-477c-97a9-0768898ce538', '4861d393-d692-42c3-ab4d-f0a2c78250f8', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '124', '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('fe595730-a989-4532-b6e4-f7e23b80eca1', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Round', '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('fe5d5da8-abd7-4e9e-844d-3e5e4b06cbf3', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, '4aeb2609-e310-4a62-9a29-474744bb49dd', 'Sports', '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('fe8408e0-7d14-48b0-818f-449ed199b269', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 'cef204f5-a047-4f4a-a843-a667437ef4b9', 'Adult', '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('fe95d852-17ac-4b8c-8f9f-57f0401434e8', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', NULL, 'fe556900-64e2-4f9a-b9cd-8b7e023a72c6', 'Square', '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('fed238d3-01f9-442a-9f97-624ce8fb5698', '32b2b210-2471-4973-ad75-9c4ca33f18fe', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('ff4fb0a9-155f-46b1-a816-a4f48265c08b', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Men', '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('ffa55371-adeb-4dd6-855d-fd6347a9ddab', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', 'Single Vision', '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('ffe4529f-5717-4fea-9e29-e5be86679ac3', '1125572a-4b30-4135-bb27-a8e360be0ad4', NULL, 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', '55', '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('ffedec80-d435-465a-9e37-2a4583ac579f', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, '5457c750-378b-4050-a7b6-dfe2d2262e44', 'Unisex', '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL);
 
 -- Dumping structure for table pos_optik.product_categories
-DROP TABLE IF EXISTS `product_categories`;
 CREATE TABLE IF NOT EXISTS `product_categories` (
   `category_id` char(36) NOT NULL,
   `category_name` varchar(50) NOT NULL,
@@ -754,12 +1449,11 @@ CREATE TABLE IF NOT EXISTS `product_categories` (
 
 -- Dumping data for table pos_optik.product_categories: ~3 rows (approximately)
 INSERT INTO `product_categories` (`category_id`, `category_name`, `category_slug`, `category_description`, `variant_mode`, `is_prescription_supported`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('855be16e-1a49-4dc2-a858-8c57021245e0', 'Sunglasses', 'sunglasses', 'Various kinds of sunglasses for men and women', 'off', 0, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('855be16e-1a49-4dc2-a858-8c57021245e0', 'Sunglasses', 'sunglasses', 'Various kinds of sunglasses for men and women', 'combination', 1, '2026-05-25 11:46:04', '2026-07-07 15:59:49', NULL),
 	('cf695022-99c8-4681-9d88-1d5541dc8078', 'Accessories', 'accessories', 'Eyewear accessories such as eyeglass straps, cases, cleaners, etc.', 'off', 0, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('f1d06647-5499-4881-9d29-c35170c39113', 'Contact Lens', 'contact-lens', 'Various kinds of contact lenses for daily and special', 'off', 0, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL);
+	('f1d06647-5499-4881-9d29-c35170c39113', 'Contact Lens', 'contact-lens', 'Various kinds of contact lenses for daily and special', 'combination', 1, '2026-05-25 11:46:04', '2026-07-09 15:05:47', NULL);
 
 -- Dumping structure for table pos_optik.product_discounts
-DROP TABLE IF EXISTS `product_discounts`;
 CREATE TABLE IF NOT EXISTS `product_discounts` (
   `product_discount_id` char(36) NOT NULL,
   `product_id` char(36) NOT NULL,
@@ -779,7 +1473,6 @@ CREATE TABLE IF NOT EXISTS `product_discounts` (
 -- Dumping data for table pos_optik.product_discounts: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.product_images
-DROP TABLE IF EXISTS `product_images`;
 CREATE TABLE IF NOT EXISTS `product_images` (
   `product_image_id` char(36) NOT NULL,
   `product_id` char(36) NOT NULL,
@@ -798,34 +1491,254 @@ CREATE TABLE IF NOT EXISTS `product_images` (
   CONSTRAINT `product_images_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_images: ~21 rows (approximately)
+-- Dumping data for table pos_optik.product_images: ~244 rows (approximately)
 INSERT INTO `product_images` (`product_image_id`, `product_id`, `url`, `alt_text`, `sort_order`, `type`, `is_primary`, `mime_type`, `size_bytes`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0014a76b-90bb-449e-a53b-1b5a1a77565a', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'https://cdn.adefoodwaste.biz.id/1784173530_2e84193cbe7652cbb497.png', 'F CAR 0054 KDX 53', 0, 'gallery', 1, 'image/png', 239180, '2026-07-16 10:45:31', '2026-07-16 10:45:31', NULL),
+	('01f8fa6b-2b11-440b-9eb9-ac76c88ffb6e', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477122_01dd920efc1013ed292b.jpg', 'Blue - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 319861, '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('034dc342-3a80-47e1-b475-ce8dea2c5d98', 'c7079913-6f26-4812-84a9-5fd705da671e', 'https://cdn.adefoodwaste.biz.id/1784174176_fa48ad380925d047b912.png', 'F II P263 C5 47', 0, 'gallery', 0, 'image/png', 212781, '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('036bed63-a394-4274-ba40-43fd95c88836', '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'https://cdn.adefoodwaste.biz.id/1784173355_72c0b5188adebd1b9ce6.png', 'F AZ 30453A C01 53', 0, 'gallery', 0, 'image/png', 263422, '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('04635286-382a-40bb-bfba-eb8c70621fd1', '09527411-ce22-4480-918c-d6a4ce65cffe', 'https://cdn.adefoodwaste.biz.id/1784174526_fc536f95c17afe9e0687.png', 'F NJ 5035LB 440 46', 0, 'gallery', 0, 'image/png', 287719, '2026-07-16 11:02:06', '2026-07-16 11:02:06', NULL),
+	('04ccb882-962b-425a-9d02-3d248ddac7f8', 'b7fae052-d79b-42f0-8498-1972f01fe37c', 'https://cdn.adefoodwaste.biz.id/1784171383_5386d8596fe8bea575b8.jpg', 'F CO VCO264 700Y 51', 0, 'gallery', 0, 'image/jpeg', 235359, '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('05074f37-7968-4bba-a8ff-1b9b066736d1', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'https://cdn.adefoodwaste.biz.id/1784175581_2ff7d981b65ce0e2a3a1.png', 'F II PTR81812 C7 48', 0, 'gallery', 0, 'image/png', 268291, '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('063db560-a764-4873-8e5d-736d94caa86e', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'https://cdn.adefoodwaste.biz.id/1784182769_8173d786a201fe45081d.png', 'F PUM PU0485O 009 57', 0, 'gallery', 1, 'image/png', 301997, '2026-07-16 13:19:29', '2026-07-16 13:19:29', NULL),
+	('064459fc-4f83-4390-b74e-9b85139ac2e6', 'dde78075-5a62-47d5-8669-026c43d893b2', 'https://cdn.adefoodwaste.biz.id/1784184536_3367abd8c017b1f1e3fd.webp', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 0, 'gallery', 0, 'image/webp', 55962, '2026-07-16 13:48:56', '2026-07-16 13:48:56', NULL),
+	('06a9a018-27aa-4b71-ba5b-be4b600b9ec1', '0064425e-436b-4dd4-90bb-49d5e296876c', 'https://cdn.adefoodwaste.biz.id/1784175273_5170f1115c6e6ba9e82e.png', 'F II SZTRZC824 C3 46', 0, 'gallery', 0, 'image/png', 231512, '2026-07-16 11:14:33', '2026-07-16 11:14:33', NULL),
+	('07393caf-f4ad-4ad1-99d8-b66a060a2eff', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477406_16d13ac6574a276aef42.jpg', 'PROGEAR ; S1284 ; 4 (BLU) - 57', 0, 'gallery', 1, 'image/jpeg', 345933, '2026-07-08 09:23:26', '2026-07-08 09:23:26', NULL),
+	('074190f1-9c6b-47c6-b378-3f99dea365f0', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477121_c264ed6f504ee1d9df1f.jpg', 'SPYDER ; PILOT 2 ; 3S000 (BLK) PZ - 00', 0, 'gallery', 0, 'image/jpeg', 439162, '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('0a534673-93cf-4c55-9bcf-b5a2e5583dbd', '6d6612ad-663d-4ba1-b803-4789769aebf8', 'https://cdn.adefoodwaste.biz.id/1784184369_989d385aecc6dee6ab42.webp', 'Kain pembersih anti-kabut dan kain pembersih lensa-love', 0, 'gallery', 0, 'image/webp', 60034, '2026-07-16 13:46:10', '2026-07-16 13:46:10', NULL),
+	('0a67e4d8-9920-413d-84f4-31b3bf34d72c', '6f525b9f-cf75-48f2-a35c-f640033c1904', 'https://cdn.adefoodwaste.biz.id/1784086737_e0677896d60bf1a36e74.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 10:38:57', '2026-07-15 10:38:57', NULL),
+	('0bf59589-6a64-4349-b2e7-7d50766c5438', '09527411-ce22-4480-918c-d6a4ce65cffe', 'https://cdn.adefoodwaste.biz.id/1784174526_ae1cf0f1e3e6f93eb62a.png', 'F NJ 5035LB 440 46', 0, 'gallery', 0, 'image/png', 217845, '2026-07-16 11:02:07', '2026-07-16 11:02:07', NULL),
+	('0c92edb4-7b65-4252-b886-bda1454bc038', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'https://cdn.adefoodwaste.biz.id/1784170989_aab79c8fbf6d96324745.jpg', 'F CO VCO270 743M 54', 0, 'gallery', 0, 'image/jpeg', 248924, '2026-07-16 10:03:10', '2026-07-16 10:03:10', NULL),
+	('0cc1f80d-4e33-401c-844d-99dd8f967dfc', '3606197c-68a5-4658-964b-8bc60df55063', 'https://cdn.adefoodwaste.biz.id/1784170663_f08bfcb0464c98f1c292.png', 'F CO VCO256I 0738 55', 0, 'gallery', 0, 'image/png', 222747, '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('0ee9fe57-b3c9-4bc2-8b30-0ce053332000', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', 'https://cdn.adefoodwaste.biz.id/1784173167_867fda2307225a5ebf64.png', 'F BN BA6019 B50 53', 0, 'gallery', 0, 'image/png', 217464, '2026-07-16 10:39:28', '2026-07-16 10:39:28', NULL),
+	('0f751663-86a4-42c4-b1a1-a8e301016b8c', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'https://cdn.adefoodwaste.biz.id/1784169136_94b3aae495fe4b1d13c3.jpg', 'F BE 1015-1 145 53', 0, 'gallery', 0, 'image/jpeg', 237742, '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
+	('0fb6e4be-dfe0-4a54-a162-a794dafb967b', '51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'https://cdn.adefoodwaste.biz.id/1784184731_fb83af3ed94b8f1f94fc.webp', 'Cairan Pembersih Kacamata Anti Fog GECLL Lens Cleaner 60Ml P010', 0, 'gallery', 0, 'image/webp', 98416, '2026-07-16 13:52:11', '2026-07-16 13:52:11', NULL),
+	('0ff8d565-c782-47ad-b1c2-ac20662702bd', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'https://cdn.adefoodwaste.biz.id/1784170990_7704f32240f41f3fa8ee.jpg', 'F CO VCO270 743M 54', 0, 'gallery', 0, 'image/jpeg', 238756, '2026-07-16 10:03:10', '2026-07-16 10:03:10', NULL),
+	('127c42d6-09c3-4c88-b62a-9015367853ed', 'b90f2056-ace6-41ed-801f-98f463b21280', 'https://cdn.adefoodwaste.biz.id/1784183776_976393a027ffd062d9b7.webp', '(1PCS) Lap Kacamata Microfaiber Halus Dan Lembut Multifungsi', 0, 'gallery', 1, 'image/webp', 34182, '2026-07-16 13:36:16', '2026-07-16 13:36:16', NULL),
+	('131c852d-3fc9-462f-95bd-3136dfc77b4b', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'https://cdn.adefoodwaste.biz.id/1784169135_30690832ef85119a51ea.jpg', 'F BE 1015-1 145 53', 0, 'gallery', 0, 'image/jpeg', 241424, '2026-07-16 09:32:16', '2026-07-16 09:32:16', NULL),
 	('14219271-e840-45f0-b768-42524b87f233', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690235_053e7e721fbba95d55f3.png', 'Gold', 0, 'variant', 0, 'image/png', 232337, '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
+	('142f5353-e8aa-482c-bd10-1cfe4569d134', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', 'https://cdn.adefoodwaste.biz.id/1784184440_1664055b8cbcd4957d51.webp', 'Kain Lap Universal Untuk Kacamata Handphone Kain Kacamata Portable Kain Kacamata Microfiber', 0, 'gallery', 0, 'image/webp', 100868, '2026-07-16 13:47:20', '2026-07-16 13:47:20', NULL),
+	('14deb016-5154-4996-9259-f9258cfb67da', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477408_902ab47e2df96fddcee5.jpg', 'PROGEAR ; S1284 ; 4 (BLU) - 57', 0, 'gallery', 0, 'image/jpeg', 466019, '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
+	('161b6620-53db-4375-8870-5b52ceb430bd', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', 'https://cdn.adefoodwaste.biz.id/1784169505_f70b465d856732ac0cd4.png', 'F BY MBY5013H 001 57', 0, 'gallery', 0, 'image/png', 206280, '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('17a4edcf-163a-4d62-86aa-5ad493d3591a', 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'https://cdn.adefoodwaste.biz.id/1784185162_fa93fdf9f61ec231a870.jpg', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 0, 'gallery', 0, 'image/jpeg', 91376, '2026-07-16 13:59:23', '2026-07-16 13:59:23', NULL),
+	('184a341b-966e-44e6-8b5e-20cd7dabc86e', '75362d09-1920-4f54-aee3-818c3d4030d7', 'https://cdn.adefoodwaste.biz.id/1784175099_02a7218a517bd0f6b3a5.png', 'F II SZTRZC826 C1 46', 0, 'gallery', 1, 'image/png', 247144, '2026-07-16 11:11:39', '2026-07-16 11:11:39', NULL),
+	('18de4e7e-6619-4f24-9be9-279288332d17', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', 'https://cdn.adefoodwaste.biz.id/1784172273_154fa3eda18f899b1f10.png', 'F IP PG6021 C7 53', 0, 'gallery', 0, 'image/png', 239430, '2026-07-16 10:24:33', '2026-07-16 10:24:33', NULL),
+	('1910b7ba-f58e-492c-ba77-f17b89980741', 'dde78075-5a62-47d5-8669-026c43d893b2', 'https://cdn.adefoodwaste.biz.id/1784184536_85b9dd67b77ed7d9e43a.webp', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 0, 'gallery', 0, 'image/webp', 127358, '2026-07-16 13:48:56', '2026-07-16 13:48:56', NULL),
+	('19a58d5f-5641-4e5a-a122-b30dcbaf46ec', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', 'https://cdn.adefoodwaste.biz.id/1784174703_df4177923ecf8bbd6db1.png', 'F II YD63052 C1 48', 0, 'gallery', 1, 'image/png', 214688, '2026-07-16 11:05:03', '2026-07-16 11:05:03', NULL),
+	('1a01a7c2-d7c1-4400-b4bf-498096d873df', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', 'https://cdn.adefoodwaste.biz.id/1784173025_0420e307211e8901bc0a.png', 'F MOL MJ5121 B10 50', 0, 'gallery', 0, 'image/png', 164986, '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('1a63ca8d-5f3c-404b-94d6-2b4ad5a95584', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'https://cdn.adefoodwaste.biz.id/1784177260_963b3b698c55fb2ddb77.png', 'F NK 7118 001 55', 0, 'gallery', 0, 'image/png', 241200, '2026-07-16 11:47:40', '2026-07-16 11:47:40', NULL),
+	('1dde5805-2a59-4aba-8525-d0790d6497eb', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', 'https://cdn.adefoodwaste.biz.id/1784170001_194e048d482d146903fe.png', 'F CA 2012T 807 52', 0, 'gallery', 0, 'image/png', 209326, '2026-07-16 09:46:42', '2026-07-16 09:46:42', NULL),
+	('20110ba8-138d-4783-b8af-74dd4ba35fce', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'https://cdn.adefoodwaste.biz.id/1784086739_a06dda8d2b83805deab1.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 10:38:59', '2026-07-15 10:38:59', NULL),
+	('205fcc60-ae4e-44f3-9261-30e7fd71ee59', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1783414848_36c236d4e213336b2b53.jpg', 'Black - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 512121, '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('2075e99d-077b-4815-bf94-1f2a04943545', '0e923360-e9df-4285-9b46-a0242ebe656f', 'https://cdn.adefoodwaste.biz.id/1784184012_61972fd039c08ab074f8.webp', 'Lap Microfiber/ Kain pembersih kacamata / Hp/ Kamera/ Laptop bahan halus', 0, 'gallery', 0, 'image/webp', 53298, '2026-07-16 13:40:12', '2026-07-16 13:40:12', NULL),
+	('20ddd610-f750-449d-a14b-a65aaf5b3007', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', 'https://cdn.adefoodwaste.biz.id/1784174704_7012628b682d1af80359.png', 'F II YD63052 C1 48', 0, 'gallery', 0, 'image/png', 182331, '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
 	('217bc354-fb3a-4813-8ab9-c1632337d9e6', '6c72d88e-f8f0-4249-8b25-7885564eaa06', 'https://cdn.adefoodwaste.biz.id/1780545365_23e16ce3c6e75d57bd9c.jpg', 'Edgy', 0, 'gallery', 1, 'image/jpeg', 202384, '2026-06-04 10:56:05', '2026-06-04 10:56:05', NULL),
+	('21f5c9c4-e69d-46e4-b721-e22f84cba629', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'https://cdn.adefoodwaste.biz.id/1784177260_8ccbc8048eeaa1c5ab83.png', 'F NK 7118 001 55', 0, 'gallery', 0, 'image/png', 207461, '2026-07-16 11:47:41', '2026-07-16 11:47:41', NULL),
+	('22855b80-fb7b-4d73-b868-720666571947', 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'https://cdn.adefoodwaste.biz.id/1784183639_834018fc1967d50bdba5.webp', 'AZ Kain Lap Kacamata Nano Anti-Fog Microfiber Glasses Cleaner - K-10', 0, 'gallery', 1, 'image/webp', 34998, '2026-07-16 13:33:59', '2026-07-16 13:33:59', NULL),
+	('22b72241-5ae7-4fb9-9e30-4bc6cd959ce3', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', 'https://cdn.adefoodwaste.biz.id/1784170780_d6c74298ce557de9c5a2.png', 'F BE 1022-1 670 52', 0, 'gallery', 0, 'image/png', 198988, '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('2327b14a-94de-4aab-8b24-f5abf6cf9f00', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'https://cdn.adefoodwaste.biz.id/1784088829_6e0a86c97c472e814c8a.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 11:13:49', '2026-07-15 11:13:49', NULL),
+	('23eeeb35-e128-4748-98ec-2b9fac6a8f17', 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'https://cdn.adefoodwaste.biz.id/1784185162_35dabe72998832e03706.webp', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 0, 'gallery', 1, 'image/webp', 162128, '2026-07-16 13:59:22', '2026-07-16 13:59:22', NULL),
+	('250aa0dc-bedb-4c27-9da3-4fae4143f96b', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', 'https://cdn.adefoodwaste.biz.id/1784169506_a2e8ec6d3035f5b02c5d.png', 'F BY MBY5013H 001 57', 0, 'gallery', 0, 'image/png', 206280, '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('27bbb91b-31c3-44fb-b9ad-bb198acf7fa2', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'https://cdn.adefoodwaste.biz.id/1784167483_4c8f1eb75d6ee34eeb63.png', 'F BE 1008 252 56', 0, 'gallery', 0, 'image/png', 261014, '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('28a6796c-215b-45fc-931f-a371fb49f9e4', '645237e3-5257-4f7f-b025-3c80fd7fc37a', 'https://cdn.adefoodwaste.biz.id/1784171868_97b8e4be51351db75f66.png', 'F AA SZPS8815 C2 53', 0, 'gallery', 0, 'image/png', 313999, '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('28df893b-7b07-4c5f-842b-6ff13d4f72c4', '837621aa-3a2a-4674-bc7d-11fd026e893d', 'https://cdn.adefoodwaste.biz.id/1784185079_c663e9c04b14b9e58be9.webp', 'Portable contact lens case with mirror', 0, 'gallery', 1, 'image/webp', 84406, '2026-07-16 13:58:00', '2026-07-16 13:58:00', NULL),
+	('2906c650-4fa5-4620-b596-e7f54ae45035', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', 'https://cdn.adefoodwaste.biz.id/1784172272_082c84767841ba0d00e5.png', 'F IP PG6021 C7 53', 0, 'gallery', 1, 'image/png', 200521, '2026-07-16 10:24:33', '2026-07-16 10:24:33', NULL),
+	('2ab11665-8b75-4a2a-8654-594d7f2958b8', '5d67be61-e193-4668-8539-4dd70d78b675', 'https://cdn.adefoodwaste.biz.id/1784175832_60d991868e86b130c4bc.png', 'F PX PJ0046O 006 51', 0, 'gallery', 0, 'image/png', 248344, '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('2b49ac8d-135c-4419-8dbc-1e481162077e', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1783414850_e275dcae53c356fc46e9.jpg', 'Gold - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 512121, '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('2b7ac61b-3f4a-4b9b-bfab-1b775052cf13', '54bb678a-de56-4f58-8ddf-5c95e92f254f', 'https://cdn.adefoodwaste.biz.id/1784170544_4be74d580b7520eb9e3a.jpg', 'F CA 203/G 807 52', 0, 'gallery', 0, 'image/jpeg', 238410, '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('2bfa36dd-d562-49db-8af9-539fd921815e', '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'https://cdn.adefoodwaste.biz.id/1784183279_688fe436bad6312204e7.jpg', 'Lens Cleaner', 0, 'gallery', 0, 'image/jpeg', 289699, '2026-07-16 13:28:00', '2026-07-16 13:28:00', NULL),
+	('2e5a8f33-5df3-43a0-bdab-ded537fd3350', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477120_22ecdb915d6ec791eefc.jpg', 'SPYDER ; PILOT 2 ; 3S000 (BLK) PZ - 00', 0, 'gallery', 0, 'image/jpeg', 319861, '2026-07-08 09:18:41', '2026-07-08 09:18:41', NULL),
+	('2e87c34a-112b-44ee-a2ea-db1f874ce56e', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477407_74399918c21c3c51b4e3.jpg', 'PROGEAR ; S1284 ; 4 (BLU) - 57', 0, 'gallery', 0, 'image/jpeg', 381496, '2026-07-08 09:23:28', '2026-07-08 09:23:28', NULL),
 	('2f011139-56c0-4f48-8802-78ae582617ed', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690233_e3b83a4485843478a9e2.png', 'Kacamata Agfian', 0, 'gallery', 1, 'image/png', 232337, '2026-05-25 13:23:54', '2026-06-04 10:43:43', NULL),
+	('305bb5af-2a82-46c2-bc15-5f21e2a5eb23', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'https://cdn.adefoodwaste.biz.id/1784177410_0d5d95ef1845c2790a9d.png', 'F PUM PU0492O 002 55', 0, 'gallery', 0, 'image/png', 218079, '2026-07-16 11:50:10', '2026-07-16 11:50:10', NULL),
 	('31b82000-5bbf-449d-8e92-8399416664e9', '8ea89139-7c05-438c-b35d-6c5c74b6044f', 'https://cdn.adefoodwaste.biz.id/1780553686_c4595ffb7bc9fe5834d2.jpg', 'ACUVUE VITA - PACKAGE 2', 0, 'gallery', 1, 'image/jpeg', 111282, '2026-06-04 13:14:47', '2026-06-04 13:14:47', NULL),
+	('3303f47f-f1c8-4be5-b1eb-d72dfb01a831', '6d6612ad-663d-4ba1-b803-4789769aebf8', 'https://cdn.adefoodwaste.biz.id/1784184370_d73a0cb0269251d38b4d.webp', 'Kain pembersih anti-kabut dan kain pembersih lensa-love', 0, 'gallery', 0, 'image/webp', 90994, '2026-07-16 13:46:10', '2026-07-16 13:46:10', NULL),
+	('336f9821-685a-47dc-a1d2-d0dee601ce45', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'https://cdn.adefoodwaste.biz.id/1784171683_9ea77653292d2c23265f.png', 'F MOL MA6031 B13 52', 0, 'gallery', 0, 'image/png', 194577, '2026-07-16 10:14:43', '2026-07-16 10:14:43', NULL),
+	('33926a8b-597b-4d8e-8ae4-6975ba5ccb79', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'https://cdn.adefoodwaste.biz.id/1784086738_b786c726b5bb5d882c8d.png', 'Aksesoris Abd', 0, 'gallery', 1, 'image/png', 344434, '2026-07-15 10:38:59', '2026-07-15 10:38:59', NULL),
+	('33ed9d84-3e58-416f-8779-e8c0459a34e2', '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'https://cdn.adefoodwaste.biz.id/1784173356_ad6a6e1c0c83d12f43f9.png', 'F AZ 30453A C01 53', 0, 'gallery', 0, 'image/png', 250275, '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
 	('356bee6d-4c0f-4c73-b126-4b5ddaf1c28b', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'https://cdn.adefoodwaste.biz.id/1780544503_ee6f65cd7c2fe6e0d4e4.jpg', '1 DAY ACUVUE DEFINE', 0, 'gallery', 0, 'image/jpeg', 101246, '2026-06-04 10:41:43', '2026-06-04 10:41:43', NULL),
+	('3624d92c-fe4c-47b7-acf3-ecec7c35dd3f', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', 'https://cdn.adefoodwaste.biz.id/1784174268_dd97fd38070fcddc9106.png', 'F II ZOFG1380 C2 46', 0, 'gallery', 0, 'image/png', 188823, '2026-07-16 10:57:49', '2026-07-16 10:57:49', NULL),
+	('3761dd93-085c-4d5a-9618-57f1aadb54db', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', 'https://cdn.adefoodwaste.biz.id/1784170000_af2538c29843f0ab9617.png', 'F CA 2012T 807 52', 0, 'gallery', 0, 'image/png', 209326, '2026-07-16 09:46:41', '2026-07-16 09:46:41', NULL),
+	('37b966c1-2a4f-41e7-af2f-0e671f6ac705', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'https://cdn.adefoodwaste.biz.id/1784182280_710501f1089a0414437c.png', 'F SH SE50021-D 006 54', 0, 'gallery', 0, 'image/png', 193657, '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('3b2b0898-aef6-4a03-a544-f505f93feb03', 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'https://cdn.adefoodwaste.biz.id/1784185163_2b3d3f77ea2693a29cd8.webp', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 0, 'gallery', 0, 'image/webp', 46802, '2026-07-16 13:59:23', '2026-07-16 13:59:23', NULL),
+	('3d918528-e8a4-47cd-ad85-966023ebb181', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477118_818e1fe01fee048c801d.jpg', 'SPYDER ; PILOT 2 ; 3S000 (BLK) PZ - 00', 0, 'gallery', 1, 'image/jpeg', 309693, '2026-07-08 09:18:40', '2026-07-08 09:18:40', NULL),
+	('413d4a3f-8a5c-4af7-8041-3d78a13375b2', '6f525b9f-cf75-48f2-a35c-f640033c1904', 'https://cdn.adefoodwaste.biz.id/1784086734_1a611468ae32efaa9522.png', 'Aksesoris Abd', 0, 'gallery', 1, 'image/png', 344434, '2026-07-15 10:38:57', '2026-07-15 10:38:57', NULL),
+	('42c9bc81-e50e-4989-ad0f-856b0fed4707', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'https://cdn.adefoodwaste.biz.id/1784167482_09f8e49ec52bcfe658ed.png', 'F BE 1008 252 56', 0, 'gallery', 0, 'image/png', 232351, '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('42d4d934-0515-4c77-9189-32d1da75dfdb', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477281_a7849e94a238a24551b9.jpg', 'Black - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 25567, '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
 	('434bad0a-6628-45bf-aea4-b9e5bc116fe6', '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'https://cdn.adefoodwaste.biz.id/1780554064_570d77b4b56ed2377bb6.jpg', 'GG1891O', 0, 'gallery', 1, 'image/jpeg', 126704, '2026-06-04 13:21:05', '2026-06-04 13:21:05', NULL),
+	('43989203-8533-41c5-9070-c45ff6a3bd01', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'https://cdn.adefoodwaste.biz.id/1784182279_be07eb0f604abc08ad79.png', 'F SH SE50021-D 006 54', 0, 'gallery', 1, 'image/png', 228251, '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('43bb507c-633c-4122-bc28-bbb75a315a1a', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'https://cdn.adefoodwaste.biz.id/1784177409_73840cd4b95c5776e9d4.png', 'F PUM PU0492O 002 55', 0, 'gallery', 1, 'image/png', 252683, '2026-07-16 11:50:10', '2026-07-16 11:50:10', NULL),
+	('44fc46d9-1ced-4cfc-aaf0-8cd4b7d2cfad', '29ba69de-73da-47af-a34c-b4daaf98380d', 'https://cdn.adefoodwaste.biz.id/1784184791_1898910a86d5c8aa80e4.webp', 'Lens Cleaner Illustro 30 ml', 0, 'gallery', 0, 'image/webp', 6088, '2026-07-16 13:53:11', '2026-07-16 13:53:11', NULL),
+	('452be1c1-c1df-4457-8d1f-98032b3a2cf5', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', 'https://cdn.adefoodwaste.biz.id/1784173167_545e1b333ac7728833d7.png', 'F BN BA6019 B50 53', 0, 'gallery', 0, 'image/png', 253546, '2026-07-16 10:39:27', '2026-07-16 10:39:27', NULL),
 	('4704c33f-566e-435b-a58b-4801184c9483', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1780557321_3eb781f781e3beca057a.jpg', 'GG0598S', 0, 'gallery', 0, 'image/jpeg', 512121, '2026-06-04 14:15:21', '2026-06-04 14:15:21', NULL),
+	('47a2b5a3-2704-4fe5-b4ee-51c4e78ebf1b', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'https://cdn.adefoodwaste.biz.id/1784182280_277ddd2501cf4c6b8226.png', 'F SH SE50021-D 006 54', 0, 'gallery', 0, 'image/png', 201567, '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('4844aae5-9d11-4658-aeed-1607986606be', 'b7fae052-d79b-42f0-8498-1972f01fe37c', 'https://cdn.adefoodwaste.biz.id/1784171383_9bdbd71c197e3cb202ac.jpg', 'F CO VCO264 700Y 51', 0, 'gallery', 0, 'image/jpeg', 200919, '2026-07-16 10:09:43', '2026-07-16 10:09:43', NULL),
+	('4a7e03b1-d12e-4d34-ad2e-56686c07c4f3', '543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', 'https://cdn.adefoodwaste.biz.id/1784183420_dccecc782c3c44e66075.webp', 'Pembersih Lensa Multifungsi', 0, 'gallery', 0, 'image/webp', 65532, '2026-07-16 13:30:21', '2026-07-16 13:30:21', NULL),
+	('4af2476d-1403-4399-ad32-089def200aa4', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', 'https://cdn.adefoodwaste.biz.id/1784184439_e1536f43f20ebf43ef37.webp', 'Kain Lap Universal Untuk Kacamata Handphone Kain Kacamata Portable Kain Kacamata Microfiber', 0, 'gallery', 1, 'image/webp', 100512, '2026-07-16 13:47:20', '2026-07-16 13:47:20', NULL),
+	('4b6f9e77-98cb-45c5-9325-f26a42a8ebc2', '51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'https://cdn.adefoodwaste.biz.id/1784184731_bfc61f54253085c3cd94.webp', 'Cairan Pembersih Kacamata Anti Fog GECLL Lens Cleaner 60Ml P010', 0, 'gallery', 0, 'image/webp', 130698, '2026-07-16 13:52:12', '2026-07-16 13:52:12', NULL),
+	('4c0dbd1f-6146-41d0-9095-f1c0cddc3bf1', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'https://cdn.adefoodwaste.biz.id/1784173531_77e00d1f7299341c51e3.png', 'F CAR 0054 KDX 53', 0, 'gallery', 0, 'image/png', 246127, '2026-07-16 10:45:31', '2026-07-16 10:45:31', NULL),
+	('4cb643e1-ab28-4083-84dc-bebb458d42f3', 'c7079913-6f26-4812-84a9-5fd705da671e', 'https://cdn.adefoodwaste.biz.id/1784174175_a96f4a31a8b479b390d2.png', 'F II P263 C5 47', 0, 'gallery', 0, 'image/png', 195611, '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('4d6767a2-e073-4dba-bfa1-d5229c96dd27', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'https://cdn.adefoodwaste.biz.id/1784169135_296c090fb95d89733b0d.jpg', 'F BE 1015-1 145 53', 0, 'gallery', 0, 'image/jpeg', 237742, '2026-07-16 09:32:15', '2026-07-16 09:32:15', NULL),
+	('4e601e54-0398-480b-8e5d-f33bf65639f6', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'https://cdn.adefoodwaste.biz.id/1784177259_d2abd6a44521623e08ac.png', 'F NK 7118 001 55', 0, 'gallery', 1, 'image/png', 239410, '2026-07-16 11:47:40', '2026-07-16 11:47:40', NULL),
+	('4ef9962c-210a-46b4-ac31-6136cf98bfc9', 'ed6f3004-bb65-4893-bda2-22a352061215', 'https://cdn.adefoodwaste.biz.id/1784175415_b769ef5b8f185b6352cd.png', 'F PX PJ0067O 004 47', 0, 'gallery', 0, 'image/png', 244298, '2026-07-16 11:16:55', '2026-07-16 11:16:55', NULL),
+	('5007bda3-ec33-47d0-88f3-5b0fe48a954f', '0e923360-e9df-4285-9b46-a0242ebe656f', 'https://cdn.adefoodwaste.biz.id/1784184012_87d419eacb945b0ea185.webp', 'Lap Microfiber/ Kain pembersih kacamata / Hp/ Kamera/ Laptop bahan halus', 0, 'gallery', 0, 'image/webp', 26548, '2026-07-16 13:40:12', '2026-07-16 13:40:12', NULL),
+	('51473d0f-0a81-44ab-a204-599d1d833cb7', 'c5905480-3ac1-4ff8-a56b-88119487bd92', 'https://cdn.adefoodwaste.biz.id/1784169718_fe6af9ff04e638b87479.png', 'F BY MBY5013H 008 57', 0, 'gallery', 0, 'image/png', 194342, '2026-07-16 09:41:59', '2026-07-16 09:41:59', NULL),
+	('549f7259-73bd-4cfb-85a1-a0310738ee77', '51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'https://cdn.adefoodwaste.biz.id/1784184732_e3119a214f3f88db1a88.webp', 'Cairan Pembersih Kacamata Anti Fog GECLL Lens Cleaner 60Ml P010', 0, 'gallery', 0, 'image/webp', 57898, '2026-07-16 13:52:12', '2026-07-16 13:52:12', NULL),
+	('558f32f6-78aa-459b-9662-fd5cfa297c8c', '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'https://cdn.adefoodwaste.biz.id/1784173355_65da3ae581fc16bf113e.png', 'F AZ 30453A C01 53', 0, 'gallery', 1, 'image/png', 258980, '2026-07-16 10:42:35', '2026-07-16 10:42:35', NULL),
+	('5a46a3e6-16b2-44ea-8b42-b4504e7292ce', '54bb678a-de56-4f58-8ddf-5c95e92f254f', 'https://cdn.adefoodwaste.biz.id/1784170543_890b62eddf1b821e7ae4.jpg', 'F CA 203/G 807 52', 0, 'gallery', 0, 'image/jpeg', 218685, '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('5b8ce59a-b34a-42aa-ae5e-e356c409dece', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'https://cdn.adefoodwaste.biz.id/1784088828_414ec5bb9e38664e0b25.png', 'Aksesoris Abd', 0, 'gallery', 1, 'image/png', 344434, '2026-07-15 11:13:49', '2026-07-15 11:13:49', NULL),
+	('5ba3ee25-8502-4ee2-9dcc-e93e8ef52760', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', 'https://cdn.adefoodwaste.biz.id/1784174267_438678bfd97a4b41dadd.png', 'F II ZOFG1380 C2 46', 0, 'gallery', 1, 'image/png', 193323, '2026-07-16 10:57:48', '2026-07-16 10:57:48', NULL),
+	('5be1de60-7fb3-49d0-babc-0d2226e0dc8c', '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'https://cdn.adefoodwaste.biz.id/1784183279_d244e23af029b623fcb1.jpg', 'Lens Cleaner', 0, 'gallery', 0, 'image/jpeg', 265655, '2026-07-16 13:27:59', '2026-07-16 13:27:59', NULL),
+	('5f0fc938-0254-4f0d-9fb5-1841408f9d78', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'https://cdn.adefoodwaste.biz.id/1784182769_9b3519dc5eb9814ac56a.png', 'F PUM PU0485O 009 57', 0, 'gallery', 0, 'image/png', 281548, '2026-07-16 13:19:30', '2026-07-16 13:19:30', NULL),
+	('5f2d7bb0-e297-43da-b61b-3ecbc319e01d', '1125572a-4b30-4135-bb27-a8e360be0ad4', 'https://cdn.adefoodwaste.biz.id/1784171962_70ede7d57891bd3fb1d8.png', 'F IR LI6343A C1 54', 0, 'gallery', 0, 'image/png', 200559, '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
 	('5f7e63d5-6af2-4f49-8526-cbfb6ac96ecf', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690233_33284907a15f57a71bf5.png', 'Kacamata Agfian', 0, 'gallery', 0, 'image/png', 244159, '2026-05-25 13:23:53', '2026-06-04 10:43:43', NULL),
+	('60fa0c6b-e16b-4db1-a08a-c97a33880279', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', 'https://cdn.adefoodwaste.biz.id/1784169506_26e6d28a1f742bbcd267.png', 'F BY MBY5013H 001 57', 0, 'gallery', 0, 'image/png', 243101, '2026-07-16 09:38:26', '2026-07-16 09:38:26', NULL),
+	('6131dd50-39f0-49d0-b7b8-bd03d8bade66', 'b90f2056-ace6-41ed-801f-98f463b21280', 'https://cdn.adefoodwaste.biz.id/1784183777_ae32e6bc28174fdbd8ad.webp', '(1PCS) Lap Kacamata Microfaiber Halus Dan Lembut Multifungsi', 0, 'gallery', 0, 'image/webp', 64244, '2026-07-16 13:36:17', '2026-07-16 13:36:17', NULL),
+	('62495a81-52a5-478f-a59b-cfa0bf0dfecf', 'ed6f3004-bb65-4893-bda2-22a352061215', 'https://cdn.adefoodwaste.biz.id/1784175415_8f843865e6e0586c2a03.png', 'F PX PJ0067O 004 47', 0, 'gallery', 0, 'image/png', 287448, '2026-07-16 11:16:56', '2026-07-16 11:16:56', NULL),
+	('628ca615-b0e5-4d1a-87f8-8d27ef7d9873', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', 'https://cdn.adefoodwaste.biz.id/1784173166_6f5b8eb1db8516a4ad2f.png', 'F BN BA6019 B50 53', 0, 'gallery', 1, 'image/png', 226811, '2026-07-16 10:39:26', '2026-07-16 10:39:26', NULL),
+	('63483957-536d-427f-830c-f523a637e5c2', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', 'https://cdn.adefoodwaste.biz.id/1784174047_a94c74aa7cf60138614c.png', 'Illustro Kids', 0, 'gallery', 1, 'image/png', 247754, '2026-07-16 10:54:07', '2026-07-16 10:54:07', NULL),
+	('6531976d-e4c9-4c07-aeef-c2187e813291', 'c7079913-6f26-4812-84a9-5fd705da671e', 'https://cdn.adefoodwaste.biz.id/1784174176_7dafe9ac661394b48f43.png', 'F II P263 C5 47', 0, 'gallery', 0, 'image/png', 210831, '2026-07-16 10:56:16', '2026-07-16 10:56:16', NULL),
+	('666ba545-6ac7-4464-9b6f-b9b66d2cc37f', '5373faf8-da09-4440-a505-ffea8f4275fb', 'https://cdn.adefoodwaste.biz.id/1784173447_8756e25e2ed699a3afd3.png', 'F MY 1098 807 57', 0, 'gallery', 0, 'image/png', 266255, '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('670086fa-4b03-4c50-bd5a-83d32ddbfa28', '5d67be61-e193-4668-8539-4dd70d78b675', 'https://cdn.adefoodwaste.biz.id/1784175833_3cbede06940bf6677d4a.png', 'F PX PJ0046O 006 51', 0, 'gallery', 0, 'image/png', 235941, '2026-07-16 11:23:53', '2026-07-16 11:23:53', NULL),
+	('67298920-57d5-430d-9d19-f74f5dc25607', '47dc0b31-8710-4654-869d-246e2e265221', 'https://cdn.adefoodwaste.biz.id/1784177553_f51e224b2e6c19238e55.png', 'F SH SE50022-D 001 55', 0, 'gallery', 0, 'image/png', 195933, '2026-07-16 11:52:33', '2026-07-16 11:52:33', NULL),
+	('68c781fc-563f-496c-9c7f-0e1bcd242d82', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477406_27db64c4a6c77c1d5c92.jpg', 'PROGEAR ; S1284 ; 4 (BLU) - 57', 0, 'gallery', 0, 'image/jpeg', 404326, '2026-07-08 09:23:27', '2026-07-08 09:23:27', NULL),
+	('68ca31d6-ef01-4b32-9a8d-f5786a1172ec', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', 'https://cdn.adefoodwaste.biz.id/1784184440_89678fc0765550a668d2.webp', 'Kain Lap Universal Untuk Kacamata Handphone Kain Kacamata Portable Kain Kacamata Microfiber', 0, 'gallery', 0, 'image/webp', 74950, '2026-07-16 13:47:20', '2026-07-16 13:47:20', NULL),
 	('6948b246-f3e5-429d-9d2e-0a33e6bd4c97', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1780557320_b720fb3d7e34840a4bf5.jpg', 'GG0598S', 0, 'gallery', 0, 'image/jpeg', 351404, '2026-06-04 14:15:20', '2026-06-04 14:15:20', NULL),
+	('6a82b150-477b-42cf-94ca-77933000473d', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477256_a30b0ba45ab344d0428e.jpg', 'WILLIAM MORRIS ; BOND (BL) ; AC1 (BLK) PZ - 51', 0, 'gallery', 0, 'image/jpeg', 27197, '2026-07-08 09:20:57', '2026-07-08 09:20:57', NULL),
+	('6a9f5d55-5780-4987-af2a-421f3b4a14ce', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', 'https://cdn.adefoodwaste.biz.id/1784174047_daef4f15883c2447e3e5.png', 'Illustro Kids', 0, 'gallery', 0, 'image/png', 235664, '2026-07-16 10:54:08', '2026-07-16 10:54:08', NULL),
+	('6cc21ab0-3f26-45a7-8c02-998e245bfbf8', '5373faf8-da09-4440-a505-ffea8f4275fb', 'https://cdn.adefoodwaste.biz.id/1784173446_65e2e45864e63314608e.png', 'F MY 1098 807 57', 0, 'gallery', 0, 'image/png', 204615, '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('6f778f03-29b8-4aab-815b-93b821a5d7d2', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', 'https://cdn.adefoodwaste.biz.id/1784174703_118e3dd93484f5845e1a.png', 'F II YD63052 C1 48', 0, 'gallery', 0, 'image/png', 196316, '2026-07-16 11:05:04', '2026-07-16 11:05:04', NULL),
+	('7413b5bb-7eca-47ae-aa52-d56cb3b1db0d', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'https://cdn.adefoodwaste.biz.id/1784086740_a3be33ee138cff8bcd99.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 10:39:00', '2026-07-15 10:39:00', NULL),
+	('774fd231-8507-4c9b-b392-e078220333ab', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', 'https://cdn.adefoodwaste.biz.id/1784174268_7620f238ec7df1f39959.png', 'F II ZOFG1380 C2 46', 0, 'gallery', 0, 'image/png', 193561, '2026-07-16 10:57:48', '2026-07-16 10:57:48', NULL),
 	('783b4402-02c3-4c26-aa29-8eb7b98fe574', '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'https://cdn.adefoodwaste.biz.id/1780554065_6657a2058593227efafc.jpg', 'GG1891O', 0, 'gallery', 0, 'image/jpeg', 130709, '2026-06-04 13:21:05', '2026-06-04 13:21:05', NULL),
+	('7911434b-5850-4ced-8ede-4999274340e7', '1125572a-4b30-4135-bb27-a8e360be0ad4', 'https://cdn.adefoodwaste.biz.id/1784171962_92fe8953dbd3b9a35b93.png', 'F IR LI6343A C1 54', 0, 'gallery', 0, 'image/png', 233149, '2026-07-16 10:19:22', '2026-07-16 10:19:22', NULL),
+	('7b2d1116-dac9-49b9-b922-3f7cf77e44cd', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'https://cdn.adefoodwaste.biz.id/1784182280_99abbb3fcc5ce0d43459.png', 'F SH SE50021-D 006 54', 0, 'gallery', 0, 'image/png', 206397, '2026-07-16 13:11:20', '2026-07-16 13:11:20', NULL),
+	('7be838fa-b5b6-4ae8-b9cf-d1b5b89a2721', '543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', 'https://cdn.adefoodwaste.biz.id/1784183420_0a51a5bbfa2180ae6ee8.webp', 'Pembersih Lensa Multifungsi', 0, 'gallery', 1, 'image/webp', 43438, '2026-07-16 13:30:20', '2026-07-16 13:30:20', NULL),
+	('7bfc0ff0-39bb-42b8-aa13-f03a061a1679', 'c3121385-d359-49fa-ba69-26d96f642b25', 'https://images.unsplash.com/photo-1582298538104-fe2e74c27f59?w=300&auto=format&fit=crop', 'Microfiber Cleaning Cloth', 0, 'gallery', 1, NULL, NULL, '2026-07-09 15:43:38', '2026-07-09 15:43:38', NULL),
+	('7c8cbfa7-5b26-4f96-a1b6-2c4746a5e01e', 'b7fae052-d79b-42f0-8498-1972f01fe37c', 'https://cdn.adefoodwaste.biz.id/1784171384_69c9d5d6b05bca3edfb5.jpg', 'F CO VCO264 700Y 51', 0, 'gallery', 0, 'image/jpeg', 200919, '2026-07-16 10:09:44', '2026-07-16 10:09:44', NULL),
+	('7d638d76-bc50-4076-8714-2d3383f8667f', '645237e3-5257-4f7f-b025-3c80fd7fc37a', 'https://cdn.adefoodwaste.biz.id/1784171869_6eff22a941c64b00483c.png', 'F AA SZPS8815 C2 53', 0, 'gallery', 0, 'image/png', 300034, '2026-07-16 10:17:49', '2026-07-16 10:17:49', NULL),
+	('7f004ad6-c7c0-479e-9ce3-fb06961b09d3', '1125572a-4b30-4135-bb27-a8e360be0ad4', 'https://cdn.adefoodwaste.biz.id/1784171963_590d7d501407145e4ef4.png', 'F IR LI6343A C1 54', 0, 'gallery', 0, 'image/png', 248829, '2026-07-16 10:19:23', '2026-07-16 10:19:23', NULL),
+	('81e91e7a-d279-4f38-a5ee-12b868dae082', 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'https://cdn.adefoodwaste.biz.id/1784183639_7e661f5073d214ea12ae.webp', 'AZ Kain Lap Kacamata Nano Anti-Fog Microfiber Glasses Cleaner - K-10', 0, 'gallery', 0, 'image/webp', 25146, '2026-07-16 13:34:00', '2026-07-16 13:34:00', NULL),
+	('8248bbd0-fbd7-4dc4-8a1b-2c55ad3e8061', '6f525b9f-cf75-48f2-a35c-f640033c1904', 'https://cdn.adefoodwaste.biz.id/1784086738_a5f07280ea1506d96e51.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 10:38:58', '2026-07-15 10:38:58', NULL),
 	('82bda916-42e8-4e34-a266-af69983fcd00', '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'https://cdn.adefoodwaste.biz.id/1780554065_18bb994fc4081f2ca34f.jpg', 'GG1891O', 0, 'gallery', 0, 'image/jpeg', 163612, '2026-06-04 13:21:05', '2026-06-04 13:21:05', NULL),
+	('82e092c7-b30d-4bd7-80bd-753984482204', '6f525b9f-cf75-48f2-a35c-f640033c1904', 'https://cdn.adefoodwaste.biz.id/1784086737_29abfaa4a53e14b76338.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 344434, '2026-07-15 10:38:58', '2026-07-15 10:38:58', NULL),
+	('84828044-3c04-4661-97f2-91d19bec2f99', '5d67be61-e193-4668-8539-4dd70d78b675', 'https://cdn.adefoodwaste.biz.id/1784175832_67a2e8c163147f2aae55.png', 'F PX PJ0046O 006 51', 0, 'gallery', 0, 'image/png', 256289, '2026-07-16 11:23:52', '2026-07-16 11:23:52', NULL),
+	('84d3f325-354d-4f81-b666-1eb1bf5f5df3', '0064425e-436b-4dd4-90bb-49d5e296876c', 'https://cdn.adefoodwaste.biz.id/1784175271_2f489b4f743370b06eaa.png', 'F II SZTRZC824 C3 46', 0, 'gallery', 1, 'image/png', 222445, '2026-07-16 11:14:32', '2026-07-16 11:14:32', NULL),
+	('84fb9214-03de-4fdc-a833-066a548b84f8', '09527411-ce22-4480-918c-d6a4ce65cffe', 'https://cdn.adefoodwaste.biz.id/1784174526_76e511a79da819c4bde9.png', 'F NJ 5035LB 440 46', 0, 'gallery', 0, 'image/png', 220174, '2026-07-16 11:02:06', '2026-07-16 11:02:06', NULL),
+	('860cf8d9-4121-45b3-af6c-2b246fd12528', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'https://cdn.adefoodwaste.biz.id/1784175581_2898d9cf988d3f8f421d.png', 'F II PTR81812 C7 48', 0, 'gallery', 0, 'image/png', 248256, '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
 	('8752e494-c929-4db1-b811-ac90d0b8ae77', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'https://cdn.adefoodwaste.biz.id/1780544500_71e038739b2b86f68401.jpg', '1 DAY ACUVUE DEFINE', 0, 'gallery', 1, 'image/jpeg', 87754, '2026-06-04 10:41:40', '2026-06-04 10:41:40', NULL),
+	('878cf535-1788-4268-946d-b77d85d34729', '837621aa-3a2a-4674-bc7d-11fd026e893d', 'https://cdn.adefoodwaste.biz.id/1784185080_b56e44f35dc2750d9139.webp', 'Portable contact lens case with mirror', 0, 'gallery', 0, 'image/webp', 29898, '2026-07-16 13:58:00', '2026-07-16 13:58:00', NULL),
+	('890b51f9-8d7b-4bc0-9498-44c1fb50789f', '0064425e-436b-4dd4-90bb-49d5e296876c', 'https://cdn.adefoodwaste.biz.id/1784175272_3b230bf07535fb98017e.png', 'F II SZTRZC824 C3 46', 0, 'gallery', 0, 'image/png', 221978, '2026-07-16 11:14:32', '2026-07-16 11:14:32', NULL),
+	('8c64c008-ae59-4690-9f8c-62fee4124cf4', 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'https://cdn.adefoodwaste.biz.id/1784185162_a796be2266c97cec13aa.webp', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 0, 'gallery', 0, 'image/webp', 135374, '2026-07-16 13:59:22', '2026-07-16 13:59:22', NULL),
+	('8cbc7bc2-55fc-4a47-9650-aa9ffe7ecb14', 'ed6f3004-bb65-4893-bda2-22a352061215', 'https://cdn.adefoodwaste.biz.id/1784175416_f96ed94a214787cc48b2.png', 'F PX PJ0067O 004 47', 0, 'gallery', 0, 'image/png', 240345, '2026-07-16 11:16:56', '2026-07-16 11:16:56', NULL),
+	('8d05b372-3768-4e35-927d-5c674cd40d0a', '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'https://cdn.adefoodwaste.biz.id/1784185275_16d0aa609913562b3c2a.webp', 'Lenscase Big Travel Kit Karakter - Tempat kotak softlens dan alat pasang soft lens', 0, 'gallery', 0, 'image/webp', 31648, '2026-07-16 14:01:15', '2026-07-16 14:01:15', NULL),
+	('8d074922-9432-4eab-b8a4-08649291ad0b', 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'https://cdn.adefoodwaste.biz.id/1784183639_3018cc83f9159b684880.webp', 'AZ Kain Lap Kacamata Nano Anti-Fog Microfiber Glasses Cleaner - K-10', 0, 'gallery', 0, 'image/webp', 7912, '2026-07-16 13:33:59', '2026-07-16 13:33:59', NULL),
+	('8d67785a-6fed-4321-b905-02db5fda8c57', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', 'https://cdn.adefoodwaste.biz.id/1784170779_f5bbe6d5a4008c6fbb64.png', 'F BE 1022-1 670 52', 0, 'gallery', 0, 'image/png', 198988, '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL),
+	('8dc435f0-47ea-4e93-b4f1-1f61307040fe', '6d6612ad-663d-4ba1-b803-4789769aebf8', 'https://cdn.adefoodwaste.biz.id/1784184369_1da01527dbcf57c8be63.webp', 'Kain pembersih anti-kabut dan kain pembersih lensa-love', 0, 'gallery', 1, 'image/webp', 53474, '2026-07-16 13:46:09', '2026-07-16 13:46:09', NULL),
+	('8df2be00-7632-41d7-9a06-0af91c5b2b0b', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', 'https://cdn.adefoodwaste.biz.id/1784170000_e213710c0c0f3663e56c.png', 'F CA 2012T 807 52', 0, 'gallery', 1, 'image/png', 242404, '2026-07-16 09:46:40', '2026-07-16 09:46:40', NULL),
 	('8e60d390-5d04-4676-b560-703e19a998e4', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1780557320_fa267f4e6b969370c4d6.jpg', 'GG0598S', 0, 'gallery', 1, 'image/jpeg', 319874, '2026-06-04 14:15:20', '2026-06-04 14:15:20', NULL),
+	('903f0b48-4b1f-4f55-ac9b-e33d5c7d9f23', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'https://cdn.adefoodwaste.biz.id/1784167483_5cc727c76681841ccb3c.png', 'F BE 1008 252 56', 0, 'gallery', 0, 'image/png', 232351, '2026-07-16 09:04:43', '2026-07-16 09:04:43', NULL),
+	('91c4b9e6-55e6-4b12-b6d6-e8fbcd8987c2', '645237e3-5257-4f7f-b025-3c80fd7fc37a', 'https://cdn.adefoodwaste.biz.id/1784171868_c591c160c1b651f87036.png', 'F AA SZPS8815 C2 53', 0, 'gallery', 0, 'image/png', 268094, '2026-07-16 10:17:48', '2026-07-16 10:17:48', NULL),
+	('988512ad-576d-4677-bfb1-0f834bf84b7e', '54bb678a-de56-4f58-8ddf-5c95e92f254f', 'https://cdn.adefoodwaste.biz.id/1784170544_f0dfa47f06c49917c08d.jpg', 'F CA 203/G 807 52', 0, 'gallery', 0, 'image/jpeg', 218685, '2026-07-16 09:55:44', '2026-07-16 09:55:44', NULL),
+	('9d12a09a-9096-4f30-9a17-6fb541d5fc44', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477256_f96b40415b4269d004bf.jpg', 'WILLIAM MORRIS ; BOND (BL) ; AC1 (BLK) PZ - 51', 0, 'gallery', 0, 'image/jpeg', 18539, '2026-07-08 09:20:56', '2026-07-08 09:20:56', NULL),
+	('a09c3e81-b83e-49e0-9ee6-c4898ecba50e', '75362d09-1920-4f54-aee3-818c3d4030d7', 'https://cdn.adefoodwaste.biz.id/1784175099_3f0e0d35455189788f3a.png', 'F II SZTRZC826 C1 46', 0, 'gallery', 0, 'image/png', 202474, '2026-07-16 11:11:39', '2026-07-16 11:11:39', NULL),
+	('a1162773-968b-4ff1-8a6a-d291c9ebb963', '5373faf8-da09-4440-a505-ffea8f4275fb', 'https://cdn.adefoodwaste.biz.id/1784173447_71605fadcfacfb0d9945.png', 'F MY 1098 807 57', 0, 'gallery', 0, 'image/png', 228281, '2026-07-16 10:44:07', '2026-07-16 10:44:07', NULL),
+	('a146e817-b0c3-4207-aa6b-78dfa5fc0247', '2740aa0a-4a67-43b4-8f7a-9ddd4b9abe2b', 'https://cdn.adefoodwaste.biz.id/1784169505_138316dd960e0bb90071.png', 'F BY MBY5013H 001 57', 0, 'gallery', 1, 'image/png', 243101, '2026-07-16 09:38:25', '2026-07-16 09:38:25', NULL),
+	('a1cd01f4-cf39-4f54-9486-b8718817d609', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'https://cdn.adefoodwaste.biz.id/1784177410_fa38f3832e0f9653c7f7.png', 'F PUM PU0492O 002 55', 0, 'gallery', 0, 'image/png', 243144, '2026-07-16 11:50:10', '2026-07-16 11:50:10', NULL),
+	('a22f0e63-62f5-418f-bcb8-d693254807e6', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'https://cdn.adefoodwaste.biz.id/1784086739_d405f10c36f9b2d6edb1.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 344434, '2026-07-15 10:39:00', '2026-07-15 10:39:00', NULL),
+	('a2516a93-1270-4681-ac94-d742fc3ede67', '0e923360-e9df-4285-9b46-a0242ebe656f', 'https://cdn.adefoodwaste.biz.id/1784184011_2c2a9b1d4ef679631de5.webp', 'Lap Microfiber/ Kain pembersih kacamata / Hp/ Kamera/ Laptop bahan halus', 0, 'gallery', 1, 'image/webp', 61806, '2026-07-16 13:40:12', '2026-07-16 13:40:12', NULL),
+	('a2966dd7-060d-477b-9d9c-d7096ed26b71', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', 'https://cdn.adefoodwaste.biz.id/1784173026_933d05bb944330ed6d89.png', 'F MOL MJ5121 B10 50', 0, 'gallery', 0, 'image/png', 211504, '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('a5097d76-dbee-4981-ba8b-30290cc1fcda', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477120_5b6932f916f63737a22d.jpg', 'SPYDER ; PILOT 2 ; 3S000 (BLK) PZ - 00', 0, 'gallery', 0, 'image/jpeg', 355297, '2026-07-08 09:18:40', '2026-07-08 09:18:40', NULL),
+	('a6834ebe-94bc-4bca-9359-954762916062', '3606197c-68a5-4658-964b-8bc60df55063', 'https://cdn.adefoodwaste.biz.id/1784170662_d768ef197572955fa535.png', 'F CO VCO256I 0738 55', 0, 'gallery', 1, 'image/png', 222747, '2026-07-16 09:57:43', '2026-07-16 09:57:43', NULL),
+	('a76e189c-0370-4075-8525-18c676d3db09', '0064425e-436b-4dd4-90bb-49d5e296876c', 'https://cdn.adefoodwaste.biz.id/1784175272_b1c80865134d7ec3dd76.png', 'F II SZTRZC824 C3 46', 0, 'gallery', 0, 'image/png', 282559, '2026-07-16 11:14:33', '2026-07-16 11:14:33', NULL),
 	('aa3aa4e0-d38c-425a-98fd-3dd253ec7c4f', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'https://cdn.adefoodwaste.biz.id/1780545275_147a95bf86b6757699e4.png', 'ACUVUE VITA', 0, 'gallery', 1, 'image/png', 465776, '2026-06-04 10:54:36', '2026-06-04 10:54:36', NULL),
+	('aaf4eda5-70ba-48fb-a2d6-4bcdbcc363da', 'ed6f3004-bb65-4893-bda2-22a352061215', 'https://cdn.adefoodwaste.biz.id/1784175415_1970ae39d9aa809c8da5.png', 'F PX PJ0067O 004 47', 0, 'gallery', 1, 'image/png', 252344, '2026-07-16 11:16:55', '2026-07-16 11:16:55', NULL),
+	('ad05ae85-4e08-4ac9-839d-204e61077240', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'https://cdn.adefoodwaste.biz.id/1784175580_904063bc15da55e58d6b.png', 'F II PTR81812 C7 48', 0, 'gallery', 0, 'image/png', 232041, '2026-07-16 11:19:41', '2026-07-16 11:19:41', NULL),
+	('ae08bbb0-f5f1-47c6-b157-a82d76b6bf77', '573afcd0-ff09-4584-896a-cfc600c9e2aa', 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=300&auto=format&fit=crop', 'Premium Lens Cleaner', 0, 'gallery', 1, NULL, NULL, '2026-07-09 15:43:38', '2026-07-09 15:43:38', NULL),
+	('b00778b5-dc82-4dbe-933c-f2b14fc064fc', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'https://cdn.adefoodwaste.biz.id/1784171682_51863245c38345da4037.png', 'F MOL MA6031 B13 52', 0, 'gallery', 1, 'image/png', 233242, '2026-07-16 10:14:43', '2026-07-16 10:14:43', NULL),
+	('b0c3437f-9eb3-4b0c-8544-9fb1dd6e3577', 'dde78075-5a62-47d5-8669-026c43d893b2', 'https://cdn.adefoodwaste.biz.id/1784184535_5c24188c9a3ad66dfbed.webp', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 0, 'gallery', 1, 'image/webp', 17840, '2026-07-16 13:48:55', '2026-07-16 13:48:55', NULL),
+	('b1253fe2-7cc4-4b35-890f-0a846ddd0c19', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'https://cdn.adefoodwaste.biz.id/1784182770_86414b25f9f16db7d3ef.png', 'F PUM PU0485O 009 57', 0, 'gallery', 0, 'image/png', 238384, '2026-07-16 13:19:31', '2026-07-16 13:19:31', NULL),
+	('b1cfb0f7-701e-4a7c-b643-6ad782592352', '645237e3-5257-4f7f-b025-3c80fd7fc37a', 'https://cdn.adefoodwaste.biz.id/1784171867_2cd3b9499f3577cf0673.png', 'F AA SZPS8815 C2 53', 0, 'gallery', 1, 'image/png', 317808, '2026-07-16 10:17:48', '2026-07-16 10:17:48', NULL),
+	('b29f2edc-79df-41e0-92e2-52369e86b9ce', '75362d09-1920-4f54-aee3-818c3d4030d7', 'https://cdn.adefoodwaste.biz.id/1784175099_7a55ff34a6118a940792.png', 'F II SZTRZC826 C1 46', 0, 'gallery', 0, 'image/png', 260031, '2026-07-16 11:11:40', '2026-07-16 11:11:40', NULL),
+	('b3c3a6cb-426c-412f-a680-b720be519865', 'b7fae052-d79b-42f0-8498-1972f01fe37c', 'https://cdn.adefoodwaste.biz.id/1784171382_9a4ffd15d4b8abceffc4.jpg', 'F CO VCO264 700Y 51', 0, 'gallery', 1, 'image/jpeg', 235359, '2026-07-16 10:09:43', '2026-07-16 10:09:43', NULL),
+	('b7cb9b5b-379a-4917-b51b-374aa4c78d7e', 'b90f2056-ace6-41ed-801f-98f463b21280', 'https://cdn.adefoodwaste.biz.id/1784183776_701c6d34d8b008db5053.webp', '(1PCS) Lap Kacamata Microfaiber Halus Dan Lembut Multifungsi', 0, 'gallery', 0, 'image/webp', 38626, '2026-07-16 13:36:17', '2026-07-16 13:36:17', NULL),
+	('b9089d9e-8cad-4304-a5db-a3a7abc99969', 'aa4647d5-6d9c-4fd5-ad4d-14727024743c', 'https://cdn.adefoodwaste.biz.id/1784174703_a7a981a8df952cef6aec.png', 'F II YD63052 C1 48', 0, 'gallery', 0, 'image/png', 165299, '2026-07-16 11:05:03', '2026-07-16 11:05:03', NULL),
+	('baa33d3a-7c7b-4816-8849-80f137539468', '47dc0b31-8710-4654-869d-246e2e265221', 'https://cdn.adefoodwaste.biz.id/1784177554_0f8648ea188d44875028.png', 'F SH SE50022-D 001 55', 0, 'gallery', 0, 'image/png', 181282, '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('bc1988de-ea3a-429d-95b0-6cd555bfea38', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', 'https://cdn.adefoodwaste.biz.id/1784173025_6753cb69d1700e11bca2.png', 'F MOL MJ5121 B10 50', 0, 'gallery', 1, 'image/png', 220728, '2026-07-16 10:37:05', '2026-07-16 10:37:05', NULL),
+	('bcd9996c-0bd7-475c-b108-07529c30b247', '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'https://cdn.adefoodwaste.biz.id/1784177260_26e1643cee64bd6348c5.png', 'F NK 7118 001 55', 0, 'gallery', 0, 'image/png', 249262, '2026-07-16 11:47:40', '2026-07-16 11:47:40', NULL),
+	('be4ccf88-446e-4215-a95f-13219df15095', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'https://cdn.adefoodwaste.biz.id/1784088829_26df939d61cc3d09a1fd.png', 'Aksesoris Abd', 0, 'gallery', 0, 'image/png', 354849, '2026-07-15 11:13:49', '2026-07-15 11:13:49', NULL),
+	('be5bfb45-e331-4d68-afa7-7467de7c8bb1', '29ba69de-73da-47af-a34c-b4daaf98380d', 'https://cdn.adefoodwaste.biz.id/1784184791_8b4b0b035055fe20bba7.webp', 'Lens Cleaner Illustro 30 ml', 0, 'gallery', 1, 'image/webp', 18202, '2026-07-16 13:53:11', '2026-07-16 13:53:11', NULL),
+	('bf4fdbaf-48a1-43e8-87e9-e1f753c72592', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477255_bf1720b7d7b9f41ca219.jpg', 'WILLIAM MORRIS ; BOND (BL) ; AC1 (BLK) PZ - 51', 0, 'gallery', 1, 'image/jpeg', 19618, '2026-07-08 09:20:56', '2026-07-08 09:20:56', NULL),
 	('c1490cfb-4f43-42d7-8e5f-13a4d7264be9', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690233_97ace5c8b1a8016cdf1c.png', 'Kacamata Agfian', 0, 'gallery', 0, 'image/png', 244242, '2026-05-25 13:23:53', '2026-06-04 10:43:43', NULL),
+	('c1e41b4d-dac5-4dd5-ac47-bd7ab9ef6ba5', '47dc0b31-8710-4654-869d-246e2e265221', 'https://cdn.adefoodwaste.biz.id/1784177553_e9cc4f27bcd1e5f6b06e.png', 'F SH SE50022-D 001 55', 0, 'gallery', 0, 'image/png', 194036, '2026-07-16 11:52:34', '2026-07-16 11:52:34', NULL),
+	('c25cfef7-ca9b-4ed4-b07b-83d1e4c448d8', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'https://cdn.adefoodwaste.biz.id/1784170989_252b577c34d179d4f8ef.jpg', 'F CO VCO270 743M 54', 0, 'gallery', 1, 'image/jpeg', 238756, '2026-07-16 10:03:09', '2026-07-16 10:03:09', NULL),
 	('c2aa14a9-b370-4620-8bd1-396e8faf1bd3', '087a9fc5-7472-4e66-bdca-ee0cc2a70698', 'https://cdn.adefoodwaste.biz.id/1780544963_e9e3acad4b0b062ef0eb.jpg', '1 DAY ACUVUE MOIST', 0, 'gallery', 1, 'image/jpeg', 78151, '2026-06-04 10:49:25', '2026-06-04 10:49:25', NULL),
+	('c486b6e8-fabd-4afa-b7f2-99a2a37b775c', '5d67be61-e193-4668-8539-4dd70d78b675', 'https://cdn.adefoodwaste.biz.id/1784175832_dc79333adade12ce5bea.png', 'F PX PJ0046O 006 51', 0, 'gallery', 1, 'image/png', 231123, '2026-07-16 11:23:52', '2026-07-16 11:23:52', NULL),
+	('c638ec95-4e2d-45b7-b1ca-e9ece69a7aea', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'https://cdn.adefoodwaste.biz.id/1784167481_cdb603b5cb54bd54baa0.png', 'F BE 1008 252 56', 0, 'gallery', 1, 'image/png', 261014, '2026-07-16 09:04:42', '2026-07-16 09:04:42', NULL),
+	('c84a065b-069d-4bdb-a085-452e1a2d2da7', '543d72fe-9b21-43f6-a5a5-5e8e3cbb82ca', 'https://cdn.adefoodwaste.biz.id/1784183421_806625ea9776aae6f789.webp', 'Pembersih Lensa Multifungsi', 0, 'gallery', 0, 'image/webp', 15116, '2026-07-16 13:30:21', '2026-07-16 13:30:21', NULL),
+	('c86e23c0-264d-4952-b08e-9272bd649ada', '49e1e73e-8fb8-429d-8cac-57bd02ebe1f9', 'https://cdn.adefoodwaste.biz.id/1784170001_f51e57059604b2225fa9.png', 'F CA 2012T 807 52', 0, 'gallery', 0, 'image/png', 242404, '2026-07-16 09:46:41', '2026-07-16 09:46:41', NULL),
+	('c8d6db89-69f0-481d-bfa0-f110cc56af82', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'https://cdn.adefoodwaste.biz.id/1784174800_44378d23bb050cbb25e2.png', 'F NJ 5035LB 001 46', 0, 'gallery', 0, 'image/png', 249517, '2026-07-16 11:06:40', '2026-07-16 11:06:40', NULL),
+	('ca80b23a-217a-46f4-a5eb-bf2fb826ebdc', '3606197c-68a5-4658-964b-8bc60df55063', 'https://cdn.adefoodwaste.biz.id/1784170664_960e061bea3a5c07ee0f.png', 'F CO VCO256I 0738 55', 0, 'gallery', 0, 'image/png', 167150, '2026-07-16 09:57:44', '2026-07-16 09:57:44', NULL),
+	('cb206af6-1aab-40c5-86d3-cae7967e1d9d', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'https://cdn.adefoodwaste.biz.id/1784182770_bb9d181fcbc0015c6fa7.png', 'F PUM PU0485O 009 57', 0, 'gallery', 0, 'image/png', 269435, '2026-07-16 13:19:30', '2026-07-16 13:19:30', NULL),
+	('cb607f7a-f92d-4449-83ca-6f53b74467a4', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'https://cdn.adefoodwaste.biz.id/1784171683_484c6556a00c093e215d.png', 'F MOL MA6031 B13 52', 0, 'gallery', 0, 'image/png', 223691, '2026-07-16 10:14:44', '2026-07-16 10:14:44', NULL),
+	('cc3cd6d2-2ca1-4731-a8c2-2fa2641fa7dc', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477409_54bc42188433c97a3b4c.jpg', 'Blue - Single Vision - 124 - 145', 0, 'variant', 0, 'image/jpeg', 381496, '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
 	('cd33f7da-e059-43b9-88c4-79952d0da6c4', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690232_ecdf94c3ba9d5d55d5c3.png', 'Kacamata Agfian', 0, 'gallery', 0, 'image/png', 236738, '2026-05-25 13:23:53', '2026-06-04 10:43:43', NULL),
+	('cf1ac7ca-aab5-4c6b-83b1-3e8af71a3541', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', 'https://cdn.adefoodwaste.biz.id/1784172273_da92690444a0d1f1c254.png', 'F IP PG6021 C7 53', 0, 'gallery', 0, 'image/png', 239365, '2026-07-16 10:24:34', '2026-07-16 10:24:34', NULL),
+	('d003ad83-227b-4e62-8fd6-4353d59c1534', 'c7079913-6f26-4812-84a9-5fd705da671e', 'https://cdn.adefoodwaste.biz.id/1784174175_78d2f6a9e58626cd8c05.png', 'F II P263 C5 47', 0, 'gallery', 1, 'image/png', 234263, '2026-07-16 10:56:15', '2026-07-16 10:56:15', NULL),
+	('d03a3edf-c84d-4505-b598-3be8da304daf', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', 'https://cdn.adefoodwaste.biz.id/1784174048_603fe81b81b8fd4e12c9.png', 'Illustro Kids', 0, 'gallery', 0, 'image/png', 250898, '2026-07-16 10:54:08', '2026-07-16 10:54:08', NULL),
 	('d3e374a7-c966-4e83-af37-01f158317922', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690234_1cdbfea5f9b67e49a95c.png', 'Black', 0, 'variant', 0, 'image/png', 232337, '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
+	('d3fff1c2-1eb6-4d16-9452-3e15d448c677', 'c5905480-3ac1-4ff8-a56b-88119487bd92', 'https://cdn.adefoodwaste.biz.id/1784169718_53155e9a4a319067f1b0.png', 'F BY MBY5013H 008 57', 0, 'gallery', 0, 'image/png', 194342, '2026-07-16 09:41:58', '2026-07-16 09:41:58', NULL),
+	('d4137d82-733a-4b44-99fa-f5cd95117fbf', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'https://cdn.adefoodwaste.biz.id/1783477122_c7cd42e6ca8a43bc1230.jpg', 'Black - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 319861, '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('d4880b78-bc93-4f5b-a774-b8513a76fa04', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', 'https://cdn.adefoodwaste.biz.id/1784174048_efe5980999cdda3d75f1.png', 'Illustro Kids', 0, 'gallery', 0, 'image/png', 216894, '2026-07-16 10:54:08', '2026-07-16 10:54:08', NULL),
+	('d48df612-960b-4f9e-8c71-7687ccca3a74', 'c5905480-3ac1-4ff8-a56b-88119487bd92', 'https://cdn.adefoodwaste.biz.id/1784169718_6f79432795a24cfde4da.png', 'F BY MBY5013H 008 57', 0, 'gallery', 0, 'image/png', 245394, '2026-07-16 09:41:58', '2026-07-16 09:41:58', NULL),
 	('d87983af-7731-47fa-920d-6687836e6bc4', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'https://cdn.adefoodwaste.biz.id/1780544502_0d6b533aed209e3c9c0b.jpg', '1 DAY ACUVUE DEFINE', 0, 'gallery', 0, 'image/jpeg', 80627, '2026-06-04 10:41:43', '2026-06-04 10:41:43', NULL),
+	('db370c54-5b98-434c-acaf-94601f7b4ae0', '54bb678a-de56-4f58-8ddf-5c95e92f254f', 'https://cdn.adefoodwaste.biz.id/1784170543_38ee18d8ba014d4e9149.jpg', 'F CA 203/G 807 52', 0, 'gallery', 1, 'image/jpeg', 238410, '2026-07-16 09:55:43', '2026-07-16 09:55:43', NULL),
+	('dd649790-ca69-43fb-8b06-4fba8506226f', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'https://cdn.adefoodwaste.biz.id/1784175580_f3e05e644413de943996.png', 'F II PTR81812 C7 48', 0, 'gallery', 1, 'image/png', 267481, '2026-07-16 11:19:40', '2026-07-16 11:19:40', NULL),
+	('df2b3f97-de4b-424e-aac2-a3b6b186dffe', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'https://cdn.adefoodwaste.biz.id/1784174800_c86069c20b8ed69ee11e.png', 'F NJ 5035LB 001 46', 0, 'gallery', 0, 'image/png', 233432, '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('df6766bf-10eb-4560-8c74-04c7c2ed1f3f', '1125572a-4b30-4135-bb27-a8e360be0ad4', 'https://cdn.adefoodwaste.biz.id/1784171962_7b4bcad6ef254e2d316f.png', 'F IR LI6343A C1 54', 0, 'gallery', 1, 'image/png', 238381, '2026-07-16 10:19:22', '2026-07-16 10:19:22', NULL),
+	('dfee22a6-2780-44b5-9344-f06210f9ea75', '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'https://cdn.adefoodwaste.biz.id/1784173356_5094a80ba01e6d746bec.png', 'F AZ 30453A C01 53', 0, 'gallery', 0, 'image/png', 243445, '2026-07-16 10:42:36', '2026-07-16 10:42:36', NULL),
+	('e10a54cb-f7a4-4ed9-b1ff-cf7c1a7fe268', '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'https://cdn.adefoodwaste.biz.id/1784172409_9f0d77f36b8e5c881f3d.png', 'F IP YDHA1016 C2 54', 0, 'gallery', 0, 'image/png', 222384, '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('e378291b-2641-4775-bf59-ce8e5101aefe', '0e923360-e9df-4285-9b46-a0242ebe656f', 'https://cdn.adefoodwaste.biz.id/1784184012_0a5efe136331bb8e4c36.webp', 'Lap Microfiber/ Kain pembersih kacamata / Hp/ Kamera/ Laptop bahan halus', 0, 'gallery', 0, 'image/webp', 37728, '2026-07-16 13:40:12', '2026-07-16 13:40:12', NULL),
+	('e478a4b5-c9a0-41a6-9b8c-207ba3f437b7', '3811b5a6-16c0-4210-a7e0-a2e9c44f39ad', 'https://cdn.adefoodwaste.biz.id/1784172273_2ea60a85cf3633f81fc8.png', 'F IP PG6021 C7 53', 0, 'gallery', 0, 'image/png', 202125, '2026-07-16 10:24:33', '2026-07-16 10:24:33', NULL),
+	('e49f79b5-f410-4922-9bc7-fa6aaae278d5', '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'https://cdn.adefoodwaste.biz.id/1784171683_d0efff9b1479dfec8992.png', 'F MOL MA6031 B13 52', 0, 'gallery', 0, 'image/png', 235658, '2026-07-16 10:14:43', '2026-07-16 10:14:43', NULL),
+	('e4a9f86c-8651-4784-b8a9-d70e8cd1d383', '09527411-ce22-4480-918c-d6a4ce65cffe', 'https://cdn.adefoodwaste.biz.id/1784174525_e8a7b351c9845fb96b10.png', 'F NJ 5035LB 440 46', 0, 'gallery', 1, 'image/png', 256482, '2026-07-16 11:02:06', '2026-07-16 11:02:06', NULL),
+	('e4b388c9-43e8-401f-abde-28e1ae8fc2a7', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'https://cdn.adefoodwaste.biz.id/1783477408_00c6ece26805ee8e0ade.jpg', 'Black - Single Vision - 124 - 145', 0, 'variant', 0, 'image/jpeg', 381496, '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('e52b36fa-121e-4bcd-a20f-663a876b3965', 'e3ab59ad-e68a-410c-9e33-767ba6a7ee98', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=300&auto=format&fit=crop', 'Elegant Eyeglass Chain', 0, 'gallery', 1, NULL, NULL, '2026-07-09 15:43:38', '2026-07-09 15:43:38', NULL),
+	('e581f64f-8833-4920-ab3c-a101a0f51de2', '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'https://cdn.adefoodwaste.biz.id/1784172408_f73d25ba9a0ab728e5b9.png', 'F IP YDHA1016 C2 54', 0, 'gallery', 1, 'image/png', 205743, '2026-07-16 10:26:49', '2026-07-16 10:26:49', NULL),
+	('e6efaa75-76e1-45d6-ad97-9c77292a567c', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', 'https://cdn.adefoodwaste.biz.id/1784170779_1077cf06cdcb20e6b26f.png', 'F BE 1022-1 670 52', 0, 'gallery', 1, 'image/png', 272673, '2026-07-16 09:59:39', '2026-07-16 09:59:39', NULL),
+	('e892f556-5842-45cf-a52a-fb347001d2b6', '75362d09-1920-4f54-aee3-818c3d4030d7', 'https://cdn.adefoodwaste.biz.id/1784175100_a0803499ec106c9d3bcd.png', 'F II SZTRZC826 C1 46', 0, 'gallery', 0, 'image/png', 206365, '2026-07-16 11:11:40', '2026-07-16 11:11:40', NULL),
+	('ea77c192-34ef-4642-9ca4-56d1cdbe67b1', '5a47f29d-b8e7-40dc-b29d-6da624e820d0', 'https://cdn.adefoodwaste.biz.id/1784174268_609f05e81f934610a70d.png', 'F II ZOFG1380 C2 46', 0, 'gallery', 0, 'image/png', 190424, '2026-07-16 10:57:48', '2026-07-16 10:57:48', NULL),
+	('eb32d013-e35d-4924-a6a1-1d8cf4eb1e87', '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'https://cdn.adefoodwaste.biz.id/1784172410_55162518e919fcd9e223.png', 'F IP YDHA1016 C2 54', 0, 'gallery', 0, 'image/png', 170022, '2026-07-16 10:26:50', '2026-07-16 10:26:50', NULL),
+	('ee7f4fff-681a-4103-be56-cfe2603b23c0', '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'https://cdn.adefoodwaste.biz.id/1784169134_b049566793424390be36.jpg', 'F BE 1015-1 145 53', 0, 'gallery', 1, 'image/jpeg', 241424, '2026-07-16 09:32:15', '2026-07-16 09:32:15', NULL),
+	('eeda3601-db67-4880-aa8d-582e62c7489c', '837621aa-3a2a-4674-bc7d-11fd026e893d', 'https://cdn.adefoodwaste.biz.id/1784185080_a3f88374689ea85b6408.webp', 'Portable contact lens case with mirror', 0, 'gallery', 0, 'image/webp', 66066, '2026-07-16 13:58:00', '2026-07-16 13:58:00', NULL),
+	('ef412e81-811b-480b-9dd4-02091665a826', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'https://cdn.adefoodwaste.biz.id/1784177410_c8af28462382f35d7e22.png', 'F PUM PU0492O 002 55', 0, 'gallery', 0, 'image/png', 210465, '2026-07-16 11:50:11', '2026-07-16 11:50:11', NULL),
+	('f1462a64-7f27-4d2c-a63f-cf2ef83d895d', '47dc0b31-8710-4654-869d-246e2e265221', 'https://cdn.adefoodwaste.biz.id/1784177553_ac64082ee81e141d5424.png', 'F SH SE50022-D 001 55', 0, 'gallery', 1, 'image/png', 211560, '2026-07-16 11:52:33', '2026-07-16 11:52:33', NULL),
+	('f152add7-3ddc-4f04-80ae-1a7b2cc85d0f', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477256_f55a31df6a1b6dbf4d24.jpg', 'WILLIAM MORRIS ; BOND (BL) ; AC1 (BLK) PZ - 51', 0, 'gallery', 0, 'image/jpeg', 25567, '2026-07-08 09:20:56', '2026-07-08 09:20:56', NULL),
+	('f3116596-40ed-4f2d-ab22-2b3fa06288a6', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'https://cdn.adefoodwaste.biz.id/1784173531_98f898cc7b85786ebccf.png', 'F CAR 0054 KDX 53', 0, 'gallery', 0, 'image/png', 209020, '2026-07-16 10:45:31', '2026-07-16 10:45:31', NULL),
+	('f3381d6e-6bf9-4af0-8349-052658a951fe', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'https://cdn.adefoodwaste.biz.id/1784174801_38f93a3ceddf27125d87.png', 'F NJ 5035LB 001 46', 0, 'gallery', 0, 'image/png', 201953, '2026-07-16 11:06:41', '2026-07-16 11:06:41', NULL),
+	('f39ef792-e839-459e-a20d-0e52734aa50d', '82261a06-c7b3-48ec-af3b-4525bc731457', 'https://cdn.adefoodwaste.biz.id/1783477282_5b249e2bf6057c286432.jpg', 'Brown - Photochromic Lens', 0, 'variant', 0, 'image/jpeg', 25567, '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('f5e461fe-caf6-4d87-8d92-08d84497cefa', '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'https://cdn.adefoodwaste.biz.id/1784183279_1f2e84b9f17bb30158c0.jpg', 'Lens Cleaner', 0, 'gallery', 1, 'image/jpeg', 284555, '2026-07-16 13:27:59', '2026-07-16 13:27:59', NULL),
+	('f6178808-c0e1-4708-8bd6-157a092d5e05', 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'https://cdn.adefoodwaste.biz.id/1784173531_783cbc70b4ca773ca91b.png', 'F CAR 0054 KDX 53', 0, 'gallery', 0, 'image/png', 207983, '2026-07-16 10:45:32', '2026-07-16 10:45:32', NULL),
+	('f68fdf1b-015f-4765-b676-5dc187a62b74', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'https://cdn.adefoodwaste.biz.id/1784174800_3505525aca7bbffa58af.png', 'F NJ 5035LB 001 46', 0, 'gallery', 1, 'image/png', 244742, '2026-07-16 11:06:40', '2026-07-16 11:06:40', NULL),
+	('f70d6181-90f8-418d-805d-50579b70da51', 'dde78075-5a62-47d5-8669-026c43d893b2', 'https://cdn.adefoodwaste.biz.id/1784184535_dd7999f056a6fbcb5638.webp', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 0, 'gallery', 0, 'image/webp', 210354, '2026-07-16 13:48:56', '2026-07-16 13:48:56', NULL),
 	('f7698c83-e279-4f11-807f-b0979825924f', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 'https://cdn.adefoodwaste.biz.id/1779684468_53e5182b1c6352294195.png', 'Lens Adidas', 0, 'gallery', 0, 'image/png', 92537, '2026-05-25 11:47:51', '2026-06-04 10:41:40', '2026-06-04 10:36:28'),
+	('f88861b5-e32d-4c10-9efd-a0de81d73dfc', '837621aa-3a2a-4674-bc7d-11fd026e893d', 'https://cdn.adefoodwaste.biz.id/1784185080_6c9803b1a797490bcc1e.webp', 'Portable contact lens case with mirror', 0, 'gallery', 0, 'image/webp', 51300, '2026-07-16 13:58:01', '2026-07-16 13:58:01', NULL),
+	('f915dc28-abb7-4a7c-a62b-500d1ea81734', '51f4ab23-e66d-4818-8d3a-5963c8c7626c', 'https://cdn.adefoodwaste.biz.id/1784184731_56495b8f2098295d96d2.webp', 'Cairan Pembersih Kacamata Anti Fog GECLL Lens Cleaner 60Ml P010', 0, 'gallery', 1, 'image/webp', 57878, '2026-07-16 13:52:11', '2026-07-16 13:52:11', NULL),
+	('f9f2bcf8-e632-4116-b79a-9b17e8eb2e33', '3606197c-68a5-4658-964b-8bc60df55063', 'https://cdn.adefoodwaste.biz.id/1784170663_e432af33dbe91fe2a852.png', 'F CO VCO256I 0738 55', 0, 'gallery', 0, 'image/png', 167150, '2026-07-16 09:57:43', '2026-07-16 09:57:43', NULL),
+	('f9fb60e6-6007-4975-8abf-30bb8841d3a1', 'c245bfa8-9c2f-4bbb-8b81-1eb87c9c045f', 'https://cdn.adefoodwaste.biz.id/1784173026_5ebf970caaaba34b162d.png', 'F MOL MJ5121 B10 50', 0, 'gallery', 0, 'image/png', 238627, '2026-07-16 10:37:06', '2026-07-16 10:37:06', NULL),
+	('fa3a964d-f8a2-4dea-a0af-50a773229885', 'c5905480-3ac1-4ff8-a56b-88119487bd92', 'https://cdn.adefoodwaste.biz.id/1784169717_325b68f001d4532e917a.png', 'F BY MBY5013H 008 57', 0, 'gallery', 1, 'image/png', 245394, '2026-07-16 09:41:58', '2026-07-16 09:41:58', NULL),
+	('fbaa6727-d285-4c49-9722-d773c703d275', 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'https://cdn.adefoodwaste.biz.id/1784170990_8450e645dd1d4de1308b.jpg', 'F CO VCO270 743M 54', 0, 'gallery', 0, 'image/jpeg', 248924, '2026-07-16 10:03:11', '2026-07-16 10:03:11', NULL),
 	('fbdeff45-2dce-4f91-906f-40963baf20c6', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'https://cdn.adefoodwaste.biz.id/1780557320_dcbf23368290db86a0a7.jpg', 'GG0598S', 0, 'gallery', 0, 'image/jpeg', 572914, '2026-06-04 14:15:21', '2026-06-04 14:15:21', NULL),
 	('fc2b1ae0-9cdb-4c5f-8730-94bedc42fd9a', '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'https://cdn.adefoodwaste.biz.id/1780554065_e0e0eac3e2ac95199b77.jpg', 'GG1891O', 0, 'gallery', 0, 'image/jpeg', 167187, '2026-06-04 13:21:06', '2026-06-04 13:21:06', NULL),
-	('fd4d6e80-79bf-4d19-adb3-2187a8079e7e', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690234_a5c6f3f116418d6b08ad.png', 'Kacamata Agfian', 0, 'gallery', 0, 'image/png', 232337, '2026-05-25 13:23:54', '2026-06-04 10:43:43', NULL);
+	('fcd57284-5696-4318-bf36-9048b459f003', '5373faf8-da09-4440-a505-ffea8f4275fb', 'https://cdn.adefoodwaste.biz.id/1784173446_d0f320d8472b64c345ff.png', 'F MY 1098 807 57', 0, 'gallery', 1, 'image/png', 254430, '2026-07-16 10:44:06', '2026-07-16 10:44:06', NULL),
+	('fd18a150-b33d-420b-9a1e-6a56b7ba968b', '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'https://cdn.adefoodwaste.biz.id/1784185275_4576b2b5dc34308562a2.webp', 'Lenscase Big Travel Kit Karakter - Tempat kotak softlens dan alat pasang soft lens', 0, 'gallery', 1, 'image/webp', 89846, '2026-07-16 14:01:15', '2026-07-16 14:01:15', NULL),
+	('fd4d6e80-79bf-4d19-adb3-2187a8079e7e', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'https://cdn.adefoodwaste.biz.id/1779690234_a5c6f3f116418d6b08ad.png', 'Kacamata Agfian', 0, 'gallery', 0, 'image/png', 232337, '2026-05-25 13:23:54', '2026-06-04 10:43:43', NULL),
+	('fd82394b-f9b1-4ca6-a28a-afb399711cd1', '36cb74ba-cd59-4bb4-8613-0871c0e0e21b', 'https://images.unsplash.com/photo-1590156546746-c58a74d2847a?w=300&auto=format&fit=crop', 'Compact Lens Case', 0, 'gallery', 1, NULL, NULL, '2026-07-09 15:43:38', '2026-07-09 15:43:38', NULL),
+	('fe1e280c-819a-4679-b626-0b956dd675bb', 'c98820e9-c613-4bde-91fb-deb1e4667a2e', 'https://cdn.adefoodwaste.biz.id/1784173166_f4969b1affd56a726e18.png', 'F BN BA6019 B50 53', 0, 'gallery', 0, 'image/png', 199175, '2026-07-16 10:39:27', '2026-07-16 10:39:27', NULL),
+	('ff544eb3-d786-491a-aba5-e9cb1645bd8f', '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'https://cdn.adefoodwaste.biz.id/1784172409_6b3aa3a9246858692a1d.png', 'F IP YDHA1016 C2 54', 0, 'gallery', 0, 'image/png', 182174, '2026-07-16 10:26:49', '2026-07-16 10:26:49', NULL),
+	('ffed8494-0f79-4b5e-a2ae-01a26af79de3', 'eba7feb9-0d83-4452-9b86-13a1710c8e9c', 'https://cdn.adefoodwaste.biz.id/1784170780_a4b8b64827aada17149c.png', 'F BE 1022-1 670 52', 0, 'gallery', 0, 'image/png', 272673, '2026-07-16 09:59:40', '2026-07-16 09:59:40', NULL);
 
 -- Dumping structure for table pos_optik.product_variants
-DROP TABLE IF EXISTS `product_variants`;
 CREATE TABLE IF NOT EXISTS `product_variants` (
   `variant_id` char(36) NOT NULL,
   `product_id` char(36) NOT NULL,
@@ -842,13 +1755,20 @@ CREATE TABLE IF NOT EXISTS `product_variants` (
   CONSTRAINT `product_variants_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_variants: ~2 rows (approximately)
+-- Dumping data for table pos_optik.product_variants: ~10 rows (approximately)
 INSERT INTO `product_variants` (`variant_id`, `product_id`, `variant_name`, `variant_sku`, `variant_signature`, `price`, `stock`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('07c245de-6af9-463c-becc-90f50917edc5', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'Black', 'OPT-SUNGLASSE-0001-BLC', 'color:black', 1000000.00, 98, '2026-05-25 13:23:54', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
-	('4c2448bb-58cf-46cb-b421-fd20e35feb7f', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'Gold', 'OPT-SUNGLASSE-0001-GLD', 'color:gold', 1000000.00, 1000, '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44');
+	('303431f3-db77-4f28-a571-fda989e0d268', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'Blue - Photochromic Lens', 'OPT-SUNGLASSE-0004-BLU-PL', 'color:blue|lens-type:photochromic-lens', 1200000.00, 103, '2026-07-08 09:18:42', '2026-07-08 09:25:18', NULL),
+	('4c2448bb-58cf-46cb-b421-fd20e35feb7f', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'Gold', 'OPT-SUNGLASSE-0001-GLD', 'color:gold', 1000000.00, 1000, '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
+	('4f4cbdd6-36d3-4f8b-8e90-0425e9cf3ed6', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'Black - Photochromic Lens', 'OPT-SUNGLASSE-0004-BLC-PL', 'color:black|lens-type:photochromic-lens', 1200000.00, 100, '2026-07-08 09:18:42', '2026-07-08 09:25:27', NULL),
+	('5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'Blue - Single Vision - 124 - 145', 'OPT-SUNGLASSE-0006-145-BLU-124-SV', 'temple-length:145|color:blue|frame-size-width:124|lens-type:single-vision', 2300000.00, 94, '2026-07-08 09:23:29', '2026-07-15 15:40:10', NULL),
+	('68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'Black - Photochromic Lens', 'OPT-SUNGLASSE-0005-BLC-PL', 'color:black|lens-type:photochromic-lens', 3500000.00, 103, '2026-07-08 09:21:21', '2026-07-15 15:15:56', NULL),
+	('92504955-32b6-4016-887d-8a278f0a3a56', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'Black - Photochromic Lens', 'OPT-SUNGLASSE-0003-BLC-PL', 'color:black|lens-type:photochromic-lens', 1100000.00, 26, '2026-07-07 16:00:48', '2026-07-07 16:01:21', NULL),
+	('9eb2532e-4efc-44b7-8c54-73381914de19', '82261a06-c7b3-48ec-af3b-4525bc731457', 'Brown - Photochromic Lens', 'OPT-SUNGLASSE-0005-BRW-PL', 'color:brown|lens-type:photochromic-lens', 3500000.00, 100, '2026-07-08 09:21:22', '2026-07-08 09:25:08', NULL),
+	('b3a23692-1b3d-4afa-a525-91aba79456da', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'Gold - Photochromic Lens', 'OPT-SUNGLASSE-0003-GLD-PL', 'color:gold|lens-type:photochromic-lens', 1100000.00, 25, '2026-07-07 16:00:50', '2026-07-07 16:05:45', NULL),
+	('cf3def1d-59e4-4401-bfbf-a6a622caf21f', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'Black - Single Vision - 124 - 145', 'OPT-SUNGLASSE-0006-145-BLC-124-SV', 'temple-length:145|color:black|frame-size-width:124|lens-type:single-vision', 2300000.00, 100, '2026-07-08 09:23:28', '2026-07-08 09:24:45', NULL);
 
 -- Dumping structure for table pos_optik.product_variant_attributes
-DROP TABLE IF EXISTS `product_variant_attributes`;
 CREATE TABLE IF NOT EXISTS `product_variant_attributes` (
   `pva_id` char(36) NOT NULL,
   `product_id` char(36) NOT NULL,
@@ -861,10 +1781,20 @@ CREATE TABLE IF NOT EXISTS `product_variant_attributes` (
   CONSTRAINT `product_variant_attributes_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_variant_attributes: ~0 rows (approximately)
+-- Dumping data for table pos_optik.product_variant_attributes: ~10 rows (approximately)
+INSERT INTO `product_variant_attributes` (`pva_id`, `product_id`, `attribute_id`, `created_at`) VALUES
+	('09aabd5c-720c-4d65-b752-1ccb2acf4cde', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', NULL),
+	('0a871c5d-783d-4993-923c-3f7192b7368a', '82261a06-c7b3-48ec-af3b-4525bc731457', '331f5339-1774-4b06-9e19-bb88b603c5a2', NULL),
+	('1fb38b8f-81d9-42d3-8af4-0e8a5ad5661f', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '331f5339-1774-4b06-9e19-bb88b603c5a2', NULL),
+	('4f89de96-a5c8-42b9-b80e-ba08b7be3d84', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '00cbc3c6-f421-4714-b509-e9770e3182d1', NULL),
+	('6bd56635-469a-4a64-8db4-6e733ef9522a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '331f5339-1774-4b06-9e19-bb88b603c5a2', NULL),
+	('8372e9a8-dd3d-48c0-bc7f-3516c3e444f9', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', NULL),
+	('a1413383-455c-410f-85e7-7a3a59fb4a66', '82261a06-c7b3-48ec-af3b-4525bc731457', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', NULL),
+	('b006fd3a-026a-4c52-94d9-52fb73b632d5', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'edfee81e-0a02-4e09-b3c4-a4a8cdcee514', NULL),
+	('cd1c9917-5cac-4162-924f-015edadde648', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '331f5339-1774-4b06-9e19-bb88b603c5a2', NULL),
+	('e2482500-6c9d-4bb8-a81b-a7ad93465c05', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'dbc661e8-ad9c-4dfe-8fe5-40707210c3f3', NULL);
 
 -- Dumping structure for table pos_optik.product_variant_images
-DROP TABLE IF EXISTS `product_variant_images`;
 CREATE TABLE IF NOT EXISTS `product_variant_images` (
   `pv_image_id` char(36) NOT NULL,
   `variant_id` char(36) NOT NULL,
@@ -880,13 +1810,20 @@ CREATE TABLE IF NOT EXISTS `product_variant_images` (
   CONSTRAINT `product_variant_images_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_variant_images: ~2 rows (approximately)
+-- Dumping data for table pos_optik.product_variant_images: ~10 rows (approximately)
 INSERT INTO `product_variant_images` (`pv_image_id`, `variant_id`, `product_image_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('18ada723-6213-49f8-b37c-fbfdde812e69', '303431f3-db77-4f28-a571-fda989e0d268', '01f8fa6b-2b11-440b-9eb9-ac76c88ffb6e', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
 	('20215a79-80c9-48fb-a8da-f0d65a478ce3', '4c2448bb-58cf-46cb-b421-fd20e35feb7f', '14219271-e840-45f0-b768-42524b87f233', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
-	('c6b9027d-2b2f-4250-9855-81c97701a031', '07c245de-6af9-463c-becc-90f50917edc5', 'd3e374a7-c966-4e83-af37-01f158317922', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44');
+	('48435109-cdef-4daa-93bd-0d9f65ff6df8', '4f4cbdd6-36d3-4f8b-8e90-0425e9cf3ed6', 'd4137d82-733a-4b44-99fa-f5cd95117fbf', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('563135fd-0213-45e5-984b-d97514dfedc1', '68cc2731-2ef9-42a6-8993-6e262552fe99', '42d4d934-0515-4c77-9189-32d1da75dfdb', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('5d1538ca-b54b-477b-bec2-748fa7818c58', '92504955-32b6-4016-887d-8a278f0a3a56', '205fcc60-ae4e-44f3-9261-30e7fd71ee59', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('bc4d624d-2346-497a-bd17-677405a36444', 'b3a23692-1b3d-4afa-a525-91aba79456da', '2b49ac8d-135c-4419-8dbc-1e481162077e', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('c1f60000-d666-4e25-ad56-16cdb1875a41', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', 'e4b388c9-43e8-401f-abde-28e1ae8fc2a7', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('c6b9027d-2b2f-4250-9855-81c97701a031', '07c245de-6af9-463c-becc-90f50917edc5', 'd3e374a7-c966-4e83-af37-01f158317922', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
+	('c70de498-b294-4dcc-a4df-6c79cf0de558', '9eb2532e-4efc-44b7-8c54-73381914de19', 'f39ef792-e839-459e-a20d-0e52734aa50d', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('f71bf324-ea66-4ab4-947a-f7a23fd3da43', '5365c81f-94ae-4908-a94f-08d89246984a', 'cc3cd6d2-2ca1-4731-a8c2-2fa2641fa7dc', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL);
 
 -- Dumping structure for table pos_optik.product_variant_values
-DROP TABLE IF EXISTS `product_variant_values`;
 CREATE TABLE IF NOT EXISTS `product_variant_values` (
   `pv_value_id` char(36) NOT NULL,
   `variant_id` char(36) NOT NULL,
@@ -901,13 +1838,30 @@ CREATE TABLE IF NOT EXISTS `product_variant_values` (
   CONSTRAINT `product_variant_values_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.product_variant_values: ~2 rows (approximately)
+-- Dumping data for table pos_optik.product_variant_values: ~20 rows (approximately)
 INSERT INTO `product_variant_values` (`pv_value_id`, `variant_id`, `pav_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0062417f-613d-4765-b055-7c7b30b116e3', '07c245de-6af9-463c-becc-90f50917edc5', '66030e90-88b4-4a0b-9e09-f9d677450119', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
-	('59f4ee05-50a0-4146-8817-e18a8e498696', '4c2448bb-58cf-46cb-b421-fd20e35feb7f', 'adb70c4e-45db-4de5-a56f-a3e718ccf793', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44');
+	('08b8c2c7-be7b-40ed-a8e3-1c483d4663b8', '9eb2532e-4efc-44b7-8c54-73381914de19', 'f3cf781d-df7c-4c6b-94a0-4e7373ebe69f', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('18921fc0-30b9-4821-8112-a82a7891b62b', '92504955-32b6-4016-887d-8a278f0a3a56', 'bc1d2fa2-c897-413c-87e8-604339675764', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('3c377c75-0e1f-4692-9184-502e2a69c0c8', '92504955-32b6-4016-887d-8a278f0a3a56', 'ac4997d9-85df-4e1b-9e7c-95d65028fd62', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('4ee8597c-2565-4d91-9bd0-f0541a42262d', '5365c81f-94ae-4908-a94f-08d89246984a', 'fdc17ee2-006a-477c-97a9-0768898ce538', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('59f4ee05-50a0-4146-8817-e18a8e498696', '4c2448bb-58cf-46cb-b421-fd20e35feb7f', 'adb70c4e-45db-4de5-a56f-a3e718ccf793', '2026-05-25 13:23:55', '2026-06-04 10:43:44', '2026-06-04 10:43:44'),
+	('5a7a2745-96e9-421e-a868-5f37f594a5d9', '303431f3-db77-4f28-a571-fda989e0d268', '8379fd67-3759-4f91-b995-44479b994e93', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL),
+	('852097f0-b151-4475-a5fb-fb7dcd1d7a2a', '68cc2731-2ef9-42a6-8993-6e262552fe99', 'f5e5060e-5535-459c-9744-9edc881b7980', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('95c65105-5140-4ab4-97fb-5decf941a9a9', '5365c81f-94ae-4908-a94f-08d89246984a', 'd5dd2151-25ce-437d-8221-f0180453e3b2', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('99c6aa17-ce28-415e-817a-21adeeafdc8f', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', 'd5dd2151-25ce-437d-8221-f0180453e3b2', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('9b73cac1-0c48-4240-8d0a-c2861d973d9e', '5365c81f-94ae-4908-a94f-08d89246984a', 'eca59574-dc48-46a6-97b4-8df0736eaa80', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('9ced6331-fc37-454a-8f6e-c656130b3209', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', '05a186b5-bdad-4c08-8ba8-55fc406b6096', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('a1354c20-946b-4718-b9c4-f35a74dc57dc', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', 'fdc17ee2-006a-477c-97a9-0768898ce538', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('a4870963-e4d0-4c22-bbfa-0bfc9d01c7ac', '9eb2532e-4efc-44b7-8c54-73381914de19', '95724b1f-bcb3-4d89-b1a0-47f4513b756b', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('ad330e02-edff-4b8c-a910-3323e9c70f2f', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', '383a7408-054b-4ded-b19b-409bf189b5aa', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('b1fbf12b-7e4f-4df3-8f23-8224fca6163d', '5365c81f-94ae-4908-a94f-08d89246984a', '383a7408-054b-4ded-b19b-409bf189b5aa', '2026-07-08 09:23:29', '2026-07-08 09:23:29', NULL),
+	('b7717593-7e35-45dc-93c6-e6f665310a35', 'b3a23692-1b3d-4afa-a525-91aba79456da', 'f21dde13-1f57-45f9-9c93-404acdb3d8d2', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('c786336f-9220-489f-8fbc-6a3dae60bdcc', '68cc2731-2ef9-42a6-8993-6e262552fe99', 'f3cf781d-df7c-4c6b-94a0-4e7373ebe69f', '2026-07-08 09:21:22', '2026-07-08 09:21:22', NULL),
+	('d083a4c5-4e34-4476-b377-0771f885f0ac', 'b3a23692-1b3d-4afa-a525-91aba79456da', 'bc1d2fa2-c897-413c-87e8-604339675764', '2026-07-07 16:00:50', '2026-07-07 16:00:50', NULL),
+	('ebcdd95e-8079-41e8-ad33-deb5fbc8e130', '4f4cbdd6-36d3-4f8b-8e90-0425e9cf3ed6', '8ee052ce-ce7c-4b85-a796-ab48db62e736', '2026-07-08 09:18:42', '2026-07-08 09:18:42', NULL);
 
 -- Dumping structure for table pos_optik.reviews
-DROP TABLE IF EXISTS `reviews`;
 CREATE TABLE IF NOT EXISTS `reviews` (
   `review_id` char(36) NOT NULL,
   `customer_id` char(36) DEFAULT NULL,
@@ -930,7 +1884,6 @@ INSERT INTO `reviews` (`review_id`, `customer_id`, `product_id`, `rating`, `comm
 	('70356a8e-6284-4660-bffc-e9a192f11448', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 5, 'Cocok dah', '2026-05-25 14:08:58', '2026-05-25 14:08:58', NULL);
 
 -- Dumping structure for table pos_optik.review_media
-DROP TABLE IF EXISTS `review_media`;
 CREATE TABLE IF NOT EXISTS `review_media` (
   `review_media_id` char(36) NOT NULL,
   `review_id` char(36) NOT NULL,
@@ -947,7 +1900,6 @@ CREATE TABLE IF NOT EXISTS `review_media` (
 -- Dumping data for table pos_optik.review_media: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.roles
-DROP TABLE IF EXISTS `roles`;
 CREATE TABLE IF NOT EXISTS `roles` (
   `role_id` char(36) NOT NULL,
   `role_name` varchar(100) NOT NULL,
@@ -966,7 +1918,6 @@ INSERT INTO `roles` (`role_id`, `role_name`, `role_description`, `created_at`, `
 	('f8e30939-9fe4-4313-8699-99fd53af0e89', 'owner', 'Owner has full access', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL);
 
 -- Dumping structure for table pos_optik.shipping_methods
-DROP TABLE IF EXISTS `shipping_methods`;
 CREATE TABLE IF NOT EXISTS `shipping_methods` (
   `shipping_method_id` char(36) NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -979,12 +1930,11 @@ CREATE TABLE IF NOT EXISTS `shipping_methods` (
   PRIMARY KEY (`shipping_method_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.shipping_methods: ~0 rows (approximately)
+-- Dumping data for table pos_optik.shipping_methods: ~1 rows (approximately)
 INSERT INTO `shipping_methods` (`shipping_method_id`, `name`, `provider`, `estimated_days`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('3e08ee99-750a-4437-a3a9-922437410f6e', 'Reguler', 'Internal Courier', '3-5 hari', 1, NULL, NULL, NULL);
 
 -- Dumping structure for table pos_optik.shipping_rates
-DROP TABLE IF EXISTS `shipping_rates`;
 CREATE TABLE IF NOT EXISTS `shipping_rates` (
   `rate_id` char(36) NOT NULL,
   `shipping_method_id` char(36) NOT NULL,
@@ -1011,7 +1961,6 @@ INSERT INTO `shipping_rates` (`rate_id`, `shipping_method_id`, `destination`, `c
 	('fb45309e-c35b-4902-a445-b57c8bf9ecdf', '3e08ee99-750a-4437-a3a9-922437410f6e', 'Bali', 25000.00, '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL);
 
 -- Dumping structure for table pos_optik.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` char(36) NOT NULL,
   `role_id` char(36) NOT NULL,
@@ -1034,7 +1983,6 @@ INSERT INTO `users` (`user_id`, `role_id`, `user_name`, `user_email`, `password`
 	('72f6bcd3-f3ea-4987-8a87-2eb3e5aeaef7', '39d85f0a-2089-4809-b7a1-8bfa719ecf3a', 'Cashier', 'cashier@gmail.com', '$2y$10$OHYK0jCMmoEl2sOQAZ5q8ekUeLJ2exawW/Ra6uM/A5Y0xLwJzlxgy', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL);
 
 -- Dumping structure for table pos_optik.user_activities
-DROP TABLE IF EXISTS `user_activities`;
 CREATE TABLE IF NOT EXISTS `user_activities` (
   `user_activity_id` char(36) NOT NULL,
   `customer_id` char(36) DEFAULT NULL,
@@ -1054,7 +2002,6 @@ CREATE TABLE IF NOT EXISTS `user_activities` (
 -- Dumping data for table pos_optik.user_activities: ~0 rows (approximately)
 
 -- Dumping structure for table pos_optik.user_refund_accounts
-DROP TABLE IF EXISTS `user_refund_accounts`;
 CREATE TABLE IF NOT EXISTS `user_refund_accounts` (
   `user_refund_account_id` char(36) NOT NULL,
   `customer_id` char(36) NOT NULL,
@@ -1070,12 +2017,12 @@ CREATE TABLE IF NOT EXISTS `user_refund_accounts` (
   CONSTRAINT `user_refund_accounts_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.user_refund_accounts: ~0 rows (approximately)
+-- Dumping data for table pos_optik.user_refund_accounts: ~2 rows (approximately)
 INSERT INTO `user_refund_accounts` (`user_refund_account_id`, `customer_id`, `account_name`, `bank_name`, `account_number`, `is_default`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('a9c858ec-990a-4e7b-83a9-b993bbf55641', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'John Doe', 'BCA', '1092090934', 0, '2026-07-15 10:42:02', '2026-07-15 10:42:02', NULL),
 	('b238d887-380d-408a-8200-11ec5cfc0db0', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Dystian', 'BCA', '09198293', 0, '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL);
 
 -- Dumping structure for table pos_optik.wishlists
-DROP TABLE IF EXISTS `wishlists`;
 CREATE TABLE IF NOT EXISTS `wishlists` (
   `wishlist_id` char(36) NOT NULL,
   `customer_id` char(36) NOT NULL,
@@ -1090,7 +2037,9 @@ CREATE TABLE IF NOT EXISTS `wishlists` (
   CONSTRAINT `wishlists_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.wishlists: ~0 rows (approximately)
+-- Dumping data for table pos_optik.wishlists: ~1 rows (approximately)
+INSERT INTO `wishlists` (`wishlist_id`, `customer_id`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('4113c06b-3637-4b07-988b-d1731fb8ab05', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', '2026-07-16 11:29:58', '2026-07-16 11:29:59', '2026-07-16 11:29:59');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
