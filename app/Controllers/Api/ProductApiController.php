@@ -125,6 +125,11 @@ class ProductApiController extends BaseApiController
     {
         $category = $this->request->getVar('category');
         $search   = $this->request->getVar('search');
+        $brand    = $this->request->getVar('brand');
+        $minPrice = $this->request->getVar('min_price');
+        $maxPrice = $this->request->getVar('max_price');
+        $stock    = $this->request->getVar('stock');
+        $rating   = $this->request->getVar('rating');
         $page     = $this->request->getVar('page') ?? 1;
         $limit    = $this->request->getVar('limit') ?? 10;
 
@@ -136,7 +141,9 @@ class ProductApiController extends BaseApiController
             ->select('
                 products.*,
                 product_images.url AS product_image_url,
-                IF(w.wishlist_id IS NULL, 0, 1) AS is_wishlist
+                IF(w.wishlist_id IS NULL, 0, 1) AS is_wishlist,
+                COALESCE((SELECT AVG(r.rating) FROM reviews r WHERE r.product_id = products.product_id AND r.deleted_at IS NULL), 0) AS avg_rating,
+                (SELECT COUNT(r.review_id) FROM reviews r WHERE r.product_id = products.product_id AND r.deleted_at IS NULL) AS total_reviews
             ')
             ->join(
                 'product_images',
@@ -167,9 +174,89 @@ class ProductApiController extends BaseApiController
             $builder->where('products.category_id', $category);
         }
 
+        if ($brand !== null && $brand !== '') {
+            $builder->where('products.product_brand', $brand);
+        }
+
+        // Price range filter
+        if ($minPrice !== null && $minPrice !== '' && $maxPrice !== null && $maxPrice !== '') {
+            $builder->groupStart()
+                ->groupStart()
+                    ->where('products.has_variants', 0)
+                    ->where('products.product_price >=', $minPrice)
+                    ->where('products.product_price <=', $maxPrice)
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('products.has_variants', 1)
+                    ->where("EXISTS (
+                        SELECT 1 FROM product_variants pv 
+                        WHERE pv.product_id = products.product_id 
+                          AND pv.deleted_at IS NULL 
+                          AND pv.price >= {$this->db->escape($minPrice)}
+                          AND pv.price <= {$this->db->escape($maxPrice)}
+                    )", null, false)
+                ->groupEnd()
+            ->groupEnd();
+        } else if ($minPrice !== null && $minPrice !== '') {
+            $builder->groupStart()
+                ->groupStart()
+                    ->where('products.has_variants', 0)
+                    ->where('products.product_price >=', $minPrice)
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('products.has_variants', 1)
+                    ->where("EXISTS (
+                        SELECT 1 FROM product_variants pv 
+                        WHERE pv.product_id = products.product_id 
+                          AND pv.deleted_at IS NULL 
+                          AND pv.price >= {$this->db->escape($minPrice)}
+                    )", null, false)
+                ->groupEnd()
+            ->groupEnd();
+        } else if ($maxPrice !== null && $maxPrice !== '') {
+            $builder->groupStart()
+                ->groupStart()
+                    ->where('products.has_variants', 0)
+                    ->where('products.product_price <=', $maxPrice)
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('products.has_variants', 1)
+                    ->where("EXISTS (
+                        SELECT 1 FROM product_variants pv 
+                        WHERE pv.product_id = products.product_id 
+                          AND pv.deleted_at IS NULL 
+                          AND pv.price <= {$this->db->escape($maxPrice)}
+                    )", null, false)
+                ->groupEnd()
+            ->groupEnd();
+        }
+
+        // Stock filter
+        if ($stock === 'in_stock') {
+            $builder->groupStart()
+                ->groupStart()
+                    ->where('products.has_variants', 0)
+                    ->where('products.product_stock >', 0)
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('products.has_variants', 1)
+                    ->where("EXISTS (
+                        SELECT 1 FROM product_variants pv
+                        WHERE pv.product_id = products.product_id
+                          AND pv.deleted_at IS NULL
+                          AND pv.stock > 0
+                    )", null, false)
+                ->groupEnd()
+            ->groupEnd();
+        }
+
+        // Rating filter
+        if ($rating !== null && $rating !== '') {
+            $builder->where("(SELECT AVG(r.rating) FROM reviews r WHERE r.product_id = products.product_id AND r.deleted_at IS NULL) >= {$this->db->escape($rating)}");
+        }
+
         if ($search) {
-            $escapedSearch = $this->db->escape($search); // includes quotes, safe for = comparison
-            $escapedSearchLike = $this->db->escapeLikeString($search);
+            $escapedSearch = $this->db->escape($search);
             $builder->groupStart()
                 ->like('products.product_name', $search)
                 ->orLike('products.product_brand', $search)
@@ -183,18 +270,21 @@ class ProductApiController extends BaseApiController
                 ->groupEnd();
         }
 
+        // Count total results for pagination
+        $total = $builder->countAllResults(false);
+
         $products = $builder
             ->orderBy('products.created_at', 'DESC')
             ->paginate($limit, 'products', $page);
 
         if (empty($products)) {
-            return $this->errorResponse('No products found');
+            return $this->paginatedResponse([], 0, (int)$page, (int)$limit);
         }
 
         $productIds = array_column($products, 'product_id');
         $this->addPriceRangesAndSold($products, $productIds);
 
-        return $this->successResponse($products);
+        return $this->paginatedResponse($products, $total, (int)$page, (int)$limit);
     }
 
     // GET /api/products/new-eyewear

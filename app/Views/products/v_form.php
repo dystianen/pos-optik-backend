@@ -105,7 +105,7 @@
         <!-- MULTIPLE IMAGES -->
         <div class="col-12 mb-3">
           <label class="form-label">Product Images <?= !isset($product) || empty($product_images) ? '<span class="text-danger">*</span>' : '' ?></label>
-          <input type="file" name="images[]" class="form-control" multiple accept=".jpg,.jpeg,.png" <?= !isset($product) || empty($product_images) ? 'required' : '' ?>>
+          <input type="file" name="images[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.webp" <?= !isset($product) || empty($product_images) ? 'required' : '' ?>>
           <div class="invalid-feedback">Please upload at least one product image.</div>
           <small class="text-muted d-block mt-1">Upload multiple images (JPG, JPEG, or PNG). Used as product images and fallback for variants.</small>
 
