@@ -65,32 +65,32 @@
         <div class="d-flex gap-2">
           <div class="flex-grow-1">
             <select name="customer_id" id="customerSelect" class="form-select" required>
-              <option value="">-- Pilih Customer --</option>
+              <option value="">-- Select Customer --</option>
               <?php foreach ($customers as $customer): ?>
                 <option value="<?= $customer['customer_id'] ?>">
                   <?= $customer['customer_name'] ?>
                 </option>
               <?php endforeach ?>
             </select>
-            <div class="invalid-feedback">Pilih customer terlebih dahulu.</div>
+            <div class="invalid-feedback">Please select a customer first.</div>
           </div>
-          <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-            <i class="fa fa-plus"></i> Tambah
+          <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Add New Customer" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <i class="fa fa-plus"></i> Add
           </a>
         </div>
       </div>
 
       <!-- ITEMS -->
-      <h5 class="mt-4">Produk Dibeli</h5>
+      <h5 class="mt-4">Purchased Products</h5>
 
       <div class="table-responsive">
         <table class="table table-bordered align-middle" id="itemsTable" style="min-width: 1400px;">
           <thead>
             <tr>
-              <th style="width:320px;">Produk</th>
+              <th style="width:320px;">Product</th>
               <th style="width:320px;">Variant</th>
-              <th style="width:120px;">Stok</th>
-              <th style="min-width:120px;">Harga</th>
+              <th style="width:120px;">Stock</th>
+              <th style="min-width:120px;">Price</th>
               <th style="width:120px;">Qty</th>
               <th style="min-width:120px;">Subtotal</th>
               <th style="min-width:180px;">Prescription</th>
@@ -105,17 +105,17 @@
                 <select name="items[0][product_id]"
                   class="form-select product-select"
                   required>
-                  <option value="">-- Pilih Produk --</option>
+                  <option value="">-- Select Product --</option>
                   <?php foreach ($products as $p): ?>
                     <option value="<?= $p['product_id'] ?>"
                       data-price="<?= $p['product_price'] ?>"
                       data-stock="<?= $p['product_stock'] ?>"
                       <?= ((int)$p['product_stock'] <= 0) ? 'disabled' : '' ?>>
-                      <?= $p['product_name'] ?> <?= ((int)$p['product_stock'] <= 0) ? '(Stok Habis)' : '(Stok: ' . $p['product_stock'] . ')' ?>
+                      <?= $p['product_name'] ?> <?= ((int)$p['product_stock'] <= 0) ? '(Out of Stock)' : '(Stock: ' . $p['product_stock'] . ')' ?>
                     </option>
                   <?php endforeach ?>
                 </select>
-                <div class="invalid-feedback">Pilih produk.</div>
+                <div class="invalid-feedback">Please select a product.</div>
               </td>
 
               <!-- VARIANT -->
@@ -123,7 +123,7 @@
                 <select name="items[0][variant_id]"
                   class="form-select variant-select"
                   disabled>
-                  <option value="">-- Pilih Variant --</option>
+                  <option value="">-- Select Variant --</option>
                 </select>
               </td>
 
@@ -155,8 +155,8 @@
                   <!-- TOGGLE -->
                   <select name="items[0][prescription][type]"
                     class="form-select rx-type">
-                    <option value="none">Tanpa Resep</option>
-                    <option value="manual">Input Manual</option>
+                    <option value="none">No Prescription</option>
+                    <option value="manual">Manual Input</option>
                   </select>
 
                   <!-- RX FORM -->
@@ -191,12 +191,12 @@
 
       <div class="card mb-4">
         <div class="card-body">
-          <h5>Pembayaran</h5>
+          <h5>Payment</h5>
           <div class="row g-3 mt-2">
             <div class="col-md-4">
-              <label class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
+              <label class="form-label">Payment Method <span class="text-danger">*</span></label>
               <select id="paymentMethod" name="payment_method_id" class="form-select" required>
-                <option value="">-- Pilih Metode Pembayaran --</option>
+                <option value="">-- Select Payment Method --</option>
                 <?php foreach ($paymentMethods as $method): ?>
                   <option value="<?= esc($method['payment_method_id']) ?>"
                     data-method-type="<?= esc($method['method_type']) ?>">
@@ -204,28 +204,28 @@
                   </option>
                 <?php endforeach ?>
               </select>
-              <div class="invalid-feedback">Pilih metode pembayaran.</div>
+              <div class="invalid-feedback">Please select a payment method.</div>
             </div>
 
             <div class="col-md-4 cash-only d-none">
-              <label class="form-label">Nominal Uang Customer</label>
+              <label class="form-label">Customer Cash Amount</label>
               <input type="number" name="cash_received" id="cashReceived"
                 class="form-control" min="0" step="0.01" placeholder="0">
             </div>
 
             <div class="col-md-4 noncash-only d-none">
-              <label class="form-label">Upload Bukti Pembayaran</label>
+              <label class="form-label">Upload Payment Proof</label>
               <input type="file" name="payment_proof" id="paymentProof"
                 class="form-control" accept="image/*">
             </div>
 
             <div class="col-md-4">
-              <label class="form-label">Total Bayar</label>
+              <label class="form-label">Total Payment</label>
               <input type="text" id="paymentTotal" class="form-control" readonly value="Rp 0">
             </div>
 
             <div class="col-md-4 cash-only d-none">
-              <label class="form-label">Kembalian</label>
+              <label class="form-label">Change</label>
               <input type="text" id="paymentChange" class="form-control" readonly value="Rp 0">
             </div>
           </div>
@@ -260,14 +260,14 @@
     // Initialize Select2 on customer dropdown
     $('#customerSelect').select2({
       theme: 'bootstrap-5',
-      placeholder: '-- Pilih Customer --',
+      placeholder: '-- Select Customer --',
       width: '100%'
     });
 
     // Initialize Select2 on product dropdowns
     $('.product-select').select2({
       theme: 'bootstrap-5',
-      placeholder: '-- Pilih Produk --',
+      placeholder: '-- Select Product --',
       width: '100%'
     });
 
@@ -358,7 +358,7 @@
     const qtyInput = row.querySelector('.qty');
 
     if (!productId) {
-      variantSelect.innerHTML = '<option value="">-- Pilih Variant --</option>';
+      variantSelect.innerHTML = '<option value="">-- Select Variant --</option>';
       variantSelect.disabled = true;
       priceInput.value = '';
       stockInput.value = '-';
@@ -377,9 +377,9 @@
         data
       }) => {
 
-        variantSelect.innerHTML = '<option value="">-- Pilih Variant --</option>';
+        variantSelect.innerHTML = '<option value="">-- Select Variant --</option>';
 
-        // TIDAK ADA VARIANT
+        // NO VARIANT
         if (!data || data.length === 0) {
           variantSelect.disabled = true;
           priceInput.value = productPrice;
@@ -389,16 +389,16 @@
           return;
         }
 
-        // ADA VARIANT
+        // HAS VARIANT
         data.forEach(v => {
           const opt = document.createElement('option');
           opt.value = v.variant_id;
-          opt.textContent = `${v.variant_name} (Stok: ${v.stock})`;
+          opt.textContent = `${v.variant_name} (Stock: ${v.stock})`;
           opt.dataset.price = v.price;
           opt.dataset.stock = v.stock;
           if (Number(v.stock) <= 0) {
             opt.disabled = true;
-            opt.textContent = `${v.variant_name} (Stok Habis)`;
+            opt.textContent = `${v.variant_name} (Out of Stock)`;
           }
           variantSelect.appendChild(opt);
         });
@@ -424,7 +424,7 @@
 
     const selectedOption = this.options[this.selectedIndex];
 
-    // ⬅️ JIKA variant dikosongkan
+    // ⬅️ IF variant is cleared
     if (!selectedOption || !selectedOption.value) {
       priceInput.value = productPrice;
       stockInput.value = '-';
@@ -433,7 +433,7 @@
       return;
     }
 
-    // ⬅️ JIKA variant dipilih
+    // ⬅️ IF variant is selected
     priceInput.value = selectedOption.dataset.price || productPrice;
     stockInput.value = selectedOption.dataset.stock || 0;
     qtyInput.max = selectedOption.dataset.stock || 0;
@@ -529,7 +529,7 @@
     // Re-initialize select2 on first row
     firstSelect.select2({
       theme: 'bootstrap-5',
-      placeholder: '-- Pilih Produk --',
+      placeholder: '-- Select Product --',
       width: '100%'
     });
 
@@ -564,7 +564,7 @@
     // Initialize select2 on the new row product select
     $(newRow).find('.product-select').select2({
       theme: 'bootstrap-5',
-      placeholder: '-- Pilih Produk --',
+      placeholder: '-- Select Product --',
       width: '100%'
     });
 
