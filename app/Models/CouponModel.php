@@ -32,6 +32,7 @@ class CouponModel extends Model
         'usage_limit',
         'per_user_limit',
         'is_active',
+        'first_order_only',
     ];
 
     protected $validationRules = [
@@ -45,6 +46,7 @@ class CouponModel extends Model
         'usage_limit'      => 'permit_empty|integer',
         'per_user_limit'   => 'permit_empty|integer',
         'is_active'        => 'permit_empty|in_list[0,1]',
+        'first_order_only' => 'permit_empty|in_list[0,1]',
     ];
 
     protected $beforeInsert = ['generateUuid'];

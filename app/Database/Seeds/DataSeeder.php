@@ -18,5 +18,6 @@ class DataSeeder extends Seeder
         $this->call('ShippingMethodSeeder');
         $this->call('ShippingRateSeeder');
         $this->call('PaymentMethodSeeder');
+        $this->call('CouponSeeder');
     }
 }

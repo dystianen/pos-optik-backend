@@ -20,13 +20,15 @@ use App\Models\ProductVariantModel;
 use App\Models\ShippingRateModel;
 use App\Models\UserRefundAccountModel;
 use App\Models\OrderStatusModel;
+use App\Models\CouponModel;
+use App\Models\OrderCouponModel;
 use Config\OrderStatus;
 use CodeIgniter\API\ResponseTrait;
 
 class OnlineSalesApiController extends BaseApiController
 {
     use ResponseTrait;
-    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $shippingRateModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $statusModel, $r2;
+    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $shippingRateModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $statusModel, $couponModel, $orderCouponModel, $r2;
 
     public function __construct()
     {
@@ -47,6 +49,8 @@ class OnlineSalesApiController extends BaseApiController
         $this->userRefundAccountModel = new UserRefundAccountModel();
         $this->orderRefundModel = new OrderRefundModel();
         $this->statusModel = new OrderStatusModel();
+        $this->couponModel = new CouponModel();
+        $this->orderCouponModel = new OrderCouponModel();
         $this->r2 = new R2Storage();
     }
 
@@ -189,8 +193,31 @@ class OnlineSalesApiController extends BaseApiController
 
             $shippingCost = $shippingRate['cost'] ?? 0;
 
+            $couponCode = $this->request->getVar('coupon_code');
+            $couponDiscount = 0;
+            $couponDetails = null;
+
+            if (!empty($couponCode)) {
+                $validation = $this->validateCoupon($couponCode, $customerId, $subtotal, $shippingCost);
+                if ($validation['is_valid']) {
+                    $couponDiscount = $validation['discount_amount'];
+                    $couponDetails = [
+                        'code' => $validation['code'],
+                        'discount_amount' => (int)$validation['discount_amount'],
+                        'is_valid' => true
+                    ];
+                } else {
+                    $couponDetails = [
+                        'code' => $couponCode,
+                        'discount_amount' => 0,
+                        'is_valid' => false,
+                        'error_message' => $validation['error_message']
+                    ];
+                }
+            }
+
             // 💰 TOTAL
-            $total = $subtotal + $shippingCost;
+            $total = $subtotal + $shippingCost - $couponDiscount;
 
             // ✅ RESPONSE
             $responseData = [
@@ -214,8 +241,11 @@ class OnlineSalesApiController extends BaseApiController
                 'summary' => [
                     'subtotal'      => (int) $subtotal,
                     'shipping_cost' => (int) $shippingCost,
-                    'total'         => (int) $total
-                ]
+                    'coupon_discount' => (int) $couponDiscount,
+                    'total'         => (int) max(0, $total)
+                ],
+
+                'coupon_details' => $couponDetails
             ];
             return $this->successResponse($responseData);
         } catch (\Throwable $e) {
@@ -312,16 +342,35 @@ class OnlineSalesApiController extends BaseApiController
                 throw new \Exception('Cart is empty');
             }
 
+            if (!empty($summary['coupon_details']) && !$summary['coupon_details']['is_valid']) {
+                throw new \Exception($summary['coupon_details']['error_message'] ?? 'Kupon tidak valid');
+            }
+
+            $couponDiscount = $summary['summary']['coupon_discount'] ?? 0;
+
             log_message('debug', 'INSERT orders');
             $this->orderModel->insert([
                 'customer_id'         => $customerId,
                 'status_id'           => $this->statusModel->getIdByCode(OrderStatus::PENDING),
                 'shipping_method_id'  => '3e08ee99-750a-4437-a3a9-922437410f6e',
                 'shipping_cost'       => $summary['shipping']['cost'],
-                'coupon_discount'     => 0,
+                'coupon_discount'     => $couponDiscount,
                 'grand_total'         => $summary['summary']['total'],
             ]);
             $orderId = $this->orderModel->getInsertID();
+
+            // Insert coupon usage if applied
+            if (!empty($summary['coupon_details']) && $summary['coupon_details']['is_valid']) {
+                $couponCodeUsed = strtoupper($summary['coupon_details']['code']);
+                $couponRecord = $this->couponModel->where('code', $couponCodeUsed)->first();
+                if ($couponRecord) {
+                    $this->orderCouponModel->insert([
+                        'order_id'        => $orderId,
+                        'coupon_id'       => $couponRecord['coupon_id'],
+                        'discount_amount' => $couponDiscount
+                    ]);
+                }
+            }
 
             $this->notificationModel->addNotification('new_order', "New online order from {$customerName}", $orderId);
             log_message('debug', 'ORDER QUERY: ' . $this->orderModel->getLastQuery());
@@ -967,8 +1016,9 @@ class OnlineSalesApiController extends BaseApiController
                 'status_code' => $order['status_code'],
                 'items' => $mappedItems,
                 'summary' => [
-                    'shipping_cost' => (int) $order['shipping_cost'],
-                    'grand_total' => (int) ($activeSubtotal + $order['shipping_cost'])
+                    'shipping_cost'   => (int) $order['shipping_cost'],
+                    'coupon_discount' => (int) $order['coupon_discount'],
+                    'grand_total'     => (int) max(0, $activeSubtotal + $order['shipping_cost'] - $order['coupon_discount'])
                 ],
                 'shipping' => [
                     'method' => $order['shipping_method'],
@@ -1358,5 +1408,119 @@ class OnlineSalesApiController extends BaseApiController
             ],
             'Order status updated successfully',
         );
+    }
+
+    private function validateCoupon($couponCode, $customerId, $subtotal, $shippingCost = 0)
+    {
+        if (empty($couponCode)) {
+            return ['is_valid' => false, 'error_message' => 'Coupon code cannot be empty.'];
+        }
+
+        $coupon = $this->couponModel->where('code', strtoupper($couponCode))->first();
+        if (!$coupon) {
+            return ['is_valid' => false, 'error_message' => 'Coupon not found.'];
+        }
+
+        if (!(int)$coupon['is_active']) {
+            return ['is_valid' => false, 'error_message' => 'Coupon is no longer active.'];
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($coupon['start_date'] > $now || $coupon['end_date'] < $now) {
+            return ['is_valid' => false, 'error_message' => 'Coupon is not valid at this time.'];
+        }
+
+        if ($coupon['min_order_amount'] !== null && $subtotal < (float)$coupon['min_order_amount']) {
+            return [
+                'is_valid' => false, 
+                'error_message' => 'Minimum transaction to use this coupon is Rp ' . number_format($coupon['min_order_amount'], 0, ',', '.') . '.'
+            ];
+        }
+
+        $db = db_connect();
+        // Exclude cancelled, rejected, expired order statuses
+        $excludedCodes = ['cancelled', 'rejected', 'expired'];
+        $excludedStatusIds = [];
+        foreach ($excludedCodes as $code) {
+            $status = $db->table('order_statuses')->where('status_code', $code)->get()->getRowArray();
+            if ($status) {
+                $excludedStatusIds[] = $status['status_id'];
+            }
+        }
+
+        // Global limit validation
+        if ($coupon['usage_limit'] !== null) {
+            $usageQuery = $db->table('order_coupons')
+                ->join('orders', 'orders.order_id = order_coupons.order_id')
+                ->where('order_coupons.coupon_id', $coupon['coupon_id'])
+                ->where('orders.deleted_at', null);
+            if (!empty($excludedStatusIds)) {
+                $usageQuery->whereNotIn('orders.status_id', $excludedStatusIds);
+            }
+            $globalUsage = $usageQuery->countAllResults();
+
+            if ($globalUsage >= (int)$coupon['usage_limit']) {
+                return ['is_valid' => false, 'error_message' => 'Global coupon usage limit has been reached.'];
+            }
+        }
+
+        // User limit validation
+        if ($coupon['per_user_limit'] !== null) {
+            $userUsageQuery = $db->table('order_coupons')
+                ->join('orders', 'orders.order_id = order_coupons.order_id')
+                ->where('order_coupons.coupon_id', $coupon['coupon_id'])
+                ->where('orders.customer_id', $customerId)
+                ->where('orders.deleted_at', null);
+            if (!empty($excludedStatusIds)) {
+                $userUsageQuery->whereNotIn('orders.status_id', $excludedStatusIds);
+            }
+            $userUsage = $userUsageQuery->countAllResults();
+
+            if ($userUsage >= (int)$coupon['per_user_limit']) {
+                return ['is_valid' => false, 'error_message' => 'You have reached your usage limit for this coupon.'];
+            }
+        }
+
+        // First order only validation
+        if ((int)$coupon['first_order_only']) {
+            $orderCountQuery = $db->table('orders')
+                ->where('customer_id', $customerId)
+                ->where('deleted_at', null);
+            if (!empty($excludedStatusIds)) {
+                $orderCountQuery->whereNotIn('status_id', $excludedStatusIds);
+            }
+            $orderCount = $orderCountQuery->countAllResults();
+
+            if ($orderCount > 0) {
+                return ['is_valid' => false, 'error_message' => 'This coupon is only valid for your first order.'];
+            }
+        }
+
+        // Calculate discount amount
+        $discountAmount = 0;
+        if ($coupon['discount_type'] === 'percentage') {
+            $discountAmount = $subtotal * ((float)$coupon['discount_value'] / 100);
+            if ($coupon['max_discount'] !== null && $discountAmount > (float)$coupon['max_discount']) {
+                $discountAmount = (float)$coupon['max_discount'];
+            }
+        } else if ($coupon['discount_type'] === 'free_shipping') {
+            $discountAmount = $shippingCost;
+        } else {
+            $discountAmount = (float)$coupon['discount_value'];
+        }
+
+        if ($discountAmount > $subtotal) {
+            $discountAmount = $subtotal;
+        }
+
+        return [
+            'is_valid' => true,
+            'coupon_id' => $coupon['coupon_id'],
+            'code' => $coupon['code'],
+            'description' => $coupon['description'],
+            'discount_type' => $coupon['discount_type'],
+            'discount_value' => (float)$coupon['discount_value'],
+            'discount_amount' => $discountAmount
+        ];
     }
 }

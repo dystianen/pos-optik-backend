@@ -97,6 +97,11 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('count', 'Api\WishlistApiController::count');
   });
 
+  // COUPONS
+  $routes->group('coupons', function ($routes) {
+    $routes->get('', 'Api\CouponApiController::listActiveCoupons');
+  });
+
   // REVIEWS
   $routes->group('reviews', function ($routes) {
     $routes->get('', 'Api\ReviewApiController::index');
@@ -199,6 +204,13 @@ $routes->group('users', ['filter' => 'authGuard'], function ($routes) {
   $routes->get('form', 'UserController::form');
   $routes->post('save', 'UserController::save');
   $routes->post('delete/(:any)', 'UserController::delete/$1');
+});
+
+$routes->group('coupons', ['filter' => 'authGuard'], function ($routes) {
+  $routes->get('/', 'CouponController::webIndex');
+  $routes->get('form', 'CouponController::form');
+  $routes->post('save', 'CouponController::save');
+  $routes->post('delete/(:any)', 'CouponController::webDelete/$1');
 });
 
 $routes->group('offline-sales', ['filter' => 'authGuard'], function ($routes) {

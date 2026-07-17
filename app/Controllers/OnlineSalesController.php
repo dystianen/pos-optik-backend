@@ -243,6 +243,7 @@ class OnlineSalesController extends BaseController
                 orders.created_at AS order_date,
                 orders.grand_total,
                 orders.shipping_cost,
+                orders.coupon_discount,
                 orders.status_id,
                 orders.tracking_number,
                 orders.courier,
@@ -358,6 +359,12 @@ class OnlineSalesController extends BaseController
             ->get()
             ->getRowArray();
 
+        $appliedCoupon = $this->db->table('order_coupons')
+            ->join('coupons', 'coupons.coupon_id = order_coupons.coupon_id')
+            ->where('order_coupons.order_id', $orderId)
+            ->get()
+            ->getRowArray();
+
         return view('online_sales/v_detail', [
             'order'              => $order,
             'items'              => $items,
@@ -366,6 +373,7 @@ class OnlineSalesController extends BaseController
             'refundAccount'      => $refundAccount,
             'activeCancellation' => $activeCancellation,
             'activeRefund'       => $activeRefund,
+            'appliedCoupon'      => $appliedCoupon,
         ]);
     }
 }

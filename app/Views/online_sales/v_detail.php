@@ -73,12 +73,18 @@ function badgeStatus($status)
           <table class="table table-sm mt-2 mb-0">
             <tr>
               <td>Subtotal</td>
-              <td class="text-end">Rp <?= number_format($order['grand_total'] - $order['shipping_cost']) ?></td>
+              <td class="text-end">Rp <?= number_format($order['grand_total'] - $order['shipping_cost'] + ($order['coupon_discount'] ?? 0)) ?></td>
             </tr>
             <tr>
               <td>Shipping</td>
               <td class="text-end">Rp <?= number_format($order['shipping_cost']) ?></td>
             </tr>
+            <?php if (!empty($order['coupon_discount']) && $order['coupon_discount'] > 0): ?>
+              <tr class="text-success fw-bold">
+                <td>Coupon Discount (<?= esc($appliedCoupon['code'] ?? 'Discount') ?>)</td>
+                <td class="text-end">-Rp <?= number_format($order['coupon_discount']) ?></td>
+              </tr>
+            <?php endif; ?>
             <tr class="fw-bold">
               <td>Total</td>
               <td class="text-end">Rp <?= number_format($order['grand_total']) ?></td>
