@@ -476,6 +476,7 @@
       justify-content: center;
       background: rgba(0, 0, 0, .05);
       font-size: 14px;
+      flex-shrink: 0;
     }
 
     .notif-content {
