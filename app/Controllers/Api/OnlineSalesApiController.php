@@ -424,6 +424,68 @@ class OnlineSalesApiController extends BaseApiController
                     ]);
                     log_message('debug', 'PRESCRIPTION QUERY: ' . $this->orderItemPrescriptionModel->getLastQuery());
                 }
+
+                // 📦 DECREMENT STOCK IMMEDIATELY (RESERVE)
+                $qty = (int)$item['quantity'];
+                if ($item['variant_id']) {
+                    $this->db->table('product_variants')
+                        ->where('variant_id', $item['variant_id'])
+                        ->set('stock', 'stock - ' . $qty, false)
+                        ->update();
+
+                    // Sync total product stock
+                    $this->db->query("
+                        UPDATE products p
+                        SET product_stock = (
+                            SELECT COALESCE(SUM(stock), 0)
+                            FROM product_variants
+                            WHERE product_id = p.product_id
+                        )
+                        WHERE p.product_id = ?
+                    ", [$item['product_id']]);
+
+                    // ✅ Cek stok variant, buat notifikasi jika kurang dari 5
+                    $product = $this->productModel->find($item['product_id']);
+                    $variant = $this->productVariantModel->find($item['variant_id']);
+                    if ($variant && (int)$variant['stock'] < 5) {
+                        $this->notificationModel->addNotification(
+                            'low_stock',
+                            "Stock for '{$product['product_name']} ({$variant['variant_name']})' is low at {$variant['stock']}",
+                            $variant['variant_id']
+                        );
+                    }
+                } else {
+                    $this->db->table('products')
+                        ->where('product_id', $item['product_id'])
+                        ->set('product_stock', 'product_stock - ' . $qty, false)
+                        ->update();
+
+                    // ✅ Cek stok product, buat notifikasi jika kurang dari 5
+                    $product = $this->productModel->find($item['product_id']);
+                    if ($product && (int)$product['product_stock'] < 5) {
+                        $this->notificationModel->addNotification(
+                            'low_stock',
+                            "Stock for '{$product['product_name']}' is low at {$product['product_stock']}",
+                            $product['product_id']
+                        );
+                    }
+                }
+
+                // 📦 LOG INVENTORY TRANSACTION (OUT)
+                $this->InventoryTransactionModel->insert([
+                    'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                    'user_id'                  => null, // Submitted by customer, no admin user session
+                    'product_id'               => $item['product_id'],
+                    'variant_id'               => $item['variant_id'] ?: null,
+                    'transaction_type'         => 'out',
+                    'reference_type'           => 'order',
+                    'reference_id'             => $orderId,
+                    'quantity'                 => $qty,
+                    'transaction_date'         => date('Y-m-d H:i:s'),
+                    'description'              => 'Online order submitted (Pending payment)',
+                    'created_at'               => date('Y-m-d H:i:s'),
+                    'updated_at'               => date('Y-m-d H:i:s')
+                ]);
             }
 
             $cartItemIds = array_column($summary['items'], 'cart_item_id');
@@ -1178,69 +1240,45 @@ class OnlineSalesApiController extends BaseApiController
                 'status_id' => $this->statusModel->getIdByCode(OrderStatus::PROCESSING)
             ]);
 
-            // 3️⃣ Ambil item order
-            $items = $this->orderItemModel
-                ->where('order_id', $orderId)
-                ->findAll();
+            // 3️⃣ Update existing inventory transactions to 'Order payment approved' and set the admin ID
+            $adminId = $session->get('id') ?? $session->get('admin_id') ?? 'system';
+            
+            $db = db_connect();
+            $this->InventoryTransactionModel
+                ->where('reference_id', $orderId)
+                ->where('reference_type', 'order')
+                ->where('transaction_type', 'out')
+                ->set([
+                    'user_id'          => $adminId,
+                    'description'      => 'Order payment approved',
+                    'transaction_date' => date('Y-m-d H:i:s'),
+                    'updated_at'       => date('Y-m-d H:i:s')
+                ])
+                ->update();
 
-            foreach ($items as $item) {
-                // 4️⃣ Insert inventory OUT
-                $this->InventoryTransactionModel->insert([
-                    'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
-                    'user_id'                  => $session->get('id'),
-                    'product_id'               => $item['product_id'],
-                    'variant_id'               => $item['variant_id'],
-                    'transaction_type'         => 'out',
-                    'reference_type'           => 'order',
-                    'reference_id'             => $orderId,
-                    'quantity'                 => (int)$item['quantity'],
-                    'transaction_date'         => date('Y-m-d H:i:s'),
-                    'description'              => 'Order payment approved'
-                ]);
+            $affectedRows = $db->affectedRows();
 
-                // 5️⃣ Reduce stock
-                if ($item['variant_id']) {
-                    $this->db->table('product_variants')
-                        ->where('variant_id', $item['variant_id'])
-                        ->set('stock', 'stock - ' . (int)$item['quantity'], false)
-                        ->update();
+            // Fallback: jika order lama tidak memiliki record transaksi saat checkout, insert record baru (tanpa memotong stok lagi untuk keamanan)
+            if ($affectedRows === 0) {
+                $items = $this->orderItemModel
+                    ->where('order_id', $orderId)
+                    ->findAll();
 
-                    // sync total product stock
-                    $this->db->query("
-                        UPDATE products p
-                        SET product_stock = (
-                            SELECT COALESCE(SUM(stock), 0)
-                            FROM product_variants
-                            WHERE product_id = p.product_id
-                        )
-                        WHERE p.product_id = ?
-                    ", [$item['product_id']]);
-
-                    // ✅ Cek stok variant, buat notifikasi jika kurang dari 5
-                    $product = $this->productModel->find($item['product_id']); // Ambil dari productModel bukan productVariantModel
-                    $variant = $this->productVariantModel->find($item['variant_id']);
-                    if ($variant && (int)$variant['stock'] < 5) {
-                        $this->notificationModel->addNotification(
-                            'low_stock',
-                            "Stock for '{$product['product_name']} ({$variant['variant_name']})' is low at {$variant['stock']}",
-                            $variant['variant_id']
-                        );
-                    }
-                } else {
-                    $this->db->table('products')
-                        ->where('product_id', $item['product_id'])
-                        ->set('product_stock', 'product_stock - ' . (int)$item['quantity'], false)
-                        ->update();
-
-                    // ✅ Cek stok product, buat notifikasi jika kurang dari 5
-                    $product = $this->productModel->find($item['product_id']);
-                    if ($product['product_stock'] < 5) {
-                        $this->notificationModel->addNotification(
-                            'low_stock',
-                            "Stock for '{$product['product_name']}' is low at {$product['product_stock']}",
-                            $product['product_id']
-                        );
-                    }
+                foreach ($items as $item) {
+                    $this->InventoryTransactionModel->insert([
+                        'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                        'user_id'                  => $adminId,
+                        'product_id'               => $item['product_id'],
+                        'variant_id'               => $item['variant_id'] ?: null,
+                        'transaction_type'         => 'out',
+                        'reference_type'           => 'order',
+                        'reference_id'             => $orderId,
+                        'quantity'                 => (int)$item['quantity'],
+                        'transaction_date'         => date('Y-m-d H:i:s'),
+                        'description'              => 'Order payment approved (Fallback - No original transaction found)',
+                        'created_at'               => date('Y-m-d H:i:s'),
+                        'updated_at'               => date('Y-m-d H:i:s')
+                    ]);
                 }
             }
 
