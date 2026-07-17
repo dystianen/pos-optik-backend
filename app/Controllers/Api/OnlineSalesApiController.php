@@ -323,7 +323,7 @@ class OnlineSalesApiController extends BaseApiController
             ]);
             $orderId = $this->orderModel->getInsertID();
 
-            $this->notificationModel->addNotification('new_order', "Pesanan baru dari {$customerName}", $orderId);
+            $this->notificationModel->addNotification('new_order', "New online order from {$customerName}", $orderId);
             log_message('debug', 'ORDER QUERY: ' . $this->orderModel->getLastQuery());
 
             log_message('debug', 'INSERT order_shipping_addresses');
@@ -386,10 +386,6 @@ class OnlineSalesApiController extends BaseApiController
 
             // 🔥 TRIGGER REAL-TIME UPDATE
             \App\Libraries\Realtime::triggerUpdate('order-online-new');
-
-            // 🔔 ADD NOTIFICATION
-            $customerName = $this->getAuthenticatedCustomerName();
-            $this->notificationModel->addNotification('new_order', "New online order from {$customerName}", $orderId);
 
             return $this->successResponse([
                 'order_id' => $orderId,
@@ -501,7 +497,7 @@ class OnlineSalesApiController extends BaseApiController
                 'status_id' => $this->statusModel->getIdByCode(OrderStatus::WAITING_CONFIRMATION), // contoh: WAITING_CONFIRMATION
             ]);
 
-            $this->notificationModel->addNotification('new_order', "Pembayaran baru dari {$customerName}", $orderId);
+            $this->notificationModel->addNotification('new_order', "New payment from {$customerName}", $orderId);
 
             $db->transComplete();
 
@@ -1176,7 +1172,7 @@ class OnlineSalesApiController extends BaseApiController
                     if ($variant && (int)$variant['stock'] < 5) {
                         $this->notificationModel->addNotification(
                             'low_stock',
-                            "Stok barang '{$product['product_name']} ({$variant['variant_name']})' tinggal {$variant['stock']}",
+                            "Stock for '{$product['product_name']} ({$variant['variant_name']})' is low at {$variant['stock']}",
                             $variant['variant_id']
                         );
                     }
@@ -1191,7 +1187,7 @@ class OnlineSalesApiController extends BaseApiController
                     if ($product['product_stock'] < 5) {
                         $this->notificationModel->addNotification(
                             'low_stock',
-                            "Stok barang '{$product['product_name']}' tinggal {$product['product_stock']}",
+                            "Stock for '{$product['product_name']}' is low at {$product['product_stock']}",
                             $product['product_id']
                         );
                     }

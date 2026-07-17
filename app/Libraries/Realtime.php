@@ -34,7 +34,20 @@ class Realtime
         }
 
         try {
-            $pusher = new Pusher($key, $secret, $appId, $options);
+            $verify = env('pusher.verify');
+            if ($verify === null) {
+                $verify = true;
+            } else {
+                if (is_string($verify)) {
+                    $verify = filter_var($verify, FILTER_VALIDATE_BOOLEAN);
+                }
+            }
+
+            $httpClient = new \GuzzleHttp\Client([
+                'verify' => $verify,
+            ]);
+
+            $pusher = new Pusher($key, $secret, $appId, $options, $httpClient);
 
             // 3. Trigger Event
             $pusher->trigger('pos-channel', 'dashboard-update', [

@@ -428,7 +428,7 @@ class OfflineSalesController extends BaseController
                     if ($updatedVariant && (int)$updatedVariant['stock'] === 0) {
                         $this->notificationModel->addNotification(
                             'stock_empty',
-                            'Stok variant "' . $updatedVariant['variant_name'] . '" telah habis',
+                            'Stock for variant "' . $updatedVariant['variant_name'] . '" is out of stock',
                             $productId
                         );
                     }
@@ -465,7 +465,7 @@ class OfflineSalesController extends BaseController
                     if ($updatedProduct && (int)$updatedProduct['product_stock'] === 0) {
                         $this->notificationModel->addNotification(
                             'stock_empty',
-                            'Stok produk "' . $updatedProduct['product_name'] . '" telah habis',
+                            'Stock for product "' . $updatedProduct['product_name'] . '" is out of stock',
                             $productId
                         );
                     }

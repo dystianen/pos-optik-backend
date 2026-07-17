@@ -337,15 +337,15 @@ class RefundApiController extends BaseApiController
         return $this->errorResponse('Failed to update shipping info');
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-return-shipped');
+
     return $this->successResponse([
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_RETURN_SHIPPED,
         'courier' => $courier,
         'tracking_number' => $trackingNumber
     ], 'Return shipping information submitted successfully');
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-return-shipped');
   }
 
   // =====================================================
@@ -406,6 +406,9 @@ class RefundApiController extends BaseApiController
       return $this->errorResponse('Return approve refund failed');
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-approved');
+
     $response = [
       'refund_id' => $refundId,
       'order_id' => $refund['order_id'],
@@ -414,9 +417,6 @@ class RefundApiController extends BaseApiController
     ];
 
     return $this->successResponse($response, 'Refund approve successfully');
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-approved');
   }
 
   public function adminReject($refundId)
@@ -439,6 +439,9 @@ class RefundApiController extends BaseApiController
       return $this->errorResponse('Reject refund failed');
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-rejected');
+
     $response = [
       'refund_id' => $refundId,
       'order_id' => $refund['order_id'],
@@ -446,9 +449,6 @@ class RefundApiController extends BaseApiController
       'admin_note' => $adminNote,
     ];
     return $this->successResponse($response, 'Refund reject successfully');
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-rejected');
   }
 
   public function adminReceive($refundId)
@@ -466,13 +466,13 @@ class RefundApiController extends BaseApiController
         return $this->errorResponse('Failed to mark as return received');
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-item-received');
+
     return $this->successResponse([
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_RETURN_RECEIVED
     ], 'Refund item marked as received');
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-item-received');
   }
 
   public function adminFinalApprove($refundId)
@@ -490,13 +490,13 @@ class RefundApiController extends BaseApiController
         return $this->errorResponse('Final approval failed');
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-final-approved');
+
     return $this->successResponse([
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_APPROVED
     ], 'Refund approved. You can now proceed to process the payment.');
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-final-approved');
   }
 
   public function adminRefund($refundId)
@@ -558,14 +558,14 @@ class RefundApiController extends BaseApiController
         $statusLabel = 'Refunded (Status update failed)';
     }
 
+    // 🔥 TRIGGER REAL-TIME UPDATE
+    \App\Libraries\Realtime::triggerUpdate('refund-completed');
+
     return $this->successResponse([
         'refund_id' => $refundId,
         'status' => OrderRefundModel::STATUS_REFUNDED,
         'order_status' => $statusCode ?? null
     ], 'Refund marked as completed and order status updated to ' . $statusLabel);
-
-    // 🔥 TRIGGER REAL-TIME UPDATE
-    \App\Libraries\Realtime::triggerUpdate('refund-completed');
   }
 
   // =====================================================

@@ -14,7 +14,7 @@
 # ENVIRONMENT
 #--------------------------------------------------------------------
 
-CI_ENVIRONMENT = development
+CI_ENVIRONMENT = production
 JWT_SECRET_KEY=devyus_pos_optik
 
 #--------------------------------------------------------------------
@@ -42,7 +42,7 @@ R2_PUBLIC_URL="https://cdn.adefoodwaste.biz.id"
 # DATABASE
 #--------------------------------------------------------------------
 
-database.default.hostname = 127.0.0.1
+database.default.hostname = localhost
 database.default.database = pos_optik
 database.default.username = root
 database.default.password = 
@@ -152,6 +152,7 @@ database.default.port = 3306
 # CURLRequest
 #--------------------------------------------------------------------
 
+# Production pusher.verify = true
 # curlrequest.shareOptions = false
 #--------------------------------------------------------------------
 # PUSHER
@@ -160,3 +161,4 @@ pusher.appId = '2143679'
 pusher.key = 'cc156dfb5c5502018a91'
 pusher.secret = 'f78b9709b5858f53bd77'
 pusher.cluster = 'ap1'
+pusher.verify = false
