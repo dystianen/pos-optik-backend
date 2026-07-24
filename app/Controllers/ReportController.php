@@ -5,9 +5,10 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use OpenSpout\Writer\XLSX\Writer;
+use OpenSpout\Common\Entity\Style\Color;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Common\Entity\Row;
 
 class ReportController extends BaseController
 {
@@ -218,48 +219,45 @@ class ReportController extends BaseController
             mkdir(WRITEPATH . 'uploads/', 0777, true);
         }
 
-        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer = new Writer();
         $writer->openToFile($filePath);
 
-        $titleStyle = (new StyleBuilder())
+        $titleStyle = (new Style())
             ->setFontBold()
             ->setFontSize(16)
-            ->setFontColor(Color::rgb(33, 37, 41))
-            ->build();
+            ->setFontColor(Color::rgb(33, 37, 41));
 
-        $headerStyle = (new StyleBuilder())
+        $headerStyle = (new Style())
             ->setFontBold()
             ->setFontSize(11)
             ->setBackgroundColor(Color::rgb(47, 184, 170))
-            ->setFontColor(Color::WHITE)
-            ->build();
+            ->setFontColor(Color::WHITE);
 
-        $subHeaderStyle = (new StyleBuilder())
+        $subHeaderStyle = (new Style())
             ->setFontBold()
-            ->setBackgroundColor(Color::rgb(241, 243, 245))
-            ->build();
+            ->setBackgroundColor(Color::rgb(241, 243, 245));
 
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Inventory Summary');
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['OPTIKERS INVENTORY REPORT'], $titleStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Transaction Type:', $typeText]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Downloaded At:', date('d M Y H:i')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
+        $writer->addRow(Row::fromValues(['OPTIKERS INVENTORY REPORT'], $titleStyle));
+        $writer->addRow(Row::fromValues(['Transaction Type:', $typeText]));
+        $writer->addRow(Row::fromValues(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
+        $writer->addRow(Row::fromValues(['Downloaded At:', date('d M Y H:i')]));
+        $writer->addRow(Row::fromValues(['']));
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Summary Metrics', 'Value'], $subHeaderStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Transactions', number_format($summary['total_transactions'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total In Quantity', number_format($summary['total_in'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Out Quantity', number_format($summary['total_out'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Net Quantity', number_format($summary['net_quantity'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Average Quantity per Transaction', number_format($summary['average_quantity'], 2, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(Row::fromValues(['Total Transactions', number_format($summary['total_transactions'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Total In Quantity', number_format($summary['total_in'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Total Out Quantity', number_format($summary['total_out'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Net Quantity', number_format($summary['net_quantity'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Average Quantity per Transaction', number_format($summary['average_quantity'], 2, ',', '.')]));
 
         $writer->addNewSheetAndMakeItCurrent();
         $writer->getCurrentSheet()->setName('Transaction Details');
 
         $headers = ['No', 'Transaction ID', 'Date', 'Transaction Type', 'Reference Type', 'Reference ID', 'Product', 'Variant', 'User', 'Quantity', 'Description'];
-        $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
+        $writer->addRow(Row::fromValues($headers, $headerStyle));
 
         $refLabels = [
             'order'      => 'ORDER',
@@ -291,7 +289,7 @@ class ReportController extends BaseController
                 $qty,
                 $transaction['description'] ?? '-',
             ];
-            $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
+            $writer->addRow(Row::fromValues($rowData));
         }
 
         $writer->close();
@@ -527,54 +525,51 @@ class ReportController extends BaseController
             mkdir(WRITEPATH . 'uploads/', 0777, true);
         }
 
-        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer = new Writer();
         $writer->openToFile($filePath);
 
         // Styling
-        $titleStyle = (new StyleBuilder())
+        $titleStyle = (new Style())
             ->setFontBold()
             ->setFontSize(16)
-            ->setFontColor(Color::rgb(33, 37, 41))
-            ->build();
+            ->setFontColor(Color::rgb(33, 37, 41));
 
-        $headerStyle = (new StyleBuilder())
+        $headerStyle = (new Style())
             ->setFontBold()
             ->setFontSize(11)
             ->setBackgroundColor(Color::rgb(47, 184, 170))
-            ->setFontColor(Color::WHITE)
-            ->build();
+            ->setFontColor(Color::WHITE);
 
-        $subHeaderStyle = (new StyleBuilder())
+        $subHeaderStyle = (new Style())
             ->setFontBold()
-            ->setBackgroundColor(Color::rgb(241, 243, 245))
-            ->build();
+            ->setBackgroundColor(Color::rgb(241, 243, 245));
 
         // 1. SALES SUMMARY SHEET
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Sales Summary');
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['OPTIKERS SALES REPORT'], $titleStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Category:', $categoryText]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Downloaded At:', date('d M Y H:i')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
+        $writer->addRow(Row::fromValues(['OPTIKERS SALES REPORT'], $titleStyle));
+        $writer->addRow(Row::fromValues(['Category:', $categoryText]));
+        $writer->addRow(Row::fromValues(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
+        $writer->addRow(Row::fromValues(['Downloaded At:', date('d M Y H:i')]));
+        $writer->addRow(Row::fromValues(['']));
 
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Summary Metrics', 'Value'], $subHeaderStyle));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Net Income (Completed Sales)', 'Rp ' . number_format($summary['completed_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Cancelled Sales', 'Rp ' . number_format($summary['cancelled_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Refunded Sales', 'Rp ' . number_format($summary['refunded_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Pending/Unpaid Sales', 'Rp ' . number_format($summary['pending_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Gross Sales Revenue', 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Transactions Volume', number_format($summary['total_transactions'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Total Items Sold (Gross)', number_format($summary['total_items'], 0, ',', '.')]));
-        $writer->addRow(WriterEntityFactory::createRowFromArray(['Average Transaction Value', 'Rp ' . number_format($summary['average_value'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(Row::fromValues(['Net Income (Completed Sales)', 'Rp ' . number_format($summary['completed_revenue'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Cancelled Sales', 'Rp ' . number_format($summary['cancelled_revenue'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Refunded Sales', 'Rp ' . number_format($summary['refunded_revenue'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Pending/Unpaid Sales', 'Rp ' . number_format($summary['pending_revenue'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Gross Sales Revenue', 'Rp ' . number_format($summary['total_revenue'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Total Transactions Volume', number_format($summary['total_transactions'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Total Items Sold (Gross)', number_format($summary['total_items'], 0, ',', '.')]));
+        $writer->addRow(Row::fromValues(['Average Transaction Value', 'Rp ' . number_format($summary['average_value'], 0, ',', '.')]));
 
         // 2. TRANSACTION DETAILS SHEET
         $writer->addNewSheetAndMakeItCurrent();
         $writer->getCurrentSheet()->setName('Transaction Details');
 
         $headers = ['No', 'Transaction ID', 'Date', 'Category', 'Customer', 'Email', 'Total Items', 'Grand Total', 'Status'];
-        $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
+        $writer->addRow(Row::fromValues($headers, $headerStyle));
 
         $no = 1;
         foreach ($orders as $order) {
@@ -589,7 +584,7 @@ class ReportController extends BaseController
                 'Rp ' . number_format($order['grand_total'], 0, ',', '.'),
                 $order['status_name'] ?? 'Completed'
             ];
-            $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
+            $writer->addRow(Row::fromValues($rowData));
         }
 
         $writer->close();

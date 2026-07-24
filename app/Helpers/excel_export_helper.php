@@ -1,8 +1,9 @@
 <?php
 
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use OpenSpout\Writer\XLSX\Writer;
+use OpenSpout\Common\Entity\Style\Color;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Common\Entity\Row;
 
 if (!function_exists('createTransactionSheetSpout')) {
   function createTransactionSheetSpout($writer, $orders, $sheetName = 'Laporan Transaksi')
@@ -11,16 +12,15 @@ if (!function_exists('createTransactionSheetSpout')) {
     $sheet->setName($sheetName);
 
     // Header Style
-    $headerStyle = (new StyleBuilder())
+    $headerStyle = (new Style())
       ->setFontBold()
       ->setFontSize(12)
       ->setBackgroundColor(Color::rgb(68, 114, 196))
-      ->setFontColor(Color::WHITE)
-      ->build();
+      ->setFontColor(Color::WHITE);
 
     // Header Row
     $headers = ['No', 'Order ID', 'Tanggal', 'Jam', 'Customer', 'Email', 'Total Item', 'Grand Total', 'Status'];
-    $headerCells = WriterEntityFactory::createRowFromArray($headers, $headerStyle);
+    $headerCells = Row::fromValues($headers, $headerStyle);
     $writer->addRow($headerCells);
 
     // ✅ SET COLUMN WIDTH (dalam karakter)
@@ -44,7 +44,7 @@ if (!function_exists('createTransactionSheetSpout')) {
         $order['status_name']                               // Status (15)
       ];
 
-      $row = WriterEntityFactory::createRowFromArray($rowData);
+      $row = Row::fromValues($rowData);
       $writer->addRow($row);
     }
   }
@@ -53,16 +53,15 @@ if (!function_exists('createTransactionSheetSpout')) {
 if (!function_exists('createSummarySheetSpout')) {
   function createSummarySheetSpout($writer, $orders, $title = 'RINGKASAN PENJUALAN IN-STORE')
   {
-    $boldStyle = (new StyleBuilder())->setFontBold()->setFontSize(12)->build();
-    $headerStyle = (new StyleBuilder())
+    $boldStyle = (new Style())->setFontBold()->setFontSize(12);
+    $headerStyle = (new Style())
       ->setFontBold()
-      ->setBackgroundColor(Color::rgb(217, 225, 242))
-      ->build();
+      ->setBackgroundColor(Color::rgb(217, 225, 242));
 
     // Title
-    $titleRow = WriterEntityFactory::createRowFromArray([$title], $boldStyle);
+    $titleRow = Row::fromValues([$title], $boldStyle);
     $writer->addRow($titleRow);
-    $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
+    $writer->addRow(Row::fromValues(['']));
 
     // Calculate summaries
     $totalTransaksi = count($orders);
@@ -71,7 +70,7 @@ if (!function_exists('createSummarySheetSpout')) {
     $avgTransaction = $totalTransaksi > 0 ? $totalRevenue / $totalTransaksi : 0;
 
     // Summary Header
-    $summaryHeader = WriterEntityFactory::createRowFromArray(['Metrik', 'Nilai'], $headerStyle);
+    $summaryHeader = Row::fromValues(['Metrik', 'Nilai'], $headerStyle);
     $writer->addRow($summaryHeader);
 
     // Summary data
@@ -83,13 +82,13 @@ if (!function_exists('createSummarySheetSpout')) {
     ];
 
     foreach ($summaryData as $data) {
-      $row = WriterEntityFactory::createRowFromArray($data);
+      $row = Row::fromValues($data);
       $writer->addRow($row);
     }
 
     // Penjualan per Hari
-    $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
-    $writer->addRow(WriterEntityFactory::createRowFromArray(['PENJUALAN PER HARI'], $boldStyle));
+    $writer->addRow(Row::fromValues(['']));
+    $writer->addRow(Row::fromValues(['PENJUALAN PER HARI'], $boldStyle));
 
     $salesByDate = [];
     foreach ($orders as $order) {
@@ -101,7 +100,7 @@ if (!function_exists('createSummarySheetSpout')) {
       $salesByDate[$date]['total'] += $order['grand_total'];
     }
 
-    $dateHeader = WriterEntityFactory::createRowFromArray(
+    $dateHeader = Row::fromValues(
       ['Tanggal', 'Jumlah Transaksi', 'Total Penjualan'],
       $headerStyle
     );
@@ -113,7 +112,7 @@ if (!function_exists('createSummarySheetSpout')) {
         number_format($data['count'], 0, ',', '.'),
         'Rp ' . number_format($data['total'], 0, ',', '.')
       ];
-      $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
+      $writer->addRow(Row::fromValues($rowData));
     }
   }
 }
@@ -121,17 +120,16 @@ if (!function_exists('createSummarySheetSpout')) {
 if (!function_exists('createTopCustomersSheetSpout')) {
   function createTopCustomersSheetSpout($writer, $orders, $limit = 20)
   {
-    $boldStyle = (new StyleBuilder())->setFontBold()->setFontSize(12)->build();
-    $headerStyle = (new StyleBuilder())
+    $boldStyle = (new Style())->setFontBold()->setFontSize(12);
+    $headerStyle = (new Style())
       ->setFontBold()
       ->setBackgroundColor(Color::rgb(112, 173, 71))
-      ->setFontColor(Color::WHITE)
-      ->build();
+      ->setFontColor(Color::WHITE);
 
     // Title
-    $title = WriterEntityFactory::createRowFromArray(["TOP {$limit} CUSTOMERS"], $boldStyle);
+    $title = Row::fromValues(["TOP {$limit} CUSTOMERS"], $boldStyle);
     $writer->addRow($title);
-    $writer->addRow(WriterEntityFactory::createRowFromArray(['']));
+    $writer->addRow(Row::fromValues(['']));
 
     // Group by customer
     $customerSales = [];
@@ -157,7 +155,7 @@ if (!function_exists('createTopCustomersSheetSpout')) {
 
     // Header
     $headers = ['Rank', 'Customer Name', 'Email', 'Total Transaksi', 'Total Pembelian'];
-    $writer->addRow(WriterEntityFactory::createRowFromArray($headers, $headerStyle));
+    $writer->addRow(Row::fromValues($headers, $headerStyle));
 
     // Data
     $rank = 1;
@@ -169,7 +167,7 @@ if (!function_exists('createTopCustomersSheetSpout')) {
         number_format($customer['count'], 0, ',', '.'),
         'Rp ' . number_format($customer['total'], 0, ',', '.')
       ];
-      $writer->addRow(WriterEntityFactory::createRowFromArray($rowData));
+      $writer->addRow(Row::fromValues($rowData));
     }
   }
 }
@@ -183,7 +181,7 @@ if (!function_exists('exportSalesExcelSpout')) {
       mkdir(WRITEPATH . 'uploads/', 0777, true);
     }
 
-    $writer = WriterEntityFactory::createXLSXWriter();
+    $writer = new Writer();
     $writer->openToFile($filePath);
 
     $title = $type === 'in-store' ? 'RINGKASAN PENJUALAN IN-STORE' : 'RINGKASAN PENJUALAN ONLINE';

@@ -13,7 +13,7 @@
         "php": "^7.4 || ^8.0",
         "agungsugiarto/codeigniter4-cors": "^3.0",
         "aws/aws-sdk-php": "^3.363",
-        "box/spout": "^3.3",
+        "openspout/openspout": "^4.0 || ^5.0",
         "codeigniter4/framework": "^4.0",
         "dompdf/dompdf": "^3.1",
         "firebase/php-jwt": "^7.0",
