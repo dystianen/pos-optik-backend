@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `cart_items` (
   CONSTRAINT `cart_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.cart_items: ~20 rows (approximately)
+-- Dumping data for table pos_optik.cart_items: ~24 rows (approximately)
 INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0978cce3-8d1b-482e-8e68-e9d1adce0d1a', 'bd3690dd-58c6-4376-b391-c64780fdf849', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 3, 3500000.00, '2026-07-15 11:47:42', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
 	('0ec3270b-5849-4a9b-a8b1-b69f3f7d6576', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 5, 1350000.00, '2026-07-15 15:51:42', '2026-07-15 15:52:00', '2026-07-15 15:52:00'),
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `coupons` (
   UNIQUE KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.coupons: ~0 rows (approximately)
+-- Dumping data for table pos_optik.coupons: ~5 rows (approximately)
 INSERT INTO `coupons` (`coupon_id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_discount`, `start_date`, `end_date`, `usage_limit`, `per_user_limit`, `is_active`, `first_order_only`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('1fbc8b27-28cc-4c37-b449-75f57a1bf812', 'PROMO10', 'Get a 10% discount on your transaction. Maximum discount is Rp 50,000.', 'percentage', 10.00, 100000.00, 50000.00, '2026-07-10 14:11:00', '2027-07-17 14:11:00', 100, 2, 1, 0, '2026-07-17 14:11:53', '2026-07-17 14:25:40', NULL),
 	('207d5ead-c1e9-4fea-8a6d-4bab47bd55dc', 'FIXED50K', 'Direct Rp 50.000 discount with a minimum spend of Rp 200.000.', 'fixed', 50000.00, 200000.00, NULL, '2026-07-10 14:29:43', '2027-07-17 14:29:43', 50, 1, 1, 0, '2026-07-17 14:29:43', '2026-07-17 14:29:43', NULL),
@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `inventory_transactions` (
   CONSTRAINT `inventory_transactions_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.inventory_transactions: ~83 rows (approximately)
+-- Dumping data for table pos_optik.inventory_transactions: ~81 rows (approximately)
 INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `variant_id`, `product_id`, `transaction_type`, `reference_type`, `reference_id`, `quantity`, `transaction_date`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('018ae11a-a7ae-4daa-9726-bc5fb6e9b579', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'in', 'initial', '', 110, '2026-07-16 10:48:37', '', '2026-07-16 10:48:37', '2026-07-16 11:29:47', NULL),
 	('04212621-6431-4a4f-8750-dd40c8f35375', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'in', 'initial', '', 100, '2026-07-15 10:39:43', '', '2026-07-15 10:39:43', '2026-07-15 11:30:26', '2026-07-15 11:30:26'),
@@ -417,7 +417,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.notifications: ~52 rows (approximately)
+-- Dumping data for table pos_optik.notifications: ~54 rows (approximately)
 INSERT INTO `notifications` (`notification_id`, `type`, `message`, `related_id`, `is_read`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0769f703-3f4d-4971-a41d-13e69557b4cc', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:40', '2026-07-15 16:15:13', NULL),
 	('0bcef56a-3945-4a3c-896b-4249ee57885b', 'new_order', 'New online order from Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:35', '2026-07-15 16:15:13', NULL),
@@ -504,7 +504,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   CONSTRAINT `orders_status_id_foreign` FOREIGN KEY (`status_id`) REFERENCES `order_statuses` (`status_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.orders: ~26 rows (approximately)
+-- Dumping data for table pos_optik.orders: ~28 rows (approximately)
 INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_id`, `shipping_cost`, `tracking_number`, `courier`, `shipped_at`, `coupon_discount`, `grand_total`, `order_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0a50b966-bca0-43ea-a0e8-6f2c31b01440', 'cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'cc46d2a8-436c-42fc-96a1-ffb537dbabed', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1773000', 'online', '2026-07-17 15:27:47', '2026-07-17 15:37:24', NULL),
 	('0e5f09ef-3187-433d-b4d2-40acdb2697c3', '29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '135000', 'offline', '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
@@ -581,7 +581,7 @@ CREATE TABLE IF NOT EXISTS `order_coupons` (
   CONSTRAINT `order_coupons_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_coupons: ~0 rows (approximately)
+-- Dumping data for table pos_optik.order_coupons: ~2 rows (approximately)
 INSERT INTO `order_coupons` (`order_coupon_id`, `order_id`, `coupon_id`, `discount_amount`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('8bac898b-be38-48d0-a46c-4690bd321e23', '366987fd-2461-4448-997c-e81097f0ccb9', '5d015baa-52eb-441a-b158-bf4b9c987b00', 100000.00, '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
 	('9f66f5e3-3068-4b4e-9cf3-86ae361a75ab', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL);
@@ -606,7 +606,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   CONSTRAINT `order_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_items: ~29 rows (approximately)
+-- Dumping data for table pos_optik.order_items: ~28 rows (approximately)
 INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0b64f3b6-b047-47db-8f9f-3bea29295706', '9e700049-24e0-4d68-8c07-9914401517f0', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 2, 9676000.00, '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
 	('0f107b49-3876-4951-b3c2-8a6a3efe17dd', '366987fd-2461-4448-997c-e81097f0ccb9', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 1, 1415500.00, '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
@@ -698,7 +698,7 @@ CREATE TABLE IF NOT EXISTS `order_refunds` (
   CONSTRAINT `order_refunds_user_refund_account_id_foreign` FOREIGN KEY (`user_refund_account_id`) REFERENCES `user_refund_accounts` (`user_refund_account_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_refunds: ~7 rows (approximately)
+-- Dumping data for table pos_optik.order_refunds: ~6 rows (approximately)
 INSERT INTO `order_refunds` (`order_refund_id`, `order_id`, `user_refund_account_id`, `refund_amount`, `reason`, `additional_note`, `status`, `refund_type`, `admin_note`, `evidence_url`, `return_courier`, `return_tracking_number`, `return_shipped_at`, `processed_by`, `created_at`, `updated_at`, `completed_at`, `deleted_at`) VALUES
 	('3ea8052b-4d20-4770-a3e7-4e8552518e71', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 155000.00, 'Cancellation: Wrong order', 'ddsds', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 15:51:20', '2026-07-15 15:51:20', NULL, NULL),
 	('537191fd-d803-4a86-be01-e124a5d1f949', '52672a09-1262-4164-8331-fbbf1374d393', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 2320000.00, 'Cancellation: Changed my mind', 'gfgfgfg', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 15:40:59', '2026-07-15 15:40:59', NULL, NULL),
@@ -745,7 +745,7 @@ CREATE TABLE IF NOT EXISTS `order_shipping_addresses` (
   CONSTRAINT `order_shipping_addresses_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_shipping_addresses: ~12 rows (approximately)
+-- Dumping data for table pos_optik.order_shipping_addresses: ~11 rows (approximately)
 INSERT INTO `order_shipping_addresses` (`osa_id`, `order_id`, `recipient_name`, `phone`, `address`, `city`, `province`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('01f7902b-dc85-47b2-be40-f8c7a10286da', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:15:37', '2026-07-15 15:15:37', NULL),
 	('03d3621e-18b3-4e9d-828a-7596dab40b17', '52672a09-1262-4164-8331-fbbf1374d393', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:39:54', '2026-07-15 15:39:54', NULL),
@@ -805,7 +805,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   CONSTRAINT `payments_payment_method_id_foreign` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.payments: ~23 rows (approximately)
+-- Dumping data for table pos_optik.payments: ~22 rows (approximately)
 INSERT INTO `payments` (`payment_id`, `order_id`, `payment_method_id`, `amount`, `proof`, `paid_at`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('113daf06-14af-4be8-8709-b555e0053caa', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'e2914263-7e0f-4e3c-9425-0958c9581215', 155000.00, 'https://cdn.adefoodwaste.biz.id/payments/a7698eb9-fc91-4b8b-bcfa-a0b2a772af96/1784087096_365f721e4a283a26b11b.png', '2026-07-15 10:44:57', '2026-07-15 10:44:57', '2026-07-15 10:44:57', NULL),
 	('285bfebe-ccb8-47f8-983d-573a45efb679', 'a6734433-cdae-4ec3-ac77-6ece69aeb338', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 5000000.00, NULL, '2026-07-15 09:59:44', '2026-07-15 09:59:44', '2026-07-15 09:59:44', NULL),
@@ -2082,9 +2082,10 @@ CREATE TABLE IF NOT EXISTS `wishlists` (
   CONSTRAINT `wishlists_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.wishlists: ~3 rows (approximately)
+-- Dumping data for table pos_optik.wishlists: ~4 rows (approximately)
 INSERT INTO `wishlists` (`wishlist_id`, `customer_id`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('4113c06b-3637-4b07-988b-d1731fb8ab05', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'c1295fb3-81fe-40c8-90d7-0fd8f801221f', '2026-07-16 11:29:58', '2026-07-16 11:29:59', '2026-07-16 11:29:59'),
+	('5421145d-be3e-4889-a426-a5dcff5bb517', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', '2026-07-20 15:48:58', '2026-07-20 15:49:12', '2026-07-20 15:49:12'),
 	('84b29cf3-e298-4a84-a95a-b8f38fdde4ef', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '5d67be61-e193-4668-8539-4dd70d78b675', '2026-07-16 15:52:26', '2026-07-16 15:52:28', '2026-07-16 15:52:28'),
 	('c24aea1d-0e1e-4ca0-90c8-d7677d167418', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', '2026-07-17 13:23:14', '2026-07-17 13:23:19', '2026-07-17 13:23:19');
 
