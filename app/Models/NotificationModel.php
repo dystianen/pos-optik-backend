@@ -26,21 +26,26 @@ class NotificationModel extends Model
     }
 
     // Ambil notifikasi terbaru, default hanya yang belum dibaca
-    public function getNotifications($onlyUnread = true, $limit = 10)
+    public function getNotifications($onlyUnread = true, $limit = 10, $types = [])
     {
         $builder = $this->orderBy('created_at', 'DESC');
         if ($onlyUnread) {
             $builder->where('is_read', 0);
         }
+        if (!empty($types)) {
+            $builder->whereIn('type', $types);
+        }
         return $this->findAll($limit);
     }
 
     /* hitung unread */
-    public function countUnread()
+    public function countUnread($types = [])
     {
-        return $this->where([
-            'is_read' => 0
-        ])->countAllResults();
+        $builder = $this->where('is_read', 0);
+        if (!empty($types)) {
+            $builder->whereIn('type', $types);
+        }
+        return $builder->countAllResults();
     }
 
     // Tandai notifikasi sebagai dibaca

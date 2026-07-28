@@ -109,7 +109,7 @@
         </li>
 
         <!-- Admin (1) dan Cashier (3) -->
-        <?php if (in_array($roleName, ['admin', 'cashier'])): ?>
+        <?php if (in_array($roleName, ['cashier'])): ?>
           <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center <?= $isSalesActive ? '' : 'collapsed' ?>"
               data-bs-toggle="collapse" href="#salesMenu" role="button"
@@ -180,25 +180,28 @@
 
             <div class="collapse <?= $isReportsActive ? 'show' : '' ?>" id="reportsMenu">
               <ul class="navbar-nav ms-4 flex-column">
-                <li class="nav-item">
-                  <a class="nav-link <?= $isReportsSalesActive ? 'active' : '' ?>" href="/reports/sales">
-                    <i class="fa-solid fa-chart-line me-1"></i>
-                    <span class="nav-link-text">Sales Report</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link <?= $isReportsInventoryActive ? 'active' : '' ?>" href="/reports/inventory">
-                    <i class="fa-solid fa-boxes-packing me-1"></i>
-                    <span class="nav-link-text">Inventory Report</span>
-                  </a>
-                </li>
+                <?php if ($roleName === 'cashier'): ?>
+                  <li class="nav-item">
+                    <a class="nav-link <?= $isReportsSalesActive ? 'active' : '' ?>" href="/reports/sales">
+                      <i class="fa-solid fa-chart-line me-1"></i>
+                      <span class="nav-link-text">Sales Report</span>
+                    </a>
+                  </li>
+                <?php endif; ?>
+                <?php if ($roleName === 'admin'): ?>
+                  <li class="nav-item">
+                    <a class="nav-link <?= $isReportsInventoryActive ? 'active' : '' ?>" href="/reports/inventory">
+                      <i class="fa-solid fa-boxes-packing me-1"></i>
+                      <span class="nav-link-text">Inventory Report</span>
+                    </a>
+                  </li>
+                <?php endif; ?>
               </ul>
             </div>
           </li>
         <?php endif; ?>
 
-        <!-- Admin (1) dan Optometrist (2) -->
-        <?php if (in_array($roleName, ['admin', 'optometrist'])): ?>
+        <?php if (in_array($roleName, ['admin'])): ?>
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'eye-examinations' ? 'active' : '' ?>" href="/eye-examinations">
               <div class="me-2 d-flex align-items-center justify-content-center">
@@ -207,18 +210,24 @@
               <span class="nav-link-text ms-1">Eye Examinations</span>
             </a>
           </li>
-        <?php endif; ?>
 
-        <hr class="horizontal dark">
+          
+          <hr class="horizontal dark">
 
-        <!-- Admin (1) dan Inventory (4) -->
-        <?php if (in_array($roleName, ['admin', 'inventory'])): ?>
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'products' ? 'active' : '' ?>" href="/products">
               <div class="me-2 d-flex align-items-center justify-content-center">
                 <i class="fas fa-shopping-basket"></i>
               </div>
               <span class="nav-link-text ms-1">Products</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <?= $segments[0] === 'coupons' ? 'active' : '' ?>" href="/coupons">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-ticket"></i>
+              </div>
+              <span class="nav-link-text ms-1">Coupons</span>
             </a>
           </li>
           <li class="nav-item">
@@ -247,10 +256,7 @@
           </li>
 
           <hr class="horizontal dark">
-        <?php endif; ?>
 
-        <!-- Admin (1) -->
-        <?php if (in_array($roleName, ['admin'])): ?>
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'customers' ? 'active' : '' ?>" href="/customers">
               <div class="me-2 d-flex align-items-center justify-content-center">
@@ -275,15 +281,6 @@
                 <i class="fa-solid fa-user-lock"></i>
               </div>
               <span class="nav-link-text ms-1">Roles</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link <?= $segments[0] === 'coupons' ? 'active' : '' ?>" href="/coupons">
-              <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fa-solid fa-ticket"></i>
-              </div>
-              <span class="nav-link-text ms-1">Coupons</span>
             </a>
           </li>
 

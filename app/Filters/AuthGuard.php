@@ -28,7 +28,72 @@ class AuthGuard implements FilterInterface
         if (!session()->get('isLoggedIn')) {
             return redirect()->to('/signin');
         }
-        !session()->get('isLoggedIn');
+
+        $roleName = session()->get('role_name');
+        $path = uri_string();
+
+        // Skip API routes from page role authorization checks
+        if (strpos($path, 'api/') === 0) {
+            return;
+        }
+
+        if (!$this->isAuthorized((string)$roleName, $path)) {
+            $response = service('response');
+            $response->setStatusCode(403);
+            $response->setBody(view('errors/unauthorized'));
+            return $response;
+        }
+    }
+
+    private function isAuthorized(string $role, string $path): bool
+    {
+        $segments = explode('/', $path);
+        $firstSegment = $segments[0] ?? '';
+
+        if ($role === 'admin') {
+            if ($firstSegment === 'reports') {
+                return strpos($path, 'reports/inventory') === 0;
+            }
+
+            $allowedSegments = [
+                'dashboard',
+                'reports',
+                'eye-examinations',
+                'products',
+                'coupons',
+                'inventory',
+                'product-category',
+                'product-attribute',
+                'customers',
+                'users',
+                'roles',
+                'notifications',
+            ];
+            return in_array($firstSegment, $allowedSegments, true);
+        }
+
+        if ($role === 'cashier') {
+            if ($path === 'dashboard/recommendation-debug') {
+                return false;
+            }
+
+            if ($firstSegment === 'reports') {
+                return strpos($path, 'reports/sales') === 0;
+            }
+
+            $allowedSegments = [
+                'dashboard',
+                'online-sales',
+                'offline-sales',
+                'refund-sales',
+                'cancellation-sales',
+                'reports',
+                'notifications',
+            ];
+            return in_array($firstSegment, $allowedSegments, true);
+        }
+
+        return false;
     }
 
     /**

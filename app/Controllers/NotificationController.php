@@ -19,8 +19,13 @@ class NotificationController extends BaseController
         $page     = (int) ($this->request->getVar('page') ?? 1);
         $perPage = 10;
 
-        $notifications = $this->notificationModel
-            ->orderBy('created_at', 'DESC')
+        $types = $this->getRoleNotificationTypes();
+        $query = $this->notificationModel;
+        if (!empty($types)) {
+            $query = $query->whereIn('type', $types);
+        }
+
+        $notifications = $query->orderBy('created_at', 'DESC')
             ->paginate($perPage, 'default', $page);
 
         $pager = [
@@ -39,8 +44,9 @@ class NotificationController extends BaseController
 
     public function getUnreadNotifications()
     {
-        $notifications = $this->notificationModel->getNotifications();
-        $unreadCount  = $this->notificationModel->countUnread();
+        $types = $this->getRoleNotificationTypes();
+        $notifications = $this->notificationModel->getNotifications(true, 10, $types);
+        $unreadCount  = $this->notificationModel->countUnread($types);
 
         return $this->response->setJSON([
             'status' => true,
@@ -51,11 +57,12 @@ class NotificationController extends BaseController
 
     public function markAllRead()
     {
-
-        $this->notificationModel
-            ->where('is_read', 0)
-            ->set(['is_read' => 1])
-            ->update();
+        $types = $this->getRoleNotificationTypes();
+        $query = $this->notificationModel->where('is_read', 0);
+        if (!empty($types)) {
+            $query = $query->whereIn('type', $types);
+        }
+        $query->set(['is_read' => 1])->update();
 
         return $this->response->setJSON([
             'status' => true
@@ -68,5 +75,17 @@ class NotificationController extends BaseController
             ->update($id, ['is_read' => 1]);
 
         return $this->response->setJSON(['status' => true]);
+    }
+
+    private function getRoleNotificationTypes(): array
+    {
+        $roleName = session('role_name');
+        if ($roleName === 'cashier') {
+            return ['new_order', 'cancel_order', 'refund_order', 'order'];
+        }
+        if ($roleName === 'admin') {
+            return ['stock', 'low_stock', 'stock_empty'];
+        }
+        return [];
     }
 }
