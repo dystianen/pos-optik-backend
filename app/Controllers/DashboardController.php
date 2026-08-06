@@ -75,7 +75,7 @@ class DashboardController extends BaseController
             ->select("
             SUM(
                 CASE
-                    WHEN os.status_code IN ('paid', 'shipped', 'completed')
+                    WHEN os.status_code IN ('paid', 'processing', 'shipped', 'completed')
                     THEN orders.grand_total
                     ELSE 0
                 END
@@ -84,7 +84,7 @@ class DashboardController extends BaseController
             SUM(
                 CASE
                     WHEN orders.order_type = 'online'
-                    AND os.status_code IN ('paid', 'shipped', 'completed')
+                    AND os.status_code IN ('paid', 'processing', 'shipped', 'completed')
                     THEN orders.grand_total
                     ELSE 0
                 END
@@ -93,7 +93,7 @@ class DashboardController extends BaseController
             SUM(
                 CASE
                     WHEN orders.order_type = 'offline'
-                    AND os.status_code IN ('paid', 'completed')
+                    AND os.status_code IN ('paid', 'processing', 'completed')
                     THEN orders.grand_total
                     ELSE 0
                 END
@@ -159,7 +159,7 @@ class DashboardController extends BaseController
             ->where('orders.created_at <=', $yearEnd)
             ->whereIn(
                 'os.status_code',
-                ['paid', 'shipped', 'completed']
+                ['paid', 'processing', 'shipped', 'completed']
             )
             ->groupBy('MONTH(orders.created_at)')
             ->orderBy('month', 'ASC')

@@ -29,6 +29,14 @@ class AuthController extends BaseController
     public function signinStore()
     {
         $session = session();
+
+        // 🛡️ RECAPTCHA VALIDATION
+        $token = $this->request->getVar('g-recaptcha-response');
+        if (!$this->verifyCaptcha($token, 'login')) {
+            $session->setFlashdata('failed', 'reCAPTCHA verification failed. Please try again.');
+            return redirect()->to('/signin');
+        }
+
         $email = $this->request->getVar('email');
         $password = $this->request->getVar('password');
 
@@ -64,5 +72,47 @@ class AuthController extends BaseController
     {
         session()->destroy();
         return view('auth/v_signin');
+    }
+
+    // =======================
+    // Helper: Verify Captcha
+    // =======================
+    private function verifyCaptcha($token, $expectedAction)
+    {
+        $secret = env('RECAPTCHA_SECRET_KEY');
+        if (empty($secret)) {
+            return true;
+        }
+
+        if (empty($token)) {
+            return false;
+        }
+
+        try {
+            $verifySsl = env('CURL_VERIFY') !== false;
+            $client = \Config\Services::curlrequest(['verify' => $verifySsl]);
+            $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+                'form_params' => [
+                    'secret'   => $secret,
+                    'response' => $token
+                ]
+            ]);
+
+            $body = json_decode($response->getBody(), true);
+            if (empty($body['success'])) {
+                log_message('error', 'reCAPTCHA v3 verification failed: ' . json_encode($body));
+                return false;
+            }
+
+            $score = $body['score'] ?? 0.0;
+            if ($score < 0.5) {
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            log_message('error', 'reCAPTCHA v3 verification exception: ' . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -36,6 +36,7 @@
   </div>
 </div>
 
+<script src="https://www.google.com/recaptcha/api.js?render=<?= env('RECAPTCHA_SITE_KEY') ?>"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
@@ -44,8 +45,26 @@
         if (!form.checkValidity()) {
           e.preventDefault();
           e.stopPropagation();
+          form.classList.add('was-validated');
+          return;
         }
-        form.classList.add('was-validated');
+
+        e.preventDefault();
+
+        grecaptcha.ready(function() {
+          grecaptcha.execute('<?= env('RECAPTCHA_SITE_KEY') ?>', {action: 'login'}).then(function(token) {
+            let recaptchaInput = document.getElementById('g-recaptcha-response');
+            if (!recaptchaInput) {
+              recaptchaInput = document.createElement('input');
+              recaptchaInput.type = 'hidden';
+              recaptchaInput.name = 'g-recaptcha-response';
+              recaptchaInput.id = 'g-recaptcha-response';
+              form.appendChild(recaptchaInput);
+            }
+            recaptchaInput.value = token;
+            form.submit();
+          });
+        });
       });
     }
   });
