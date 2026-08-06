@@ -16,6 +16,7 @@ class CustomerModel extends Model
         'customer_id',
         'customer_name',
         'customer_email',
+        'google_id',
         'customer_password',
         'customer_phone',
         'customer_dob',

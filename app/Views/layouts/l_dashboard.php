@@ -723,12 +723,20 @@
           'dashboard-update',
           'order-online-new',
           'pos-order-new',
+          'order-new',
           'order-approved',
           'order-rejected',
+          'order-expired',
           'order-shipped',
           'order-status-update',
           'cancellation-requested',
+          'cancellation-approved',
+          'cancellation-rejected',
           'refund-requested',
+          'refund-approved',
+          'refund-rejected',
+          'refund-completed',
+          'payment-received',
           'stock-update'
         ];
 

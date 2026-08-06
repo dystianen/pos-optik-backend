@@ -527,6 +527,7 @@ class OfflineSalesController extends BaseController
 
             // 🔥 TRIGGER REAL-TIME UPDATE
             \App\Libraries\Realtime::triggerUpdate('order-new');
+            \App\Libraries\Realtime::triggerUpdate('stock-update');
 
             if ($this->request->isAJAX()) {
                 return $this->response->setJSON([

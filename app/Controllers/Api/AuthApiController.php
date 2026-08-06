@@ -28,6 +28,11 @@ class AuthApiController extends BaseApiController
   // =======================
   public function register()
   {
+    $captchaToken = $this->request->getVar('captcha_token');
+    if (!$this->verifyCaptcha($captchaToken, 'register')) {
+      return $this->errorResponse('Captcha verification failed. Please try again.');
+    }
+
     $rules = [
       'customer_name'     => 'required|min_length[3]|max_length[50]|is_unique[customers.customer_name]',
       'customer_email'    => 'required|valid_email|is_unique[customers.customer_email]',
@@ -64,6 +69,11 @@ class AuthApiController extends BaseApiController
   // =======================
   public function login()
   {
+    $captchaToken = $this->request->getVar('captcha_token');
+    if (!$this->verifyCaptcha($captchaToken, 'login')) {
+      return $this->errorResponse('Captcha verification failed. Please try again.');
+    }
+
     $email    = $this->request->getVar('customer_email');
     $password = $this->request->getVar('customer_password');
 
@@ -270,6 +280,148 @@ class AuthApiController extends BaseApiController
       return $this->messageResponse('Your password has been updated successfully.');
     } catch (Exception $e) {
       return $this->serverErrorResponse('An error occurred while resetting your password. Please try again.');
+    }
+  }
+
+  // =======================
+  // POST /api/auth/google-login
+  // =======================
+  public function googleLogin()
+  {
+    $captchaToken = $this->request->getVar('captcha_token');
+    if (!$this->verifyCaptcha($captchaToken, 'google_login')) {
+      return $this->errorResponse('Captcha verification failed. Please try again.');
+    }
+
+    $idToken = $this->request->getVar('id_token');
+    if (empty($idToken)) {
+      return $this->validationErrorResponse(['id_token' => 'Google ID Token is required']);
+    }
+
+    try {
+      $verifySsl = getenv('CURL_VERIFY') !== 'false';
+      $client = \Config\Services::curlrequest(['verify' => $verifySsl]);
+      $response = $client->get('https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken));
+      $googleData = json_decode($response->getBody(), true);
+    } catch (Exception $e) {
+      return $this->errorResponse('Failed to verify Google token: ' . $e->getMessage());
+    }
+
+    if (empty($googleData['email']) || !empty($googleData['error'])) {
+      return $this->errorResponse('Invalid Google token response.');
+    }
+
+    $clientId = getenv('GOOGLE_CLIENT_ID');
+    if (!empty($clientId) && ($googleData['aud'] ?? '') !== $clientId) {
+      return $this->errorResponse('Google token client ID mismatch.');
+    }
+
+    $email = $googleData['email'];
+    $name = $googleData['name'] ?? 'Google User';
+    $googleId = $googleData['sub'] ?? '';
+
+    $user = $this->customerModel->where('customer_email', $email)->first();
+
+    if (!$user) {
+      // Create user automatically
+      $userData = [
+        'customer_name'     => $name,
+        'customer_email'    => $email,
+        'google_id'         => $googleId,
+        'customer_password' => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT),
+        'customer_phone'    => '-',
+        'customer_dob'      => date('Y-m-d'),
+        'customer_gender'   => 'other',
+      ];
+
+      if (!$this->customerModel->insert($userData)) {
+        return $this->errorResponse('Failed to create customer account.');
+      }
+
+      $user = $this->customerModel->where('customer_email', $email)->first();
+    } else {
+      if (empty($user['google_id']) && !empty($googleId)) {
+        $this->customerModel->update($user['customer_id'], ['google_id' => $googleId]);
+        $user['google_id'] = $googleId;
+      }
+    }
+
+    $key = getenv('JWT_SECRET_KEY');
+    if (empty($key)) {
+      return $this->serverErrorResponse('JWT secret key not configured');
+    }
+
+    $iat = time();
+    $accessTokenPayload = [
+      'iss'       => 'Your Store',
+      'iat'       => $iat,
+      'exp'       => $iat + 3600,
+      'user_id'   => $user['customer_id'],
+      'user_name' => $user['customer_name'],
+      'email'     => $user['customer_email'],
+      'type'      => 'access',
+    ];
+
+    $refreshTokenPayload = [
+      'iss'     => 'Your Store',
+      'iat'     => $iat,
+      'exp'     => $iat + (30 * 24 * 60 * 60),
+      'user_id' => $user['customer_id'],
+      'type'    => 'refresh',
+    ];
+
+    return $this->successResponse([
+      'access_token'  => JWT::encode($accessTokenPayload, $key, 'HS256'),
+      'refresh_token' => JWT::encode($refreshTokenPayload, $key, 'HS256'),
+      'token_type'    => 'Bearer',
+      'expires_in'    => 3600,
+      'user' => [
+        'id'    => $user['customer_id'],
+        'name'  => $user['customer_name'],
+        'email' => $user['customer_email'],
+      ],
+    ], 'Google login successful');
+  }
+
+  // =======================
+  // Helper: Verify Captcha
+  // =======================
+  private function verifyCaptcha($token, $expectedAction)
+  {
+    $secret = getenv('RECAPTCHA_SECRET_KEY');
+    if (empty($secret)) {
+      return true;
+    }
+
+    if (empty($token)) {
+      return false;
+    }
+
+    try {
+      $verifySsl = getenv('CURL_VERIFY') !== 'false';
+      $client = \Config\Services::curlrequest(['verify' => $verifySsl]);
+      $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+        'form_params' => [
+          'secret'   => $secret,
+          'response' => $token
+        ]
+      ]);
+
+      $body = json_decode($response->getBody(), true);
+      if (empty($body['success'])) {
+        log_message('error', 'reCAPTCHA v3 verification failed: ' . json_encode($body));
+        return false;
+      }
+
+      $score = $body['score'] ?? 0.0;
+      if ($score < 0.5) {
+        return false;
+      }
+
+      return true;
+    } catch (\Exception $e) {
+      log_message('error', 'reCAPTCHA v3 verification exception: ' . $e->getMessage());
+      return false;
     }
   }
 }

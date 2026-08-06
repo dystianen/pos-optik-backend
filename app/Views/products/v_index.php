@@ -65,7 +65,7 @@
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="realtime-tbody">
           <?php $startIndex = ($pager["currentPage"] - 1) * $pager["limit"] + 1; ?>
 
           <?php if (empty($products)): ?>
@@ -102,7 +102,14 @@
     </div>
 
     <nav aria-label="Page navigation example" class="mt-4">
-      <ul class="pagination" id="pagination">
+      <ul class="pagination" id="realtime-pagination">
+        <?php if ($pager["totalPages"] > 1): ?>
+          <?php for ($i = 1; $i <= $pager["totalPages"]; $i++): ?>
+            <li class="page-item primary <?= $i === $pager["currentPage"] ? 'active' : '' ?>">
+              <a class="page-link" href="javascript:void(0);" onclick="handlePagination(<?= $i ?>)"><?= $i ?></a>
+            </li>
+          <?php endfor; ?>
+        <?php endif; ?>
       </ul>
     </nav>
   </div>
@@ -111,41 +118,11 @@
 
 <?= $this->section('scripts') ?>
 <script type="text/javascript">
-  var currentURL = window.location.search;
-  var urlParams = new URLSearchParams(currentURL);
-  var pageParam = urlParams.get('page');
-
   // PAGINATION
   function handlePagination(pageNumber) {
     const params = new URLSearchParams(window.location.search);
     params.set('page', pageNumber);
     window.location.replace(`<?php echo base_url(); ?>products?${params.toString()}`);
-  }
-
-  var paginationContainer = document.getElementById('pagination');
-  var totalPages = <?= $pager["totalPages"] ?>;
-  if (totalPages > 1) {
-    for (var i = 1; i <= totalPages; i++) {
-      var pageItem = document.createElement('li');
-      pageItem.classList.add('page-item');
-      pageItem.classList.add('primary');
-      if (i === <?= $pager["currentPage"] ?>) {
-        pageItem.classList.add('active');
-      }
-
-      var pageLink = document.createElement('a');
-      pageLink.classList.add('page-link');
-      pageLink.href = 'javascript:void(0);'
-      pageLink.textContent = i;
-
-      pageLink.addEventListener('click', function() {
-        var pageNumber = parseInt(this.textContent);
-        handlePagination(pageNumber);
-      });
-
-      pageItem.appendChild(pageLink);
-      paginationContainer.appendChild(pageItem);
-    }
   }
 </script>
 <?= $this->endSection() ?>

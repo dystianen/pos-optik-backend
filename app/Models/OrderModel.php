@@ -140,6 +140,9 @@ class OrderModel extends Model
                 'updated_at'               => date('Y-m-d H:i:s')
             ]);
         }
+
+        // 🔥 TRIGGER REAL-TIME UPDATE
+        \App\Libraries\Realtime::triggerUpdate('stock-update');
     }
 
     // Payment expiration deadline in hours

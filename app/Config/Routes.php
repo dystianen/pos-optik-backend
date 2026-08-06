@@ -28,6 +28,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
   // AUTH
   $routes->group('auth', function ($routes) {
     $routes->post('login', 'Api\AuthApiController::login');
+    $routes->post('google-login', 'Api\AuthApiController::googleLogin');
     $routes->post('register', 'Api\AuthApiController::register');
     $routes->post('refresh', 'Api\AuthApiController::refresh');
     $routes->post('forgot-password', 'Api\AuthApiController::forgotPassword');

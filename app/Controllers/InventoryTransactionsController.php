@@ -356,6 +356,10 @@ class InventoryTransactionsController extends BaseController
     public function delete($id)
     {
         $this->InventoryTransactionModel->delete($id);
+        
+        // 🔥 TRIGGER REAL-TIME UPDATE
+        \App\Libraries\Realtime::triggerUpdate('stock-update');
+        
         return redirect()->to('/inventory')->with('success', 'Inventory transaction deleted successfully.');
     }
 }

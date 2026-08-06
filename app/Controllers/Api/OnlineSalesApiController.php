@@ -497,6 +497,7 @@ class OnlineSalesApiController extends BaseApiController
 
             // 🔥 TRIGGER REAL-TIME UPDATE
             \App\Libraries\Realtime::triggerUpdate('order-online-new');
+            \App\Libraries\Realtime::triggerUpdate('stock-update');
 
             return $this->successResponse([
                 'order_id' => $orderId,
