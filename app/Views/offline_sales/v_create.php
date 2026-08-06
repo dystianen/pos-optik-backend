@@ -74,7 +74,7 @@
             </select>
             <div class="invalid-feedback">Please select a customer first.</div>
           </div>
-          <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Add New Customer" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <a href="<?= site_url('customers/form?from=offline-sales') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Add New Customer" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
             <i class="fa fa-plus"></i> Add
           </a>
         </div>

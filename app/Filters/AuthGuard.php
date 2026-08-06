@@ -89,6 +89,7 @@ class AuthGuard implements FilterInterface
                 'cancellation-sales',
                 'reports',
                 'notifications',
+                'customers',
             ];
             return in_array($firstSegment, $allowedSegments, true);
         }

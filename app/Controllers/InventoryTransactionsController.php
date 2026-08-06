@@ -88,8 +88,8 @@ class InventoryTransactionsController extends BaseController
         // clone builder untuk total data
         $countBuilder = clone $builder;
 
-        $transactions = $builder->findAll($totalLimit, $offset);
         $totalRows    = $countBuilder->countAllResults(false);
+        $transactions = $builder->findAll($totalLimit, $offset);
 
         $totalPages = (int) ceil($totalRows / $totalLimit);
 

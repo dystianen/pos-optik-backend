@@ -90,8 +90,8 @@ class ProductController extends BaseController
         // Clone builder untuk count
         $countBuilder = clone $builder;
 
-        $products = $builder->findAll($totalLimit, $offset);
         $totalRows = $countBuilder->countAllResults(false);
+        $products = $builder->findAll($totalLimit, $offset);
         $totalPages = (int) ceil($totalRows / $totalLimit);
 
         $categories = $this->categoryModel->findAll();

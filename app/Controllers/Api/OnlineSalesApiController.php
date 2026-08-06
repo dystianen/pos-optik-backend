@@ -470,22 +470,6 @@ class OnlineSalesApiController extends BaseApiController
                         );
                     }
                 }
-
-                // 📦 LOG INVENTORY TRANSACTION (OUT)
-                $this->InventoryTransactionModel->insert([
-                    'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
-                    'user_id'                  => null, // Submitted by customer, no admin user session
-                    'product_id'               => $item['product_id'],
-                    'variant_id'               => $item['variant_id'] ?: null,
-                    'transaction_type'         => 'out',
-                    'reference_type'           => 'order',
-                    'reference_id'             => $orderId,
-                    'quantity'                 => $qty,
-                    'transaction_date'         => date('Y-m-d H:i:s'),
-                    'description'              => 'Online order submitted (Pending payment)',
-                    'created_at'               => date('Y-m-d H:i:s'),
-                    'updated_at'               => date('Y-m-d H:i:s')
-                ]);
             }
 
             $cartItemIds = array_column($summary['items'], 'cart_item_id');
@@ -1241,46 +1225,28 @@ class OnlineSalesApiController extends BaseApiController
                 'status_id' => $this->statusModel->getIdByCode(OrderStatus::PROCESSING)
             ]);
 
-            // 3️⃣ Update existing inventory transactions to 'Order payment approved' and set the admin ID
+            // 3️⃣ Record inventory transaction OUT
             $adminId = $session->get('id') ?? $session->get('admin_id') ?? 'system';
             
-            $db = db_connect();
-            $this->InventoryTransactionModel
-                ->where('reference_id', $orderId)
-                ->where('reference_type', 'order')
-                ->where('transaction_type', 'out')
-                ->set([
-                    'user_id'          => $adminId,
-                    'description'      => 'Order payment approved',
-                    'transaction_date' => date('Y-m-d H:i:s'),
-                    'updated_at'       => date('Y-m-d H:i:s')
-                ])
-                ->update();
+            $items = $this->orderItemModel
+                ->where('order_id', $orderId)
+                ->findAll();
 
-            $affectedRows = $db->affectedRows();
-
-            // Fallback: jika order lama tidak memiliki record transaksi saat checkout, insert record baru (tanpa memotong stok lagi untuk keamanan)
-            if ($affectedRows === 0) {
-                $items = $this->orderItemModel
-                    ->where('order_id', $orderId)
-                    ->findAll();
-
-                foreach ($items as $item) {
-                    $this->InventoryTransactionModel->insert([
-                        'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
-                        'user_id'                  => $adminId,
-                        'product_id'               => $item['product_id'],
-                        'variant_id'               => $item['variant_id'] ?: null,
-                        'transaction_type'         => 'out',
-                        'reference_type'           => 'order',
-                        'reference_id'             => $orderId,
-                        'quantity'                 => (int)$item['quantity'],
-                        'transaction_date'         => date('Y-m-d H:i:s'),
-                        'description'              => 'Order payment approved (Fallback - No original transaction found)',
-                        'created_at'               => date('Y-m-d H:i:s'),
-                        'updated_at'               => date('Y-m-d H:i:s')
-                    ]);
-                }
+            foreach ($items as $item) {
+                $this->InventoryTransactionModel->insert([
+                    'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                    'user_id'                  => $adminId,
+                    'product_id'               => $item['product_id'],
+                    'variant_id'               => $item['variant_id'] ?: null,
+                    'transaction_type'         => 'out',
+                    'reference_type'           => 'order',
+                    'reference_id'             => $orderId,
+                    'quantity'                 => (int)$item['quantity'],
+                    'transaction_date'         => date('Y-m-d H:i:s'),
+                    'description'              => 'Order payment approved',
+                    'created_at'               => date('Y-m-d H:i:s'),
+                    'updated_at'               => date('Y-m-d H:i:s')
+                ]);
             }
 
             $this->db->transCommit();
@@ -1366,6 +1332,53 @@ class OnlineSalesApiController extends BaseApiController
         } catch (\Throwable $e) {
             $this->db->transRollback();
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    // POST /api/orders/{id}/expire (REST API version)
+    public function apiExpireOrder($orderId)
+    {
+        $customerId = $this->getAuthenticatedCustomerId();
+
+        $this->db->transBegin();
+
+        try {
+            $order = $this->orderModel
+                ->where('order_id', $orderId)
+                ->where('customer_id', $customerId)
+                ->first();
+
+            if (!$order) {
+                return $this->errorResponse('Order tidak ditemukan', null, 404);
+            }
+
+            $pendingStatusId = $this->statusModel->getIdByCode(OrderStatus::PENDING);
+            if ($order['status_id'] !== $pendingStatusId) {
+                return $this->errorResponse('Order is not in pending status', null, 400);
+            }
+
+            // Update status to EXPIRED
+            $expiredStatusId = $this->statusModel->getIdByCode(OrderStatus::EXPIRED);
+            $this->orderModel->update($orderId, [
+                'status_id' => $expiredStatusId,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            // Restore Stock!
+            $this->orderModel->restoreStock($orderId, 'Payment expired (Stock restored)', $customerId);
+
+            $this->db->transCommit();
+
+            // 🔥 TRIGGER REAL-TIME UPDATE
+            \App\Libraries\Realtime::triggerUpdate('order-expired');
+
+            return $this->successResponse([
+                'order_id' => $orderId,
+                'status' => 'expired'
+            ], 'Order marked as expired and stock restored');
+        } catch (\Throwable $e) {
+            $this->db->transRollback();
+            return $this->errorResponse($e->getMessage(), null, 500);
         }
     }
 

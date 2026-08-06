@@ -95,6 +95,13 @@ class OrderModel extends Model
             ->get()
             ->getResultArray();
 
+        // Check if there was any 'out' transaction recorded for this order (meaning it was paid/approved)
+        $hasOutTransaction = $this->db->table('inventory_transactions')
+            ->where('reference_id', $orderId)
+            ->where('reference_type', 'order')
+            ->where('transaction_type', 'out')
+            ->countAllResults() > 0;
+
         foreach ($items as $item) {
             $qty = (int)$item['quantity'];
 
@@ -124,21 +131,23 @@ class OrderModel extends Model
                     ->update();
             }
 
-            // 2️⃣ Record inventory transaction IN (to balance it out)
-            $this->db->table('inventory_transactions')->insert([
-                'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
-                'user_id'                  => $userId,
-                'product_id'               => $item['product_id'],
-                'variant_id'               => $item['variant_id'] ?: null,
-                'transaction_type'         => 'in',
-                'reference_type'           => 'order_return',
-                'reference_id'             => $orderId,
-                'quantity'                 => $qty,
-                'transaction_date'         => date('Y-m-d H:i:s'),
-                'description'              => $reason,
-                'created_at'               => date('Y-m-d H:i:s'),
-                'updated_at'               => date('Y-m-d H:i:s')
-            ]);
+            // 2️⃣ Record inventory transaction IN (to balance it out) only if an OUT transaction was previously recorded
+            if ($hasOutTransaction) {
+                $this->db->table('inventory_transactions')->insert([
+                    'inventory_transaction_id' => service('uuid')->uuid4()->toString(),
+                    'user_id'                  => $userId,
+                    'product_id'               => $item['product_id'],
+                    'variant_id'               => $item['variant_id'] ?: null,
+                    'transaction_type'         => 'in',
+                    'reference_type'           => 'order_return',
+                    'reference_id'             => $orderId,
+                    'quantity'                 => $qty,
+                    'transaction_date'         => date('Y-m-d H:i:s'),
+                    'description'              => $reason,
+                    'created_at'               => date('Y-m-d H:i:s'),
+                    'updated_at'               => date('Y-m-d H:i:s')
+                ]);
+            }
         }
 
         // 🔥 TRIGGER REAL-TIME UPDATE
@@ -146,7 +155,7 @@ class OrderModel extends Model
     }
 
     // Payment expiration deadline in hours
-    public const DEADLINE_HOURS = 1;
+    public const DEADLINE_HOURS = 5 / 60;
 
     /**
      * Bulk check and expire any pending orders that have exceeded the deadline.

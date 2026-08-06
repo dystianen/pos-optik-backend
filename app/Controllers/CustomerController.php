@@ -39,8 +39,8 @@ class CustomerController extends BaseController
         // Clone builder for counting
         $countBuilder = clone $builder;
 
-        $customers = $builder->orderBy('created_at', 'DESC')->findAll($totalLimit, $offset);
         $totalRows = $countBuilder->countAllResults(false);
+        $customers = $builder->orderBy('created_at', 'DESC')->findAll($totalLimit, $offset);
         $totalPages = (int) ceil($totalRows / $totalLimit);
 
         $data = [
@@ -60,6 +60,7 @@ class CustomerController extends BaseController
     public function form($id = null)
     {
         $id = $this->request->getVar('id');
+        $from = $this->request->getVar('from');
         $data = [];
         if ($id) {
             $customer = $this->customerModel->find($id);
@@ -72,6 +73,8 @@ class CustomerController extends BaseController
                 'customer' => $customer
             ];
         }
+
+        $data['from'] = $from;
 
         return view('customers/v_form', $data);
     }
@@ -108,17 +111,25 @@ class CustomerController extends BaseController
             $customerData['customer_password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
+        $from = $request->getVar('from');
+        $redirectUrl = '/customers';
+        if ($from === 'offline-sales') {
+            $redirectUrl = '/offline-sales';
+        } elseif ($from === 'eye-examinations') {
+            $redirectUrl = '/eye-examinations/form';
+        }
+
         try {
             if ($id) {
                 if (!$this->customerModel->update($id, $customerData)) {
                     return redirect()->back()->with('failed', 'Gagal mengupdate customer.');
                 }
-                return redirect()->to('/customers')->with('success', 'Customer updated successfully.');
+                return redirect()->to($redirectUrl)->with('success', 'Customer updated successfully.');
             } else {
                 if (!$this->customerModel->insert($customerData)) {
                     return redirect()->back()->with('failed', 'Gagal membuat customer baru.');
                 }
-                return redirect()->to('/customers')->with('success', 'Customer created successfully.');
+                return redirect()->to($redirectUrl)->with('success', 'Customer created successfully.');
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('failed', $e->getMessage());

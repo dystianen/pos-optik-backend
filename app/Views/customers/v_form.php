@@ -26,6 +26,7 @@
 
     <form action="<?= site_url('customers/save') ?>" method="post" novalidate>
       <input type="hidden" name="id" value="<?= isset($customer) ? $customer['customer_id'] : '' ?>">
+      <input type="hidden" name="from" value="<?= esc($from ?? '') ?>">
 
       <div class="row">
         <!-- Customer Name -->
@@ -98,7 +99,7 @@
         </div>
 
         <div class="col-12 mt-4">
-          <a href="<?= base_url('/customers') ?>" class="btn btn-secondary">
+          <a href="<?= ($from === 'offline-sales') ? base_url('/offline-sales') : (($from === 'eye-examinations') ? base_url('/eye-examinations/form') : base_url('/customers')) ?>" class="btn btn-secondary">
             <i class="fas fa-times"></i> Cancel
           </a>
           <button type="submit" class="btn btn-primary">

@@ -72,6 +72,7 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->get('summary/(:segment)', 'Api\OnlineSalesApiController::summaryOrders/$1');
     $routes->post('submit/(:segment)', 'Api\OnlineSalesApiController::submitOrder/$1');
     $routes->post('(:segment)/status', 'Api\OnlineSalesApiController::updateStatus/$1');
+    $routes->post('(:segment)/expire', 'Api\OnlineSalesApiController::apiExpireOrder/$1');
     $routes->get('(:segment)', 'Api\OnlineSalesApiController::getOrderDetail/$1');
   });
 

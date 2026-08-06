@@ -88,7 +88,7 @@
               </select>
               <div class="invalid-feedback">Please select a customer.</div>
             </div>
-            <a href="<?= site_url('customers/form') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 40px;">
+            <a href="<?= site_url('customers/form?from=eye-examinations') ?>" class="btn btn-outline-primary btn-sm mb-0" id="btnAddNewCustomer" title="Tambah Customer Baru" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 40px;">
               <i class="fa fa-plus"></i> Add
             </a>
           </div>
