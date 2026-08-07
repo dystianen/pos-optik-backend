@@ -108,8 +108,27 @@
           </a>
         </li>
 
-        <!-- Admin (1) dan Cashier (3) -->
         <?php if (in_array($roleName, ['cashier'])): ?>
+          <!-- Eye Examinations (cashier only) -->
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'eye-examinations' ? 'active' : '' ?>" href="/eye-examinations">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-glasses"></i>
+              </div>
+              <span class="nav-link-text ms-1">Eye Examinations</span>
+            </a>
+          </li>
+
+          <!-- Customers (cashier only) -->
+          <li class="nav-item">
+            <a class="nav-link <?= $currentURI === 'customers' ? 'active' : '' ?>" href="/customers">
+              <div class="me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-users"></i>
+              </div>
+              <span class="nav-link-text ms-1">Customers</span>
+            </a>
+          </li>
+
           <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center <?= $isSalesActive ? '' : 'collapsed' ?>"
               data-bs-toggle="collapse" href="#salesMenu" role="button"
@@ -202,16 +221,6 @@
         <?php endif; ?>
 
         <?php if (in_array($roleName, ['admin'])): ?>
-          <li class="nav-item">
-            <a class="nav-link <?= $currentURI === 'eye-examinations' ? 'active' : '' ?>" href="/eye-examinations">
-              <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fas fa-glasses"></i>
-              </div>
-              <span class="nav-link-text ms-1">Eye Examinations</span>
-            </a>
-          </li>
-
-          
           <hr class="horizontal dark">
 
           <li class="nav-item">
@@ -256,15 +265,6 @@
           </li>
 
           <hr class="horizontal dark">
-
-          <li class="nav-item">
-            <a class="nav-link <?= $currentURI === 'customers' ? 'active' : '' ?>" href="/customers">
-              <div class="me-2 d-flex align-items-center justify-content-center">
-                <i class="fas fa-users"></i>
-              </div>
-              <span class="nav-link-text ms-1">Customers</span>
-            </a>
-          </li>
 
           <li class="nav-item">
             <a class="nav-link <?= $currentURI === 'users' ? 'active' : '' ?>" href="/users">

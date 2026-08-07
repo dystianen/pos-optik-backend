@@ -58,7 +58,6 @@ class AuthGuard implements FilterInterface
             $allowedSegments = [
                 'dashboard',
                 'reports',
-                'eye-examinations',
                 'products',
                 'coupons',
                 'inventory',
@@ -83,13 +82,14 @@ class AuthGuard implements FilterInterface
 
             $allowedSegments = [
                 'dashboard',
+                'eye-examinations',
+                'customers',
                 'online-sales',
                 'offline-sales',
                 'refund-sales',
                 'cancellation-sales',
                 'reports',
                 'notifications',
-                'customers',
             ];
             return in_array($firstSegment, $allowedSegments, true);
         }
