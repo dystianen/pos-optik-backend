@@ -86,6 +86,9 @@ class NotificationController extends BaseController
         if ($roleName === 'admin') {
             return ['stock', 'low_stock', 'stock_empty'];
         }
+        if ($roleName === 'owner') {
+            return ['low_stock', 'stock_empty'];
+        }
         return [];
     }
 }
