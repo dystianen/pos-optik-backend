@@ -50,6 +50,23 @@ class AuthGuard implements FilterInterface
         $segments = explode('/', $path);
         $firstSegment = $segments[0] ?? '';
 
+        if ($role === 'owner') {
+            if ($path === 'dashboard/recommendation-debug') {
+                return false;
+            }
+
+            if ($firstSegment === 'reports') {
+                return strpos($path, 'reports/sales') === 0 || strpos($path, 'reports/inventory') === 0;
+            }
+
+            $allowedSegments = [
+                'dashboard',
+                'reports',
+                'notifications',
+            ];
+            return in_array($firstSegment, $allowedSegments, true);
+        }
+
         if ($role === 'admin') {
             if ($firstSegment === 'reports') {
                 return strpos($path, 'reports/inventory') === 0;

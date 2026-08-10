@@ -161,4 +161,58 @@ final class AuthGuardTest extends CIUnitTestCase
         $response = $this->filter->before($this->request);
         $this->assertNull($response);
     }
+
+    public function testOwnerAllowedPaths(): void
+    {
+        $this->session->set([
+            'isLoggedIn' => true,
+            'role_name' => 'owner'
+        ]);
+
+        // Dashboard is allowed
+        $this->request->getUri()->setPath('dashboard');
+        $response = $this->filter->before($this->request);
+        $this->assertNull($response);
+
+        // Sales Report is allowed
+        $this->request->getUri()->setPath('reports/sales');
+        $response = $this->filter->before($this->request);
+        $this->assertNull($response);
+
+        // Inventory Report is allowed
+        $this->request->getUri()->setPath('reports/inventory');
+        $response = $this->filter->before($this->request);
+        $this->assertNull($response);
+
+        // Notifications is allowed
+        $this->request->getUri()->setPath('notifications');
+        $response = $this->filter->before($this->request);
+        $this->assertNull($response);
+    }
+
+    public function testOwnerBlockedPaths(): void
+    {
+        $this->session->set([
+            'isLoggedIn' => true,
+            'role_name' => 'owner'
+        ]);
+
+        // Products is blocked
+        $this->request->getUri()->setPath('products');
+        $response = $this->filter->before($this->request);
+        $this->assertNotNull($response);
+        $this->assertSame(403, $response->getStatusCode());
+
+        // Users is blocked
+        $this->request->getUri()->setPath('users');
+        $response = $this->filter->before($this->request);
+        $this->assertNotNull($response);
+        $this->assertSame(403, $response->getStatusCode());
+
+        // Debugger is blocked
+        $this->request->getUri()->setPath('dashboard/recommendation-debug');
+        $response = $this->filter->before($this->request);
+        $this->assertNotNull($response);
+        $this->assertSame(403, $response->getStatusCode());
+    }
 }

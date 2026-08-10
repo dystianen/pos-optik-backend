@@ -181,8 +181,8 @@
           </li>
         <?php endif; ?>
 
-        <!-- Admin (1) dan Cashier (3) - Reports -->
-        <?php if (in_array($roleName, ['admin', 'cashier'])): ?>
+        <!-- Admin (1), Cashier (3) dan Owner - Reports -->
+        <?php if (in_array($roleName, ['admin', 'cashier', 'owner'])): ?>
           <?php
           $isReportsActive = $segments[0] === 'reports';
           $isReportsSalesActive = $currentURI === 'reports' || (isset($segments[1]) && $segments[1] === 'sales');
@@ -199,7 +199,7 @@
 
             <div class="collapse <?= $isReportsActive ? 'show' : '' ?>" id="reportsMenu">
               <ul class="navbar-nav ms-4 flex-column">
-                <?php if ($roleName === 'cashier'): ?>
+                <?php if (in_array($roleName, ['cashier', 'owner'])): ?>
                   <li class="nav-item">
                     <a class="nav-link <?= $isReportsSalesActive ? 'active' : '' ?>" href="/reports/sales">
                       <i class="fa-solid fa-chart-line me-1"></i>
@@ -207,7 +207,7 @@
                     </a>
                   </li>
                 <?php endif; ?>
-                <?php if ($roleName === 'admin'): ?>
+                <?php if (in_array($roleName, ['admin', 'owner'])): ?>
                   <li class="nav-item">
                     <a class="nav-link <?= $isReportsInventoryActive ? 'active' : '' ?>" href="/reports/inventory">
                       <i class="fa-solid fa-boxes-packing me-1"></i>
