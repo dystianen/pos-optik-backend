@@ -31,8 +31,10 @@ CREATE TABLE IF NOT EXISTS `carts` (
   CONSTRAINT `carts_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.carts: ~0 rows (approximately)
+-- Dumping data for table pos_optik.carts: ~5 rows (approximately)
 INSERT INTO `carts` (`cart_id`, `customer_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('0717b1ca-79c5-4960-8a31-f25c8305e45b', 'c546d00b-d4bd-4ddc-b6b4-7f6e635abd17', '2026-08-06 13:26:02', '2026-08-06 13:26:02', NULL),
+	('7762bd19-f3e2-4e96-b9b4-b1163a556253', '8b3000d7-0386-4073-b38d-764bfbd294f8', '2026-08-06 13:59:32', '2026-08-06 13:59:32', NULL),
 	('b759b2f3-b484-462b-b41b-4ff791589bb3', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '2026-05-25 13:58:37', '2026-05-25 13:58:37', NULL),
 	('bd3690dd-58c6-4376-b391-c64780fdf849', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '2026-07-15 10:40:44', '2026-07-15 10:40:44', NULL),
 	('f1eccb51-81f6-408e-852f-dae37f8bd381', 'cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', '2026-07-17 14:37:10', '2026-07-17 14:37:10', NULL);
@@ -57,15 +59,20 @@ CREATE TABLE IF NOT EXISTS `cart_items` (
   CONSTRAINT `cart_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.cart_items: ~24 rows (approximately)
+-- Dumping data for table pos_optik.cart_items: ~33 rows (approximately)
 INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('021c0519-9ffd-4e52-9cf8-d51325a5b1ef', '7762bd19-f3e2-4e96-b9b4-b1163a556253', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 1, 1415500.00, '2026-08-06 14:16:36', '2026-08-06 14:16:42', '2026-08-06 14:16:42'),
 	('0978cce3-8d1b-482e-8e68-e9d1adce0d1a', 'bd3690dd-58c6-4376-b391-c64780fdf849', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 3, 3500000.00, '2026-07-15 11:47:42', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
 	('0ec3270b-5849-4a9b-a8b1-b69f3f7d6576', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 5, 1350000.00, '2026-07-15 15:51:42', '2026-07-15 15:52:00', '2026-07-15 15:52:00'),
+	('1525554e-0730-4440-9dad-36e7f058ff65', '7762bd19-f3e2-4e96-b9b4-b1163a556253', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 1, 250750.00, '2026-08-06 14:45:07', '2026-08-06 14:45:16', '2026-08-06 14:45:16'),
+	('17bc6fae-a95d-4fa1-a9a1-61f2d057ecaa', '7762bd19-f3e2-4e96-b9b4-b1163a556253', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 1, 1415500.00, '2026-08-06 14:05:48', '2026-08-06 14:05:56', '2026-08-06 14:05:56'),
 	('18bed939-5068-4268-984a-04bae625d595', 'b759b2f3-b484-462b-b41b-4ff791589bb3', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 1, 1415500.00, '2026-07-17 14:14:56', '2026-07-17 14:16:44', '2026-07-17 14:16:44'),
 	('2407b525-e6a7-45eb-9181-3504667b715e', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', NULL, 1, 2401250.00, '2026-07-17 14:23:59', '2026-07-17 14:23:59', NULL),
 	('24891e4a-7051-43de-935e-609f310fa018', 'bd3690dd-58c6-4376-b391-c64780fdf849', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-07-15 11:34:18', '2026-07-15 11:47:32', '2026-07-15 11:47:32'),
+	('2b0263cf-56b5-4885-8ad0-529327347de2', '0717b1ca-79c5-4960-8a31-f25c8305e45b', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 1, 1853000.00, '2026-08-06 13:26:02', '2026-08-06 13:26:50', '2026-08-06 13:26:50'),
 	('2d05eb64-fb62-4e85-8ed7-e738e7b5e5ff', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '303431f3-db77-4f28-a571-fda989e0d268', 3, 1200000.00, '2026-07-15 14:20:02', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
 	('2fa5b884-88c0-4433-9027-57d57c1c6fde', 'b759b2f3-b484-462b-b41b-4ff791589bb3', 'fc16e77d-aa3e-4629-a0b6-f478bcda4da7', NULL, 4, 2000.00, '2026-07-17 10:46:40', '2026-07-17 10:46:50', '2026-07-17 10:46:50'),
+	('434d64a9-c3ce-4fd6-bcbf-620c16a19178', '7762bd19-f3e2-4e96-b9b4-b1163a556253', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 2, 1853000.00, '2026-08-06 13:59:32', '2026-08-06 13:59:47', '2026-08-06 13:59:47'),
 	('43ee7004-1e18-40ae-8061-e8aa13d88511', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 4, 570000.00, '2026-07-15 16:01:31', '2026-07-15 16:01:36', '2026-07-15 16:01:36'),
 	('4e8489a4-c005-46f3-bd88-a6c01cc615fe', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 1, 7850000.00, '2026-07-07 13:09:16', '2026-07-07 13:09:35', '2026-07-07 13:09:35'),
 	('4e8843ca-1095-4820-99d5-3a7953215a83', 'b759b2f3-b484-462b-b41b-4ff791589bb3', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', '07c245de-6af9-463c-becc-90f50917edc5', 1, 1000000.00, '2026-05-25 13:58:37', '2026-05-25 13:59:58', '2026-05-25 13:59:58'),
@@ -76,12 +83,16 @@ INSERT INTO `cart_items` (`cart_item_id`, `cart_id`, `product_id`, `variant_id`,
 	('88e4efdd-4c89-4f3c-b97e-15acb1d36bbf', 'bd3690dd-58c6-4376-b391-c64780fdf849', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '92504955-32b6-4016-887d-8a278f0a3a56', 2, 1100000.00, '2026-07-15 14:23:26', '2026-07-15 14:25:23', '2026-07-15 14:25:23'),
 	('8d4e5940-de14-4695-b3f9-54a3eafd3724', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 1, 9676000.00, '2026-06-04 13:31:38', '2026-07-07 13:09:35', '2026-07-07 13:09:35'),
 	('92be53b7-f67a-43d7-859d-3eb01b1a06d8', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 3, 1350000.00, '2026-07-15 15:51:47', '2026-07-15 15:51:52', '2026-07-15 15:51:52'),
+	('945eadee-66d0-4c2d-ba04-32f9fa4369b4', '7762bd19-f3e2-4e96-b9b4-b1163a556253', '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', NULL, 1, 35640.00, '2026-08-06 14:44:11', '2026-08-06 14:45:16', '2026-08-06 14:45:16'),
 	('9c7efe9b-f74f-4b00-bc1e-cf5581013f90', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', NULL, 1, 824500.00, '2026-07-16 09:19:16', '2026-07-16 09:19:28', '2026-07-16 09:19:28'),
+	('ad5e7a1d-ec04-48d3-bd14-a1d17e9dc66a', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5d67be61-e193-4668-8539-4dd70d78b675', NULL, 1, 1151750.00, '2026-07-30 11:12:36', '2026-07-30 11:12:36', NULL),
 	('cabc27ce-8fce-4aca-bcb9-875987761327', 'bd3690dd-58c6-4376-b391-c64780fdf849', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135.00, '2026-07-15 10:40:44', '2026-07-15 10:41:19', '2026-07-15 10:41:19'),
 	('cd7d7bc3-59b3-4dc7-8ada-75726b48db0a', 'bd3690dd-58c6-4376-b391-c64780fdf849', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 1, 1000000.00, '2026-07-15 15:21:14', '2026-07-15 15:21:22', '2026-07-15 15:21:22'),
+	('cf805510-0d0f-4f7a-938b-5af59127fb75', 'b759b2f3-b484-462b-b41b-4ff791589bb3', 'dde78075-5a62-47d5-8669-026c43d893b2', NULL, 1, 26000.00, '2026-07-30 11:12:43', '2026-07-30 11:12:43', NULL),
 	('d06877d1-2098-47d4-8a7c-f1af0c3c5609', 'f1eccb51-81f6-408e-852f-dae37f8bd381', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 1, 1853000.00, '2026-07-17 14:37:10', '2026-07-17 15:27:47', '2026-07-17 15:27:47'),
 	('e837e3de-c20b-4dd4-95bd-89f740805103', 'bd3690dd-58c6-4376-b391-c64780fdf849', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 1, 3500000.00, '2026-07-15 15:11:26', '2026-07-15 15:15:37', '2026-07-15 15:15:37'),
 	('f94481bb-3e95-4347-bf54-ff382e95c07b', 'bd3690dd-58c6-4376-b391-c64780fdf849', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:41:25', '2026-07-15 10:41:47', '2026-07-15 10:41:47'),
+	('fc3c64a6-0a8f-47b4-81b8-c0e459990eec', '7762bd19-f3e2-4e96-b9b4-b1163a556253', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 1, 1394000.00, '2026-08-06 15:20:33', '2026-08-06 15:20:43', '2026-08-06 15:20:43'),
 	('ffadb20b-65c3-440a-9024-e9a3b6b0f2ac', 'b759b2f3-b484-462b-b41b-4ff791589bb3', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'b3a23692-1b3d-4afa-a525-91aba79456da', 1, 1100000.00, '2026-07-07 16:05:13', '2026-07-07 16:05:22', '2026-07-07 16:05:22');
 
 -- Dumping structure for table pos_optik.cart_item_prescriptions
@@ -143,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `customer_id` char(36) NOT NULL,
   `customer_name` varchar(100) NOT NULL,
   `customer_email` varchar(100) NOT NULL,
+  `google_id` varchar(255) DEFAULT NULL,
   `customer_password` varchar(255) NOT NULL,
   `customer_phone` varchar(20) NOT NULL,
   `customer_dob` date DEFAULT NULL,
@@ -155,27 +167,29 @@ CREATE TABLE IF NOT EXISTS `customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Dumping data for table pos_optik.customers: ~20 rows (approximately)
-INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `customer_password`, `customer_phone`, `customer_dob`, `customer_gender`, `created_at`, `updated_at`, `deleted_at`) VALUES
-	('091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Tina Usamah', 'julia.novitasari@yahoo.com', '$2y$10$m95fHDjDRbKuwqQEhlGuzumizaWZsGB8VSzTRtwDTOgTgxujZAWmq', '0588 2101 3581', '1964-08-27', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'Jagaraga Mustofa M.Kom.', 'yance57@gmail.com', '$2y$10$Ndxg5XuwkAGWHLKj/tvJNuoOyF3iHiXM40S1YO6SeAwwal3SQcZ2S', '(+62) 728 5465 5337', '2006-06-29', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('21747745-59c1-47ce-82de-8368e60e0412', 'Bancar Jais Mahendra S.H.', 'santoso.harsana@yahoo.co.id', '$2y$10$PUd.S3hBBDqDFyw/RwPmbut7dUbirctl79LKBf4z97OWPVDk6YcsC', '(+62) 827 8517 1995', '1968-07-20', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', 'Elvina Kayla Novitasari', 'anom08@yahoo.com', '$2y$10$ol3ZvEULlPKPaBklRb56hO21dYbgd7.s4EpYHdRAeFnOUES/GLWaa', '0257 1407 5647', '1997-07-20', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('30022d14-9388-4351-8709-2f8c89ae9002', 'Ayu Zelaya Wahyuni', 'hartati.kadir@pudjiastuti.sch.id', '$2y$10$XAEU0Xoex2LUKAtOupAu1eitnO2BCz6/wflXINKGr0Yxa1E05KFT6', '0715 5276 6867', '1990-09-06', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('3b1435da-afab-49b4-a27f-8f6885763ce1', 'Rudi Kurniawan', 'gharyanto@gmail.com', '$2y$10$8pMxY/t5QgCDbsXS3FKTse5IxEedTomSeb1eSBwz32hF6HkRxx7Zm', '024 2404 060', '1997-03-29', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('59dbf7bf-bf2c-489f-9b19-1f815e81969b', 'Himawan Anom Mangunsong', 'bella29@yahoo.com', '$2y$10$HDFcWLO0qfVfOGWeh1g01u3Nuo0U2Pg2lLWqpruWdIePxBPRohIPe', '(+62) 499 8307 706', '2003-03-17', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('6849345e-ac52-45fb-b9ab-1f2207c3ddde', 'Xanana Firmansyah', 'ghaliyati.safitri@yahoo.com', '$2y$10$cZbDanP76umV3gQW7HkRE.xhKMSvl3MmXkdyQs1NdelCCfC1Db4O6', '029 1168 2674', '1993-10-04', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('8077796c-0419-4c0b-bd04-569223e67e75', 'Yance Novitasari', 'mardhiyah.hasta@yahoo.co.id', '$2y$10$YvE26S2.cjF.xwkUc9A2deLatWg/tOFZ/WDTf3cbWN2ZadHr6AKua', '0329 7404 6816', '1977-03-14', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('8a497633-77f9-4fcc-ad60-098a63f8a6f1', 'Rachel Rahmawati', 'rhidayat@yahoo.com', '$2y$10$TXj6JSZjmkjOWmi8fu0ggOckylcFjbTC70GTsgtBdTzlddD5iC.F.', '0996 4818 027', '1981-12-31', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('97f72b46-900e-4573-95fa-83c787e9fa10', 'Caraka Halim', 'endah58@gmail.co.id', '$2y$10$uQhfs2Jh/0A1iuz6fkM/keaszoFf9dyViNFf.23C.zmWTjl.369FC', '0479 0035 593', '1981-03-22', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('9b6343bc-4abb-464f-836c-bf86b8488f3b', 'Jagaraga Okto Wahyudin', 'darijan68@yahoo.co.id', '$2y$10$U3OuAQmX3vJ8KftCUDuxZOOwy49Slaj/XUvbZxxlbf082VplCtlce', '(+62) 713 4188 4078', '1960-07-02', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('a6f461c4-7944-456d-9d99-72154705d189', 'Jefri Napitupulu', 'bagiya.sirait@yahoo.com', '$2y$10$0eXbNKMkidot7H0uz/RKbu.bB./DPKq9C0n6wbU7dWSK978LcyWUm', '0637 1885 962', '1988-04-27', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('afd2b803-2976-4a1d-8a6e-5d0685ef4983', 'Joko Yosef Wahyudin M.TI.', 'maras24@marbun.biz', '$2y$10$e/N25G5rI9v.uz/3TZtUEuk6wc2YLbJGenpYknUriblqviQxmaZL2', '0243 3106 288', '1977-03-04', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('b035d66f-22bc-44a4-ac5e-6b679565cb48', 'Cici Suartini', 'handayani.banawi@gmail.com', '$2y$10$mHeg8Zmju..euI5fzzhL0OdIgxwCgxeBWYz1fkcfEPQDEGjP3Q9nC', '(+62) 366 8404 425', '1999-02-22', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('b9ebd251-1dd9-4416-bf6b-251f540646f3', 'Hasim Naradi Nashiruddin', 'hwidodo@yahoo.com', '$2y$10$7gjE5Ldf8PT9SEbbrM3hsO9QMyxH7N1WMyTIUbJAq53NF7pB/VNhS', '0548 0321 4674', '1996-08-19', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('c34a007b-fd29-45c6-94a2-29df1b4173d8', 'Vivi Farida', 'adhiarja.hutasoit@gmail.com', '$2y$10$13y/0rAV7foNVN1A92WGaOFiN90Qgs1LgMEvVnetwMo0BYyOKxhGW', '(+62) 348 3560 941', '1987-05-19', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
-	('cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'Unggul Tarihoran', 'maryadi.cici@yahoo.com', '$2y$10$Y3HmjHkmWT5yE42C78H05.oBXPIQlhnyoyhtJ1ZmXlF2KCf1BW6YG', '(+62) 242 6065 9136', '1969-12-12', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('e10483bb-fb78-43a1-9b15-04dc5bc0dd95', 'Pardi Liman Sitorus M.M.', 'vwahyuni@astuti.id', '$2y$10$43.cws/YUlBBq4w4nqzyTutwoLY3TDTg0nkPdMH4gFS65u/1vUAKu', '0601 1967 689', '1985-08-10', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
-	('f18c2ed4-e362-4e39-a362-b94a30cea851', 'Kuncara Pranowo M.TI.', 'mandasari.kezia@yahoo.com', '$2y$10$PIyuFQS3E7UiS76Uid7Gb..vcLd1eADAj8ZoE0lIbjv2oXZgoavgG', '0791 1787 8446', '1994-10-11', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL);
+INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `google_id`, `customer_password`, `customer_phone`, `customer_dob`, `customer_gender`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Tina Usamah', 'julia.novitasari@yahoo.com', NULL, '$2y$10$m95fHDjDRbKuwqQEhlGuzumizaWZsGB8VSzTRtwDTOgTgxujZAWmq', '0588 2101 3581', '1964-08-27', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'Jagaraga Mustofa M.Kom.', 'yance57@gmail.com', NULL, '$2y$10$Ndxg5XuwkAGWHLKj/tvJNuoOyF3iHiXM40S1YO6SeAwwal3SQcZ2S', '(+62) 728 5465 5337', '2006-06-29', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('21747745-59c1-47ce-82de-8368e60e0412', 'Bancar Jais Mahendra S.H.', 'santoso.harsana@yahoo.co.id', NULL, '$2y$10$PUd.S3hBBDqDFyw/RwPmbut7dUbirctl79LKBf4z97OWPVDk6YcsC', '(+62) 827 8517 1995', '1968-07-20', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', 'Elvina Kayla Novitasari', 'anom08@yahoo.com', NULL, '$2y$10$ol3ZvEULlPKPaBklRb56hO21dYbgd7.s4EpYHdRAeFnOUES/GLWaa', '0257 1407 5647', '1997-07-20', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('30022d14-9388-4351-8709-2f8c89ae9002', 'Ayu Zelaya Wahyuni', 'hartati.kadir@pudjiastuti.sch.id', NULL, '$2y$10$XAEU0Xoex2LUKAtOupAu1eitnO2BCz6/wflXINKGr0Yxa1E05KFT6', '0715 5276 6867', '1990-09-06', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('3b1435da-afab-49b4-a27f-8f6885763ce1', 'Rudi Kurniawan', 'gharyanto@gmail.com', NULL, '$2y$10$8pMxY/t5QgCDbsXS3FKTse5IxEedTomSeb1eSBwz32hF6HkRxx7Zm', '024 2404 060', '1997-03-29', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('59dbf7bf-bf2c-489f-9b19-1f815e81969b', 'Himawan Anom Mangunsong', 'bella29@yahoo.com', NULL, '$2y$10$HDFcWLO0qfVfOGWeh1g01u3Nuo0U2Pg2lLWqpruWdIePxBPRohIPe', '(+62) 499 8307 706', '2003-03-17', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('6849345e-ac52-45fb-b9ab-1f2207c3ddde', 'Xanana Firmansyah', 'ghaliyati.safitri@yahoo.com', NULL, '$2y$10$cZbDanP76umV3gQW7HkRE.xhKMSvl3MmXkdyQs1NdelCCfC1Db4O6', '029 1168 2674', '1993-10-04', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('8077796c-0419-4c0b-bd04-569223e67e75', 'Yance Novitasari', 'mardhiyah.hasta@yahoo.co.id', NULL, '$2y$10$YvE26S2.cjF.xwkUc9A2deLatWg/tOFZ/WDTf3cbWN2ZadHr6AKua', '0329 7404 6816', '1977-03-14', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('8a497633-77f9-4fcc-ad60-098a63f8a6f1', 'Rachel Rahmawati', 'rhidayat@yahoo.com', NULL, '$2y$10$TXj6JSZjmkjOWmi8fu0ggOckylcFjbTC70GTsgtBdTzlddD5iC.F.', '0996 4818 027', '1981-12-31', 'female', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('8b3000d7-0386-4073-b38d-764bfbd294f8', 'Dystian en', 'distian.enyus@gmail.com', '111291753752354812599', '$2y$12$K0L63z1YnY7WSyLPSN6gpO40AVBHMcAQfKLFVTDA3IWLvis0EchQO', '-', '2026-08-06', 'other', '2026-08-06 13:59:21', '2026-08-06 13:59:21', NULL),
+	('97f72b46-900e-4573-95fa-83c787e9fa10', 'Caraka Halim', 'endah58@gmail.co.id', NULL, '$2y$10$uQhfs2Jh/0A1iuz6fkM/keaszoFf9dyViNFf.23C.zmWTjl.369FC', '0479 0035 593', '1981-03-22', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('9b6343bc-4abb-464f-836c-bf86b8488f3b', 'Jagaraga Okto Wahyudin', 'darijan68@yahoo.co.id', NULL, '$2y$10$U3OuAQmX3vJ8KftCUDuxZOOwy49Slaj/XUvbZxxlbf082VplCtlce', '(+62) 713 4188 4078', '1960-07-02', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('a6f461c4-7944-456d-9d99-72154705d189', 'Jefri Napitupulu', 'bagiya.sirait@yahoo.com', NULL, '$2y$10$0eXbNKMkidot7H0uz/RKbu.bB./DPKq9C0n6wbU7dWSK978LcyWUm', '0637 1885 962', '1988-04-27', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('afd2b803-2976-4a1d-8a6e-5d0685ef4983', 'Joko Yosef Wahyudin M.TI.', 'maras24@marbun.biz', NULL, '$2y$10$e/N25G5rI9v.uz/3TZtUEuk6wc2YLbJGenpYknUriblqviQxmaZL2', '0243 3106 288', '1977-03-04', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('b035d66f-22bc-44a4-ac5e-6b679565cb48', 'Cici Suartini', 'handayani.banawi@gmail.com', NULL, '$2y$10$mHeg8Zmju..euI5fzzhL0OdIgxwCgxeBWYz1fkcfEPQDEGjP3Q9nC', '(+62) 366 8404 425', '1999-02-22', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('b9ebd251-1dd9-4416-bf6b-251f540646f3', 'Hasim Naradi Nashiruddin', 'hwidodo@yahoo.com', NULL, '$2y$10$7gjE5Ldf8PT9SEbbrM3hsO9QMyxH7N1WMyTIUbJAq53NF7pB/VNhS', '0548 0321 4674', '1996-08-19', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('c34a007b-fd29-45c6-94a2-29df1b4173d8', 'Vivi Farida', 'adhiarja.hutasoit@gmail.com', NULL, '$2y$10$13y/0rAV7foNVN1A92WGaOFiN90Qgs1LgMEvVnetwMo0BYyOKxhGW', '(+62) 348 3560 941', '1987-05-19', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL),
+	('c546d00b-d4bd-4ddc-b6b4-7f6e635abd17', 'DYSTIAN EN YUSGIANTORO 411221165', '411221165@mahasiswa.undira.ac.id', '102882780368598697208', '$2y$12$qWB3icPtIBICSSHfXzCF8OIGVD4huxd0XgKMKfr7WWypz.xeBfpEO', '-', '2026-08-06', 'other', '2026-08-06 13:21:38', '2026-08-06 13:21:38', NULL),
+	('cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'Unggul Tarihoran', 'maryadi.cici@yahoo.com', NULL, '$2y$10$Y3HmjHkmWT5yE42C78H05.oBXPIQlhnyoyhtJ1ZmXlF2KCf1BW6YG', '(+62) 242 6065 9136', '1969-12-12', 'female', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('e10483bb-fb78-43a1-9b15-04dc5bc0dd95', 'Pardi Liman Sitorus M.M.', 'vwahyuni@astuti.id', NULL, '$2y$10$43.cws/YUlBBq4w4nqzyTutwoLY3TDTg0nkPdMH4gFS65u/1vUAKu', '0601 1967 689', '1985-08-10', 'male', '2026-05-25 11:46:04', '2026-05-25 11:46:04', NULL),
+	('f18c2ed4-e362-4e39-a362-b94a30cea851', 'Kuncara Pranowo M.TI.', 'mandasari.kezia@yahoo.com', NULL, '$2y$10$PIyuFQS3E7UiS76Uid7Gb..vcLd1eADAj8ZoE0lIbjv2oXZgoavgG', '0791 1787 8446', '1994-10-11', 'male', '2026-05-25 11:46:03', '2026-05-25 11:46:03', NULL);
 
 -- Dumping structure for table pos_optik.customer_shipping_addresses
 CREATE TABLE IF NOT EXISTS `customer_shipping_addresses` (
@@ -195,9 +209,10 @@ CREATE TABLE IF NOT EXISTS `customer_shipping_addresses` (
   CONSTRAINT `customer_shipping_addresses_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.customer_shipping_addresses: ~0 rows (approximately)
+-- Dumping data for table pos_optik.customer_shipping_addresses: ~3 rows (approximately)
 INSERT INTO `customer_shipping_addresses` (`csa_id`, `customer_id`, `recipient_name`, `phone`, `address`, `city`, `province`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('3224081e-d0fb-4dde-8fc6-bbaf34c2b945', 'cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:43', '2026-07-17 14:38:57', NULL),
+	('6dd794a1-7fcb-4e76-b511-c036968eb7de', '8b3000d7-0386-4073-b38d-764bfbd294f8', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 13:26:41', '2026-08-06 13:59:41', NULL),
 	('b12b6db4-e3dc-48a6-a059-1c2bf12203b7', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 10:41:41', '2026-07-15 10:41:41', NULL);
 
 -- Dumping structure for table pos_optik.eye_examinations
@@ -249,7 +264,7 @@ CREATE TABLE IF NOT EXISTS `inventory_transactions` (
   CONSTRAINT `inventory_transactions_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.inventory_transactions: ~81 rows (approximately)
+-- Dumping data for table pos_optik.inventory_transactions: ~103 rows (approximately)
 INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `variant_id`, `product_id`, `transaction_type`, `reference_type`, `reference_id`, `quantity`, `transaction_date`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('018ae11a-a7ae-4daa-9726-bc5fb6e9b579', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ef55ef05-0583-4a77-a3c5-8eb1bc584cf2', 'in', 'initial', '', 110, '2026-07-16 10:48:37', '', '2026-07-16 10:48:37', '2026-07-16 11:29:47', NULL),
 	('04212621-6431-4a4f-8750-dd40c8f35375', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'in', 'initial', '', 100, '2026-07-15 10:39:43', '', '2026-07-15 10:39:43', '2026-07-15 11:30:26', '2026-07-15 11:30:26'),
@@ -273,6 +288,7 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('36671f07-a9a9-47c1-a9bf-6f9687a96193', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '776aa20e-0ada-4f65-81cf-1e199de7dab3', 'in', 'initial', '', 40, '2026-07-16 10:48:00', '', '2026-07-16 10:48:00', '2026-07-16 10:48:00', NULL),
 	('37fb1915-b418-4903-b699-0c2c23ecbcc6', NULL, NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'in', '', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 5, '2026-07-15 16:23:00', 'Order cancellation approved by Admin', '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL),
 	('3811e21d-626e-4ba4-b6e5-ea11541b89ad', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '07c245de-6af9-463c-becc-90f50917edc5', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 'out', 'order', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 14:00:49', 'Order payment approved', '2026-05-25 14:00:49', '2026-05-25 14:00:49', NULL),
+	('3b68e8c7-942c-41af-aa94-852acfbd097c', '72f6bcd3-f3ea-4987-8a87-2eb3e5aeaef7', NULL, 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'out', 'order', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 1, '2026-08-06 14:47:45', 'Order payment approved', '2026-08-06 14:47:45', '2026-08-06 14:47:45', NULL),
 	('3d485e4c-e343-4377-a923-27b88d9a3694', NULL, '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:40:59', 'Order cancellation approved by Admin', '2026-07-15 15:40:59', '2026-07-15 15:40:59', NULL),
 	('41183ebf-23e1-47c9-bed1-c01de892bacf', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'e7fad896-c27a-47db-afd3-97f48dcb296b', 'in', 'initial', '', 100, '2026-07-16 15:40:00', '', '2026-07-16 15:40:00', '2026-07-16 15:40:00', NULL),
 	('420a4f63-8c43-44fa-8c7b-29099c226890', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', 'out', 'order', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:45:05', 'Order payment approved', '2026-07-15 10:45:05', '2026-07-15 11:30:24', '2026-07-15 11:30:24'),
@@ -289,6 +305,7 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('60cde26f-d810-42c8-83ff-44a9aa679f9e', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'f5a79d3e-d4bd-4799-90f3-c9e00e46bc13', 'in', 'initial', '', 200, '2026-07-16 13:36:51', '', '2026-07-16 13:36:51', '2026-07-16 13:36:51', NULL),
 	('60ee62b8-d808-4dfa-9398-79b7f87f3e34', NULL, '68cc2731-2ef9-42a6-8993-6e262552fe99', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 3, '2026-07-15 15:15:31', 'Order cancelled by customer (Pending Payment)', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
 	('63d1cc4f-b297-4501-bb72-fe0db38864ed', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b90f2056-ace6-41ed-801f-98f463b21280', 'in', 'initial', '', 20, '2026-07-16 13:49:18', '', '2026-07-16 13:49:18', '2026-07-16 13:49:18', NULL),
+	('6812e855-090b-41e4-8417-c08faf5a9943', NULL, NULL, '47dc0b31-8710-4654-869d-246e2e265221', 'out', 'order', 'bb154d5e-c913-4fdd-a563-7bc2af57f1aa', 1, '2026-08-06 14:16:42', 'Online order submitted (Pending payment)', '2026-08-06 14:16:42', '2026-08-06 14:16:42', NULL),
 	('68d70654-d2aa-4079-a813-df51aabf6784', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', 'b3a23692-1b3d-4afa-a525-91aba79456da', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'out', 'order', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:45', 'Order payment approved', '2026-07-07 16:05:45', '2026-07-07 16:05:45', NULL),
 	('69bfc93a-2cdb-422d-b608-30bd0beeb6b7', NULL, '303431f3-db77-4f28-a571-fda989e0d268', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'in', '', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 3, '2026-07-15 15:15:31', 'Order cancelled by customer (Pending Payment)', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
 	('6e30750c-c6ee-4f73-b544-31594533f806', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '5365c81f-94ae-4908-a94f-08d89246984a', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '', 100, '2026-07-08 09:24:35', '', '2026-07-08 09:24:35', '2026-07-08 09:24:35', NULL),
@@ -299,6 +316,7 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('7baabf93-8b3a-4e04-bf84-c953d3510c6b', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', 'cf3def1d-59e4-4401-bfbf-a6a622caf21f', '4861d393-d692-42c3-ab4d-f0a2c78250f8', 'in', '', '', 100, '2026-07-08 09:24:45', '', '2026-07-08 09:24:45', '2026-07-08 09:24:45', NULL),
 	('7c687fa8-dece-49ca-9a18-5f1ffa83c893', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'in', 'initial', '', 100, '2026-06-04 13:21:52', '', '2026-06-04 13:21:52', '2026-06-04 13:21:52', NULL),
 	('7f47f994-f6d4-4441-b114-913480b6883d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '9eb2532e-4efc-44b7-8c54-73381914de19', '82261a06-c7b3-48ec-af3b-4525bc731457', 'in', '', '', 100, '2026-07-08 09:25:08', '', '2026-07-08 09:25:08', '2026-07-08 09:25:08', NULL),
+	('7f71a6fa-d5e3-486e-9e65-e6b3fada4957', '72f6bcd3-f3ea-4987-8a87-2eb3e5aeaef7', NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'out', 'order', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 1, '2026-08-06 13:36:02', 'Order payment approved', '2026-08-06 13:26:50', '2026-08-06 13:36:02', NULL),
 	('82261943-e316-4b33-a2ce-a66cae09a105', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '32b2b210-2471-4973-ad75-9c4ca33f18fe', 'in', 'initial', '', 50, '2026-07-16 10:47:13', '', '2026-07-16 10:47:13', '2026-07-16 10:47:13', NULL),
 	('8564c0c3-71de-4b82-823f-444c715abfe0', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'out', 'order', '366987fd-2461-4448-997c-e81097f0ccb9', 1, '2026-07-17 14:23:03', 'Order payment approved', '2026-07-17 14:23:03', '2026-07-17 14:23:03', NULL),
 	('8777a33e-35e1-4e18-8c45-6d82ff4da797', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'out', 'order', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', 1, '2026-07-17 15:37:24', 'Order payment approved', '2026-07-17 15:37:24', '2026-07-17 15:37:24', NULL),
@@ -311,6 +329,7 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('9270db89-b0ee-4cab-a15d-ea92ea1ef0d0', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'out', 'order', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:59', 'Order payment approved', '2026-07-07 13:09:59', '2026-07-07 13:09:59', NULL),
 	('927a58c9-d1b2-4739-a296-bbf593253e5f', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '61d300aa-6f73-4fe3-b26e-6d6a2cda2166', 'in', 'initial', '', 40, '2026-07-16 13:21:29', '', '2026-07-16 13:21:29', '2026-07-16 13:21:29', NULL),
 	('9c7504cb-cc03-4c19-b80f-4d290956e473', NULL, NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'in', '', '54d1ad24-4d35-43fd-bae0-538a38270497', 4, '2026-07-15 16:14:21', 'Order cancellation approved by Admin', '2026-07-15 16:14:21', '2026-07-15 16:14:21', NULL),
+	('9cf2d268-ad21-4cff-8587-f9a73f5e3869', NULL, NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'in', '', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 1, '2026-08-06 13:44:27', 'Order cancellation approved by Admin', '2026-08-06 13:44:27', '2026-08-06 13:44:27', NULL),
 	('9f4a5f89-3907-41f7-9679-0cdd9a310d62', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '4f4cbdd6-36d3-4f8b-8e90-0425e9cf3ed6', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', 'in', '', '', 100, '2026-07-08 09:25:27', '', '2026-07-08 09:25:27', '2026-07-08 09:25:27', NULL),
 	('a3949158-2193-47f0-8e92-40dde3821db1', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c7079913-6f26-4812-84a9-5fd705da671e', 'in', 'initial', '', 100, '2026-07-16 11:28:05', '', '2026-07-16 11:28:05', '2026-07-16 11:28:05', NULL),
 	('a4de5ac4-3494-48f9-8a83-75930c01d5cb', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '837621aa-3a2a-4674-bc7d-11fd026e893d', 'in', 'initial', '', 120, '2026-07-16 15:40:16', '', '2026-07-16 15:40:16', '2026-07-16 15:40:16', NULL),
@@ -319,10 +338,14 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('a76d7156-a955-4fee-b43a-9f0fb84e8f9d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'in', 'initial', '', 100, '2026-07-07 13:08:43', 'Masuk', '2026-07-07 13:08:43', '2026-07-07 13:08:43', NULL),
 	('a869a211-92df-4bba-80a3-9efcca87281f', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '0e0b34c0-f704-45ce-bfa3-95ad767e8ca0', 'in', 'initial', '', 100, '2026-07-16 10:45:46', '', '2026-07-16 10:45:46', '2026-07-16 10:45:46', NULL),
 	('a8aee837-f158-4f58-9544-61b435f4db9e', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'c6bd5977-eedc-41c5-87a4-59cee6d3acae', 'in', 'initial', '', 100, '2026-07-16 10:08:07', '', '2026-07-16 10:08:07', '2026-07-16 10:08:07', NULL),
+	('a94ce283-e6ab-40af-88c9-e72bc5f5127b', '72f6bcd3-f3ea-4987-8a87-2eb3e5aeaef7', NULL, '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'out', 'order', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 1, '2026-08-06 14:47:45', 'Order payment approved', '2026-08-06 14:47:45', '2026-08-06 14:47:45', NULL),
+	('abc3b6e5-8ec4-4b4d-99d8-4f0acbac1562', NULL, NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'out', 'order', 'b326f53c-f313-4f78-97c7-fa7e84b4dd4a', 2, '2026-08-06 13:59:47', 'Online order submitted (Pending payment)', '2026-08-06 13:59:47', '2026-08-06 13:59:47', NULL),
+	('ae2164f5-d379-4158-8700-5918b30a68d7', NULL, NULL, 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', 'out', 'order', '744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', 1, '2026-08-06 14:05:56', 'Online order submitted (Pending payment)', '2026-08-06 14:05:56', '2026-08-06 14:05:56', NULL),
 	('b1e0c0b6-d867-4e28-8de1-e3212c00dbb6', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'in', 'initial', '', 110, '2026-07-16 11:25:40', '', '2026-07-16 11:25:40', '2026-07-16 11:25:40', NULL),
 	('b21f8e83-4973-4112-b194-f04faeafb219', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '09527411-ce22-4480-918c-d6a4ce65cffe', 'in', 'initial', '', 120, '2026-07-16 11:26:35', '', '2026-07-16 11:26:35', '2026-07-16 11:26:35', NULL),
 	('b34f41d3-b60f-4fd0-8e9e-6d6cab7ce1cd', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'out', 'order', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', 3, '2026-07-15 11:30:57', 'Offline sale — order #503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
 	('b5f717f7-2bff-433e-a828-2a1c371eb1ca', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', 'out', 'order', '54d1ad24-4d35-43fd-bae0-538a38270497', 4, '2026-07-15 16:01:49', 'Order payment approved', '2026-07-15 16:01:49', '2026-07-15 16:01:49', NULL),
+	('b8cd32de-1a34-4f15-b97a-0b65aff0fa68', NULL, NULL, 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'in', '', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 1, '2026-08-06 14:48:31', 'Order cancellation approved by Admin', '2026-08-06 14:48:31', '2026-08-06 14:48:31', NULL),
 	('c02ebdf9-e6da-42a1-bbf2-ff4a8946a247', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '3606197c-68a5-4658-964b-8bc60df55063', 'in', 'initial', '', 100, '2026-07-16 10:07:32', '', '2026-07-16 10:07:32', '2026-07-16 10:07:32', NULL),
 	('c2ae576d-93b5-42b0-8544-c1a79fda2714', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '8ada1e1c-59a7-4e44-8f17-4b60ed9b9d73', 'in', 'initial', '', 30, '2026-07-16 13:21:12', '', '2026-07-16 13:21:12', '2026-07-16 13:21:12', NULL),
 	('c369c30c-40f3-4d4a-84b7-cd3a2f5d258b', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', 'in', 'initial', '', 39, '2026-07-16 13:19:51', '', '2026-07-16 13:19:51', '2026-07-16 13:19:51', NULL),
@@ -334,6 +357,8 @@ INSERT INTO `inventory_transactions` (`inventory_transaction_id`, `user_id`, `va
 	('d349dedc-246d-4023-baee-31672c84f0d7', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'ed2634ba-64cc-4a64-9f25-a7de6853538f', 'in', 'initial', '', 200, '2026-07-15 11:14:41', '', '2026-07-15 11:14:41', '2026-07-15 11:14:41', NULL),
 	('d3681046-5249-458b-9b67-14196bbbe6d4', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', 'in', 'initial', '', 80, '2026-07-16 11:24:25', '', '2026-07-16 11:24:25', '2026-07-16 11:24:25', NULL),
 	('d4938a0d-a4af-4e44-a484-aeda513d5e1d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '36f1c94d-8449-4e02-b9c2-f4de790997b3', 'out', 'order', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:59', 'Order payment approved', '2026-07-07 13:09:59', '2026-07-07 13:09:59', NULL),
+	('d5ed073b-8510-4bd2-af34-4107b63d468a', '72f6bcd3-f3ea-4987-8a87-2eb3e5aeaef7', NULL, 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 'out', 'order', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 1, '2026-08-06 15:21:07', 'Order payment approved', '2026-08-06 15:21:07', '2026-08-06 15:21:07', NULL),
+	('dcc1e580-459b-42f8-9536-c85d90f012b0', NULL, NULL, '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', 'in', '', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 1, '2026-08-06 14:48:31', 'Order cancellation approved by Admin', '2026-08-06 14:48:31', '2026-08-06 14:48:31', NULL),
 	('dd268b74-f78b-46d0-a272-fc3e7b2ad83d', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '790f723c-2ffb-4d87-a4b9-9582b7b40b2e', 'in', 'initial', '', 10, '2026-07-16 13:31:39', '', '2026-07-16 13:31:39', '2026-07-16 13:31:39', NULL),
 	('ddfcfcc2-20f0-447f-b7f9-f343ec6b9c97', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, '9d09b7dd-1cde-4d23-8217-29eaf7c8733c', 'in', 'initial', '', 100, '2026-07-16 09:48:48', '', '2026-07-16 09:48:48', '2026-07-16 09:48:48', NULL),
 	('e2856465-a0fd-4d26-b735-071f7c956961', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', NULL, 'dcd94de1-0282-421b-bf0c-31cf21b3d2fa', 'in', 'initial', '', 100, '2026-07-16 09:05:46', '', '2026-07-16 09:05:46', '2026-07-16 09:05:46', NULL),
@@ -355,7 +380,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `time` int NOT NULL,
   `batch` int unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb3;
 
 -- Dumping data for table pos_optik.migrations: ~40 rows (approximately)
 INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`, `batch`) VALUES
@@ -402,7 +427,8 @@ INSERT INTO `migrations` (`id`, `version`, `class`, `group`, `namespace`, `time`
 	(161, '2026-07-07-101000', 'App\\Database\\Migrations\\MakeShippingMethodIdNullableInOrders', 'default', 'App', 1783419012, 2),
 	(162, '2026-07-15-110000', 'App\\Database\\Migrations\\AddHasVariantsToProducts', 'default', 'App', 1784089368, 3),
 	(163, '2026-07-15-153000', 'App\\Database\\Migrations\\AddReturnShippingToRefunds', 'default', 'App', 1784104166, 4),
-	(164, '2026-07-17-141200', 'App\\Database\\Migrations\\AddFirstOrderOnlyToCoupons', 'default', 'App', 1784272307, 5);
+	(164, '2026-07-17-141200', 'App\\Database\\Migrations\\AddFirstOrderOnlyToCoupons', 'default', 'App', 1784272307, 5),
+	(165, '2026-08-06-042930', 'App\\Database\\Migrations\\AddGoogleIdToCustomers', 'default', 'App', 1785990578, 6);
 
 -- Dumping structure for table pos_optik.notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
@@ -417,52 +443,65 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.notifications: ~54 rows (approximately)
+-- Dumping data for table pos_optik.notifications: ~64 rows (approximately)
 INSERT INTO `notifications` (`notification_id`, `type`, `message`, `related_id`, `is_read`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0769f703-3f4d-4971-a41d-13e69557b4cc', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:40', '2026-07-15 16:15:13', NULL),
 	('0bcef56a-3945-4a3c-896b-4249ee57885b', 'new_order', 'New online order from Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:35', '2026-07-15 16:15:13', NULL),
 	('0c1f7327-c1b8-49b0-81fa-7ed25a508671', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '346bda17-d275-421e-80c9-066e11609051', 1, '2026-07-15 15:40:19', '2026-07-15 16:15:13', NULL),
-	('2342a06b-5a3b-4f74-a8b7-93ad4c443c44', 'new_order', 'Pesanan baru dari Tina Usamah', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 0, '2026-07-17 10:46:50', '2026-07-17 10:46:50', NULL),
+	('0e93647f-1691-4f28-b242-e6846c143b3b', 'new_order', 'New online order from Dystian en', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 0, '2026-08-06 14:45:16', '2026-08-06 14:45:16', NULL),
+	('169e573f-a981-4738-aa28-c8a6317d72ce', 'new_order', 'New online order from DYSTIAN EN YUSGIANTORO 411221165', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 0, '2026-08-06 13:26:50', '2026-08-06 13:26:50', NULL),
+	('2342a06b-5a3b-4f74-a8b7-93ad4c443c44', 'new_order', 'Pesanan baru dari Tina Usamah', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 1, '2026-07-17 10:46:50', '2026-08-06 13:25:54', NULL),
 	('28009d27-0e85-4f87-a86e-841a3d8f797a', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:44:57', '2026-07-15 16:15:13', NULL),
 	('2bcacf2a-21df-4965-ad63-97a48003a867', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:37', '2026-07-15 16:15:13', NULL),
 	('2d0cbd34-c858-4024-b01a-13741e805704', 'new_order', 'Pesanan baru dari Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:35', '2026-07-15 16:15:13', NULL),
 	('2fab8f6d-548d-4cf5-b432-4510e100315f', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:41:47', '2026-07-15 10:45:01', NULL),
 	('353dd832-8e14-4e6c-b2c4-638afee97161', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:44', '2026-07-15 16:15:13', NULL),
+	('3811d871-eade-4b84-897d-b6b791bb67f8', 'new_order', 'New online order from Dystian en', 'b326f53c-f313-4f78-97c7-fa7e84b4dd4a', 0, '2026-08-06 13:59:47', '2026-08-06 13:59:47', NULL),
 	('391382ed-7b3c-42cc-8452-4e78b9c830b4', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:36', '2026-07-15 16:15:13', NULL),
+	('396db158-21ca-49dc-b8dd-b1989ffe5e01', 'new_order', 'New online order from Dystian en', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 0, '2026-08-06 15:20:43', '2026-08-06 15:20:43', NULL),
 	('3cf789e3-90ec-4db4-a12b-6e37392fc59d', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 1, '2026-07-15 15:56:40', '2026-07-15 16:15:13', NULL),
-	('3f07fd94-0de8-49f8-80c7-6890b47be97a', 'new_order', 'New online order from Unggul Tarihoran', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', 0, '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL),
+	('3f07fd94-0de8-49f8-80c7-6890b47be97a', 'new_order', 'New online order from Unggul Tarihoran', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', 1, '2026-07-17 15:27:47', '2026-08-06 13:25:54', NULL),
+	('3f97b64f-875a-496f-9cb7-3a2cf377bf20', 'cancel_order', 'New cancellation request from DYSTIAN EN YUSGIANTORO 411221165', '3a262cbd-a886-4ef7-a3ce-0f5813b09ce9', 1, '2026-08-06 13:44:11', '2026-08-06 13:44:21', NULL),
 	('40cfa63d-b532-414a-b770-342387b578cf', 'refund_order', 'Refund approved for Order #54d1ad24-4d35-43fd-bae0-538a38270497 (Cancellation)', 'dfa1a240-565c-4642-ab46-53a7d1740c67', 1, '2026-07-15 16:14:21', '2026-07-15 16:15:13', NULL),
 	('41bf15a6-7110-4e28-bd07-2bd4a82beaa1', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:22', '2026-07-15 16:15:13', NULL),
 	('46acee33-4789-4940-abd1-2157ccf07419', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:54', '2026-07-15 16:15:13', NULL),
 	('48c2a2fd-f94c-427e-b509-00882aef1f31', 'refund_order', 'Refund approved for Order #a7698eb9-fc91-4b8b-bcfa-a0b2a772af96 (Cancellation)', '3ea8052b-4d20-4770-a3e7-4e8552518e71', 1, '2026-07-15 15:51:20', '2026-07-15 16:15:13', NULL),
 	('4c0f6bf7-127a-46b0-b34a-a331dc82e50c', 'new_order', 'Pembayaran baru dari Tina Usamah', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:29', '2026-07-07 16:05:42', NULL),
 	('4c7da7d5-e45a-4d7f-b6c4-1e3e4d69ce98', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '8e1ed674-5823-49e8-9b1b-17aa2b067ab8', 1, '2026-07-15 15:51:12', '2026-07-15 16:15:13', NULL),
+	('5663e70f-a084-494d-9648-20aa2aaee600', 'new_order', 'New payment from Dystian en', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 0, '2026-08-06 15:20:50', '2026-08-06 15:20:50', NULL),
 	('5d104897-34fd-4061-9eea-56d18716ce4b', 'new_order', 'New payment from Tina Usamah', '366987fd-2461-4448-997c-e81097f0ccb9', 1, '2026-07-17 14:22:56', '2026-07-17 14:23:01', NULL),
 	('6237a1c8-89fc-44b5-8a5c-9dfac9382a70', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 1, '2026-07-15 14:25:23', '2026-07-15 15:15:47', NULL),
+	('631a0c82-7064-4a7f-9b89-9358b8998144', 'new_order', 'New payment from DYSTIAN EN YUSGIANTORO 411221165', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 0, '2026-08-06 13:35:47', '2026-08-06 13:35:47', NULL),
 	('64885505-d3a6-476e-bc96-417ffdb3a1dd', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:36', '2026-07-15 16:15:13', NULL),
 	('6aef05da-aa5c-4814-a27c-259ea081a247', 'new_order', 'Pembayaran baru dari Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 14:00:23', '2026-05-26 09:06:59', NULL),
 	('6b208791-325d-471c-88f0-c01b7c4f437e', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:59', '2026-07-15 16:15:13', NULL),
-	('71ab1de7-dfe5-4a55-9ddb-4593012ba678', 'new_order', 'New online order from Tina Usamah', '366987fd-2461-4448-997c-e81097f0ccb9', 0, '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
+	('71ab1de7-dfe5-4a55-9ddb-4593012ba678', 'new_order', 'New online order from Tina Usamah', '366987fd-2461-4448-997c-e81097f0ccb9', 1, '2026-07-17 14:16:44', '2026-08-06 13:25:54', NULL),
 	('744d2cd4-28b5-4a7d-9b45-00c982c7e985', 'new_order', 'Pembayaran baru dari Tina Usamah', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 1, '2026-07-07 13:09:49', '2026-07-07 16:05:36', NULL),
 	('756a4c9f-2ed8-447b-8529-206c4e773449', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 1, '2026-07-16 09:19:35', '2026-07-17 10:46:23', NULL),
+	('7d9dda08-9a8d-4a6e-9423-6dc3100676d9', 'new_order', 'New online order from Dystian en', '744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', 0, '2026-08-06 14:05:56', '2026-08-06 14:05:56', NULL),
 	('831667c6-e9b8-4099-a91c-6d0606e003be', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '52672a09-1262-4164-8331-fbbf1374d393', 1, '2026-07-15 15:39:54', '2026-07-15 16:15:13', NULL),
 	('856579cd-afc7-4a96-b77c-148f51d9ebbe', 'refund_order', 'Refund approved for Order #52672a09-1262-4164-8331-fbbf1374d393 (Cancellation)', '537191fd-d803-4a86-be01-e124a5d1f949', 1, '2026-07-15 15:40:59', '2026-07-15 16:15:13', NULL),
+	('8e52cb94-7b27-4952-abbf-d78d90600f55', 'new_order', 'New payment from Dystian en', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 1, '2026-08-06 14:45:59', '2026-08-06 14:47:36', NULL),
+	('9492be96-add5-4ad3-bdd0-966b1488667a', 'refund_order', 'Refund approved for Order #39be94c4-e0a6-4d2e-9a8c-93ae93f39be9 (Cancellation)', 'f01ff877-ab4c-46c1-9420-2bd16fdd06bf', 0, '2026-08-06 14:48:31', '2026-08-06 14:48:31', NULL),
 	('9562318c-109c-4178-8598-bcce3a736afd', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:41:47', '2026-07-15 16:15:13', NULL),
 	('9a869b94-dc04-4117-94f0-8d3b9825ce59', 'refund_order', 'New refund request from Jagaraga Mustofa M.Kom.', 'd280894c-390e-4025-a1a8-f152c7b88035', 1, '2026-07-15 15:22:32', '2026-07-15 16:15:13', NULL),
 	('9b38926d-eab2-4834-bb63-56b9fbbb8c3e', 'new_order', 'Pesanan baru dari Tina Usamah', 'f0872a80-855d-453b-a466-f61259fb8d51', 1, '2026-05-25 13:59:58', '2026-07-15 16:15:13', NULL),
+	('9e46f841-bd5a-41a9-9cd0-50e28e18fa32', 'refund_order', 'Refund approved for Order #c3785cb2-d771-4deb-92d7-d7cb5a385f0d (Cancellation)', 'f11cb81d-f3e4-4119-a0f0-d611c15eb979', 0, '2026-08-06 13:44:27', '2026-08-06 13:44:27', NULL),
+	('a0ecb6be-8fcc-4746-99d2-6b0569166f03', 'new_order', 'New online order from Dystian en', 'bb154d5e-c913-4fdd-a563-7bc2af57f1aa', 0, '2026-08-06 14:16:42', '2026-08-06 14:16:42', NULL),
 	('a9bca8f6-e90c-49f8-8657-e8d72f01fd5c', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', 'beb9f65e-9f56-4cd2-858e-8ce6d95dbeb3', 1, '2026-07-15 16:02:03', '2026-07-15 16:15:13', NULL),
 	('ab1ef9a8-5d53-4fbc-ace4-b00cfd7e9e0e', 'new_order', 'New payment from Tina Usamah', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 1, '2026-07-17 11:03:07', '2026-07-17 11:03:11', NULL),
 	('b1bcccde-c848-487f-ad8e-0d142c98389d', 'new_order', 'Pesanan baru dari Tina Usamah', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 1, '2026-07-07 16:05:22', '2026-07-15 09:58:21', NULL),
 	('b31e47a7-6ffc-4741-8517-88602a30e04d', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 1, '2026-07-15 15:52:06', '2026-07-15 15:52:14', NULL),
+	('b3939f0e-d7e2-4864-a406-79e24b1a3333', 'cancel_order', 'New cancellation request from Dystian en', '507413f1-4eca-4f40-b1c0-a5cbd885d3dc', 0, '2026-08-06 14:48:15', '2026-08-06 14:48:15', NULL),
 	('b48f58d8-e0b9-47a8-9791-054c5b0c7471', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:23', '2026-07-15 16:15:13', NULL),
 	('b62a9c79-0301-4339-9bf6-0533321bf0e1', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 1, '2026-07-15 15:52:01', '2026-07-15 16:15:13', NULL),
 	('b72e0130-9e9e-46bd-8369-fffc19bcc2e9', 'new_order', 'Pesanan baru dari Jagaraga Mustofa M.Kom.', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 1, '2026-07-16 09:19:28', '2026-07-17 10:46:23', NULL),
 	('c564c8a4-e30d-48af-8786-2d5279d102ab', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 1, '2026-07-15 10:42:02', '2026-07-15 10:44:38', NULL),
-	('d462dead-7708-4ecd-bf10-f0ea036937b4', 'refund_order', 'Refund approved for Order #fd3ca190-e315-4468-a6fb-b1b8cb959537 (Cancellation)', '8d97ad32-24ff-4543-ba65-e4119ae0e0f5', 0, '2026-07-17 11:03:51', '2026-07-17 11:03:51', NULL),
+	('d462dead-7708-4ecd-bf10-f0ea036937b4', 'refund_order', 'Refund approved for Order #fd3ca190-e315-4468-a6fb-b1b8cb959537 (Cancellation)', '8d97ad32-24ff-4543-ba65-e4119ae0e0f5', 1, '2026-07-17 11:03:51', '2026-08-06 13:25:54', NULL),
 	('d5364c0d-d93e-476f-9753-7d074faf42ec', 'refund_order', 'New refund request from Jagaraga Mustofa M.Kom.', '7a43bdd8-2744-4ac9-abb5-487a6e6a3d95', 1, '2026-07-15 15:59:32', '2026-07-15 16:15:13', NULL),
-	('d72f7d81-beed-4b8f-986e-79ea53d03b0a', 'new_order', 'New online order from Tina Usamah', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 0, '2026-07-17 10:46:51', '2026-07-17 10:46:51', NULL),
+	('d72f7d81-beed-4b8f-986e-79ea53d03b0a', 'new_order', 'New online order from Tina Usamah', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 1, '2026-07-17 10:46:51', '2026-08-06 13:25:54', NULL),
 	('dcc5f78f-f3d3-496a-ba22-ac834bacc9da', 'new_order', 'New online order from Jagaraga Mustofa M.Kom.', '30154f79-8290-4374-9dae-3ea47f20ce7e', 1, '2026-07-15 15:15:37', '2026-07-15 16:15:13', NULL),
-	('df1a613a-2797-42c8-a26a-74a6e2e46909', 'cancel_order', 'New cancellation request from Tina Usamah', '47aa579c-f5c1-4ada-9c96-b506af00fef0', 0, '2026-07-17 11:03:35', '2026-07-17 11:03:35', NULL),
+	('df1a613a-2797-42c8-a26a-74a6e2e46909', 'cancel_order', 'New cancellation request from Tina Usamah', '47aa579c-f5c1-4ada-9c96-b506af00fef0', 1, '2026-07-17 11:03:35', '2026-08-06 13:25:54', NULL),
 	('df70484a-1db7-4026-b0ac-ffdab314453c', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '54d1ad24-4d35-43fd-bae0-538a38270497', 1, '2026-07-15 16:01:40', '2026-07-15 16:15:13', NULL),
 	('dfd2d3ab-77db-40a9-827b-5d5983789194', 'new_order', 'Pembayaran baru dari Jagaraga Mustofa M.Kom.', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 1, '2026-07-15 15:21:29', '2026-07-15 15:21:45', NULL),
 	('e58b215d-39f6-4959-9229-4cd805474aaf', 'cancel_order', 'New cancellation request from Jagaraga Mustofa M.Kom.', '0997d88b-4be7-46f8-a994-02ebf477232c', 1, '2026-07-15 16:22:44', '2026-07-17 10:46:23', NULL),
@@ -504,8 +543,9 @@ CREATE TABLE IF NOT EXISTS `orders` (
   CONSTRAINT `orders_status_id_foreign` FOREIGN KEY (`status_id`) REFERENCES `order_statuses` (`status_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.orders: ~28 rows (approximately)
+-- Dumping data for table pos_optik.orders: ~34 rows (approximately)
 INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_id`, `shipping_cost`, `tracking_number`, `courier`, `shipped_at`, `coupon_discount`, `grand_total`, `order_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('055c23d7-e1e8-4afe-a258-ee77bd66e4a9', '8b3000d7-0386-4073-b38d-764bfbd294f8', '8d434de4-ba22-4698-8438-8318ef3f6d8f', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '12123232212121', 'J&T', NULL, 100000.00, '1314000', 'online', '2026-08-06 15:20:43', '2026-08-06 15:33:07', NULL),
 	('0a50b966-bca0-43ea-a0e8-6f2c31b01440', 'cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'cc46d2a8-436c-42fc-96a1-ffb537dbabed', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1773000', 'online', '2026-07-17 15:27:47', '2026-07-17 15:37:24', NULL),
 	('0e5f09ef-3187-433d-b4d2-40acdb2697c3', '29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '135000', 'offline', '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
 	('143d5c4a-8523-4ee9-8f7d-c21e37847973', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '16320000', 'online', '2026-07-15 14:25:23', '2026-07-15 15:15:31', NULL),
@@ -513,6 +553,7 @@ INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_i
 	('22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '570000', 'offline', '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
 	('30154f79-8290-4374-9dae-3ea47f20ce7e', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '3520000', 'online', '2026-07-15 15:15:37', '2026-07-15 15:17:50', NULL),
 	('366987fd-2461-4448-997c-e81097f0ccb9', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'cc46d2a8-436c-42fc-96a1-ffb537dbabed', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1335500', 'online', '2026-07-17 14:16:44', '2026-07-17 14:23:03', NULL),
+	('39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', '8b3000d7-0386-4073-b38d-764bfbd294f8', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 42958.00, '263431', 'online', '2026-08-06 14:45:16', '2026-08-06 14:48:31', NULL),
 	('4da557ef-f65a-4cdd-9d63-d96356e84dee', '29ea4fb9-1e2d-428f-9657-1d7663f5ba2b', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '29028000', 'offline', '2026-07-09 14:49:49', '2026-07-09 14:49:49', NULL),
 	('503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '3b1435da-afab-49b4-a27f-8f6885763ce1', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '4050000', 'offline', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
 	('52672a09-1262-4164-8331-fbbf1374d393', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '2320000', 'online', '2026-07-15 15:39:54', '2026-07-15 15:40:59', NULL),
@@ -520,6 +561,7 @@ INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_i
 	('5e15cb5c-bf24-41cf-b259-e20f289b604c', '3b1435da-afab-49b4-a27f-8f6885763ce1', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '6900000', 'offline', '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
 	('63e78cb8-c662-4aba-a4b7-9aed7ccc0618', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '6770000', 'online', '2026-07-15 15:52:00', '2026-07-15 16:23:00', NULL),
 	('71de3fdc-8905-4eff-97e6-90ad87686b99', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '2300000', 'offline', '2026-07-15 09:24:22', '2026-07-15 09:24:22', NULL),
+	('744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', '8b3000d7-0386-4073-b38d-764bfbd294f8', '234af2ae-bba4-4fa3-b386-5f1390c51146', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1335500', 'online', '2026-08-06 14:05:56', '2026-08-06 14:15:10', NULL),
 	('7f6042b4-3f58-4e87-a366-b3f3f0c41187', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'ae12a448-98b3-4dc1-9c71-87468abc7bb5', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '323232423312121', 'J&T', NULL, 0.00, '590000', 'online', '2026-07-15 15:56:40', '2026-07-15 16:00:07', NULL),
 	('83b85cec-c469-4652-8f3e-63fbcbcbfb65', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '827u4u484728239384', 'JNE', NULL, 0.00, '17546000', 'online', '2026-07-07 13:09:35', '2026-07-07 13:10:26', NULL),
 	('8e756651-3f5a-4578-ad08-0a6bdfdc8da4', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '9676000', 'offline', '2026-07-15 09:26:59', '2026-07-15 09:26:59', NULL),
@@ -527,8 +569,11 @@ INSERT INTO `orders` (`order_id`, `customer_id`, `status_id`, `shipping_method_i
 	('a6734433-cdae-4ec3-ac77-6ece69aeb338', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '4600000', 'offline', '2026-07-15 09:59:44', '2026-07-15 09:59:44', NULL),
 	('a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '155000', 'online', '2026-07-15 10:41:47', '2026-07-15 15:51:20', NULL),
 	('accd9090-090b-410b-9245-86e9230f52dc', '30022d14-9388-4351-8709-2f8c89ae9002', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '2700000', 'offline', '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL),
+	('b326f53c-f313-4f78-97c7-fa7e84b4dd4a', '8b3000d7-0386-4073-b38d-764bfbd294f8', '234af2ae-bba4-4fa3-b386-5f1390c51146', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '3626000', 'online', '2026-08-06 13:59:47', '2026-08-06 14:05:50', NULL),
+	('bb154d5e-c913-4fdd-a563-7bc2af57f1aa', '8b3000d7-0386-4073-b38d-764bfbd294f8', '234af2ae-bba4-4fa3-b386-5f1390c51146', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1335500', 'online', '2026-08-06 14:16:42', '2026-08-06 14:21:43', NULL),
 	('bba1861d-d341-4dd7-aaf1-188e1f193f8f', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'cc46d2a8-436c-42fc-96a1-ffb537dbabed', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 0.00, '844500', 'online', '2026-07-16 09:19:28', '2026-07-16 09:20:10', NULL),
 	('c322e59d-5b1f-46c3-92dc-74236e7bc23b', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '10000000', 'offline', '2026-07-09 14:49:06', '2026-07-09 14:49:06', NULL),
+	('c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 'c546d00b-d4bd-4ddc-b6b4-7f6e635abd17', '0ab780fe-49da-4a95-ad73-56c3c74f2416', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, NULL, NULL, NULL, 100000.00, '1773000', 'online', '2026-08-06 13:26:50', '2026-08-06 13:44:27', NULL),
 	('c48753e7-0691-4004-8178-6837eb5db258', '30022d14-9388-4351-8709-2f8c89ae9002', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '270000', 'offline', '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
 	('d6709d13-aec5-4eab-b1a0-508e53aeb56f', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '8d434de4-ba22-4698-8438-8318ef3f6d8f', NULL, 0.00, NULL, NULL, NULL, 0.00, '19352000', 'offline', '2026-07-08 08:58:53', '2026-07-08 08:58:53', NULL),
 	('db162bb3-38c4-4b58-9ce6-e8b51b9376e7', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '4d609622-8392-469b-acd1-c7859424633a', '3e08ee99-750a-4437-a3a9-922437410f6e', 20000.00, '827u4u484728239384', 'JNE', NULL, 0.00, '1120000', 'online', '2026-07-07 16:05:22', '2026-07-07 16:05:55', NULL),
@@ -556,11 +601,13 @@ CREATE TABLE IF NOT EXISTS `order_cancellations` (
   CONSTRAINT `order_cancellations_processed_by_foreign` FOREIGN KEY (`processed_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_cancellations: ~7 rows (approximately)
+-- Dumping data for table pos_optik.order_cancellations: ~9 rows (approximately)
 INSERT INTO `order_cancellations` (`order_cancellation_id`, `order_id`, `reason`, `additional_note`, `status`, `processed_by`, `processed_at`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0997d88b-4be7-46f8-a994-02ebf477232c', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'Pricing issue', '', 'approved', NULL, '2026-07-15 16:23:00', '2026-07-15 16:22:44', '2026-07-15 16:23:00', NULL),
 	('346bda17-d275-421e-80c9-066e11609051', '52672a09-1262-4164-8331-fbbf1374d393', 'Changed my mind', 'gfgfgfg', 'approved', NULL, '2026-07-15 15:40:59', '2026-07-15 15:40:19', '2026-07-15 15:40:59', NULL),
+	('3a262cbd-a886-4ef7-a3ce-0f5813b09ce9', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 'Changed my mind', '', 'approved', NULL, '2026-08-06 13:44:26', '2026-08-06 13:44:11', '2026-08-06 13:44:26', NULL),
 	('47aa579c-f5c1-4ada-9c96-b506af00fef0', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 'Changed my mind', '', 'approved', NULL, '2026-07-17 11:03:51', '2026-07-17 11:03:35', '2026-07-17 11:03:51', NULL),
+	('507413f1-4eca-4f40-b1c0-a5cbd885d3dc', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 'Changed my mind', '', 'approved', NULL, '2026-08-06 14:48:31', '2026-08-06 14:48:15', '2026-08-06 14:48:31', NULL),
 	('5d638e53-7366-43c5-a007-d2d027c14e4f', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'Cancelled to start a new checkout flow', '', 'approved', NULL, '2026-07-15 15:15:31', '2026-07-15 15:15:31', '2026-07-15 15:15:31', NULL),
 	('8e1ed674-5823-49e8-9b1b-17aa2b067ab8', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'Wrong order', 'ddsds', 'approved', NULL, '2026-07-15 15:51:20', '2026-07-15 15:51:12', '2026-07-15 15:51:20', NULL),
 	('beb9f65e-9f56-4cd2-858e-8ce6d95dbeb3', '54d1ad24-4d35-43fd-bae0-538a38270497', 'Wrong order', 'sasasas', 'approved', NULL, '2026-07-15 16:14:21', '2026-07-15 16:02:03', '2026-07-15 16:14:21', NULL),
@@ -581,10 +628,16 @@ CREATE TABLE IF NOT EXISTS `order_coupons` (
   CONSTRAINT `order_coupons_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_coupons: ~2 rows (approximately)
+-- Dumping data for table pos_optik.order_coupons: ~8 rows (approximately)
 INSERT INTO `order_coupons` (`order_coupon_id`, `order_id`, `coupon_id`, `discount_amount`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('8bac898b-be38-48d0-a46c-4690bd321e23', '366987fd-2461-4448-997c-e81097f0ccb9', '5d015baa-52eb-441a-b158-bf4b9c987b00', 100000.00, '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
-	('9f66f5e3-3068-4b4e-9cf3-86ae361a75ab', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL);
+	('9f66f5e3-3068-4b4e-9cf3-86ae361a75ab', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL),
+	('d4d5bbc6-9ec8-497a-82a9-8358c7d08f1e', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-08-06 13:26:50', '2026-08-06 13:26:50', NULL),
+	('1d14f627-d4a1-4f22-8765-1ac745f4a928', 'b326f53c-f313-4f78-97c7-fa7e84b4dd4a', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-08-06 13:59:47', '2026-08-06 13:59:47', NULL),
+	('4aaf0cc1-1daa-4a2e-91e2-66b967621ca6', '744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-08-06 14:05:56', '2026-08-06 14:05:56', NULL),
+	('0a2fd9a8-a2a7-4c96-9200-a91fc28dad32', 'bb154d5e-c913-4fdd-a563-7bc2af57f1aa', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-08-06 14:16:42', '2026-08-06 14:16:42', NULL),
+	('db042e9a-bfda-46cc-81cc-622faf938516', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 42958.00, '2026-08-06 14:45:16', '2026-08-06 14:45:16', NULL),
+	('cd8bf56d-12d8-4cde-a98e-1999394719a0', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', '9c6bbd7b-ba24-4ffe-bac5-c71466ba85a0', 100000.00, '2026-08-06 15:20:43', '2026-08-06 15:20:43', NULL);
 
 -- Dumping structure for table pos_optik.order_items
 CREATE TABLE IF NOT EXISTS `order_items` (
@@ -606,8 +659,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   CONSTRAINT `order_items_variant_id_foreign` FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`variant_id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_items: ~28 rows (approximately)
+-- Dumping data for table pos_optik.order_items: ~38 rows (approximately)
 INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `variant_id`, `quantity`, `price`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('09f2f29d-fc73-47bb-a3cd-30725e655690', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 1, 1853000.00, '2026-08-06 13:26:50', '2026-08-06 13:26:50', NULL),
 	('0b64f3b6-b047-47db-8f9f-3bea29295706', '9e700049-24e0-4d68-8c07-9914401517f0', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 2, 9676000.00, '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
 	('0f107b49-3876-4951-b3c2-8a6a3efe17dd', '366987fd-2461-4448-997c-e81097f0ccb9', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 1, 1415500.00, '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
 	('0f40acda-8b6c-4970-96a0-a6140b1ce755', '143d5c4a-8523-4ee9-8f7d-c21e37847973', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', '92504955-32b6-4016-887d-8a278f0a3a56', 2, 1100000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
@@ -615,12 +669,14 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `variant_i
 	('1ab6c659-4429-430b-ab6e-d7c4d3fe2fbb', 'c48753e7-0691-4004-8178-6837eb5db258', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 2, 135000.00, '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
 	('1f365e68-9777-4d62-82ee-a1e350bc9512', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 1, 1853000.00, '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL),
 	('20b72565-5bd1-4683-be2e-f042061eb368', '71de3fdc-8905-4eff-97e6-90ad87686b99', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 1, 2300000.00, '2026-07-15 09:24:23', '2026-07-15 09:24:23', NULL),
+	('308e78f4-55ca-440a-90b6-2f785c1823e3', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', '0e436fcc-9d31-41a6-85cc-a8109fdaa7c5', NULL, 1, 35640.00, '2026-08-06 14:45:16', '2026-08-06 14:45:16', NULL),
 	('31dd4428-acec-4a9f-94fc-cdffda9940b0', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', NULL, 1, 7850000.00, '2026-07-07 13:09:35', '2026-07-07 13:09:35', NULL),
 	('36721243-f740-438f-a81d-8bfe20555081', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:41:47', '2026-07-15 10:41:47', NULL),
 	('46c04009-9c87-4add-afe9-a39976be2743', '52672a09-1262-4164-8331-fbbf1374d393', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 1, 2300000.00, '2026-07-15 15:39:54', '2026-07-15 15:39:54', NULL),
 	('490fd9fd-c318-4af7-b1ff-454bb5cfa877', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 3, 1350000.00, '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
 	('5317fe7d-5b6e-4bf5-bb7c-2dcbfa146673', '22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 1, 570000.00, '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
 	('60400e7d-15ec-4866-812c-58c8ce1cf35b', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 1, 570000.00, '2026-07-15 15:56:40', '2026-07-15 15:56:40', NULL),
+	('684f7063-b6f5-4526-932e-12a90abeeae8', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', NULL, 1, 1394000.00, '2026-08-06 15:20:43', '2026-08-06 15:20:43', NULL),
 	('70544496-5cd7-4a84-9de2-4e7b7216df30', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', NULL, 1, 1000000.00, '2026-07-15 15:21:22', '2026-07-15 15:21:22', NULL),
 	('72dc9262-35f6-436e-aa6e-f1a417a68361', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', '5fb5cbe7-9908-48bd-b9cc-76ffab7d7161', 'b3a23692-1b3d-4afa-a525-91aba79456da', 1, 1100000.00, '2026-07-07 16:05:22', '2026-07-07 16:05:22', NULL),
 	('7c7ad204-500e-4cef-80f1-a167c02fc388', '0e5f09ef-3187-433d-b4d2-40acdb2697c3', '4c5cf0b1-e0e8-4c1f-9f61-62e6ab60893a', NULL, 1, 135000.00, '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
@@ -634,10 +690,14 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `variant_i
 	('a9bfa079-6ed1-4d0a-9da9-24c654bb0e66', '143d5c4a-8523-4ee9-8f7d-c21e37847973', '82261a06-c7b3-48ec-af3b-4525bc731457', '68cc2731-2ef9-42a6-8993-6e262552fe99', 3, 3500000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
 	('aace3d9e-9c98-4f90-90c3-b1d35c425bcd', '4da557ef-f65a-4cdd-9d63-d96356e84dee', '36f1c94d-8449-4e02-b9c2-f4de790997b3', NULL, 3, 9676000.00, '2026-07-09 14:49:49', '2026-07-09 14:49:49', NULL),
 	('acde7c85-7402-4583-94fe-1c41a19b8102', 'f0872a80-855d-453b-a466-f61259fb8d51', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', '07c245de-6af9-463c-becc-90f50917edc5', 1, 1000000.00, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
+	('b55928db-2a1a-45d5-8928-4d5f3bf05b97', 'bb154d5e-c913-4fdd-a563-7bc2af57f1aa', '47dc0b31-8710-4654-869d-246e2e265221', NULL, 1, 1415500.00, '2026-08-06 14:16:42', '2026-08-06 14:16:42', NULL),
 	('bd217fcc-147a-45f7-abd6-244cafcb36f5', 'f0872a80-855d-453b-a466-f61259fb8d51', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', NULL, 1, 1000000.00, '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
 	('c5590bab-d3f2-47f0-9db1-ab437ca2ffa5', '54d1ad24-4d35-43fd-bae0-538a38270497', 'a4f8a1ba-8eed-4df5-ad7f-21f80c730d30', NULL, 4, 570000.00, '2026-07-15 16:01:36', '2026-07-15 16:01:36', NULL),
+	('c82b624b-0cd8-4c95-a921-34280b28ba86', 'b326f53c-f313-4f78-97c7-fa7e84b4dd4a', '100c00b9-2aa6-4ec9-af71-7f32d2d1d537', NULL, 2, 1853000.00, '2026-08-06 13:59:47', '2026-08-06 13:59:47', NULL),
 	('cc6bc271-fecc-455d-9255-6ca952dace4d', 'accd9090-090b-410b-9245-86e9230f52dc', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 2, 1350000.00, '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL),
+	('dc2a730f-9816-4d77-9104-3e46978f1bd0', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 'bb8b2e07-1eca-4dc4-bf99-d455d098a86e', NULL, 1, 250750.00, '2026-08-06 14:45:16', '2026-08-06 14:45:16', NULL),
 	('e060be8a-8b6c-4c9c-a19d-a9bd410e9b6e', '5e15cb5c-bf24-41cf-b259-e20f289b604c', '4861d393-d692-42c3-ab4d-f0a2c78250f8', '5365c81f-94ae-4908-a94f-08d89246984a', 3, 2300000.00, '2026-07-15 11:33:23', '2026-07-15 11:33:23', NULL),
+	('e4af1c11-2993-4c0e-932a-fe62a4d97cce', '744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', 'b4118af4-f1d6-423c-a3a5-c5c9afa17b64', NULL, 1, 1415500.00, '2026-08-06 14:05:56', '2026-08-06 14:05:56', NULL),
 	('e79ed1b3-15fd-42fc-9bb3-e16cc68f9367', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'ed2634ba-64cc-4a64-9f25-a7de6853538f', NULL, 5, 1350000.00, '2026-07-15 15:52:00', '2026-07-15 15:52:00', NULL),
 	('e8c8bd71-7f33-4008-8ed1-8a62fced1a48', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'fa9e14e2-03dd-47a6-9545-99e1eb45f6b6', '303431f3-db77-4f28-a571-fda989e0d268', 3, 1200000.00, '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL);
 
@@ -706,7 +766,9 @@ INSERT INTO `order_refunds` (`order_refund_id`, `order_id`, `user_refund_account
 	('8d97ad32-24ff-4543-ba65-e4119ae0e0f5', 'fd3ca190-e315-4468-a6fb-b1b8cb959537', 'b238d887-380d-408a-8200-11ec5cfc0db0', 28000.00, 'Cancellation: Changed my mind', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-17 11:03:51', '2026-07-17 11:03:51', NULL, NULL),
 	('d280894c-390e-4025-a1a8-f152c7b88035', '159fda19-5e23-4b56-ad97-3db7f266a9a7', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 1020000.00, 'Defective product', 'SASASASWEEWE', 'refunded', 'full', 'SASASAS', 'https://cdn.adefoodwaste.biz.id/1784103751_e27b6148aec9ca054fa2.png', 'JNE', '090943KJDSJKJSDSJD', '2026-07-15 15:30:38', '3f4d20ca-cf30-4b1b-abd2-3d7b669fc58e', '2026-07-15 15:22:32', '2026-07-15 15:31:31', '2026-07-15 15:31:19', NULL),
 	('dfa1a240-565c-4642-ab46-53a7d1740c67', '54d1ad24-4d35-43fd-bae0-538a38270497', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 2300000.00, 'Cancellation: Wrong order', 'sasasas', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 16:14:21', '2026-07-15 16:14:21', NULL, NULL),
-	('e889f5ba-7ff9-4c57-870d-a9469ffd5e12', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 6770000.00, 'Cancellation: Pricing issue', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL, NULL);
+	('e889f5ba-7ff9-4c57-870d-a9469ffd5e12', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'a9c858ec-990a-4e7b-83a9-b993bbf55641', 6770000.00, 'Cancellation: Pricing issue', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-07-15 16:23:00', '2026-07-15 16:23:00', NULL, NULL),
+	('f01ff877-ab4c-46c1-9420-2bd16fdd06bf', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', '208a0498-7f53-4a64-b052-2b02d182a4fa', 263431.00, 'Cancellation: Changed my mind', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-08-06 14:48:31', '2026-08-06 14:48:31', NULL, NULL),
+	('f11cb81d-f3e4-4119-a0f0-d611c15eb979', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 'ba0f6f55-1cd2-4eda-9b73-f352be4786f2', 1773000.00, 'Cancellation: Changed my mind', '', 'approved', 'full', NULL, 'cancellation', NULL, NULL, NULL, NULL, '2026-08-06 13:44:27', '2026-08-06 13:44:27', NULL, NULL);
 
 -- Dumping structure for table pos_optik.order_refund_items
 CREATE TABLE IF NOT EXISTS `order_refund_items` (
@@ -745,18 +807,24 @@ CREATE TABLE IF NOT EXISTS `order_shipping_addresses` (
   CONSTRAINT `order_shipping_addresses_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.order_shipping_addresses: ~11 rows (approximately)
+-- Dumping data for table pos_optik.order_shipping_addresses: ~19 rows (approximately)
 INSERT INTO `order_shipping_addresses` (`osa_id`, `order_id`, `recipient_name`, `phone`, `address`, `city`, `province`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('01f7902b-dc85-47b2-be40-f8c7a10286da', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:15:37', '2026-07-15 15:15:37', NULL),
 	('03d3621e-18b3-4e9d-828a-7596dab40b17', '52672a09-1262-4164-8331-fbbf1374d393', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:39:54', '2026-07-15 15:39:54', NULL),
 	('11e68326-e258-4da1-a311-33e47bb4743e', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-07 16:05:22', '2026-07-07 16:05:22', NULL),
 	('148ddec9-0c8b-4e42-90ca-2ad52b20aea2', '366987fd-2461-4448-997c-e81097f0ccb9', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-17 14:16:44', '2026-07-17 14:16:44', NULL),
 	('15ffe8a5-82bd-4ce8-be61-46400e834811', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:52:00', '2026-07-15 15:52:00', NULL),
+	('17626750-20a3-4a05-bcec-7073d5a017dd', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 14:45:16', '2026-08-06 14:45:16', NULL),
 	('2eadc7c0-a840-4c6b-ac87-b78368fb332f', 'f0872a80-855d-453b-a466-f61259fb8d51', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-05-25 13:59:58', '2026-05-25 13:59:58', NULL),
+	('2f333fe8-51ec-48e1-9e36-df92ab6e8952', 'bb154d5e-c913-4fdd-a563-7bc2af57f1aa', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 14:16:42', '2026-08-06 14:16:42', NULL),
 	('47d70436-b291-4750-b7b4-7d008913085d', '83b85cec-c469-4652-8f3e-63fbcbcbfb65', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-07 13:09:35', '2026-07-07 13:09:35', NULL),
 	('4835184b-2346-4657-9e2e-58ee89cbbe33', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', 'Dystian En ', '081928938398', 'Tebet Barat Dalam X E No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-17 15:27:47', '2026-07-17 15:27:47', NULL),
 	('53167c93-613c-40ec-bc4f-fcc95ab9c984', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 15:56:40', '2026-07-15 15:56:40', NULL),
 	('58314d96-059a-4479-aa09-2aed48628016', '143d5c4a-8523-4ee9-8f7d-c21e37847973', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 14:25:23', '2026-07-15 14:25:23', NULL),
+	('590c663e-8424-4e52-973b-e2943eab9e5f', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 13:26:50', '2026-08-06 13:26:50', NULL),
+	('668a7601-d244-4a37-bdef-5390167c59b2', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 15:20:43', '2026-08-06 15:20:43', NULL),
+	('7cb0b732-d4aa-4a13-9371-ac78b85f91f1', 'b326f53c-f313-4f78-97c7-fa7e84b4dd4a', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 13:59:47', '2026-08-06 13:59:47', NULL),
+	('836f69b3-e86f-4664-9fc7-21747e3d90fd', '744d9b4e-cc4d-4981-9fa1-63a9be8bdc2c', 'Dystian', '081928329439', 'Tebet Barat', 'Jakarta Selatan', 'Jakarta', '12810', '2026-08-06 14:05:56', '2026-08-06 14:05:56', NULL),
 	('91683294-e842-4dcb-91c4-7a325c8ebb59', '54d1ad24-4d35-43fd-bae0-538a38270497', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 16:01:36', '2026-07-15 16:01:36', NULL),
 	('bed56fbe-31ac-4e2e-8da1-b7bad6ebe2d3', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-15 10:41:47', '2026-07-15 10:41:47', NULL),
 	('f06062b0-f6ad-4fc0-a0af-30c96166efe6', 'bba1861d-d341-4dd7-aaf1-188e1f193f8f', 'Dystian', '081982929283', 'Jl. Tebet Barat Dalam X E&nbsp;No.12', 'Kota Jakarta Selatan', 'Dki Jakarta', '12810', '2026-07-16 09:19:28', '2026-07-16 09:19:28', NULL),
@@ -816,6 +884,7 @@ INSERT INTO `payments` (`payment_id`, `order_id`, `payment_method_id`, `amount`,
 	('4594a3f1-f31c-40a2-9089-31f16d0396af', '22b3f4eb-f8ae-4ce8-bc5d-2f967d959167', '7aeb3cfe-7ab5-4adf-a1ae-66f1d583ae56', 570000.00, 'https://cdn.adefoodwaste.biz.id/payments/22b3f4eb-f8ae-4ce8-bc5d-2f967d959167/1783419091_1d0278dfd636d8070bbf.png', '2026-07-07 17:11:31', '2026-07-07 17:11:31', '2026-07-07 17:11:31', NULL),
 	('4aded865-33fd-4f63-824f-b266efba885c', '63e78cb8-c662-4aba-a4b7-9aed7ccc0618', 'e2914263-7e0f-4e3c-9425-0958c9581215', 6770000.00, 'https://cdn.adefoodwaste.biz.id/payments/63e78cb8-c662-4aba-a4b7-9aed7ccc0618/1784105525_187624ed6dcaa3eb04ae.png', '2026-07-15 15:52:06', '2026-07-15 15:52:06', '2026-07-15 15:52:06', NULL),
 	('4bd7719f-0242-49f7-9f6f-b3210715ecbb', 'f0872a80-855d-453b-a466-f61259fb8d51', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2020000.00, 'https://cdn.adefoodwaste.biz.id/payments/f0872a80-855d-453b-a466-f61259fb8d51/1779692422_bcc1141911a8c4ddc74f.png', '2026-05-25 14:00:23', '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL),
+	('52986336-e028-4489-aaf3-bab3c312c7d9', '39be94c4-e0a6-4d2e-9a8c-93ae93f39be9', 'e2914263-7e0f-4e3c-9425-0958c9581215', 263431.00, 'https://cdn.adefoodwaste.biz.id/payments/39be94c4-e0a6-4d2e-9a8c-93ae93f39be9/1786002359_bf205e7490bf4d018a96.png', '2026-08-06 14:45:59', '2026-08-06 14:45:59', '2026-08-06 14:45:59', NULL),
 	('687d9602-7dcc-42b7-b755-1b700f55f383', 'a7698eb9-fc91-4b8b-bcfa-a0b2a772af96', 'e2914263-7e0f-4e3c-9425-0958c9581215', 155000.00, 'https://cdn.adefoodwaste.biz.id/payments/a7698eb9-fc91-4b8b-bcfa-a0b2a772af96/1784086922_8fcf537b5825e22354a0.png', '2026-07-15 10:42:02', '2026-07-15 10:42:02', '2026-07-15 10:42:02', NULL),
 	('6b69b0d3-9c2b-4350-a454-e1858e5a953d', '0a50b966-bca0-43ea-a0e8-6f2c31b01440', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1773000.00, 'https://cdn.adefoodwaste.biz.id/payments/0a50b966-bca0-43ea-a0e8-6f2c31b01440/1784277010_37c2561fd56065b29988.png', '2026-07-17 15:30:11', '2026-07-17 15:30:11', '2026-07-17 15:30:11', NULL),
 	('6e283d24-ed7a-4eb5-85ec-23a1be2161a2', '54d1ad24-4d35-43fd-bae0-538a38270497', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2300000.00, 'https://cdn.adefoodwaste.biz.id/payments/54d1ad24-4d35-43fd-bae0-538a38270497/1784106100_791b5b00db274e211a34.png', '2026-07-15 16:01:40', '2026-07-15 16:01:40', '2026-07-15 16:01:40', NULL),
@@ -825,6 +894,7 @@ INSERT INTO `payments` (`payment_id`, `order_id`, `payment_method_id`, `amount`,
 	('7bf1d051-34f0-40df-b73e-bf545f48358b', '7f6042b4-3f58-4e87-a366-b3f3f0c41187', 'e2914263-7e0f-4e3c-9425-0958c9581215', 590000.00, 'https://cdn.adefoodwaste.biz.id/payments/7f6042b4-3f58-4e87-a366-b3f3f0c41187/1784105804_fb618c915c043828b63f.png', '2026-07-15 15:56:44', '2026-07-15 15:56:44', '2026-07-15 15:56:44', NULL),
 	('83746214-5846-4203-99c9-33af7d2a5973', '30154f79-8290-4374-9dae-3ea47f20ce7e', 'e2914263-7e0f-4e3c-9425-0958c9581215', 3520000.00, 'https://cdn.adefoodwaste.biz.id/payments/30154f79-8290-4374-9dae-3ea47f20ce7e/1784103343_8da776eb366f5044f11a.png', '2026-07-15 15:15:44', '2026-07-15 15:15:44', '2026-07-15 15:15:44', NULL),
 	('86edf88c-ea8a-4ec9-8ab5-72552e91d6cd', '0e5f09ef-3187-433d-b4d2-40acdb2697c3', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 1500000.00, NULL, '2026-07-15 10:49:45', '2026-07-15 10:49:45', '2026-07-15 10:49:45', NULL),
+	('91eaee45-5453-4a58-912d-55978a603df6', '055c23d7-e1e8-4afe-a258-ee77bd66e4a9', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1314000.00, 'https://cdn.adefoodwaste.biz.id/payments/055c23d7-e1e8-4afe-a258-ee77bd66e4a9/1786004449_ece1e6b327c062afa24b.png', '2026-08-06 15:20:50', '2026-08-06 15:20:50', '2026-08-06 15:20:50', NULL),
 	('95b7571d-60ec-4778-9fc6-9fa4ec9373ed', 'db162bb3-38c4-4b58-9ce6-e8b51b9376e7', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1120000.00, 'https://cdn.adefoodwaste.biz.id/payments/db162bb3-38c4-4b58-9ce6-e8b51b9376e7/1783415128_e5dc4d2d17d1a0eb6b7c.png', '2026-07-07 16:05:29', '2026-07-07 16:05:29', '2026-07-07 16:05:29', NULL),
 	('abe5e8cc-e077-40f0-8250-186d0bd7ee88', '9e700049-24e0-4d68-8c07-9914401517f0', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 20000000.00, NULL, '2026-07-15 09:58:55', '2026-07-15 09:58:55', '2026-07-15 09:58:55', NULL),
 	('b7ae4789-e145-4f90-bbff-d1040a160263', '71de3fdc-8905-4eff-97e6-90ad87686b99', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 2500000.00, NULL, '2026-07-15 09:24:23', '2026-07-15 09:24:23', '2026-07-15 09:24:23', NULL),
@@ -832,6 +902,7 @@ INSERT INTO `payments` (`payment_id`, `order_id`, `payment_method_id`, `amount`,
 	('ce51d92f-ef87-46c8-a0c9-7cda1bf24d3f', '503b5a3b-9163-416e-9eb4-eb9f2dd492d3', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 4100000.00, NULL, '2026-07-15 11:30:57', '2026-07-15 11:30:57', '2026-07-15 11:30:57', NULL),
 	('dcde7283-0bbe-407c-8e43-db37f73c07a6', '366987fd-2461-4448-997c-e81097f0ccb9', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1335500.00, 'https://cdn.adefoodwaste.biz.id/payments/366987fd-2461-4448-997c-e81097f0ccb9/1784272975_2d754c4cdd1d154a61ab.png', '2026-07-17 14:22:56', '2026-07-17 14:22:56', '2026-07-17 14:22:56', NULL),
 	('e1facad4-206e-4258-a94e-7e7ef74a4011', 'd6709d13-aec5-4eab-b1a0-508e53aeb56f', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 20000000.00, NULL, '2026-07-08 08:58:53', '2026-07-08 08:58:53', '2026-07-08 08:58:53', NULL),
+	('e2021b58-421f-4d0a-88d4-2d8d4fe40e27', 'c3785cb2-d771-4deb-92d7-d7cb5a385f0d', 'e2914263-7e0f-4e3c-9425-0958c9581215', 1773000.00, 'https://cdn.adefoodwaste.biz.id/payments/c3785cb2-d771-4deb-92d7-d7cb5a385f0d/1785998146_ac68178abbe5ec0f5a66.png', '2026-08-06 13:35:47', '2026-08-06 13:35:47', '2026-08-06 13:35:47', NULL),
 	('e5798b8e-1335-466c-a6a3-c832e6d6d67e', 'c48753e7-0691-4004-8178-6837eb5db258', '581c746b-0084-4ac3-9c2e-2c00ea5d6ab7', 300000.00, NULL, '2026-07-15 11:06:10', '2026-07-15 11:06:10', '2026-07-15 11:06:10', NULL),
 	('fae9ad69-eba6-4fde-8152-3a35ada4bdf3', '52672a09-1262-4164-8331-fbbf1374d393', 'e2914263-7e0f-4e3c-9425-0958c9581215', 2320000.00, 'https://cdn.adefoodwaste.biz.id/payments/52672a09-1262-4164-8331-fbbf1374d393/1784104799_9c1c9471dd5d0bb6bd06.png', '2026-07-15 15:39:59', '2026-07-15 15:39:59', '2026-07-15 15:39:59', NULL),
 	('fc0ecfdb-cf87-4e95-9a9f-07c0b5fecb28', 'accd9090-090b-410b-9245-86e9230f52dc', '7aeb3cfe-7ab5-4adf-a1ae-66f1d583ae56', 2700000.00, 'https://cdn.adefoodwaste.biz.id/payments/accd9090-090b-410b-9245-86e9230f52dc/1784088907_7e0dbba2186174d8df23.png', '2026-07-15 11:15:07', '2026-07-15 11:15:07', '2026-07-15 11:15:07', NULL);
@@ -876,7 +947,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.products: ~66 rows (approximately)
+-- Dumping data for table pos_optik.products: ~67 rows (approximately)
 INSERT INTO `products` (`product_id`, `category_id`, `product_name`, `product_sku`, `product_price`, `product_stock`, `has_variants`, `product_brand`, `description`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('0064425e-436b-4dd4-90bb-49d5e296876c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F II SZTRZC824 C3 46', 'OPT-SUNGLASSE-0034', 250750.00, 120, 0, 'ILLUSTRO KIDS', '', 1, '2026-07-16 11:14:31', '2026-07-16 11:25:02', NULL),
 	('087a9fc5-7472-4e66-bdca-ee0cc2a70698', 'f1d06647-5499-4881-9d29-c35170c39113', '1 DAY ACUVUE MOIST', 'OPT-CONTACT-0002', 545000.00, 0, 0, 'MOIST', 'Daily disposable contact lens. Fresh pair every day for maximum hygiene and convenience.', 1, '2026-06-04 10:49:23', '2026-06-04 10:49:23', NULL),
@@ -936,7 +1007,7 @@ INSERT INTO `products` (`product_id`, `category_id`, `product_name`, `product_sk
 	('dcd94de1-0282-421b-bf0c-31cf21b3d2fa', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BE 1008 252 56', 'OPT-SUNGLASSE-0007', 824500.00, 99, 0, 'BENETTON', '', 1, '2026-07-16 09:04:39', '2026-07-16 09:05:46', NULL),
 	('dde78075-5a62-47d5-8669-026c43d893b2', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Microfiber Cloth / Lap Pembersih Lensa Kacamata', 'OPT-ACCESSORIE-0015', 26000.00, 2000, 0, 'MYLOGY ', '', 1, '2026-07-16 13:48:55', '2026-07-16 13:50:35', NULL),
 	('e3ab59ad-e68a-410c-9e33-767ba6a7ee98', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Elegant Eyeglass Chain', 'OPT-ACC-0004', 35000.00, 45, 0, '0', 'Elegant Eyeglass Chain strap. Keeps your glasses secure and within reach with a touch of style.', 1, '2026-07-09 15:43:38', '2026-07-15 16:34:06', '2026-07-15 16:34:06'),
-	('e73e70a9-e057-42a4-8d90-f4e0b5f2be20', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F NJ 5035LB 001 46', 'OPT-SUNGLASSE-0032', 1394000.00, 110, 0, 'NIKE', '', 1, '2026-07-16 11:06:40', '2026-07-16 11:25:40', NULL),
+	('e73e70a9-e057-42a4-8d90-f4e0b5f2be20', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F NJ 5035LB 001 46', 'OPT-SUNGLASSE-0032', 1394000.00, 109, 0, 'NIKE', '', 1, '2026-07-16 11:06:40', '2026-07-16 11:25:40', NULL),
 	('e7fad896-c27a-47db-afd3-97f48dcb296b', 'cf695022-99c8-4681-9d88-1d5541dc8078', '1 Set Contact Lens Case Mixed colors Contact lens container Softlens box For Travel Kit Accessories', 'OPT-ACCESSORIE-0019', 10000.00, 100, 0, 'UYAAI ', '', 1, '2026-07-16 13:59:22', '2026-07-16 15:40:00', NULL),
 	('eba7feb9-0d83-4452-9b86-13a1710c8e9c', '855be16e-1a49-4dc2-a858-8c57021245e0', 'F BE 1022-1 670 52', 'OPT-SUNGLASSE-0014', 824500.00, 100, 0, 'BENETTON', '', 1, '2026-07-16 09:59:39', '2026-07-16 10:07:50', NULL),
 	('ed2634ba-64cc-4a64-9f25-a7de6853538f', 'cf695022-99c8-4681-9d88-1d5541dc8078', 'Aksesoris Abd', 'OPT-ACCESSORIE-0007', 1350000.00, 200, 0, 'MELAWAI', '', 1, '2026-07-15 11:13:48', '2026-07-16 13:56:55', '2026-07-16 13:56:55'),
@@ -1925,7 +1996,8 @@ CREATE TABLE IF NOT EXISTS `reviews` (
 -- Dumping data for table pos_optik.reviews: ~2 rows (approximately)
 INSERT INTO `reviews` (`review_id`, `customer_id`, `product_id`, `rating`, `comment`, `created_at`, `updated_at`, `deleted_at`) VALUES
 	('072ffaae-400e-42d6-bdea-54a917474fca', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'ccee1bc1-b476-4b4d-a88d-c50599c5312c', 4, 'Mantab', '2026-05-25 14:08:56', '2026-05-25 14:08:56', NULL),
-	('70356a8e-6284-4660-bffc-e9a192f11448', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 5, 'Cocok dah', '2026-05-25 14:08:58', '2026-05-25 14:08:58', NULL);
+	('70356a8e-6284-4660-bffc-e9a192f11448', '091d6584-0ff1-4acb-9fde-8bedaca083b2', '5bed0361-3f84-4eb3-bba8-8e2a12f66f7b', 5, 'Cocok dah', '2026-05-25 14:08:58', '2026-05-25 14:08:58', NULL),
+	('bc9c1417-e08e-433b-a23d-2c387f5fd8d0', '8b3000d7-0386-4073-b38d-764bfbd294f8', 'e73e70a9-e057-42a4-8d90-f4e0b5f2be20', 5, '', '2026-08-06 15:33:10', '2026-08-06 15:33:10', NULL);
 
 -- Dumping structure for table pos_optik.review_media
 CREATE TABLE IF NOT EXISTS `review_media` (
@@ -2061,11 +2133,13 @@ CREATE TABLE IF NOT EXISTS `user_refund_accounts` (
   CONSTRAINT `user_refund_accounts_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table pos_optik.user_refund_accounts: ~0 rows (approximately)
+-- Dumping data for table pos_optik.user_refund_accounts: ~5 rows (approximately)
 INSERT INTO `user_refund_accounts` (`user_refund_account_id`, `customer_id`, `account_name`, `bank_name`, `account_number`, `is_default`, `created_at`, `updated_at`, `deleted_at`) VALUES
+	('208a0498-7f53-4a64-b052-2b02d182a4fa', '8b3000d7-0386-4073-b38d-764bfbd294f8', 'Tian', 'BCA', '0912902332', 0, '2026-08-06 14:45:59', '2026-08-06 14:45:59', NULL),
 	('55c0b1a6-d001-45cf-8327-10d79057172c', 'cd9c7b58-77fe-4d12-bf91-fc0d8be570c2', 'UHSSS', 'BCA', '090920992', 0, '2026-07-17 15:30:11', '2026-07-17 15:30:11', NULL),
 	('a9c858ec-990a-4e7b-83a9-b993bbf55641', '18942a6b-7462-4be5-8f1e-1ce3f0fdc88c', 'John Doe', 'BCA', '1092090934', 0, '2026-07-15 10:42:02', '2026-07-15 10:42:02', NULL),
-	('b238d887-380d-408a-8200-11ec5cfc0db0', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Dystian', 'BCA', '09198293', 0, '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL);
+	('b238d887-380d-408a-8200-11ec5cfc0db0', '091d6584-0ff1-4acb-9fde-8bedaca083b2', 'Dystian', 'BCA', '09198293', 0, '2026-05-25 14:00:23', '2026-05-25 14:00:23', NULL),
+	('ba0f6f55-1cd2-4eda-9b73-f352be4786f2', 'c546d00b-d4bd-4ddc-b6b4-7f6e635abd17', 'Tian', 'BCA', '091829283', 0, '2026-08-06 13:35:47', '2026-08-06 13:35:47', NULL);
 
 -- Dumping structure for table pos_optik.wishlists
 CREATE TABLE IF NOT EXISTS `wishlists` (
