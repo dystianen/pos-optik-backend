@@ -73,7 +73,7 @@ class RefundSalesController extends BaseController
     $orderId = $refund['order_id'];
 
     $order = $this->orderModel
-      ->select('orders.order_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.status_id, orders.tracking_number, orders.courier, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code, shipping_methods.name AS shipping_method, shipping_methods.estimated_days')
+      ->select('orders.order_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.coupon_discount, orders.status_id, orders.tracking_number, orders.courier, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code, shipping_methods.name AS shipping_method, COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days')
       ->join('customers', 'customers.customer_id = orders.customer_id', 'left')
       ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
       ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
@@ -96,6 +96,12 @@ class RefundSalesController extends BaseController
 
     $refundItems = $this->refundItemModel->getByRefundId($refundId);
 
+    $appliedCoupon = $this->db->table('order_coupons')
+      ->join('coupons', 'coupons.coupon_id = order_coupons.coupon_id')
+      ->where('order_coupons.order_id', $orderId)
+      ->get()
+      ->getRowArray();
+
     $data = [
       'order' => $order,
       'items' => $items,
@@ -103,6 +109,7 @@ class RefundSalesController extends BaseController
       'shippingAddress' => $shippingAddress,
       'refund' => $refund,
       'refundItems' => $refundItems,
+      'appliedCoupon' => $appliedCoupon,
     ];
 
     return view('refund_sales/v_detail', $data);

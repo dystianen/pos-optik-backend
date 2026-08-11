@@ -255,7 +255,7 @@ class OnlineSalesController extends BaseController
                 order_statuses.status_code,
 
                 shipping_methods.name AS shipping_method,
-                shipping_methods.estimated_days
+                COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days
             ")
             ->join(
                 'customers',

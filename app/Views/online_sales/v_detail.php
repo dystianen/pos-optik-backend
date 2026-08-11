@@ -134,10 +134,10 @@ function badgeStatus($status)
         <div class="card-body">
           <dl class="row mb-0 small">
             <dt class="col-5 text-muted">Method</dt>
-            <dd class="col-7 fw-semibold text-right"><?= $order['shipping_method'] ?></dd>
+            <dd class="col-7 fw-semibold text-right"><?= $order['shipping_method'] ?: 'RajaOngkir' ?></dd>
 
             <dt class="col-5 text-muted">Estimated</dt>
-            <dd class="col-7 text-right"><?= $order['estimated_days'] ?> days</dd>
+            <dd class="col-7 text-right"><?= $order['estimated_days'] ? $order['estimated_days'] . ' days' : '-' ?></dd>
 
             <dt class="col-5 text-muted">Courier</dt>
             <dd class="col-7 text-right"><?= $order['courier'] ?: '-' ?></dd>
@@ -304,14 +304,13 @@ function badgeStatus($status)
                 <div class="row g-3">
                   <div class="col-md-4">
                     <label class="form-label">Courier</label>
-                    <select name="courier" class="form-select" required <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
-                      <option value="">-- Select Courier --</option>
-                      <option value="JNE">JNE</option>
-                      <option value="J&T">J&T</option>
-                      <option value="SiCepat">SiCepat</option>
-                      <option value="AnterAja">AnterAja</option>
-                      <option value="POS Indonesia">POS Indonesia</option>
-                    </select>
+                    <input type="text"
+                      name="courier"
+                      class="form-control"
+                      value="<?= esc($order['courier']) ?>"
+                      readonly
+                      required
+                      <?= (!empty($activeCancellation) || !empty($activeRefund)) ? 'disabled' : '' ?>>
                   </div>
 
                   <div class="col-md-5">

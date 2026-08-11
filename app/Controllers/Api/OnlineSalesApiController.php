@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Libraries\R2Storage;
+use App\Libraries\RajaOngkir;
 use App\Models\CartItemModel;
 use App\Models\CartItemPrescriptionModel;
 use App\Models\CartModel;
@@ -175,23 +176,64 @@ class OnlineSalesApiController extends BaseApiController
                 ];
             }, $items);
 
-            // 🚚 SHIPPING COST
+            // 🚚 SHIPPING COST WITH RAJAONGKIR
             $destinationText = trim(
-                ($shippingAddress['city'] ?? '') . ' ' . ($shippingAddress['province'] ?? '')
+                ($shippingAddress['district'] ?? '') . ' ' . ($shippingAddress['city'] ?? '') . ' ' . ($shippingAddress['province'] ?? '')
             );
 
-            $shippingRate = $this->shippingRateModel
-                ->where("'$destinationText' LIKE CONCAT('%', destination, '%')", null, false)
-                ->orderBy('LENGTH(destination)', 'DESC')
-                ->first();
+            $destinationId = $shippingAddress['district_id'] ?? null;
+            $destinationType = 'subdistrict';
 
-            if (!$shippingRate) {
-                $shippingRate = $this->shippingRateModel
-                    ->where('destination', 'Indonesia')
-                    ->first();
+            if (!$destinationId) {
+                $destinationId = $shippingAddress['city_id'] ?? null;
+                $destinationType = 'city';
             }
 
-            $shippingCost = $shippingRate['cost'] ?? 0;
+            $courier = $this->request->getVar('courier');
+            $service = $this->request->getVar('service');
+
+            $shippingCost = 15000; // default fallback if anything fails
+            $selectedCourier = $courier ?: 'jne';
+            $selectedService = $service ?: 'REG';
+            $estimatedDays = '';
+
+            if ($destinationId) {
+                // Calculate weight of cart items
+                $totalQty = 0;
+                foreach ($items as $item) {
+                    $totalQty += (int)$item['quantity'];
+                }
+                $weight = $totalQty > 0 ? ($totalQty * 500) : 500;
+
+                if (!empty($courier) && !empty($service)) {
+                    $res = RajaOngkir::calculateCost($destinationId, $weight, $courier, $destinationType);
+                    if ($res && isset($res['costs'])) {
+                        foreach ($res['costs'] as $serviceCost) {
+                            if (strcasecmp($serviceCost['service'], $service) === 0) {
+                                $shippingCost = $serviceCost['cost'][0]['value'] ?? 15000;
+                                $selectedCourier = $res['code'];
+                                $selectedService = $serviceCost['service'];
+                                $estimatedDays = $serviceCost['cost'][0]['etd'] ?? '';
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // Try to get default rate (e.g. JNE REG)
+                    $res = RajaOngkir::calculateCost($destinationId, $weight, 'jne', $destinationType);
+                    if ($res && isset($res['costs'])) {
+                        foreach ($res['costs'] as $serviceCost) {
+                            if (strcasecmp($serviceCost['service'], 'REG') === 0) {
+                                $shippingCost = $serviceCost['cost'][0]['value'] ?? 15000;
+                                $selectedCourier = 'jne';
+                                $selectedService = 'REG';
+                                $estimatedDays = $serviceCost['cost'][0]['etd'] ?? '';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             $couponCode = $this->request->getVar('coupon_code');
             $couponDiscount = 0;
@@ -226,16 +268,22 @@ class OnlineSalesApiController extends BaseApiController
                     'phone'          => $shippingAddress['phone'],
                     'address'        => $shippingAddress['address'],
                     'city'           => $shippingAddress['city'],
+                    'city_id'        => $shippingAddress['city_id'] ?? null,
+                    'district'       => $shippingAddress['district'] ?? null,
+                    'district_id'    => $shippingAddress['district_id'] ?? null,
                     'province'       => $shippingAddress['province'],
+                    'province_id'    => $shippingAddress['province_id'] ?? null,
                     'postal_code'    => $shippingAddress['postal_code'],
                 ],
 
                 'items' => $mappedItems,
 
                 'shipping' => [
-                    'service'     => 'regular',
-                    'destination' => $destinationText,
-                    'cost'        => (int) $shippingCost
+                    'service'        => $selectedService,
+                    'courier'        => $selectedCourier,
+                    'destination'    => $destinationText,
+                    'cost'           => (int) $shippingCost,
+                    'estimated_days' => $estimatedDays
                 ],
 
                 'summary' => [
@@ -352,8 +400,10 @@ class OnlineSalesApiController extends BaseApiController
             $this->orderModel->insert([
                 'customer_id'         => $customerId,
                 'status_id'           => $this->statusModel->getIdByCode(OrderStatus::PENDING),
-                'shipping_method_id'  => '3e08ee99-750a-4437-a3a9-922437410f6e',
+                'shipping_method_id'  => null,
                 'shipping_cost'       => $summary['shipping']['cost'],
+                'courier'             => strtoupper($summary['shipping']['courier']) . ' - ' . $summary['shipping']['service'],
+                'estimated_days'      => $summary['shipping']['estimated_days'] ?? null,
                 'coupon_discount'     => $couponDiscount,
                 'grand_total'         => $summary['summary']['total'],
             ]);
@@ -384,7 +434,11 @@ class OnlineSalesApiController extends BaseApiController
                 'phone'          => $summary['shipping_address']['phone'],
                 'address'        => $summary['shipping_address']['address'],
                 'city'           => $summary['shipping_address']['city'],
+                'city_id'        => $summary['shipping_address']['city_id'] ?? null,
+                'district'       => $summary['shipping_address']['district'] ?? null,
+                'district_id'    => $summary['shipping_address']['district_id'] ?? null,
                 'province'       => $summary['shipping_address']['province'],
+                'province_id'    => $summary['shipping_address']['province_id'] ?? null,
                 'postal_code'    => $summary['shipping_address']['postal_code'],
             ]);
             log_message('debug', 'SHIPPING QUERY: ' . $this->orderShippingAddressModel->getLastQuery());
@@ -722,12 +776,13 @@ class OnlineSalesApiController extends BaseApiController
                     orders.created_at AS order_date,
                     orders.grand_total,
                     orders.shipping_cost,
+                    orders.coupon_discount,
 
                     order_statuses.status_name,
                     order_statuses.status_code,
 
                     shipping_methods.name AS shipping_method,
-                    shipping_methods.estimated_days,
+                    COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days,
 
                     pm.method_name AS payment_method,
                     p.paid_at
@@ -856,12 +911,13 @@ class OnlineSalesApiController extends BaseApiController
                     'status_code' => $order['status_code'],
                     'items' => $displayItems,
                     'summary' => [
-                        'grand_total' => (int) ($activeSubtotal + $order['shipping_cost']),
+                        'grand_total' => (int) $order['grand_total'],
                         'shipping_cost' => (int) $order['shipping_cost'],
+                        'coupon_discount' => (int) $order['coupon_discount'],
                         'total_items' => count($displayItems)
                     ],
                     'shipping' => [
-                        'method' => $order['shipping_method'],
+                        'method' => $order['shipping_method'] ?: 'RajaOngkir',
                         'rate' => (int) $order['shipping_cost'],
                         'estimated_days' => $order['estimated_days'],
                         'address' => $addressesGrouped[$orderId] ?? null
@@ -895,7 +951,7 @@ class OnlineSalesApiController extends BaseApiController
                     order_statuses.status_name,
                     order_statuses.status_code,
                     shipping_methods.name AS shipping_method,
-                    shipping_methods.estimated_days,
+                    COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days,
                     payment_methods.method_name AS payment_method,
                     payments.paid_at,
                     payments.proof
@@ -1068,7 +1124,7 @@ class OnlineSalesApiController extends BaseApiController
                     'grand_total'     => (int) max(0, $activeSubtotal + $order['shipping_cost'] - $order['coupon_discount'])
                 ],
                 'shipping' => [
-                    'method' => $order['shipping_method'],
+                    'method' => $order['shipping_method'] ?: 'RajaOngkir',
                     'rate' => (int) $order['shipping_cost'],
                     'courier' => $order['courier'],
                     'tracking_number' => $order['tracking_number'],

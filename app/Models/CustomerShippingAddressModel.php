@@ -21,7 +21,11 @@ class CustomerShippingAddressModel extends Model
         'phone',
         'address',
         'city',
+        'city_id',
+        'district',
+        'district_id',
         'province',
+        'province_id',
         'postal_code',
         'created_at',
         'updated_at',
@@ -33,7 +37,11 @@ class CustomerShippingAddressModel extends Model
         'phone' => 'required|min_length[1]',
         'address' => 'required|min_length[1]',
         'city' => 'required|min_length[1]',
+        'city_id' => 'required|min_length[1]',
+        'district' => 'required|min_length[1]',
+        'district_id' => 'required|min_length[1]',
         'province' => 'required|min_length[1]',
+        'province_id' => 'required|min_length[1]',
         'postal_code' => 'required|min_length[1]',
     ];
 

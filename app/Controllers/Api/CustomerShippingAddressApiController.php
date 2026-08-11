@@ -68,7 +68,11 @@ class CustomerShippingAddressApiController extends BaseApiController
                 'phone'          => $this->request->getVar('phone'),
                 'address'        => $this->request->getVar('address'),
                 'city'           => $this->request->getVar('city'),
+                'city_id'        => $this->request->getVar('city_id'),
+                'district'       => $this->request->getVar('district'),
+                'district_id'    => $this->request->getVar('district_id'),
                 'province'       => $this->request->getVar('province'),
+                'province_id'    => $this->request->getVar('province_id'),
                 'postal_code'    => $this->request->getVar('postal_code'),
             ];
 

@@ -30,6 +30,7 @@ class OrderModel extends Model
         'grand_total',
         'tracking_number',
         'courier',
+        'estimated_days',
         'order_type',
         'created_at',
         'updated_at',

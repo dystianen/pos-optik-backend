@@ -92,6 +92,14 @@ $routes->group('api', ['filter' => 'cors'], function ($routes) {
     $routes->post('save', 'Api\CustomerShippingAddressApiController::save');
   });
 
+  // RAJAONGKIR SHIPPING
+  $routes->group('shipping', ['filter' => 'authApi'], function ($routes) {
+    $routes->get('provinces', 'Api\ShippingApiController::getProvinces');
+    $routes->get('cities', 'Api\ShippingApiController::getCities');
+    $routes->get('districts', 'Api\ShippingApiController::getDistricts');
+    $routes->post('calculate-cost', 'Api\ShippingApiController::calculateCost');
+  });
+
   // WISHLIST
   $routes->group('wishlist', ['filter' => 'authApi'], function ($routes) {
     $routes->get('', 'Api\WishlistApiController::index');
