@@ -31,11 +31,16 @@ class WishlistApiController extends BaseApiController
          * SUBQUERY TOTAL SOLD
          * ==========================
          */
+        $soldStatusIds = $this->getSoldStatusIds();
         $subQuery = $this->db->table('order_items oi')
             ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
-            ->join('orders o', 'o.order_id = oi.order_id')
-            ->where('o.status_id', $this->statusModel->getIdByCode(OrderStatus::COMPLETED))
-            ->groupBy('oi.product_id');
+            ->join('orders o', 'o.order_id = oi.order_id');
+        if (!empty($soldStatusIds)) {
+            $subQuery->whereIn('o.status_id', $soldStatusIds);
+        } else {
+            $subQuery->where('1 = 0', null, false);
+        }
+        $subQuery = $subQuery->groupBy('oi.product_id');
 
         /**
          * ==========================

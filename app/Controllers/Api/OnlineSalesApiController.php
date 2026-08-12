@@ -28,7 +28,6 @@ use CodeIgniter\API\ResponseTrait;
 
 class OnlineSalesApiController extends BaseApiController
 {
-    use ResponseTrait;
     protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $shippingRateModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $statusModel, $couponModel, $orderCouponModel, $r2;
 
     public function __construct()

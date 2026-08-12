@@ -7,7 +7,6 @@ use CodeIgniter\API\ResponseTrait;
 
 class ProductVariantApiController extends BaseApiController
 {
-    use ResponseTrait;
     protected $variantModel;
     public function __construct()
     {

@@ -40,8 +40,8 @@ class CustomerShippingAddressApiController extends BaseApiController
     // =======================
     public function getById($id)
     {
-        $this->getAuthenticatedUser();
-        $data = $this->csaModel->find($id);
+        $customerId = $this->getAuthenticatedCustomerId();
+        $data = $this->csaModel->where('csa_id', $id)->where('customer_id', $customerId)->first();
 
         if (!$data) {
             return $this->notFoundResponse('Shipping address not found');

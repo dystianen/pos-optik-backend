@@ -89,6 +89,18 @@ class BaseApiController extends ResourceController
   }
 
   /**
+   * Override respond to inject Cache-Control headers preventing browser caching of API responses.
+   */
+  public function respond($data = null, int $status = null, string $message = ''): ResponseInterface
+  {
+    $response = parent::respond($data, $status, $message);
+    return $response
+      ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+      ->setHeader('Pragma', 'no-cache')
+      ->setHeader('Expires', '0');
+  }
+
+  /**
    * Override validate() to automatically beautify validation error messages.
    * Uses Reflection to inject formatted errors back into the validator instance.
    *
@@ -413,5 +425,15 @@ class BaseApiController extends ResourceController
     }
 
     log_message('info', 'API Request: ' . json_encode($logData));
+  }
+
+  protected function getSoldStatusIds(): array
+  {
+    $excludedCodes = ['pending', 'waiting_confirmation', 'cancelled', 'expired', 'rejected'];
+    $rows = $this->db->table('order_statuses')
+      ->whereNotIn('status_code', $excludedCodes)
+      ->get()
+      ->getResultArray();
+    return array_column($rows, 'status_id');
   }
 }

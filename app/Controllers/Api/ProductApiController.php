@@ -363,11 +363,16 @@ class ProductApiController extends BaseApiController
 
         // Pertama, cari 10 product ID dengan total penjualan terbanyak
         $bestSellerBuilder = $this->db->table('order_items oi');
+        $soldStatusIds = $this->getSoldStatusIds();
         $bestSellerBuilder->select('oi.product_id, SUM(oi.quantity) AS total_sold')
             ->join('orders o', 'o.order_id = oi.order_id')
-            ->join('products p', 'p.product_id = oi.product_id')
-            ->where('o.status_id', $this->statusModel->getIdByCode(OrderStatus::COMPLETED))
-            ->where('p.deleted_at', null);
+            ->join('products p', 'p.product_id = oi.product_id');
+        if (!empty($soldStatusIds)) {
+            $bestSellerBuilder->whereIn('o.status_id', $soldStatusIds);
+        } else {
+            $bestSellerBuilder->where('1 = 0', null, false);
+        }
+        $bestSellerBuilder->where('p.deleted_at', null);
 
         if (!empty($search)) {
             $bestSellerBuilder->like('p.product_name', $search);
@@ -692,14 +697,18 @@ class ProductApiController extends BaseApiController
     // ===================================================================
     private function apiBestSellerFallback(int $limit): \CodeIgniter\HTTP\ResponseInterface
     {
-        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+        $soldStatusIds = $this->getSoldStatusIds();
 
         $bsRows = $this->db->table('order_items oi')
             ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
             ->join('orders o', 'o.order_id = oi.order_id')
-            ->join('products p', 'p.product_id = oi.product_id')
-            ->where('o.status_id', $completedStatusId)
-            ->where('p.deleted_at', null)
+            ->join('products p', 'p.product_id = oi.product_id');
+        if (!empty($soldStatusIds)) {
+            $bsRows->whereIn('o.status_id', $soldStatusIds);
+        } else {
+            $bsRows->where('1 = 0', null, false);
+        }
+        $bsRows = $bsRows->where('p.deleted_at', null)
             ->groupBy('oi.product_id')
             ->orderBy('total_sold', 'DESC')
             ->limit($limit)
@@ -796,12 +805,16 @@ class ProductApiController extends BaseApiController
             $product['max_price'] = (float)$product['product_price'];
         }
         
-        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
-        $totalSold = $this->db->table('order_items oi')
+        $soldStatusIds = $this->getSoldStatusIds();
+        $totalSoldQuery = $this->db->table('order_items oi')
             ->join('orders o', 'o.order_id = oi.order_id')
-            ->where('oi.product_id', $product['product_id'])
-            ->where('o.status_id', $completedStatusId)
-            ->selectSum('oi.quantity', 'total')
+            ->where('oi.product_id', $product['product_id']);
+        if (!empty($soldStatusIds)) {
+            $totalSoldQuery->whereIn('o.status_id', $soldStatusIds);
+        } else {
+            $totalSoldQuery->where('1 = 0', null, false);
+        }
+        $totalSold = $totalSoldQuery->selectSum('oi.quantity', 'total')
             ->get()
             ->getRowArray()['total'] ?? 0;
             
@@ -928,13 +941,17 @@ class ProductApiController extends BaseApiController
             return;
         }
 
-        $completedStatusId = $this->statusModel->getIdByCode(\Config\OrderStatus::COMPLETED);
+        $soldStatusIds = $this->getSoldStatusIds();
         $soldQuery = $this->db->table('order_items oi')
             ->select('oi.product_id, SUM(oi.quantity) AS total_sold')
             ->join('orders o', 'o.order_id = oi.order_id')
-            ->whereIn('oi.product_id', $productIds)
-            ->where('o.status_id', $completedStatusId)
-            ->groupBy('oi.product_id')
+            ->whereIn('oi.product_id', $productIds);
+        if (!empty($soldStatusIds)) {
+            $soldQuery->whereIn('o.status_id', $soldStatusIds);
+        } else {
+            $soldQuery->where('1 = 0', null, false);
+        }
+        $soldQuery = $soldQuery->groupBy('oi.product_id')
             ->get()
             ->getResultArray();
 

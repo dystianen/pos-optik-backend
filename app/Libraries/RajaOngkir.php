@@ -6,29 +6,13 @@ class RajaOngkir
 {
     private static function getApiKey()
     {
-        return env('RAJAONGKIR_API_KEY') ?: '';
+        $key = env('RAJAONGKIR_API_KEY') ?: '';
+        return trim($key, '"\' ');
     }
 
     private static function getOriginCityId()
     {
-        return env('RAJAONGKIR_ORIGIN_CITY_ID') ?: '419'; // Default: Sleman
-    }
-
-    private static function getAccountType()
-    {
-        return env('RAJAONGKIR_ACCOUNT_TYPE') ?: 'pro'; // Default to pro for district support
-    }
-
-    private static function getBaseUrl()
-    {
-        $type = self::getAccountType();
-        if ($type === 'pro') {
-            return 'https://pro.rajaongkir.com/api';
-        }
-        if ($type === 'basic') {
-            return 'https://api.rajaongkir.com/basic';
-        }
-        return 'https://api.rajaongkir.com/starter';
+        return env('RAJAONGKIR_ORIGIN_CITY_ID'); // Default: Sleman district in Komerce
     }
 
     private static function isMockEnabled()
@@ -50,9 +34,52 @@ class RajaOngkir
 
     private static function handleConnectionFailure(\Throwable $e)
     {
-        log_message('error', 'RajaOngkir Connection Failure: ' . $e->getMessage());
+        log_message('error', 'Komerce RajaOngkir Connection Failure: ' . $e->getMessage());
         // Save offline status in cache for 5 minutes (300 seconds) to avoid hanging subsequent requests
         cache()->save('rajaongkir_offline', true, 300);
+    }
+
+    /**
+     * Helper to lookup postal code for a Komerce city
+     */
+    private static function getCityPostalCode($cityId)
+    {
+        $cacheKey = 'rajaongkir_postal_code_city_' . $cityId;
+        $cached = cache($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        try {
+            // Get districts of this city
+            $districts = self::getDistricts($cityId);
+            if (!empty($districts)) {
+                $firstDistrictId = $districts[0]['subdistrict_id'];
+                
+                // Get sub-districts of this district
+                $url = 'https://rajaongkir.komerce.id/api/v1/destination/sub-district/' . $firstDistrictId;
+                $client = \Config\Services::curlrequest();
+                $response = $client->request('GET', $url, [
+                    'headers' => [
+                        'key' => self::getApiKey()
+                    ],
+                    'timeout' => 5,
+                    'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
+                ]);
+
+                $body = json_decode($response->getBody(), true);
+                if (isset($body['meta']['code']) && $body['meta']['code'] === 200 && !empty($body['data'])) {
+                    $postalCode = $body['data'][0]['zip_code'] ?? '';
+                    cache()->save($cacheKey, $postalCode, 3600 * 24 * 30); // Cache for 30 days
+                    return $postalCode;
+                }
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Failed to fetch postal code for city ' . $cityId . ': ' . $e->getMessage());
+        }
+
+        cache()->save($cacheKey, '', 3600 * 2); // Cache empty result for 2 hours on failure
+        return '';
     }
 
     /**
@@ -60,10 +87,6 @@ class RajaOngkir
      */
     public static function getProvinces()
     {
-        if (self::isMockEnabled()) {
-            return self::getMockProvinces();
-        }
-
         $cacheKey = 'rajaongkir_provinces';
         $cached = cache($cacheKey);
         if ($cached) {
@@ -72,30 +95,35 @@ class RajaOngkir
 
         try {
             $client = \Config\Services::curlrequest();
-            $url = self::getBaseUrl() . '/province';
+            $url = 'https://rajaongkir.komerce.id/api/v1/destination/province';
             
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'key' => self::getApiKey()
                 ],
-                'timeout' => 2, // Fast timeout (2 seconds)
+                'timeout' => 10,
                 'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
             ]);
 
             $body = json_decode($response->getBody(), true);
-            if (isset($body['rajaongkir']['status']['code']) && $body['rajaongkir']['status']['code'] === 200) {
-                $provinces = $body['rajaongkir']['results'];
+            if (isset($body['meta']['code']) && $body['meta']['code'] === 200) {
+                $provinces = [];
+                foreach ($body['data'] as $item) {
+                    $provinces[] = [
+                        'province_id' => (string) $item['id'],
+                        'province'    => $item['name']
+                    ];
+                }
                 cache()->save($cacheKey, $provinces, 3600 * 24); // Cache for 24 hours
                 return $provinces;
             }
             
-            log_message('error', 'RajaOngkir API returned non-200: ' . $response->getBody());
-            cache()->save('rajaongkir_offline', true, 300);
+            log_message('error', 'Komerce Province API returned non-200: ' . $response->getBody());
         } catch (\Throwable $e) {
-            self::handleConnectionFailure($e);
+            log_message('error', 'Komerce RajaOngkir Province Fetch Failure: ' . $e->getMessage());
         }
 
-        return self::getMockProvinces();
+        return [];
     }
 
     /**
@@ -103,10 +131,6 @@ class RajaOngkir
      */
     public static function getCities($provinceId = null)
     {
-        if (self::isMockEnabled()) {
-            return self::getMockCities($provinceId);
-        }
-
         $cacheKey = 'rajaongkir_cities_' . ($provinceId ?: 'all');
         $cached = cache($cacheKey);
         if ($cached) {
@@ -114,47 +138,89 @@ class RajaOngkir
         }
 
         try {
-            $url = self::getBaseUrl() . '/city';
-            if ($provinceId) {
-                $url .= '?province=' . $provinceId;
-            }
-
             $client = \Config\Services::curlrequest();
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'key' => self::getApiKey()
-                ],
-                'timeout' => 2,
-                'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
-            ]);
+            if ($provinceId) {
+                $url = 'https://rajaongkir.komerce.id/api/v1/destination/city/' . $provinceId;
+                $response = $client->request('GET', $url, [
+                    'headers' => [
+                        'key' => self::getApiKey()
+                    ],
+                    'timeout' => 10,
+                    'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
+                ]);
 
-            $body = json_decode($response->getBody(), true);
-            if (isset($body['rajaongkir']['status']['code']) && $body['rajaongkir']['status']['code'] === 200) {
-                $cities = $body['rajaongkir']['results'];
-                cache()->save($cacheKey, $cities, 3600 * 24); // Cache for 24 hours
-                return $cities;
+                $body = json_decode($response->getBody(), true);
+                if (isset($body['meta']['code']) && $body['meta']['code'] === 200) {
+                    $cities = [];
+                    foreach ($body['data'] as $item) {
+                        // For performance and to prevent 429 errors, check cache only and do not query APIs dynamically.
+                        $postalCodeCacheKey = 'rajaongkir_postal_code_city_' . $item['id'];
+                        $postalCode = cache($postalCodeCacheKey) ?: '';
+                        
+                        $cities[] = [
+                            'city_id'     => (string) $item['id'],
+                            'province_id' => (string) $provinceId,
+                            'city_name'   => $item['name'],
+                            'type'        => '',
+                            'postal_code' => $postalCode
+                        ];
+                    }
+                    cache()->save($cacheKey, $cities, 3600 * 24); // Cache for 24 hours
+                    return $cities;
+                }
+                log_message('error', 'Komerce City API returned non-200 for province ' . $provinceId . ': ' . $response->getBody());
+            } else {
+                $provinces = self::getProvinces();
+                $allCities = [];
+                foreach ($provinces as $p) {
+                    $pId = $p['province_id'];
+                    $url = 'https://rajaongkir.komerce.id/api/v1/destination/city/' . $pId;
+                    try {
+                        $response = $client->request('GET', $url, [
+                            'headers' => [
+                                'key' => self::getApiKey()
+                            ],
+                            'timeout' => 10,
+                            'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
+                        ]);
+                        $body = json_decode($response->getBody(), true);
+                        if (isset($body['meta']['code']) && $body['meta']['code'] === 200) {
+                            foreach ($body['data'] as $item) {
+                                // For performance when fetching all cities, do NOT fetch postal codes dynamically via API.
+                                // Instead, check if it's already cached. If not, leave it empty or fetch it later.
+                                $postalCodeCacheKey = 'rajaongkir_postal_code_city_' . $item['id'];
+                                $postalCode = cache($postalCodeCacheKey) ?: '';
+
+                                $allCities[] = [
+                                    'city_id'     => (string) $item['id'],
+                                    'province_id' => (string) $pId,
+                                    'city_name'   => $item['name'],
+                                    'type'        => '',
+                                    'postal_code' => $postalCode
+                                ];
+                            }
+                        }
+                    } catch (\Throwable $innerEx) {
+                        log_message('error', 'Komerce City API failed for province ' . $pId . ': ' . $innerEx->getMessage());
+                    }
+                }
+                cache()->save($cacheKey, $allCities, 3600 * 24); // Cache for 24 hours
+                return $allCities;
             }
-
-            log_message('error', 'RajaOngkir API returned non-200: ' . $response->getBody());
-            cache()->save('rajaongkir_offline', true, 300);
         } catch (\Throwable $e) {
-            self::handleConnectionFailure($e);
+            log_message('error', 'Komerce RajaOngkir Cities Fetch Failure: ' . $e->getMessage());
         }
 
-        return self::getMockCities($provinceId);
+        return [];
     }
 
     /**
-     * Get list of districts (subdistrict) in a city (Only for Pro account)
+     * Get list of districts (subdistrict) in a city
      */
     public static function getDistricts($cityId)
     {
         if (empty($cityId)) {
             return [];
-        }
-
-        if (self::isMockEnabled() || self::getAccountType() !== 'pro') {
-            return self::getMockDistricts($cityId);
         }
 
         $cacheKey = 'rajaongkir_districts_' . $cityId;
@@ -164,31 +230,37 @@ class RajaOngkir
         }
 
         try {
-            $url = self::getBaseUrl() . '/subdistrict?city=' . $cityId;
+            $url = 'https://rajaongkir.komerce.id/api/v1/destination/district/' . $cityId;
 
             $client = \Config\Services::curlrequest();
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'key' => self::getApiKey()
                 ],
-                'timeout' => 2,
+                'timeout' => 10,
                 'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
             ]);
 
             $body = json_decode($response->getBody(), true);
-            if (isset($body['rajaongkir']['status']['code']) && $body['rajaongkir']['status']['code'] === 200) {
-                $districts = $body['rajaongkir']['results'];
+            if (isset($body['meta']['code']) && $body['meta']['code'] === 200) {
+                $districts = [];
+                foreach ($body['data'] as $item) {
+                    $districts[] = [
+                        'subdistrict_id'   => (string) $item['id'],
+                        'city_id'          => (string) $cityId,
+                        'subdistrict_name' => $item['name']
+                    ];
+                }
                 cache()->save($cacheKey, $districts, 3600 * 24); // Cache for 24 hours
                 return $districts;
             }
 
-            log_message('error', 'RajaOngkir subdistrict API returned non-200: ' . $response->getBody());
-            cache()->save('rajaongkir_offline', true, 300);
+            log_message('error', 'Komerce district API returned non-200: ' . $response->getBody());
         } catch (\Throwable $e) {
-            self::handleConnectionFailure($e);
+            log_message('error', 'Komerce RajaOngkir District Fetch Failure for city ' . $cityId . ': ' . $e->getMessage());
         }
 
-        return self::getMockDistricts($cityId);
+        return [];
     }
 
     /**
@@ -202,22 +274,15 @@ class RajaOngkir
 
         try {
             $client = \Config\Services::curlrequest();
-            $url = self::getBaseUrl() . '/cost';
+            $url = 'https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost';
 
             $formParams = [
-                'origin'          => self::getOriginCityId(),
-                'originType'      => 'city',
-                'destination'     => $destinationId,
-                'destinationType' => $destinationType,
-                'weight'          => $weightGrams,
-                'courier'         => strtolower($courier)
+                'origin'      => self::getOriginCityId(),
+                'destination' => $destinationId,
+                'weight'      => $weightGrams,
+                'courier'     => strtolower($courier),
+                'price'       => 'lowest'
             ];
-
-            // If account type is starter, it does not support originType/destinationType
-            if (self::getAccountType() === 'starter') {
-                unset($formParams['originType']);
-                unset($formParams['destinationType']);
-            }
 
             $response = $client->request('POST', $url, [
                 'headers' => [
@@ -225,16 +290,44 @@ class RajaOngkir
                     'content-type' => 'application/x-www-form-urlencoded'
                 ],
                 'form_params' => $formParams,
-                'timeout' => 2,
+                'timeout' => 10,
                 'verify'  => env('CURL_VERIFY') !== false && env('CURL_VERIFY') !== 'false'
             ]);
 
             $body = json_decode($response->getBody(), true);
-            if (isset($body['rajaongkir']['status']['code']) && $body['rajaongkir']['status']['code'] === 200) {
-                return $body['rajaongkir']['results'][0] ?? null;
+            if (isset($body['meta']['code']) && $body['meta']['code'] === 200 && isset($body['data'])) {
+                // Map Komerce flat array to official RajaOngkir format
+                $costs = [];
+                $courierName = strtoupper($courier);
+                foreach ($body['data'] as $item) {
+                    if (strtolower($item['code']) === strtolower($courier)) {
+                        $courierName = $item['name'];
+                        
+                        // Clean ETD
+                        $etd = str_ireplace(' day', '', $item['etd'] ?? '');
+                        
+                        $costs[] = [
+                            'service' => $item['service'],
+                            'description' => $item['description'],
+                            'cost' => [
+                                [
+                                    'value' => (int) $item['cost'],
+                                    'etd' => $etd ?: '',
+                                    'note' => ''
+                                ]
+                            ]
+                        ];
+                    }
+                }
+                
+                return [
+                    'code' => strtolower($courier),
+                    'name' => $courierName,
+                    'costs' => $costs
+                ];
             }
 
-            log_message('error', 'RajaOngkir cost API returned non-200: ' . $response->getBody());
+            log_message('error', 'Komerce cost API returned non-200: ' . $response->getBody());
             cache()->save('rajaongkir_offline', true, 300);
         } catch (\Throwable $e) {
             self::handleConnectionFailure($e);
