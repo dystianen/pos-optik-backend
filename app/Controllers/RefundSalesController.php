@@ -84,7 +84,30 @@ class RefundSalesController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException('Order not found');
     }
 
-    $items = $this->orderModel->getOrderItems($orderId);
+    $items = $this->db->table('order_items')
+      ->select('
+          order_items.order_item_id,
+          products.product_sku,
+          products.product_name,
+          order_items.quantity AS qty,
+          order_items.price,
+          rx.right_sph,
+          rx.right_cyl,
+          rx.right_axis,
+          rx.right_add,
+          rx.left_sph,
+          rx.left_cyl,
+          rx.left_axis,
+          rx.left_add,
+          rx.pd_single,
+          rx.pd_left,
+          rx.pd_right
+      ')
+      ->join('products', 'products.product_id = order_items.product_id')
+      ->join('order_item_prescriptions rx', 'rx.order_item_id = order_items.order_item_id', 'left')
+      ->where('order_items.order_id', $orderId)
+      ->get()
+      ->getResultArray();
 
     $payment = $this->paymentModel->select('payments.proof, payments.amount, payments.paid_at, payment_methods.method_name')
       ->join('payment_methods', 'payment_methods.payment_method_id = payments.payment_method_id', 'left')
