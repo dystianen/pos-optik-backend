@@ -18,7 +18,6 @@ use App\Models\OrderShippingAddressModel;
 use App\Models\PaymentModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
-use App\Models\ShippingRateModel;
 use App\Models\UserRefundAccountModel;
 use App\Models\OrderStatusModel;
 use App\Models\CouponModel;
@@ -28,7 +27,7 @@ use CodeIgniter\API\ResponseTrait;
 
 class OnlineSalesApiController extends BaseApiController
 {
-    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $shippingRateModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $statusModel, $couponModel, $orderCouponModel, $r2;
+    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $statusModel, $couponModel, $orderCouponModel, $r2;
 
     public function __construct()
     {
@@ -40,7 +39,6 @@ class OnlineSalesApiController extends BaseApiController
         $this->csaModel = new CustomerShippingAddressModel();
         $this->cartModel = new CartModel();
         $this->cartItemModel = new CartItemModel();
-        $this->shippingRateModel = new ShippingRateModel();
         $this->cartItemPrescriptionModel = new CartItemPrescriptionModel();
         $this->orderShippingAddressModel = new OrderShippingAddressModel();
         $this->orderItemPrescriptionModel = new OrderItemPrescriptionModel();
@@ -399,7 +397,6 @@ class OnlineSalesApiController extends BaseApiController
             $this->orderModel->insert([
                 'customer_id'         => $customerId,
                 'status_id'           => $this->statusModel->getIdByCode(OrderStatus::PENDING),
-                'shipping_method_id'  => null,
                 'shipping_cost'       => $summary['shipping']['cost'],
                 'courier'             => strtoupper($summary['shipping']['courier']) . ' - ' . $summary['shipping']['service'],
                 'estimated_days'      => $summary['shipping']['estimated_days'] ?? null,
@@ -780,14 +777,13 @@ class OnlineSalesApiController extends BaseApiController
                     order_statuses.status_name,
                     order_statuses.status_code,
 
-                    shipping_methods.name AS shipping_method,
-                    COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days,
+                    orders.courier AS shipping_method,
+                    orders.estimated_days,
 
                     pm.method_name AS payment_method,
                     p.paid_at
                 ")
                 ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
-                ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
                 ->join(
                     '(SELECT p1.*
                     FROM payments p1
@@ -949,14 +945,13 @@ class OnlineSalesApiController extends BaseApiController
                     orders.*,
                     order_statuses.status_name,
                     order_statuses.status_code,
-                    shipping_methods.name AS shipping_method,
-                    COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days,
+                    orders.courier AS shipping_method,
+                    orders.estimated_days,
                     payment_methods.method_name AS payment_method,
                     payments.paid_at,
                     payments.proof
                 ")
                 ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
-                ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
                 ->join('payments', 'payments.order_id = orders.order_id', 'left')
                 ->join('payment_methods', 'payment_methods.payment_method_id = payments.payment_method_id', 'left')
                 ->where('orders.order_id', $orderId)

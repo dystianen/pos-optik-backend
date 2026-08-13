@@ -15,8 +15,6 @@ class DataSeeder extends Seeder
         $this->call('ProductAttributeSeeder');
         $this->call('ProductAttributeMasterValuesSeeder');
         $this->call('OrderStatusSeeder');
-        $this->call('ShippingMethodSeeder');
-        $this->call('ShippingRateSeeder');
         $this->call('PaymentMethodSeeder');
         $this->call('CouponSeeder');
     }

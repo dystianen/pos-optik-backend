@@ -76,10 +76,9 @@ class CancellationSalesController extends BaseController
         $orderId = $cancellation['order_id'];
 
         $order = $this->orderModel
-            ->select('orders.order_id, orders.customer_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.coupon_discount, orders.status_id, orders.tracking_number, orders.courier, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code, shipping_methods.name AS shipping_method, COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days')
+            ->select('orders.order_id, orders.customer_id, orders.created_at AS order_date, orders.grand_total, orders.shipping_cost, orders.coupon_discount, orders.status_id, orders.tracking_number, orders.courier, orders.estimated_days, customers.customer_name, customers.customer_email, order_statuses.status_name, order_statuses.status_code')
             ->join('customers', 'customers.customer_id = orders.customer_id', 'left')
             ->join('order_statuses', 'order_statuses.status_id = orders.status_id', 'left')
-            ->join('shipping_methods', 'shipping_methods.shipping_method_id = orders.shipping_method_id', 'left')
             ->where('orders.order_id', $orderId)
             ->first();
 

@@ -133,14 +133,11 @@ function badgeStatus($status)
         </div>
         <div class="card-body">
           <dl class="row mb-0 small">
-            <dt class="col-5 text-muted">Method</dt>
-            <dd class="col-7 fw-semibold text-right"><?= $order['shipping_method'] ?: 'RajaOngkir' ?></dd>
+            <dt class="col-5 text-muted">Courier</dt>
+            <dd class="col-7 fw-semibold text-right"><?= $order['courier'] ?: '-' ?></dd>
 
             <dt class="col-5 text-muted">Estimated</dt>
             <dd class="col-7 text-right"><?= $order['estimated_days'] ? $order['estimated_days'] . ' days' : '-' ?></dd>
-
-            <dt class="col-5 text-muted">Courier</dt>
-            <dd class="col-7 text-right"><?= $order['courier'] ?: '-' ?></dd>
 
             <dt class="col-5 text-muted">Tracking</dt>
             <dd class="col-7 fw-semibold text-right"><?= $order['tracking_number'] ?: '-' ?></dd>

@@ -18,14 +18,13 @@ use App\Models\OrderShippingAddressModel;
 use App\Models\PaymentModel;
 use App\Models\ProductModel;
 use App\Models\ProductVariantModel;
-use App\Models\ShippingRateModel;
 use App\Models\UserRefundAccountModel;
 use CodeIgniter\API\ResponseTrait;
 
 class OnlineSalesController extends BaseController
 {
     use ResponseTrait;
-    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $shippingRateModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $r2;
+    protected $orderModel, $orderItemModel, $InventoryTransactionModel, $productModel, $productVariantModel, $csaModel, $cartModel, $cartItemModel, $cartItemPrescriptionModel, $orderShippingAddressModel, $orderItemPrescriptionModel, $paymentModel, $notificationModel, $userRefundAccountModel, $orderRefundModel, $r2;
 
     public function __construct()
     {
@@ -37,7 +36,6 @@ class OnlineSalesController extends BaseController
         $this->csaModel = new CustomerShippingAddressModel();
         $this->cartModel = new CartModel();
         $this->cartItemModel = new CartItemModel();
-        $this->shippingRateModel = new ShippingRateModel();
         $this->cartItemPrescriptionModel = new CartItemPrescriptionModel();
         $this->orderShippingAddressModel = new OrderShippingAddressModel();
         $this->orderItemPrescriptionModel = new OrderItemPrescriptionModel();
@@ -247,15 +245,13 @@ class OnlineSalesController extends BaseController
                 orders.status_id,
                 orders.tracking_number,
                 orders.courier,
+                orders.estimated_days,
 
                 customers.customer_name,
                 customers.customer_email,
 
                 order_statuses.status_name,
-                order_statuses.status_code,
-
-                shipping_methods.name AS shipping_method,
-                COALESCE(orders.estimated_days, shipping_methods.estimated_days) AS estimated_days
+                order_statuses.status_code
             ")
             ->join(
                 'customers',
@@ -265,11 +261,6 @@ class OnlineSalesController extends BaseController
             ->join(
                 'order_statuses',
                 'order_statuses.status_id = orders.status_id',
-                'left'
-            )
-            ->join(
-                'shipping_methods',
-                'shipping_methods.shipping_method_id = orders.shipping_method_id',
                 'left'
             )
             ->where('orders.order_id', $orderId)
