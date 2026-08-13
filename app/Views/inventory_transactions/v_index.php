@@ -170,15 +170,7 @@ $refLabels = [
     </div>
 
     <nav aria-label="Page navigation example" class="mt-4">
-      <ul class="pagination" id="realtime-pagination">
-        <?php if ($pager["totalPages"] > 1): ?>
-          <?php for ($i = 1; $i <= $pager["totalPages"]; $i++): ?>
-            <li class="page-item primary <?= $i === $pager["currentPage"] ? 'active' : '' ?>">
-              <a class="page-link" href="javascript:void(0);" onclick="handlePagination(<?= $i ?>)"><?= $i ?></a>
-            </li>
-          <?php endfor; ?>
-        <?php endif; ?>
-      </ul>
+      <ul class="pagination" id="realtime-pagination"></ul>
     </nav>
   </div>
 </div>
@@ -192,5 +184,9 @@ $refLabels = [
     params.set('page', pageNumber);
     window.location.replace(`<?php echo base_url(); ?>inventory?${params.toString()}`);
   }
+
+  window.addEventListener('load', function() {
+    renderPagination('realtime-pagination', <?= (int)$pager["currentPage"] ?>, <?= (int)$pager["totalPages"] ?>, handlePagination);
+  });
 </script>
 <?= $this->endSection() ?>

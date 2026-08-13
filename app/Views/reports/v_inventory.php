@@ -247,26 +247,12 @@
     window.location.replace(`<?php echo base_url(); ?>reports/inventory?${params.toString()}`);
   }
 
-  const paginationContainer = document.getElementById('realtime-pagination');
   const totalPages = <?= (int) $pager['totalPages'] ?>;
   const currentPage = <?= (int) $pager['currentPage'] ?>;
 
-  if (totalPages > 1) {
-    for (let i = 1; i <= totalPages; i++) {
-      const li = document.createElement('li');
-      li.className = 'page-item' + (i === currentPage ? ' active' : '');
-
-      const a = document.createElement('a');
-      a.className = 'page-link';
-      a.href = 'javascript:void(0)';
-      a.innerText = i;
-
-      a.onclick = () => handlePagination(i);
-
-      li.appendChild(a);
-      paginationContainer.appendChild(li);
-    }
-  }
+  window.addEventListener('load', function() {
+    renderPagination('realtime-pagination', currentPage, totalPages, handlePagination);
+  });
 </script>
 <?= $this->endSection() ?>
 

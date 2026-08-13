@@ -837,6 +837,81 @@
         }
       });
     });
+
+    /**
+     * Global pagination helper matching Option 1 UX style
+     */
+    function renderPagination(containerId, currentPage, totalPages, onPageClick) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      function createPageItem(page, text, active = false, disabled = false) {
+        const li = document.createElement('li');
+        li.className = `page-item primary ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
+        
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = 'javascript:void(0);';
+        a.innerHTML = text;
+        
+        if (!disabled && !active) {
+          a.addEventListener('click', () => onPageClick(page));
+        }
+        
+        li.appendChild(a);
+        return li;
+      }
+
+      // 1. First button (<<)
+      container.appendChild(createPageItem(1, '<i class="fa-solid fa-angles-left"></i>', false, currentPage === 1));
+
+      // 2. Prev button (<)
+      container.appendChild(createPageItem(currentPage - 1, '<i class="fa-solid fa-angle-left"></i>', false, currentPage === 1));
+
+      // 3. Page numbers
+      let startPage = Math.max(1, currentPage - 1);
+      let endPage = Math.min(totalPages, currentPage + 1);
+
+      if (currentPage <= 2) {
+        endPage = Math.min(totalPages, 3);
+      }
+      if (currentPage >= totalPages - 1) {
+        startPage = Math.max(1, totalPages - 2);
+      }
+
+      if (startPage > 1) {
+        container.appendChild(createPageItem(1, '1'));
+        if (startPage > 2) {
+          const li = document.createElement('li');
+          li.className = 'page-item disabled';
+          li.innerHTML = '<span class="page-link">...</span>';
+          container.appendChild(li);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        container.appendChild(createPageItem(i, i, i === currentPage));
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          const li = document.createElement('li');
+          li.className = 'page-item disabled';
+          li.innerHTML = '<span class="page-link">...</span>';
+          container.appendChild(li);
+        }
+        container.appendChild(createPageItem(totalPages, totalPages));
+      }
+
+      // 4. Next button (>)
+      container.appendChild(createPageItem(currentPage + 1, '<i class="fa-solid fa-angle-right"></i>', false, currentPage === totalPages));
+
+      // 5. Last button (>>)
+      container.appendChild(createPageItem(totalPages, '<i class="fa-solid fa-angles-right"></i>', false, currentPage === totalPages));
+    }
   </script>
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <script src="<?= base_url('assets'); ?>/js/argon-dashboard.js?v=2.1.3"></script>
