@@ -1,5 +1,6 @@
 <?= $this->extend('layouts/l_dashboard') ?>
 <?= $this->section('content') ?>
+<?php $errors = session()->getFlashdata('errors') ?? []; ?>
 
 <div class="container-fluid card">
   <div class="card-header pb-0">
@@ -7,24 +8,6 @@
   </div>
 
   <div class="card-body">
-    <!-- Error Messages Display -->
-    <?php if (session()->getFlashdata('failed')): ?>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <h5 class="alert-heading"><i class="fas fa-exclamation-circle"></i> Validation Error</h5>
-        <div><?= session()->getFlashdata('failed') ?></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    <?php endif; ?>
-
-    <!-- Success Messages Display -->
-    <?php if (session()->getFlashdata('success')): ?>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <h5 class="alert-heading"><i class="fas fa-check-circle"></i> Success</h5>
-        <div><?= session()->getFlashdata('success') ?></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    <?php endif; ?>
-
     <form id="productForm" action="<?= site_url('products/save') ?>" method="post" enctype="multipart/form-data" novalidate>
       <?= csrf_field() ?>
 
@@ -50,10 +33,12 @@
         <!-- Name -->
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label">Product Name <span class="text-danger">*</span></label>
-          <input type="text" name="product_name" class="form-control"
+          <input type="text" name="product_name" class="form-control <?= isset($errors['product_name']) ? 'is-invalid' : '' ?>"
             placeholder="e.g., Blue Light Glasses"
             value="<?= old('product_name', $product['product_name'] ?? '') ?>" required>
-          <div class="invalid-feedback">Please enter the product name.</div>
+          <div class="invalid-feedback">
+            <?= isset($errors['product_name']) ? esc($errors['product_name']) : 'Please enter the product name.' ?>
+          </div>
         </div>
 
         <!-- Price (base) -->

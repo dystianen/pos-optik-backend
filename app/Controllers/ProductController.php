@@ -292,7 +292,9 @@ class ProductController extends BaseController
         // VALIDATION
         // -------------------------------------------------
         $rules = [
-            'product_name'  => 'required|min_length[3]',
+            'product_name'  => $id 
+                ? "required|min_length[3]|is_unique[products.product_name,product_id,{$id}]"
+                : "required|min_length[3]|is_unique[products.product_name]",
             'product_price' => 'required|numeric',
             'product_brand' => 'required',
             'category_id'   => 'required',
@@ -316,8 +318,17 @@ class ProductController extends BaseController
 
         $redirectUrl = 'products/form' . ($id ? '?id=' . $id : '');
 
-        if (!$this->validate($rules)) {
-            return redirect()->to(site_url($redirectUrl))->withInput()->with('failed', implode('<br>', $this->validator->getErrors()));
+        $messages = [
+            'product_name' => [
+                'is_unique' => 'Product name is already in use. Please use a different name to keep it unique.'
+            ]
+        ];
+
+        if (!$this->validate($rules, $messages)) {
+            return redirect()->to(site_url($redirectUrl))
+                ->withInput()
+                ->with('failed', implode('<br>', $this->validator->getErrors()))
+                ->with('errors', $this->validator->getErrors());
         }
 
         $oldProduct = null;

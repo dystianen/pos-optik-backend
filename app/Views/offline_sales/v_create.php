@@ -161,7 +161,7 @@
                   <option value="">-- Select Product --</option>
                   <?php foreach ($products as $p): ?>
                     <option value="<?= $p['product_id'] ?>" data-price="<?= $p['product_price'] ?>" data-stock="<?= $p['product_stock'] ?>" <?= ((int)$p['product_stock'] <= 0) ? 'disabled' : '' ?>>
-                      <?= esc($p['product_name']) ?><?= ((int)$p['product_stock'] <= 0) ? ' (Out of Stock)' : '' ?>
+                      <?= esc($p['product_sku']) ?> - <?= esc($p['product_name']) ?><?= ((int)$p['product_stock'] <= 0) ? ' (Out of Stock)' : '' ?>
                     </option>
                   <?php endforeach ?>
                 </select>
@@ -310,7 +310,7 @@
         $disabled = ((int)$p['product_stock'] <= 0) ? ' disabled' : '';
         $outTxt   = ((int)$p['product_stock'] <= 0) ? ' (Out of Stock)' : '';
         return "<option value=\"{$p['product_id']}\" data-price=\"{$p['product_price']}\" data-stock=\"{$p['product_stock']}\"{$disabled}>"
-             . esc($p['product_name']) . $outTxt . "</option>";
+             . esc($p['product_sku']) . ' - ' . esc($p['product_name']) . $outTxt . "</option>";
       }, $products))
     ) ?>;
     return tmp.innerHTML;
