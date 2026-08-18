@@ -223,30 +223,30 @@ class ReportController extends BaseController
         $writer->openToFile($filePath);
 
         $titleStyle = (new Style())
-            ->setFontBold()
-            ->setFontSize(16)
-            ->setFontColor(Color::rgb(33, 37, 41));
+            ->withFontBold(true)
+            ->withFontSize(16)
+            ->withFontColor(Color::rgb(33, 37, 41));
 
         $headerStyle = (new Style())
-            ->setFontBold()
-            ->setFontSize(11)
-            ->setBackgroundColor(Color::rgb(47, 184, 170))
-            ->setFontColor(Color::WHITE);
+            ->withFontBold(true)
+            ->withFontSize(11)
+            ->withBackgroundColor(Color::rgb(47, 184, 170))
+            ->withFontColor(Color::WHITE);
 
         $subHeaderStyle = (new Style())
-            ->setFontBold()
-            ->setBackgroundColor(Color::rgb(241, 243, 245));
+            ->withFontBold(true)
+            ->withBackgroundColor(Color::rgb(241, 243, 245));
 
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Inventory Summary');
 
-        $writer->addRow(Row::fromValues(['OPTIKERS INVENTORY REPORT'], $titleStyle));
+        $writer->addRow(Row::fromValuesWithStyle(['OPTIKERS INVENTORY REPORT'], $titleStyle));
         $writer->addRow(Row::fromValues(['Transaction Type:', $typeText]));
         $writer->addRow(Row::fromValues(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
         $writer->addRow(Row::fromValues(['Downloaded At:', date('d M Y H:i')]));
         $writer->addRow(Row::fromValues(['']));
 
-        $writer->addRow(Row::fromValues(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(Row::fromValuesWithStyle(['Summary Metrics', 'Value'], $subHeaderStyle));
         $writer->addRow(Row::fromValues(['Total Transactions', number_format($summary['total_transactions'], 0, ',', '.')]));
         $writer->addRow(Row::fromValues(['Total In Quantity', number_format($summary['total_in'], 0, ',', '.')]));
         $writer->addRow(Row::fromValues(['Total Out Quantity', number_format($summary['total_out'], 0, ',', '.')]));
@@ -257,7 +257,7 @@ class ReportController extends BaseController
         $writer->getCurrentSheet()->setName('Transaction Details');
 
         $headers = ['No', 'Transaction ID', 'Date', 'Transaction Type', 'Reference Type', 'Reference ID', 'Product', 'Variant', 'User', 'Quantity', 'Description'];
-        $writer->addRow(Row::fromValues($headers, $headerStyle));
+        $writer->addRow(Row::fromValuesWithStyle($headers, $headerStyle));
 
         $refLabels = [
             'order'      => 'ORDER',
@@ -530,31 +530,31 @@ class ReportController extends BaseController
 
         // Styling
         $titleStyle = (new Style())
-            ->setFontBold()
-            ->setFontSize(16)
-            ->setFontColor(Color::rgb(33, 37, 41));
+            ->withFontBold(true)
+            ->withFontSize(16)
+            ->withFontColor(Color::rgb(33, 37, 41));
 
         $headerStyle = (new Style())
-            ->setFontBold()
-            ->setFontSize(11)
-            ->setBackgroundColor(Color::rgb(47, 184, 170))
-            ->setFontColor(Color::WHITE);
+            ->withFontBold(true)
+            ->withFontSize(11)
+            ->withBackgroundColor(Color::rgb(47, 184, 170))
+            ->withFontColor(Color::WHITE);
 
         $subHeaderStyle = (new Style())
-            ->setFontBold()
-            ->setBackgroundColor(Color::rgb(241, 243, 245));
+            ->withFontBold(true)
+            ->withBackgroundColor(Color::rgb(241, 243, 245));
 
         // 1. SALES SUMMARY SHEET
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Sales Summary');
 
-        $writer->addRow(Row::fromValues(['OPTIKERS SALES REPORT'], $titleStyle));
+        $writer->addRow(Row::fromValuesWithStyle(['OPTIKERS SALES REPORT'], $titleStyle));
         $writer->addRow(Row::fromValues(['Category:', $categoryText]));
         $writer->addRow(Row::fromValues(['Period:', date('d M Y', strtotime($startDate)) . ' to ' . date('d M Y', strtotime($endDate))]));
         $writer->addRow(Row::fromValues(['Downloaded At:', date('d M Y H:i')]));
         $writer->addRow(Row::fromValues(['']));
 
-        $writer->addRow(Row::fromValues(['Summary Metrics', 'Value'], $subHeaderStyle));
+        $writer->addRow(Row::fromValuesWithStyle(['Summary Metrics', 'Value'], $subHeaderStyle));
         $writer->addRow(Row::fromValues(['Net Income (Completed Sales)', 'Rp ' . number_format($summary['completed_revenue'], 0, ',', '.')]));
         $writer->addRow(Row::fromValues(['Cancelled Sales', 'Rp ' . number_format($summary['cancelled_revenue'], 0, ',', '.')]));
         $writer->addRow(Row::fromValues(['Refunded Sales', 'Rp ' . number_format($summary['refunded_revenue'], 0, ',', '.')]));
@@ -569,7 +569,7 @@ class ReportController extends BaseController
         $writer->getCurrentSheet()->setName('Transaction Details');
 
         $headers = ['No', 'Transaction ID', 'Date', 'Category', 'Customer', 'Email', 'Total Items', 'Grand Total', 'Status'];
-        $writer->addRow(Row::fromValues($headers, $headerStyle));
+        $writer->addRow(Row::fromValuesWithStyle($headers, $headerStyle));
 
         $no = 1;
         foreach ($orders as $order) {

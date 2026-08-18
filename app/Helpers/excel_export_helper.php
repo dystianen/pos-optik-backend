@@ -13,14 +13,14 @@ if (!function_exists('createTransactionSheetSpout')) {
 
     // Header Style
     $headerStyle = (new Style())
-      ->setFontBold()
-      ->setFontSize(12)
-      ->setBackgroundColor(Color::rgb(68, 114, 196))
-      ->setFontColor(Color::WHITE);
+      ->withFontBold(true)
+      ->withFontSize(12)
+      ->withBackgroundColor(Color::rgb(68, 114, 196))
+      ->withFontColor(Color::WHITE);
 
     // Header Row
     $headers = ['No', 'Order ID', 'Tanggal', 'Jam', 'Customer', 'Email', 'Total Item', 'Grand Total', 'Status'];
-    $headerCells = Row::fromValues($headers, $headerStyle);
+    $headerCells = Row::fromValuesWithStyle($headers, $headerStyle);
     $writer->addRow($headerCells);
 
     // ✅ SET COLUMN WIDTH (dalam karakter)
@@ -53,13 +53,13 @@ if (!function_exists('createTransactionSheetSpout')) {
 if (!function_exists('createSummarySheetSpout')) {
   function createSummarySheetSpout($writer, $orders, $title = 'RINGKASAN PENJUALAN IN-STORE')
   {
-    $boldStyle = (new Style())->setFontBold()->setFontSize(12);
+    $boldStyle = (new Style())->withFontBold(true)->withFontSize(12);
     $headerStyle = (new Style())
-      ->setFontBold()
-      ->setBackgroundColor(Color::rgb(217, 225, 242));
+      ->withFontBold(true)
+      ->withBackgroundColor(Color::rgb(217, 225, 242));
 
     // Title
-    $titleRow = Row::fromValues([$title], $boldStyle);
+    $titleRow = Row::fromValuesWithStyle([$title], $boldStyle);
     $writer->addRow($titleRow);
     $writer->addRow(Row::fromValues(['']));
 
@@ -70,7 +70,7 @@ if (!function_exists('createSummarySheetSpout')) {
     $avgTransaction = $totalTransaksi > 0 ? $totalRevenue / $totalTransaksi : 0;
 
     // Summary Header
-    $summaryHeader = Row::fromValues(['Metrik', 'Nilai'], $headerStyle);
+    $summaryHeader = Row::fromValuesWithStyle(['Metrik', 'Nilai'], $headerStyle);
     $writer->addRow($summaryHeader);
 
     // Summary data
@@ -88,7 +88,7 @@ if (!function_exists('createSummarySheetSpout')) {
 
     // Penjualan per Hari
     $writer->addRow(Row::fromValues(['']));
-    $writer->addRow(Row::fromValues(['PENJUALAN PER HARI'], $boldStyle));
+    $writer->addRow(Row::fromValuesWithStyle(['PENJUALAN PER HARI'], $boldStyle));
 
     $salesByDate = [];
     foreach ($orders as $order) {
@@ -100,7 +100,7 @@ if (!function_exists('createSummarySheetSpout')) {
       $salesByDate[$date]['total'] += $order['grand_total'];
     }
 
-    $dateHeader = Row::fromValues(
+    $dateHeader = Row::fromValuesWithStyle(
       ['Tanggal', 'Jumlah Transaksi', 'Total Penjualan'],
       $headerStyle
     );
@@ -120,14 +120,14 @@ if (!function_exists('createSummarySheetSpout')) {
 if (!function_exists('createTopCustomersSheetSpout')) {
   function createTopCustomersSheetSpout($writer, $orders, $limit = 20)
   {
-    $boldStyle = (new Style())->setFontBold()->setFontSize(12);
+    $boldStyle = (new Style())->withFontBold(true)->withFontSize(12);
     $headerStyle = (new Style())
-      ->setFontBold()
-      ->setBackgroundColor(Color::rgb(112, 173, 71))
-      ->setFontColor(Color::WHITE);
+      ->withFontBold(true)
+      ->withBackgroundColor(Color::rgb(112, 173, 71))
+      ->withFontColor(Color::WHITE);
 
     // Title
-    $title = Row::fromValues(["TOP {$limit} CUSTOMERS"], $boldStyle);
+    $title = Row::fromValuesWithStyle(["TOP {$limit} CUSTOMERS"], $boldStyle);
     $writer->addRow($title);
     $writer->addRow(Row::fromValues(['']));
 
@@ -155,7 +155,7 @@ if (!function_exists('createTopCustomersSheetSpout')) {
 
     // Header
     $headers = ['Rank', 'Customer Name', 'Email', 'Total Transaksi', 'Total Pembelian'];
-    $writer->addRow(Row::fromValues($headers, $headerStyle));
+    $writer->addRow(Row::fromValuesWithStyle($headers, $headerStyle));
 
     // Data
     $rank = 1;
