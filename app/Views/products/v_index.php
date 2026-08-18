@@ -19,7 +19,7 @@
           placeholder="Search SKU, product name..."
           value="<?= esc($search ?? '') ?>">
       </div>
-      <div class="col-lg-3 col-md-6 col-6">
+      <div class="col-lg-2 col-md-6 col-6">
         <label class="form-label text-xs font-weight-bold">Category</label>
         <select name="category_id" class="form-select form-select-sm">
           <option value="">All Categories</option>
@@ -30,7 +30,7 @@
           <?php endforeach; ?>
         </select>
       </div>
-      <div class="col-lg-3 col-md-6 col-6">
+      <div class="col-lg-2 col-md-6 col-6">
         <label class="form-label text-xs font-weight-bold">Brand</label>
         <select name="brand" class="form-select form-select-sm">
           <option value="">All Brands</option>
@@ -41,8 +41,17 @@
           <?php endforeach; ?>
         </select>
       </div>
-      <div class="col-lg-3 col-md-12 col-12 d-flex gap-2 mt-lg-0 mt-3">
-        <button type="submit" class="btn btn-sm btn-primary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Filter">
+      <div class="col-lg-2 col-md-6 col-6">
+        <label class="form-label text-xs font-weight-bold">Stock Status</label>
+        <select name="stock_status" class="form-select form-select-sm">
+          <option value="">All Stock</option>
+          <option value="empty" <?= ($selectedStockStatus ?? '') == 'empty' ? 'selected' : '' ?>>🔴 Out of Stock (0)</option>
+          <option value="low" <?= ($selectedStockStatus ?? '') == 'low' ? 'selected' : '' ?>>🟡 Low Stock (1 - 5)</option>
+          <option value="in_stock" <?= ($selectedStockStatus ?? '') == 'in_stock' ? 'selected' : '' ?>>🟢 Safe Stock (> 5)</option>
+        </select>
+      </div>
+      <div class="col-lg-3 col-md-6 col-6 d-flex gap-2 mt-lg-0 mt-3">
+        <button type="submit" class="btn btn-sm btn-primary mb-0 d-flex align-items-center justify-content-center gap-1 flex-fill" style="height: 31px;" title="Filter">
           <i class="fa-solid fa-filter"></i> <span>Filter</span>
         </button>
         <a href="<?= base_url('/products') ?>" class="btn btn-sm btn-outline-secondary mb-0 d-flex align-items-center justify-content-center gap-1" style="height: 31px;" title="Reset">
@@ -60,8 +69,8 @@
             <th>Category</th>
             <th>Name</th>
             <th>Brand</th>
-            <th>Stock</th>
-            <th>Total Variants</th>
+            <th class="text-center">Stock</th>
+            <th class="text-center">Total Variants</th>
             <th class="sticky-action text-center">Actions</th>
           </tr>
         </thead>
@@ -70,25 +79,39 @@
 
           <?php if (empty($products)): ?>
             <tr>
-              <td colspan="8" class="text-center text-muted">No product data available.</td>
+              <td colspan="8" class="text-center text-muted py-4">No product data available.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($products as $product): ?>
               <tr>
                 <td class="text-center"><?= $startIndex++ ?></td>
-                <td><?= $product['product_sku'] ?></td>
-                <td><?= $product['category_name'] ?></td>
-                <td><?= $product['product_name'] ?></td>
-                <td><?= $product['product_brand'] ?></td>
-                <td><?= $product['product_stock'] ?></td>
-                <td><?= $product['total_variants'] ?></td>
+                <td><span class="font-weight-bold"><?= esc($product['product_sku']) ?></span></td>
+                <td><?= esc($product['category_name']) ?></td>
+                <td><?= esc($product['product_name']) ?></td>
+                <td><?= esc($product['product_brand'] ?: '-') ?></td>
+                <td class="text-center">
+                  <?php if ((int)$product['product_stock'] <= 0): ?>
+                    <span class="badge bg-gradient-danger">0 (Out of Stock)</span>
+                  <?php elseif ((int)$product['product_stock'] <= 5): ?>
+                    <span class="badge bg-gradient-warning"><?= $product['product_stock'] ?> (Low Stock)</span>
+                  <?php else: ?>
+                    <span class="badge bg-gradient-success"><?= $product['product_stock'] ?></span>
+                  <?php endif; ?>
+                </td>
+                <td class="text-center">
+                  <?php if ($product['has_variants']): ?>
+                    <span class="badge bg-gradient-info"><?= $product['total_variants'] ?> Variants</span>
+                  <?php else: ?>
+                    <span class="text-xs text-muted">Non-Variant</span>
+                  <?php endif; ?>
+                </td>
                 <td class="sticky-action text-center">
-                  <a href="<?= base_url('/products/form?id=' . $product['product_id']) ?>" class="btn btn-sm btn-warning">
+                  <a href="<?= base_url('/products/form?id=' . $product['product_id']) ?>" class="btn btn-sm btn-warning mb-0" title="Edit Product">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </a>
-                  <form action="<?= base_url('/products/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;" class="confirm-delete">
+                  <form action="<?= base_url('/products/delete/' . $product['product_id']) ?>" method="post" style="display:inline-block;" class="confirm-delete mb-0">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-sm btn-danger">
+                    <button type="submit" class="btn btn-sm btn-danger mb-0" title="Delete Product">
                       <i class="fa-solid fa-trash"></i>
                     </button>
                   </form>
@@ -97,7 +120,6 @@
             <?php endforeach; ?>
           <?php endif; ?>
         </tbody>
-
       </table>
     </div>
 

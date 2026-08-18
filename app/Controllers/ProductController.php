@@ -50,9 +50,10 @@ class ProductController extends BaseController
         $totalLimit = 10;
         $offset = ($currentPage - 1) * $totalLimit;
 
-        $search     = $this->request->getGet('search');
-        $categoryId = $this->request->getGet('category_id');
-        $brand      = $this->request->getGet('brand');
+        $search      = $this->request->getGet('search');
+        $categoryId  = $this->request->getGet('category_id');
+        $brand       = $this->request->getGet('brand');
+        $stockStatus = $this->request->getGet('stock_status');
 
         $builder = $this->productModel
             ->select('
@@ -87,6 +88,26 @@ class ProductController extends BaseController
             $builder->where('products.product_brand', $brand);
         }
 
+        if (!empty($stockStatus)) {
+            if ($stockStatus === 'empty') {
+                $builder->groupStart()
+                    ->where('products.product_stock <=', 0)
+                    ->orWhere("EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = products.product_id AND pv.deleted_at IS NULL AND pv.stock <= 0)", null, false)
+                    ->groupEnd();
+            } elseif ($stockStatus === 'low') {
+                $builder->groupStart()
+                    ->groupStart()
+                        ->where('products.product_stock >', 0)
+                        ->where('products.product_stock <=', 5)
+                    ->groupEnd()
+                    ->orWhere("EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = products.product_id AND pv.deleted_at IS NULL AND pv.stock > 0 AND pv.stock <= 5)", null, false)
+                    ->groupEnd();
+            } elseif ($stockStatus === 'in_stock') {
+                $builder->where('products.product_stock >', 5)
+                    ->where("NOT EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = products.product_id AND pv.deleted_at IS NULL AND pv.stock <= 5)", null, false);
+            }
+        }
+
         // Clone builder untuk count
         $countBuilder = clone $builder;
 
@@ -115,6 +136,7 @@ class ProductController extends BaseController
             "brands" => array_column($distinctBrands, 'product_brand'),
             "selectedCategoryId" => $categoryId,
             "selectedBrand" => $brand,
+            "selectedStockStatus" => $stockStatus,
         ];
 
         return view('products/v_index', $data);

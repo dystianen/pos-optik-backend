@@ -134,12 +134,88 @@ class DashboardController extends BaseController
 
         /**
          * =========================
-         * LOW STOCK
+         * STOCK ALERTS (LOW & OUT OF STOCK)
          * =========================
          */
-        $lowStockCount = $this->db->table('products')
+        $stockAlertsQuery = "
+            (SELECT 
+                p.product_id,
+                p.product_name,
+                p.product_sku,
+                p.product_brand,
+                pc.category_name,
+                NULL AS variant_id,
+                NULL AS variant_name,
+                p.product_stock AS current_stock,
+                0 AS has_variants,
+                CASE WHEN p.product_stock <= 0 THEN 'empty' ELSE 'low' END AS alert_type
+            FROM products p
+            LEFT JOIN product_categories pc ON pc.category_id = p.category_id
+            WHERE p.deleted_at IS NULL 
+              AND p.has_variants = 0 
+              AND p.product_stock <= 5)
+            
+            UNION ALL
+            
+            (SELECT 
+                p.product_id,
+                p.product_name,
+                p.product_sku,
+                p.product_brand,
+                pc.category_name,
+                pv.variant_id,
+                pv.variant_name,
+                pv.stock AS current_stock,
+                1 AS has_variants,
+                CASE WHEN pv.stock <= 0 THEN 'empty' ELSE 'low' END AS alert_type
+            FROM product_variants pv
+            JOIN products p ON p.product_id = pv.product_id
+            LEFT JOIN product_categories pc ON pc.category_id = p.category_id
+            WHERE p.deleted_at IS NULL 
+              AND pv.deleted_at IS NULL 
+              AND p.has_variants = 1 
+              AND pv.stock <= 5)
+            
+            ORDER BY current_stock ASC, product_name ASC
+            LIMIT 10
+        ";
+
+        $stockAlerts = $this->db->query($stockAlertsQuery)->getResultArray();
+
+        // Calculate counts for empty & low stock
+        $emptyStockNonVariant = $this->db->table('products')
+            ->where('deleted_at', null)
+            ->where('has_variants', 0)
+            ->where('product_stock <=', 0)
+            ->countAllResults();
+
+        $emptyStockVariant = $this->db->table('product_variants pv')
+            ->join('products p', 'p.product_id = pv.product_id')
+            ->where('p.deleted_at', null)
+            ->where('pv.deleted_at', null)
+            ->where('p.has_variants', 1)
+            ->where('pv.stock <=', 0)
+            ->countAllResults();
+
+        $emptyStockCount = $emptyStockNonVariant + $emptyStockVariant;
+
+        $lowStockNonVariant = $this->db->table('products')
+            ->where('deleted_at', null)
+            ->where('has_variants', 0)
+            ->where('product_stock >', 0)
             ->where('product_stock <=', 5)
             ->countAllResults();
+
+        $lowStockVariant = $this->db->table('product_variants pv')
+            ->join('products p', 'p.product_id = pv.product_id')
+            ->where('p.deleted_at', null)
+            ->where('pv.deleted_at', null)
+            ->where('p.has_variants', 1)
+            ->where('pv.stock >', 0)
+            ->where('pv.stock <=', 5)
+            ->countAllResults();
+
+        $lowStockCount = $lowStockNonVariant + $lowStockVariant;
 
         /**
          * =========================
@@ -231,7 +307,10 @@ class DashboardController extends BaseController
             'onlineSales'       => (int) ($salesStats['online_sales'] ?? 0),
             'posSales'          => (int) ($salesStats['pos_sales'] ?? 0),
             'totalCustomers'    => (int) $totalCustomers,
+            'emptyStockCount'   => (int) $emptyStockCount,
             'lowStockCount'     => (int) $lowStockCount,
+            'stockAlertCount'   => (int) ($emptyStockCount + $lowStockCount),
+            'stockAlerts'       => $stockAlerts,
             'months'            => json_encode($months),
             'revenues'          => json_encode($revenues),
             'topProducts'       => $topProducts,
